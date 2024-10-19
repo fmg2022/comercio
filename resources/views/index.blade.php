@@ -10,7 +10,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased dark:bg-slate-900 dark:text-white/50">
-        <header x-data="{ open: false }" class="relative py-6 px-3 w-full flex items-center justify-between gap-4">
+        <header x-data="{ open: false }" class="relative py-6 px-3 w-full flex items-center justify-between gap-4 dark:bg-slate-800">
             <!-- Logos -->
             <a href="/" class="flex gap-2 items-center justify-start">
                 <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
@@ -19,8 +19,8 @@
                 </h2>
             </a>
             <!-- Links -->
-            <nav :class="{'flex flex-1 justify-between flex-col border-b border-gray-200 dark:border-gray-600': open, 'hidden': !open}" class="absolute top-16 left-0 right-0 bg-slate-900 sm:static sm:flex pb-4 transition-all">
-                <form class="flex items-center max-w-sm mx-auto py-3">   
+            <nav :class="{'flex flex-1 flex-col border-b border-gray-200 dark:border-gray-600': open, 'hidden': !open}" class="absolute top-16 left-0 right-0 bg-slate-800 sm:static sm:flex sm:justify-between pb-4">
+                <form class="flex items-center max-w-sm py-3 mx-2 sm:mx-0">
                     <label for="simple-search" class="sr-only">Buscar...</label>
                     <div class="relative w-full">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -37,17 +37,17 @@
                         <span class="sr-only">Buscar</span>
                     </button>
                 </form>
-                <x-responsive-nav-link :href="'#'">
+                <label for="category-toggle" class="flex w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M21.484 7.125l-9.022-5a1.003 1.003 0 0 0-.968 0l-8.978 4.96a1 1 0 0 0-.003 1.748l9.022 5.04a.995.995 0 0 0 .973.001l8.978-5a1 1 0 0 0-.002-1.749z" fill="currentColor"/><path d="M12 15.856l-8.515-4.73l-.971 1.748l9 5a1 1 0 0 0 .971 0l9-5l-.971-1.748L12 15.856z" fill="currentColor"/><path d="M12 19.856l-8.515-4.73l-.971 1.748l9 5a1 1 0 0 0 .971 0l9-5l-.971-1.748L12 19.856z" fill="currentColor"/></svg>
                     <span class="ms-3">Categorias</span>
-                </x-responsive-nav-link>
+                </label>
                 @if (Route::has('login'))
                     @auth
                         <x-responsive-nav-link :href="route('dashboard')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M4 13h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1zm-1 7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v4zm10 0a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v7zm1-10h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1z" fill="currentColor"/></svg>
-                            <span class="ms-3">Dashboar</span>
+                            <span class="ms-3">Dashboard</span>
                         </x-responsive-nav-link>
-                        <x-responsive-nav-link>
+                        <x-responsive-nav-link :href="'#!'">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8m4-9l-4-4m4 4l-4 4m4-4H9"/></svg>
                             <span class="ms-3">Desconectarse</span>
 
@@ -66,22 +66,54 @@
                         @endif
                     @endauth
                 @endif
-                <label for="cart-toggle" class="flex w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 transition duration-150 ease-in-out cursor-pointer">
+                <label for="cart-toggle" class="flex w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M21 4H2v2h2.3l3.28 9a3 3 0 0 0 2.82 2H19v-2h-8.6a1 1 0 0 1-.94-.66L9 13h9.28a2 2 0 0 0 1.92-1.45L22 5.27A1 1 0 0 0 21.27 4A.8.8 0 0 0 21 4m-2.75 7h-10L6.43 6h13.24z"/><circle cx="10.5" cy="19.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="19.5" r="1.5" fill="currentColor"/></svg>
                     <span class="ms-3">Mi Carrito</span>
                 </label>
             </nav>
             <!-- Hamburger -->
-            <button @click="open = ! open" class="inline-flex items-center justify-end sm:hidden p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+            <button @click="open = ! open" class="inline-flex items-center justify-end sm:hidden p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </header>
+
+        <!-- Inputs para mostrar/ocultar contenido -->
         <input type="checkbox" id="cart-toggle" class="hidden" />
-        <aside class="fixed top-0 -right-full z-50 w-full h-screen p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800">
-            <label for="cart-toggle" class="absolute top-4 right-4 z-50 cursor-pointer dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
+        <input type="checkbox" id="category-toggle" class="hidden" />
+
+        <!-- Categories -->
+        <aside class="fixed -top-full left-0 z-50 w-full h-screen p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
+            <label for="category-toggle" class="absolute top-4 right-4 z-50 cursor-pointer dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
+                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </label>
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 leading-tight text-center mb-4">Categorías</h2>
+            <div class="flex flex-col gap-2 p-2 h-full">
+                <ul>
+                    <!-- Listar las categorías -->
+                    @forelse($categories as $category)
+                        <li class="my-auto text-center text-xl">
+                            <h2 class="text-xl text-gray-800">{{ $category->name }}</h2>
+                            @if ($category->parent_id)
+                                <span class="text-sm mb-1">
+                                    {{ $category->parent->name }}
+                                </span>
+                            @endif
+                        </li>
+                    @empty
+                        <li class="my-auto text-center text-xl">Sin categorías</li>
+                    @endforelse
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Cart -->
+        <aside class="fixed top-0 -right-full z-50 w-full h-screen p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
+            <label for="cart-toggle" class="absolute top-4 right-4 z-50 cursor-pointer dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>

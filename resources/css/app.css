@@ -4,7 +4,11 @@
 
 @layer components {
   #cart-toggle:checked~aside {
-    left: 0;
+    right: 0;
+  }
+
+  #category-toggle:checked~aside {
+    top: 0;
   }
 }
 
