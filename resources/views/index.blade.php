@@ -85,23 +85,29 @@
         <input type="checkbox" id="category-toggle" class="hidden" />
 
         <!-- Categories -->
-        <aside class="fixed -top-full left-0 z-50 w-full h-screen p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
+        <aside class="fixed -top-full left-0 z-50 w-full h-screen overflow-auto p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
             <label for="category-toggle" class="absolute top-4 right-4 z-50 cursor-pointer dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </label>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 leading-tight text-center mb-4">Categorías</h2>
-            <div class="flex flex-col gap-2 p-2 h-full">
-                <ul>
+            <div class="p-2 h-full">
+                <ul class="grid content-center gap-3">
                     <!-- Listar las categorías -->
+                    {{-- https://www.youtube.com/watch?v=uupOWz65O4M --}}
                     @forelse($categories as $category)
                         <li class="my-auto text-center text-xl">
-                            <h2 class="text-xl text-gray-800">{{ $category->name }}</h2>
-                            @if ($category->parent_id)
-                                <span class="text-sm mb-1">
-                                    {{ $category->parent->name }}
-                                </span>
+                            <span class="text-xl text-gray-400">{{ $category->name }}</span>
+                            @if ($category->children !== null)
+                                <input type="checkbox" class="invisible">
+                                <ul>
+                                @foreach ($category->children as $child)
+                                    <li class="my-auto text-center text-xl">
+                                        <span class="text-xl text-gray-300">{{ $child->name }}</span>
+                                    </li>
+                                @endforeach
+                                </ul>
                             @endif
                         </li>
                     @empty
@@ -112,7 +118,7 @@
         </aside>
 
         <!-- Cart -->
-        <aside class="fixed top-0 -right-full z-50 w-full h-screen p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
+        <aside class="fixed top-0 -right-full z-50 w-full h-screen overflow-auto p-8 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 transition-all duration-300 ease-in-out">
             <label for="cart-toggle" class="absolute top-4 right-4 z-50 cursor-pointer dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

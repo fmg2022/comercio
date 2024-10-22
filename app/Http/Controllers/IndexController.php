@@ -9,7 +9,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::where('parent_id', null)->get();
         return view('index', compact('categories'));
     }
 }
