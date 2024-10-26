@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('table_id');
             $table->string('table', 50);
-            $table->foreign('offer_id')->constrained()->onUpdate('cascade');
+            $table->foreignId('offer_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
