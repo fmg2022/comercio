@@ -119,19 +119,16 @@
                 <p class="my-auto text-center text-xl">Sin productos</p>
             </div>
         </aside>
-        <main>
-            <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200 leading-tight">Lorem ipsum dolor sit amet consectetur adipisicing elit</h2>
-            <p class="text-gray-400 mb-3 p-2">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Numquam vero, itaque consectetur placeat quisquam deserunt possimus saepe nisi tenetur vitae porro eos odit quasi natus ex cupiditate, officia, nemo perferendis.</p>
-            <p class="mb-10">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestias eius aut omnis, expedita consequatur ad iste error perspiciatis, asperiores esse unde voluptatem voluptate hic minus non dolorum porro, neque fuga.</p>
-            <ul class="list-disc ml-6">
-                <li class="ml-2">texto de lista</li>
-                <li class="ml-2">texto de lista</li>
-                <li class="ml-2">texto de lista</li>
-                <li class="ml-2">texto de lista</li>
-                <li>texto de lista</li>
-                <li>texto de lista</li>
+        <main class="container mx-auto">
+            <ul class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 px-2 py-8">
+                @foreach ($products as $product)
+                    <li class="flex justify-center" >
+                        <x-card :product="$product" />
+                    </li>
+                @endforeach
             </ul>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos nemo minima consequatur necessitatibus consectetur quaerat, quisquam ea distinctio in veniam ad ex fuga sunt, maxime aliquid veritatis tempore corporis expedita?Placeat cumque fugit, voluptates, minus deleniti harum soluta sapiente esse quam eius voluptatum est exercitationem quis voluptas suscipit incidunt inventore sint. Culpa, alias earum quam quaerat quasi nihil aut voluptatum!</p>
         </main>
     </body>
 </html>
+{{-- https://unpkg.com/flowbite@1.4.0/dist/flowbite.js --}}
+{{-- carousel --}}
