@@ -120,6 +120,12 @@
             </div>
         </aside>
         <main class="container mx-auto">
+            <!-- SECCION: Carrusel de ofertas -->
+            <x-sections.carrousel-img :offers="$offers" />
+
+            <!-- SECCION: Listado de categorias -->
+            
+            <!-- SECCION: Slider de productos recomendados -->
             <ul class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 px-2 py-8">
                 @foreach ($products as $product)
                     <li class="flex justify-center" >
@@ -127,8 +133,10 @@
                     </li>
                 @endforeach
             </ul>
+
+            <!-- SECCION: Listado de marcas -->
         </main>
     </body>
 </html>
 {{-- https://unpkg.com/flowbite@1.4.0/dist/flowbite.js --}}
-{{-- carousel --}}
+{{-- carousel / slider --}}

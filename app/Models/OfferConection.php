@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OfferLine extends Model
+class OfferConection extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,8 +16,8 @@ class OfferLine extends Model
         'table_id'
     ];
 
-    public function Offer(): BelongsTo
+    public function Offers(): HasMany
     {
-        return $this->belongsTo(Offer::class);
+        return $this->hasMany(Offer::class);
     }
 }

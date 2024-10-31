@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
@@ -13,14 +13,15 @@ class Offer extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'type_discount',
         'discount',
         'initial_date',
         'expiration_date'
     ];
 
-    public function offerLines(): HasMany
+    public function OfferConection(): BelongsTo
     {
-        return $this->hasMany(OfferLine::class);
+        return $this->belongsTo(OfferConection::class);
     }
 }

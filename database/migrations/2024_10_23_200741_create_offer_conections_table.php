@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('offer_lines', function (Blueprint $table) {
+        Schema::create('offer_conections', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('table_id');
             $table->string('table', 50);
-            $table->foreignId('offer_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offer_lines');
+        Schema::dropIfExists('offer_conections');
     }
 };
