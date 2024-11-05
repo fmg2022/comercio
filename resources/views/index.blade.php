@@ -8,6 +8,9 @@
 
         <!-- Styles -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Extras -->
+        <script src="{{ asset('js/extra.js') }}" defer></script>
     </head>
     <body class="antialiased dark:bg-slate-900 dark:text-white/50">
         <header x-data="{ open: false }" class="relative py-6 px-3 w-full flex items-center justify-between gap-4 dark:bg-slate-800">
@@ -121,11 +124,13 @@
         </aside>
         <main class="container mx-auto">
             <!-- SECCION: Carrusel de ofertas -->
-            <x-sections.carrousel-img :offers="$offers" />
+            <x-sections.carrousel-img :offers="$offers" :listId="'list-oferta'" :btnNextId="'next-oferta'" :btnPrevId="'prev-oferta'" />
 
             <!-- SECCION: Listado de categorias -->
+            <x-sections.list-items :title="'Categorías Destacadas'" :items="$selectedCategories" />
             
             <!-- SECCION: Slider de productos recomendados -->
+            <!-- https://www.youtube.com/watch?v=7ufe6J-XZrk -->
             <ul class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 px-2 py-8">
                 @foreach ($products as $product)
                     <li class="flex justify-center" >
@@ -135,6 +140,7 @@
             </ul>
 
             <!-- SECCION: Listado de marcas -->
+            <x-sections.list-items :title="'Marcas Destacadas'" :items="$marks" />
         </main>
     </body>
 </html>
