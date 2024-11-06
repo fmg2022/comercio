@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('offer_conections', function (Blueprint $table) {
+        Schema::create('article_offer', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('table_id');
-            $table->string('table', 50);
+            $table->foreignId('article_id')->constrained()->onDelete('cascade');
+            $table->foreignId('offer_id')->constrained()->onDelete('cascade');
+            $table->date('initial_date');
+            $table->date('expiration_date');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offer_conections');
+        Schema::dropIfExists('article_offer');
     }
 };

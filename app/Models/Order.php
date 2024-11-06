@@ -28,9 +28,9 @@ class Order extends Model
         return $this->belongsTo(OrderStatus::class);
     }
 
-    public function offerLine(): BelongsTo
+    public function offer(): BelongsTo
     {
-        return $this->belongsTo(OfferLine::class);
+        return $this->belongsTo(Offer::class);
     }
 
     public function payments(): HasMany

@@ -17,9 +17,6 @@ return new class extends Migration
             $table->string('code', 50);
             $table->string('type_discount', 50); // porcentaje o monto fijo
             $table->decimal('discount', 10, 2);
-            $table->date('initial_date');
-            $table->date('expiration_date');
-            $table->foreignId('offer_conection_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

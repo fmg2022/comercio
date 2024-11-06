@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
@@ -15,13 +15,11 @@ class Offer extends Model
         'name',
         'code',
         'type_discount',
-        'discount',
-        'initial_date',
-        'expiration_date'
+        'discount'
     ];
 
-    public function OfferConection(): BelongsTo
+    public function articles(): BelongsToMany
     {
-        return $this->belongsTo(OfferConection::class);
+        return $this->belongsToMany(Article::class)->as('details')->withPivot(['initial_date', 'expiration_date']);
     }
 }

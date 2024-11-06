@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OfferConection extends Model
+class Article extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -16,8 +16,8 @@ class OfferConection extends Model
         'table_id'
     ];
 
-    public function Offers(): HasMany
+    public function Offers(): BelongsToMany
     {
-        return $this->hasMany(Offer::class);
+        return $this->belongsToMany(Offer::class)->as('details')->withPivot(['initial_date', 'expiration_date']);
     }
 }

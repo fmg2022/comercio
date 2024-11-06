@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class OfferConectionSeeder extends Seeder
+class ArticleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,27 +14,30 @@ class OfferConectionSeeder extends Seeder
     public function run(): void
     {
         for ($i = 1; $i <= 4; $i++) {
-            DB::table('offer_conections')->insert([
+            DB::table('articles')->insert([
                 'table' => 'products',
                 'table_id' => $i,
             ]);
         }
-        DB::table('offer_conections')->insert([
+        // arroz
+        DB::table('articles')->insert([
             'table' => 'products',
             'table_id' => 10,
         ]);
-
-        DB::table('offer_conections')->insert([
+        // gaseosas
+        DB::table('articles')->insert([
             'table' => 'categories',
             'table_id' => 20,
         ]);
-        DB::table('offer_conections')->insert([
+        // leches
+        DB::table('articles')->insert([
             'table' => 'categories',
             'table_id' => 16,
         ]);
-        DB::table('offer_conections')->insert([
+        // galletas
+        DB::table('articles')->insert([
             'table' => 'categories',
-            'table_id' => 32,
+            'table_id' => 31,
         ]);
     }
 }
