@@ -1,7 +1,8 @@
 @props(['product'])
 
-<article class="max-w-sm h-max rounded shadow-lg bg-slate-300 pb-3">
-  <img class="w-full" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
+<article class="max-w-sm h-max rounded-xl shadow-lg bg-slate-300 pb-3 overflow-hidden">
+  <img class="w-full max-w-96 aspect-square" src="{{ asset('images/products/' . $product->image) }}"
+    alt="{{ $product->name }}" draggable="false">
   <div class="px-6 py-4">
     <h2 class="font-bold text-2xl mb-1 text-slate-700">{{ $product->mark }}</h2>
     <p class="text-slate-500 text-base">{{ $product->name }}</p>

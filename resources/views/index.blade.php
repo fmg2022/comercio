@@ -11,7 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Extras -->
-    <script src="{{ asset('js/extra.js') }}" defer></script>
+    <script type="module" src="{{ asset('js/index.js') }}" defer></script>
 </head>
 
 <body class="antialiased dark:bg-slate-900 dark:text-white/50">
@@ -172,11 +172,11 @@
     </aside>
     <main class="container mx-auto">
         <!-- SECCION: Carrusel de ofertas -->
-        <x-sections.carousel-img :listId="'list-oferta'" :btnNextId="'next-oferta'" :btnPrevId="'prev-oferta'">
+        <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'">
             @foreach ($offers as $offer)
-            <li class="item">
+            <li class="item snap-start">
                 <img src="https://picsum.photos/seed/{{ $offer->code }}/768/360.webp" alt="Offer"
-                    class="h-full max-w-[100dvw] object-cover" />
+                    class="h-full w-full object-cover" draggable="false" />
             </li>
             @endforeach
         </x-sections.carousel-img>
@@ -186,9 +186,9 @@
 
         <!-- SECCION: Slider de productos recomendados -->
         <!-- https://www.youtube.com/watch?v=7ufe6J-XZrk -->
-        <x-sections.carousel-img :listId="'list-product'" :btnNextId="'next-product'" :btnPrevId="'prev-product'">
+        <x-sections.carousel-img :listId="'list-product'" :btnsId="'btns-product'" :class="'px-3'">
             @foreach ($products as $product)
-            <li class="item p-2">
+            <li class="item flex justify-center items-center snap-start">
                 <x-card :product="$product" />
             </li>
             @endforeach
