@@ -5,7 +5,6 @@ export default function carousel(carousel, btns) {
   const carouselChildren = [...$carousel.children]
 
   let isDragging = false, startX, starScrollLeft
-
   let itemsPedrView = Math.round($carousel.offsetWidth / itemWidth)
 
   // Copia en el principio el último elemento del carrusel
