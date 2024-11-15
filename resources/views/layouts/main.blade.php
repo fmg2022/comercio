@@ -14,11 +14,13 @@
 
 <body class="font-sans antialiased">
 	<!-- Page Header -->
+	@include('layouts.header')
 	<!-- Page Content -->
-	<main>
-		{{ $slot }}
+	<main class="container mx-auto">
+		@yield('content')
 	</main>
 	<!-- Page Footer -->
+	@include('layouts.footer')
 </body>
 
 </html>

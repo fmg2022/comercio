@@ -20,7 +20,7 @@
 
     <main class="container mx-auto">
         <!-- SECCION: Carrusel de ofertas -->
-        <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'">
+        <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'" :fullwidth="true">
             @foreach ($offers as $offer)
             <li class="item snap-start">
                 <img src="https://picsum.photos/seed/{{ $offer->code }}/768/360.webp" alt="Offer"
@@ -44,6 +44,9 @@
         <!-- SECCION: Listado de marcas -->
         <x-sections.list-items :title="'Marcas Destacadas'" :items="$marks" />
     </main>
+
+    <!-- Footer section -->
+    @include('layouts.footer')
 </body>
 
 </html>

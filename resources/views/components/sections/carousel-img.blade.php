@@ -1,9 +1,13 @@
-@props(['listId', 'btnsId', 'class' => ''])
+@props(['listId', 'btnsId', 'class' => '', 'fullwidth' => false])
+
+@php
+$classUl = $fullwidth ? '' : 'sm:auto-cols-[50%] lg:auto-cols-[calc(32%)]';
+@endphp
 
 <section class="mb-7 {{ $class }}">
     <div class="relative w-full">
         <ul id="{{ $listId }}" style="scrollbar-width: none;"
-            class="grid grid-flow-col auto-cols-[100%] sm:auto-cols-[50%] lg:auto-cols-[calc(32%)] gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth">
+            class="grid grid-flow-col auto-cols-[100%] {{ $classUl }} gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth">
             {{ $slot }}
         </ul>
         <div id="{{ $btnsId }}" class="absolute top-[45%] left-[4%] w-[92%] flex justify-between text-slate-600">
