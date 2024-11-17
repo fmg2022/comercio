@@ -9,8 +9,8 @@
   </a>
   <!-- Links -->
   <nav :class="{'flex flex-1 flex-col border-b border-gray-200 dark:border-gray-600': open, 'hidden': !open}"
-    class="absolute top-16 left-0 right-0 z-10 bg-slate-800 sm:static sm:flex sm:justify-between pb-4">
-    <form class="flex items-center max-w-sm py-3 mx-2 sm:mx-0">
+    class="absolute top-16 left-0 right-0 z-10 bg-slate-800 md:static md:flex md:justify-between py-4">
+    <form class="flex items-center max-w-sm w-full md:w-auto py-3 px-2 mx-auto md:mx-0">
       <label for="simple-search" class="sr-only">Buscar...</label>
       <div class="relative w-full">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -98,7 +98,7 @@
   </nav>
   <!-- Hamburger -->
   <button @click="open = ! open"
-    class="inline-flex items-center justify-end sm:hidden p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
+    class="inline-flex items-center justify-end md:hidden p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400">
     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
       <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round"
         stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />

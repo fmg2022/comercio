@@ -1,10 +1,13 @@
-@props(['listId', 'btnsId', 'class' => '', 'fullwidth' => false])
+@props(['listId', 'btnsId', 'class' => '', 'fullwidth' => false, 'title' => ''])
 
 @php
 $classUl = $fullwidth ? '' : 'sm:auto-cols-[50%] lg:auto-cols-[calc(32%)]';
 @endphp
 
 <section class="mb-7 {{ $class }}">
+    @if ($title)
+    <h2 class="text-2xl font-bold text-slate-700 mb-4">{{ $title }}</h2>
+    @endif
     <div class="relative w-full">
         <ul id="{{ $listId }}" style="scrollbar-width: none;"
             class="grid grid-flow-col auto-cols-[100%] {{ $classUl }} gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth">

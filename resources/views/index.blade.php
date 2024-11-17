@@ -33,7 +33,8 @@
         <x-sections.list-items :title="'Categorías Destacadas'" :items="$selectedCategories" />
 
         <!-- SECCION: Slider de productos recomendados -->
-        <x-sections.carousel-img :listId="'list-product'" :btnsId="'btns-product'" :class="'px-3'">
+        <x-sections.carousel-img :listId="'list-product'" :btnsId="'btns-product'" :class="'px-3'"
+            title="Productos recomendados">
             @foreach ($products as $product)
             <li class="item flex justify-center items-center snap-start">
                 <x-card :product="$product" />

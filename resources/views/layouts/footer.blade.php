@@ -12,10 +12,10 @@
 				<li>TT</li>
 			</ul>
 		</div>
-		<div class="grid place-items-center md:grid-cols-2">
+		<div class="grid place-items-center sm:grid-cols-2">
 			<div class="mb-6">
 				<h5 class="mb-2.5 font-bold uppercase">Conocenos</h5>
-				<ul class="text-center md:text-start">
+				<ul class="text-center sm:text-start">
 					<li>
 						<x-ancor-link>Historia</x-ancor-link>
 					</li>
@@ -32,7 +32,7 @@
 			</div>
 			<div class="mb-6">
 				<h5 class="mb-2.5 font-bold uppercase">Descubre</h5>
-				<ul class="text-center md:text-start">
+				<ul class="text-center sm:text-start">
 					<li>
 						<x-ancor-link>Eventos</x-ancor-link>
 					</li>

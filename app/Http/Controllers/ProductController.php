@@ -12,6 +12,7 @@ class ProductController extends Controller
     {
         $categories = Category::where('parent_id', null)->get()->values('name', 'id');
         $product = Product::findOrFail($id);
-        return view('layouts.product.show', compact('product', 'categories'));
+        $products = Product::where('category_id', $product->category_id)->get();
+        return view('layouts.product.show', compact('product', 'categories', 'products'));
     }
 }
