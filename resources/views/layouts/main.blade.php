@@ -10,9 +10,10 @@
 
 	<!-- Scripts -->
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
+	@yield('scripts')
 </head>
 
-<body class="font-sans antialiased">
+<body class="antialiased dark:bg-slate-800 dark:text-white/50">
 	<!-- Page Header -->
 	@include('layouts.header')
 	<!-- Page Content -->
