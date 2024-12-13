@@ -13,7 +13,8 @@
 	@yield('scripts')
 </head>
 
-<body class="antialiased dark:bg-slate-800 dark:text-white/50">
+<body
+	class="relative antialiased min-h-screen flex flex-col bg-blue-50 dark:bg-cyan-950 text-slate-900 dark:text-white/90">
 	<!-- Page Header -->
 	@include('layouts.header')
 	<!-- Page Content -->
