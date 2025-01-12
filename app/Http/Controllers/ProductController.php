@@ -15,4 +15,11 @@ class ProductController extends Controller
         $products = Product::where('category_id', $product->category_id)->get();
         return view('product.show', compact('product', 'categories', 'products'));
     }
+
+    public function findProducts(Request $request, $q)
+    {
+        $products = Product::where('name', 'like', '%' . $q . '%')->get();
+        $categories = Category::where('parent_id', null)->get()->values('name', 'id');
+        return view('product.list', compact('products', 'categories', 'q'));
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProductController;
@@ -10,6 +11,9 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 
 // Rutas para los productos
 Route::get('/products/{id}', [ProductController::class, 'showOne'])->name('product.show');
+
+// Ruta para las categorías
+Route::get('/fetch-categories', [CategoryController::class, 'getCategories']);
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
