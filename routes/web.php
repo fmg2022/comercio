@@ -24,3 +24,33 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+
+Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    // Rutas para los productos
+    // Route::resource('products', ProductController::class);
+    // Route::resource('categories', CategoryController::class)->except(['show']);
+    // Route::resource('users', ProfileController::class);
+    // Route::resource('orders', OrderController::class);
+    // Route::resource('states', StateController::class)->except(['show']);
+    // Route::resource('payments', PaymentController::class);
+    // Route::resource('addresses', AddressController::class);
+
+    // Route::prefix('comercio')->name('comercio.')->group(function () {
+    // Route::get('/', [IndexController::class, 'index'])->name('home');
+    // Route::post('/add-to-cart', [IndexController::class, 'addToCart'])->name('add_to_cart');
+    // Route::post('/increment', [IndexController::class, 'increment'])->name('increment'); // hacer un fetch
+    // Route::post('/decrement', [IndexController::class, 'decrement'])->name('decrement'); // hacer un fetch
+    // Route::post('/remove', [IndexController::class, 'remove'])->name('remove');
+    // });
+
+    // View de carrito
+    // Route::prefix('cart')->name('cart.')->group(function () {
+    // Route::get('/', [CartController::class, 'index'])->name('index');
+    // Route::post('/increment', [CartController::class, 'increment'])->name('increment'); // hacer un fetch
+    // Route::post('/decrement', [CartController::class, 'decrement'])->name('decrement'); // hacer un fetch
+    // Route::post('/remove', [CartController::class, 'remove'])->name('remove');
+    // Route::post('/clear', [CartController::class, 'clear'])->name('clear');
+    // });
+});

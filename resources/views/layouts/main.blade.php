@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	<title>{{ config('app.name', 'Comercio') }}</title>
@@ -12,6 +12,20 @@
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
 	@yield('scripts')
 
+	<script type="module" src="{{ asset('js/index.js') }}" defer></script>
+	<script>
+		// It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
+    if (
+    localStorage.getItem('color-theme') === 'dark' ||
+    (!('color-theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+    document.documentElement.classList.add('dark')
+    } else {
+    document.documentElement.classList.remove('dark')
+    }
+	</script>
+
 </head>
 
 <body
@@ -19,7 +33,7 @@
 	<!-- Page Header -->
 	@include('layouts.header')
 	<!-- Page Content -->
-	<main class="container mx-auto">
+	<main class="grow sm:px-3 lg:px-6">
 		@yield('content')
 	</main>
 	<!-- Page Footer -->

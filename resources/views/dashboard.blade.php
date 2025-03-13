@@ -8,6 +8,7 @@
     * TEMPLATES
         - https://dashlite.net/demo2/ecommerce/index.html
         - https://dashlite.net/demo2/ecommerce/user-profile.html
+        - https://dashlite.net/demo2/ecommerce/products.html
             *| usar el "privacity confg" del template para el link de 'configuracion'
         - https://dev.to/codewithsadee/responsive-shopping-cart-for-ecommerce-website-html-css-js-383g
 
@@ -53,18 +54,6 @@
             top: 3.5rem;
         }
 
-        aside li.active {
-            background-color: rgb(241 245 249);
-            color: rgb(15 23 42 / 0.75);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            aside li.active {
-                background-color: rgb(51 65 85);
-                color: rgb(168 85 247);
-            }
-        }
-
         #sidebar-toggle:checked~aside .check-visible {
             opacity: 1;
             visibility: visible;
@@ -89,7 +78,7 @@
     <aside
         class="group fixed -left-full inset-y-0 z-20 h-screen w-72 bg-teal-50 dark:bg-slate-800 border-b border-slate-100/60 dark:border-slate-700/60 transition-all duration-500 ease-in-out peer-checked:left-0 xl:sticky xl:left-0 xl:w-[90px] hover:w-72 xl:peer-checked:w-72">
         <div class="flex justify-between py-5 px-3 xl:min-w-full xl:w-72">
-            <a href="{{ route('home') }}" class="relative flex gap-2 items-center px-3 xl:pointer-events-none">
+            <a href="{{ route('home') }}" class="relative flex gap-2 items-center px-3">
                 <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px">
                 <span
                     class="relative block font-semibold text-lg xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible transition duration-500 ease-in">{{ config('app.name', 'Comercio') }}</span>
@@ -115,7 +104,8 @@
         </div>
         <div class="relative overflow-y-auto py-4 xl:overflow-x-hidden">
             <!-- Aplicar lógica para los link activos según la dirección url -->
-            <ul class="relative flex flex-col space-y-3 px-3 text-slate-800 dark:text-slate-200/75">
+            <ul
+                class="relative flex flex-col space-y-3 px-3 text-slate-800 dark:text-slate-200/75 [&>li.active]:bg-slate-200 dark:[&>li.active]:bg-slate-700 [&>li.active]:text-slate-900/75 dark:[&>li.active]:text-purple-500">
                 <li
                     class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
                     <a href="{{ route('home') }}" class="relative px-3 py-2 flex items-center gap-3">
@@ -352,7 +342,7 @@
                                     </div>
                                 </div>
                                 <div class="px-7 py-2 flex flex-col">
-                                    <a href="#"
+                                    <a href="{{ route('profile.index') }}"
                                         class="py-2 flex items-center gap-3 hover:text-slate-900 dark:hover:text-violet-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             viewBox="0 0 24 24">
@@ -763,11 +753,11 @@
           }
         }
     
-        const chartA = new ApexCharts(document.querySelector("#chart-sales"), optionsArea)
-        const chartB = new ApexCharts(document.querySelector("#chart-ordes"), optionsBar)
+        // const chartA = new ApexCharts(document.querySelector("#chart-sales"), optionsArea)
+        // const chartB = new ApexCharts(document.querySelector("#chart-ordes"), optionsBar)
     
-        chartA.render()
-        chartB.render()
+        // chartA.render()
+        // chartB.render()
     
         // Toggle theme
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon')
