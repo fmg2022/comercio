@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-
+// Para el Dashboard
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     // Rutas para los productos

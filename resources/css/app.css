@@ -1,15 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../views";
 
-@layer components {
-  #cart-toggle:checked~aside {
-    right: 0;
-  }
+#cart-toggle:checked~aside {
+  right: 0;
+}
 
-  #category-toggle:checked~aside {
-    top: 0;
-  }
+#category-toggle:checked~aside {
+  top: 0;
 }
 
 body {

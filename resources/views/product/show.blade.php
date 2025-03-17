@@ -3,22 +3,23 @@
 @section('scripts')
 <script defer>
 	const $nav = document.getElementById('nav-info')
-    const inputs = $nav.querySelectorAll('input')
-    const infoCont = $nav.nextElementSibling
+	const inputs = $nav.querySelectorAll('input')
+	const infoCont = $nav.nextElementSibling
 
-    infoCont.style.width = inputs.length * 100 + '%'
-    inputs.forEach((input, i) => {
-      input.addEventListener('change', () => {
-        infoCont.style.left = `-${i * 100}%`
-      })
-    })
+	infoCont.style.width = inputs.length * 100 + '%'
+
+	inputs.forEach((input, i) => {
+		input.addEventListener('change', () => {
+			infoCont.style.left = `-${i * 100}%`
+		})
+	})
 </script>
 @endsection
 
 @section('content')
 <nav class="px-2 my-4 flex" aria-label="Breadcrumb">
 	<ol
-		class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-xs font-medium text-gray-700 dark:text-slate-300 [&_a]:hover:text-black [&_a]:dark:hover:text-purple-500">
+		class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-xs font-medium text-gray-700 dark:text-slate-300 [&_a]:hover:text-black [&_a]:dark:hover:text-purple-500 md:text-sm">
 		<li class="inline-flex items-center">
 			<a href="catag.html" class="inline-flex items-center gap-2">
 				<svg width=" 12" height="12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
@@ -65,27 +66,26 @@
 	<article class=" py-3 flex flex-col dark:divide-white/10 md:divide-x-2 md:divide-black/10 md:flex-row">
 		<section class="flex items-center justify-center md:w-4/7">
 			<!-- Pre-visualización de las imágenes -->
-			<div class="w-1/5 hidden md:block">
-				<img src="product.webp" alt="producto">
-				<img src="product.webp" alt="producto">
+			<div class="h-full w-1/5 hidden flex-col justify-start items-center gap-2 md:flex">
+				<img class="size-32" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
 			</div>
 			<div class="md:w-4/5">
-				<img src="product.webp" alt="producto">
+				<img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
 			</div>
 		</section>
 		<section class="w-full px-4 py-8 md:w-3/7 md:py-4">
 			<!-- Nomre producto: Categoria + nombre del producto -->
 			<div>
-				<h3 class="text-2xl font-semibold">Nombre producto x 2Lt</h3>
+				<h3 class="text-2xl font-semibold">{{ $product->name }} x CTDO</h3>
 				<p class="text-sm">
-					<span class="me-3 font-bold uppercase">Categoria</span> |
+					<span class="me-3 font-bold uppercase">{{ $product->category }}</span> |
 					<span class="ms-3 font-semibold">SKU: 12345678901</span>
 				</p>
 			</div>
-			<h4 class="my-8 text-xl font-bold">$1.234,56</h4>
+			<h4 class="my-8 text-xl font-bold">${{ $product->price }}</h4>
 			<ul class="ms-6 mb-8 list-disc text-sm">
-				<li>Tipo de producto: Producto</li>
-				<li>Contenido: 2Lt</li>
+				<li>Tipo de producto: {{ $product->name }}</li>
+				<li>Contenido: Contenido</li>
 				<li>Envase: Botella de vidrio</li>
 			</ul>
 			<button
@@ -93,7 +93,7 @@
 		</section>
 	</article>
 </section>
-<section class="w-full px-3 py-6 my-4 overflow-x-hidden lg:w-1/2">
+<section class="container px-3 py-6 my-4 mx-auto overflow-x-hidden lg">
 	<nav id="nav-info" class="py-4 mb-5 flex justify-center gap-12 border-b border-slate-800 dark:border-slate-600">
 		<label class="cursor-pointer hover:text-purple-500">
 			<input type="radio" name="tabs" checked class="hidden">
