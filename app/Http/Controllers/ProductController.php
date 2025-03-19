@@ -22,4 +22,10 @@ class ProductController extends Controller
         $categories = Category::where('parent_id', null)->get()->values('name', 'id');
         return view('product.list', compact('products', 'categories', 'q'));
     }
+
+    public function getAllProducts(Request $request)
+    {
+        $products = Product::all();
+        return view('product.list', compact('products'));
+    }
 }

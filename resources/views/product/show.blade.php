@@ -1,7 +1,7 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('scripts')
-<script defer>
+<script type="module">
 	const $nav = document.getElementById('nav-info')
 	const inputs = $nav.querySelectorAll('input')
 	const infoCont = $nav.nextElementSibling

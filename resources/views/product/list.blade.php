@@ -1,11 +1,11 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
 @section('content')
 <div
   class="w-full px-3 py-5 mb-7 grid grid-cols-3 gap-3 items-center divide-x dark:divide-slate-100/20 border-b dark:border-slate-100/20">
   <div>
     <div class="hidden py-2 ms-5 lg:block">
-      <h3 class="text-lg font-semibold">{{ $q }}</h3>
+      {{-- <h3 class="text-lg font-semibold"></h3> --}}
       <span class="text-gray-300 text-sm">{{ $products->count() }} productos</span>
     </div>
     <label for="toggle-filter"
@@ -66,18 +66,18 @@
     <form class="mt-4 grid grid-cols-2 gap-y-2 lg:grid-cols-1 lg:m-0">
       <fieldset class="flex flex-col mx-4">
         <legend class="font-semibold py-1 px-3 mb-2 border-b border-white/20 lg:text-center">Categorias</legend>
-        @php
+        {{-- @php
         $prodCategory = $product->category;
         @endphp
         @while ($prodCategory->parent_id != null)
         <label class="text-white/80">
           <input type="checkbox" name="categorias" value="{{ $prodCategory->id }}">
-          {{ $prodCategory->name }}
+        {{ $prodCategory->name }}
         </label>
         @php
         $prodCategory = $prodCategory->parent;
         @endphp
-        @endwhile
+        @endwhile --}}
       </fieldset>
       <fieldset class="flex flex-col mx-4">
         <legend class="font-semibold py-1 px-3 mb-2 border-b border-white/20 lg:text-center">Marcas</legend>

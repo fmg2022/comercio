@@ -12,4 +12,5 @@
     </a>
     @endforeach
   </div>
+  {{ $slot }}
 </section>
