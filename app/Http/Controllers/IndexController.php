@@ -17,6 +17,6 @@ class IndexController extends Controller
         $offers = Offer::limit(10)->get()->values('name');
         $marks = Product::select('mark as name')->distinct()->limit(5)->get();
 
-        return view('index', compact('categories', 'products', 'offers', 'selectedCategories', 'marks'));
+        return view('pages.index', compact('categories', 'products', 'offers', 'selectedCategories', 'marks'));
     }
 }
