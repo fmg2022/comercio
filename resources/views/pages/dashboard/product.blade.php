@@ -98,42 +98,5 @@
 <!-- Paginación
     https://laravel.com/docs/11.x/pagination
 -->
-<nav class="px-3 py-6 bg-slate-800 rounded-b-md">
-  {{ $products->onEachSide(5)->links() }}
-</nav>
-<nav class="px-3 py-6 bg-slate-800 rounded-b-md">
-  <ul class="w-full grid grid-cols-3 gap-2 border-t border-slate-700 [&>li>a]:pt-3">
-    <li class="flex items-center justify-start">
-      <a href="#!" class="flex items-center gap-3 text-xs">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="m4.836 12l6.207 6.207l1.414-1.414L7.664 12l4.793-4.793l-1.414-1.414zm5.65 0l6.207 6.207l1.414-1.414L13.314 12l4.793-4.793l-1.414-1.414z" />
-        </svg>
-        Anterior
-      </a>
-    </li>
-    <li
-      class="flex items-start justify-center [&>a]:px-4 [&>a]:border-t-2 [&>a]:border-transparent [&>a.active]:border-purple-800 [&>a.active]:text-purple-500 [&>a]:transition-colors">
-      <a href="#!" class="active">1</a>
-      <a href="#!">2</a>
-      <a href="#!">3</a>
-      <a href="#!">4</a>
-      <a href="#!">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
-          <path fill="currentColor"
-            d="M3 9.5a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3" />
-        </svg>
-      </a>
-    </li>
-    <li class="flex items-center justify-end">
-      <a href="#!" class="flex items-center gap-3 text-xs">
-        Siguiente
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="m19.164 12l-6.207-6.207l-1.414 1.414L16.336 12l-4.793 4.793l1.414 1.414zm-5.65 0L7.307 5.793L5.893 7.207L10.686 12l-4.793 4.793l1.414 1.414z" />
-        </svg>
-      </a>
-    </li>
-  </ul>
-</nav>
+{{ $products->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
 @endsection
