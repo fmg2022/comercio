@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -16,6 +17,9 @@ class ProductController extends Controller
         return view('pages.product.show', compact('product', 'categories', 'products'));
     }
 
+    /* Buscar productos
+        -> [Producto, ...], [Categoría, ...], String
+    */
     public function findProducts(Request $request, $q)
     {
         $products = Product::where('name', 'like', '%' . $q . '%')->get();
@@ -27,5 +31,15 @@ class ProductController extends Controller
     {
         $products = Product::all();
         return view('pages.product.list', compact('products'));
+    }
+
+    // Para el Dashboard
+
+    public function index()
+    {
+        return view('pages.dashboard.product', [
+            'products' => Product::paginate(15),
+            'user' => Auth::user(),
+        ]);
     }
 }
