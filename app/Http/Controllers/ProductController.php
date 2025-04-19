@@ -6,10 +6,11 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function showOne(Request $request, $id)
+    public function showOne(Request $request, $id): View
     {
         $categories = Category::where('parent_id', null)->get()->values('name', 'id');
         $product = Product::findOrFail($id);
@@ -20,14 +21,15 @@ class ProductController extends Controller
     /* Buscar productos
         -> [Producto, ...], [Categoría, ...], String
     */
-    public function findProducts(Request $request, $q)
+    public function findProducts(Request $request, $q): View
     {
         $products = Product::where('name', 'like', '%' . $q . '%')->get();
         $categories = Category::where('parent_id', null)->get()->values('name', 'id');
         return view('pages.product.list', compact('products', 'categories', 'q'));
     }
 
-    public function getAllProducts(Request $request)
+    // Quitar
+    public function getAllProducts(Request $request): View
     {
         $products = Product::all();
         return view('pages.product.list', compact('products'));
@@ -35,11 +37,43 @@ class ProductController extends Controller
 
     // Para el Dashboard
 
-    public function index()
+    public function index(): View
     {
         return view('pages.dashboard.product', [
             'products' => Product::paginate(15),
             'user' => Auth::user(),
         ]);
+    }
+
+    public function create(): View
+    {
+        return view('pages.dashboard.create', [
+            'user' => Auth::user(),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        return true;
+    }
+
+    public function show(string $id)
+    {
+        return true;
+    }
+
+    public function edit(Product $product)
+    {
+        return true;
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        return true;
+    }
+
+    public function destroy(Product $product)
+    {
+        return true;
     }
 }

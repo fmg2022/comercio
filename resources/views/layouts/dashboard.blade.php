@@ -35,6 +35,8 @@
         }
   </script> --}}
 
+  <script defer src="{{ asset('js/dashboard/asideMenu.js') }}"></script>
+
   <style>
     .toggle-input:checked~.absolute {
       opacity: 1;
@@ -48,17 +50,19 @@
   </style>
 </head>
 
-<body
-  class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 has-[.peer:checked]:overflow-hidden xl:flex">
+<body class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 xl:flex">
   @include('layouts.partials.dashboard.asideMenu')
 
   <main class="grow">
     @include('layouts.partials.dashboard.header')
 
     <div class="px-2 py-5 sm:px-5 sm:py-7">
-      <h1 class="pb-3 sm:pb-5 text-2xl font-bold">
-        @yield('title', 'Dashboard')
-      </h1>
+      <div class="px-5 flex justify-between items-center">
+        <h1 class="pb-5 text-2xl font-bold">
+          @yield('titleH1', 'Dashboard')
+        </h1>
+        @yield('header-actions')
+      </div>
 
       @yield('content')
     </div>

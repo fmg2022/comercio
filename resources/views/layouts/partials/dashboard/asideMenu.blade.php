@@ -28,11 +28,11 @@
   </div>
   <div class="relative overflow-y-auto py-4 xl:overflow-x-hidden">
     <!-- Aplicar lógica para los link activos según la dirección url -->
-    <ul
+    <ul id="sidebar-menu"
       class="relative flex flex-col space-y-3 px-3 text-slate-800 dark:text-slate-200/75 [&>li.active]:bg-slate-200 dark:[&>li.active]:bg-slate-700 [&>li.active]:text-purple-500">
       <li
-        class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out active">
-        <a href="#" class="relative px-3 py-2 flex items-center gap-3">
+        class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
+        <a href="{{ route('dashboard') }}" class="relative px-3 py-2 flex items-center gap-3" data-section="dashboard">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="currentColor"
@@ -45,7 +45,7 @@
       </li>
       <li
         class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
-        <a href="#" class="px-3 py-2 flex items-center gap-3">
+        <a href="#" class="px-3 py-2 flex items-center gap-3" data-section="orders">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="currentColor"
@@ -58,7 +58,7 @@
       </li>
       <li
         class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
-        <a href="{{ route('products.index') }}" class="px-3 py-2 flex items-center gap-3">
+        <a href="{{ route('products.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="products">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5"
@@ -71,7 +71,7 @@
       </li>
       <li
         class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
-        <a href="#" class="relative px-3 py-2 flex items-center gap-3">
+        <a href="#" class="relative px-3 py-2 flex items-center gap-3" data-section="users">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -84,7 +84,7 @@
       </li>
       <li
         class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
-        <a href="#" class="px-3 py-2 flex items-center gap-3">
+        <a href="#" class="px-3 py-2 flex items-center gap-3" data-section="support">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
               <path fill="currentColor"
