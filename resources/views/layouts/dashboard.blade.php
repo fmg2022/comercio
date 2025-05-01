@@ -53,19 +53,18 @@
 <body class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 xl:flex">
   @include('layouts.partials.dashboard.asideMenu')
 
-  <main class="grow">
+  <main class="min-h-screen flex flex-col grow">
     @include('layouts.partials.dashboard.header')
 
-    <div class="px-2 py-5 sm:px-5 sm:py-7">
+    <section class="px-2 py-5 grow sm:px-5 sm:py-7">
       <div class="px-5 flex justify-between items-center">
         <h1 class="pb-5 text-2xl font-bold">
           @yield('titleH1', 'Dashboard')
         </h1>
         @yield('header-actions')
       </div>
-
       @yield('content')
-    </div>
+    </section>
 
     @include('layouts.partials.dashboard.footer')
   </main>
