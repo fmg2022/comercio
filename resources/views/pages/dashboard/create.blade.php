@@ -4,18 +4,22 @@
 
 @section('content')
 <div class="@container px-2 md:px-4">
-  <form
-    class="px-3 py-4 mx-auto max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
-    <label class="flex flex-col items-center gap-5">
-      <span class="me-auto">Nombre:</span>
-      <input type="text" name="name" class="w-full max-w-xs px-3 py-2 outline-none rounded-lg bg-white/10"
-        placeholder="Nombre del producto" required>
-    </label>
-    <label class="flex flex-col items-center gap-5">
-      <span class="me-auto">Precio:</span>
-      <input type="text" name="price" class="w-full max-w-xs px-3 py-2 outline-none rounded-lg bg-white/10"
-        placeholder="$1500,50" required>
-    </label>
+  <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"
+    class="px-3 py-4 mx-auto my-4 max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
+    @csrf
+    <x-inputs.withLabel title="Nombre" name="name" placeholder="Nombre del producto" required />
+    <x-inputs.withLabel title="Marca" name="mark" placeholder="Marca del producto" required />
+    <x-inputs.withLabel title="Precio" name="price" placeholder="$1550.65" required />
+    <x-inputs.withLabel title="Stock" name="quantity" type="number" placeholder="150" />
+    <x-inputs.withLabel title="Imagen" name="image" placeholder=".jpg, .webp, .png, ..." />
+
+    <select name="categories" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
+      <option value="" disabled selected>Selecciona una categoría</option>
+      @foreach ($categories as $category)
+      <option value="{{ $category->id }}">{{ $category->name }}</option>
+      @endforeach
+    </select>
+
     <div class="flex items-center gap-3 justify-end">
       <button type="submit"
         class="px-3 py-2 bg-emerald-700 rounded-md hover:bg-emerald-600 cursor-pointer">Agregar</button>

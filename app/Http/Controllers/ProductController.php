@@ -49,11 +49,19 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.create', [
             'user' => Auth::user(),
+            'categories' => Category::all()
         ]);
+        // where('parent_id', null)->get()->values('name', 'id')
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|max:2048',
+        ]);
         return true;
     }
 
