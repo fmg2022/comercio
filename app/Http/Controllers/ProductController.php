@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductStoreRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -54,15 +56,11 @@ class ProductController extends Controller
         // where('parent_id', null)->get()->values('name', 'id')
     }
 
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|max:2048',
-        ]);
-        return true;
+        Product::create($request->validated());
+
+        return redirect()->route('products.index')->with('success', 'Producto creado correctamente');
     }
 
     public function show(string $id)

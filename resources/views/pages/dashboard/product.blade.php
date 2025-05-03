@@ -12,6 +12,10 @@
 </x-buttons.ancorFill>
 @endsection
 
+<!-- Mostrar un mensaje para:
+    - Los errores en las operaciones desde está página
+    - El mensaje de éxito al crear un producto -->
+
 @section('content')
 <table
   class="table-auto w-full divide-y divide-slate-500 border-separate border-spacing-y-1 [&_th]:py-4 [&_th]:px-3 [&_td]:py-4 [&_td]:px-3 [&_tr]:bg-slate-800">
