@@ -91,11 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
           // Obtener las subcategorias 2° nivel
           const subcc = data.filter(dic => dic.parent_id == sc.id)
 
-          // // Hay subcategorias?
+          // Hay subcategorias?
           if (subcc.length > 0) {
             const fragment3 = document.createDocumentFragment()
 
-            //   // ciclo de la subcategoria 2° nivel
+            // ciclo de la subcategoria 2° nivel
             subcc.forEach(scc => {
               const $a = document.createElement('a')
               $a.innerText = scc.name

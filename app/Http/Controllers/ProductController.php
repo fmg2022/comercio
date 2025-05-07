@@ -51,9 +51,8 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.create', [
             'user' => Auth::user(),
-            'categories' => Category::all()
+            'categories' => Category::where('parent_id', null)->get()
         ]);
-        // where('parent_id', null)->get()->values('name', 'id')
     }
 
     public function store(ProductStoreRequest $request): RedirectResponse
