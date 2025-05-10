@@ -1,5 +1,12 @@
 @extends('layouts.dashboard')
 
+@section('scripts')
+  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script type="module">
+    openModal('dialog1', 'modalb1')
+  </script>
+@endsection
+
 @section('titleH1', 'Productos')
 
 @section('header-actions')
@@ -114,4 +121,15 @@
 
   {{ $products->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
 
+  <button id="modalb1">abrir</button>
+  <x-modals.confirm id="dialog1" title="Borrar producto">
+    <p>¿Está seguro de que desea eliminar este producto?</p>
+    <div class="flex justify-end gap-3">
+      <button type="button" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
+      <form method="dialog">
+        <button type="button"
+          class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+      </form>
+    </div>
+  </x-modals.confirm>
 @endsection

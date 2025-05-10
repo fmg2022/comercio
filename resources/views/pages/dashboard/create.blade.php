@@ -16,23 +16,25 @@
       <x-inputs.withLabel title="Imagen" name="image" placeholder=".jpg, .webp, .png, ..." />
 
       <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
-        <option value="" disabled selected>Selecciona una categoría</option>
+        <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una categoría
+        </option>
         @foreach ($categories as $category)
-          <option value="{{ $category->id }}" {{ $category->children ? 'disabled' : '' }}
-            class="font-semibold
-        text-purple-700">
+          <option value="{{ $category->id }}" {{ $category->children->count() ? 'disabled' : '' }}
+            class="font-semibold text-purple-700 bg-purple-50">
             {{ $category->name }}
           </option>
           @if ($category->children->count())
             @foreach ($category->children as $child)
-              <option value="{{ $child->id }}" {{ $child->children ? 'disabled' : '' }}>
-                -- {{ $child->name }}
+              <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
+                class="text-purple-700">
+                {{ $child->name }}
+                {{ $child->name }}
               </option>
 
               @if ($child->children->count())
                 @foreach ($child->children as $grandChild)
-                  <option value="{{ $grandChild->id }}">
-                    ---- {{ $grandChild->name }}
+                  <option value="{{ $grandChild->id }}" {{ $grandChild->children->count() ? 'disabled' : '' }}>
+                    -- {{ $grandChild->name }}
                   </option>
                 @endforeach
               @endif

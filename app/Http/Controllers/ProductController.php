@@ -62,9 +62,12 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Producto creado correctamente');
     }
 
-    public function show(string $id)
+    public function show(string $id): View
     {
-        return true;
+        return view('pages.dashboard.show', [
+            'product' => Product::findOrFail($id),
+            'user' => Auth::user(),
+        ]);
     }
 
     public function edit(Product $product)
