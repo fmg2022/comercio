@@ -76,7 +76,7 @@
     const inputsChecks = $$('[name="toggle-btns"]')
     const $toggleAside = $('#sidebar-toggle')
     const overlay = $('.overlay')
-    
+
     // Solo un dropdown este abierto a la vez
     if (inputsChecks.length > 0) {
       inputsChecks.forEach($input => {
@@ -176,7 +176,6 @@
     //     }
     //   }
     // })
-
   </script>
 </body>
 

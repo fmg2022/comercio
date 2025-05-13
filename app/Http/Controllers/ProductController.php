@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -43,14 +44,13 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.product', [
             'products' => Product::paginate(15),
-            'user' => Auth::user(),
+            'productsDeleted' => Product::onlyTrashed()->paginate(15),
         ]);
     }
 
     public function create(): View
     {
         return view('pages.dashboard.create', [
-            'user' => Auth::user(),
             'categories' => Category::where('parent_id', null)->get()
         ]);
     }
@@ -66,7 +66,6 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.show', [
             'product' => Product::findOrFail($id),
-            'user' => Auth::user(),
         ]);
     }
 
@@ -80,8 +79,9 @@ class ProductController extends Controller
         return true;
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
-        return true;
+        $product->delete();
+        return Redirect::back()->with('success', 'Producto eliminado correctamente');
     }
 }

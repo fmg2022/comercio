@@ -1,10 +1,13 @@
-function openModal(modalId, buttonId) {
+function openModal(modalId) {
   const $dialog = document.getElementById(modalId)
-  const $button = document.getElementById(buttonId)
 
-  if ($dialog && $button) {
-    $button.addEventListener('click', () => {
-      $dialog.showModal()
+  if ($dialog) {
+    $dialog.showModal()
+
+    $dialog.addEventListener('click', (event) => {
+      if (event.target.nodeName === "DIALOG") {
+        $dialog.close()
+      }
     })
   }
 }

@@ -2,9 +2,6 @@
 
 @section('scripts')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-  <script type="module">
-    openModal('dialog1', 'modalb1')
-  </script>
 @endsection
 
 @section('titleH1', 'Productos')
@@ -109,7 +106,34 @@
                         d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
                     </svg>
                   </span>
-                  <span>Eliminar Producto</span>
+                  @php
+                    $dialogid = 'dialog' . $product->id;
+                  @endphp
+                  <button type="button" onclick="openModal('{{ $dialogid }}')">Eliminar
+                    Producto</button>
+                  <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar el producto ' . $product->name }}">
+                    <div class="flex flex-col items-center justify-center">
+                      <span class="text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
+                          <path fill="currentColor"
+                            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+                        </svg>
+                      </span>
+                      <p class="px-2 py-4 mb-3">¿Está seguro de que desea eliminar este producto?</p>
+                    </div>
+                    <div class="flex justify-end gap-3 text-white">
+                      <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                          class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
+                      </form>
+                      <form method="dialog">
+                        <button
+                          class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+                      </form>
+                    </div>
+                  </x-modals.confirm>
                 </li>
               </ul>
             </div>
@@ -120,16 +144,4 @@
   </table>
 
   {{ $products->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
-
-  <button id="modalb1">abrir</button>
-  <x-modals.confirm id="dialog1" title="Borrar producto">
-    <p>¿Está seguro de que desea eliminar este producto?</p>
-    <div class="flex justify-end gap-3">
-      <button type="button" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-      <form method="dialog">
-        <button type="button"
-          class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-      </form>
-    </div>
-  </x-modals.confirm>
 @endsection
