@@ -6,7 +6,7 @@
   <article>
     <div class="flex justify-between items-center">
       <h2>{{ $product->name }}</h2>
-      <a href="{{ route('product.edit') }}">Editar</a>
+      <a href="{{ route('products.edit', $product->id) }}">Editar</a>
     </div>
     <div>
       <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"

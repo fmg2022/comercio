@@ -81,7 +81,7 @@
                       </g>
                     </svg>
                   </span>
-                  <span>Ver Producto</span>
+                  <a href="{{ route('products.show', $product->id) }}">Ver Producto</a>
                 </li>
                 <li class="flex gap-3">
                   <span>
@@ -226,12 +226,10 @@
                     </li>
                     <li class="flex gap-3 active">
                       <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
-                          <path fill="currentColor"
-                            d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z" />
-                          <path fill="currentColor"
-                            d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
+                          <path fill="currentColor" fill-rule="evenodd"
+                            d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
+                            clip-rule="evenodd" />
                         </svg>
                       </span>
                       @php
@@ -274,6 +272,6 @@
 
     {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
   @else
-    <h3>Sin productos eliminados</h3>
+    <h3 class="text-center text-xl font-semibold">Sin productos eliminados</h3>
   @endif
 @endsection

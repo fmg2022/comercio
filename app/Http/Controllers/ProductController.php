@@ -68,9 +68,12 @@ class ProductController extends Controller
         ]);
     }
 
-    public function edit(Product $product)
+    public function edit(String $id): View
     {
-        return true;
+        return view('pages.dashboard.edit', [
+            'product' => Product::findOrFail($id),
+            'categories' => Category::where('parent_id', null)->get()
+        ]);
     }
 
     public function update(Request $request, Product $product)
