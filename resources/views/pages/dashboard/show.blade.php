@@ -3,19 +3,22 @@
 @section('titleH1', 'Detalles del producto')
 
 @section('content')
-  <article>
+  <article class="px-3">
     <div class="flex justify-between items-center">
-      <h2>{{ $product->name }}</h2>
-      <a href="{{ route('products.edit', $product->id) }}">Editar</a>
+      <h2 class="text-3xl font-semibold">{{ $product->name }}</h2>
+      <x-buttons.ancorFill href="{{ route('products.edit', $product->id) }}">
+        Editar
+      </x-buttons.ancorFill>
+      {{-- <a href="{{ route('products.edit', $product->id) }}">Editar</a> --}}
     </div>
-    <div>
+    <div class="flex flex-col items-center gap-5 my-4 md:items-start md:flex-row">
       <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-        class="w-32 h-32 object-cover rounded-md">
-      <div>
-        <h3>Marca: {{ $product->mark }}</h3>
-        <h3>Precio: {{ $product->price }}</h3>
-        <h3>Stock: {{ $product->quantity }}</h3>
-        <h3>Categoría: {{ $product->category->name }}</h3>
+        class="max-h-96 object-cover rounded-md">
+      <div class="w-full px-6 py-3 flex flex-col gap-3">
+        <h3 class="text-xl">Marca: {{ $product->mark }}</h3>
+        <h3 class="text-xl">Precio: {{ $product->price }}</h3>
+        <h3 class="text-xl">Stock: {{ $product->quantity }}</h3>
+        <h3 class="text-xl">Categoría: {{ $product->category->name }}</h3>
       </div>
     </div>
   </article>
