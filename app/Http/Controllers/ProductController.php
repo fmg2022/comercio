@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductStoreRequest;
-use App\Http\Requests\ProductUpdateRequest;
+use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -42,7 +41,7 @@ class ProductController extends Controller
 
     public function index(): View
     {
-        return view('pages.dashboard.product', [
+        return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
             'productsDeleted' => Product::onlyTrashed()->paginate(10),
         ]);
@@ -50,12 +49,12 @@ class ProductController extends Controller
 
     public function create(): View
     {
-        return view('pages.dashboard.create', [
+        return view('pages.dashboard.product.create', [
             'categories' => Category::where('parent_id', null)->get()
         ]);
     }
 
-    public function store(ProductStoreRequest $request): RedirectResponse
+    public function store(ProductRequest $request): RedirectResponse
     {
         Product::create($request->validated());
 
@@ -64,20 +63,20 @@ class ProductController extends Controller
 
     public function show(string $id): View
     {
-        return view('pages.dashboard.show', [
+        return view('pages.dashboard.product.show', [
             'product' => Product::findOrFail($id),
         ]);
     }
 
     public function edit(String $id): View
     {
-        return view('pages.dashboard.edit', [
+        return view('pages.dashboard.product.edit', [
             'product' => Product::findOrFail($id),
             'categories' => Category::where('parent_id', null)->get()
         ]);
     }
 
-    public function update(ProductUpdateRequest $request, Product $product): RedirectResponse
+    public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         $product->update($request->validated());
 
