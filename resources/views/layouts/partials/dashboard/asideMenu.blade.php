@@ -45,7 +45,7 @@
       </li>
       <li
         class="hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900/75 dark:hover:text-purple-500 rounded-md transition-color duration-300 ease-in-out">
-        <a href="#" class="px-3 py-2 flex items-center gap-3" data-section="orders">
+        <a href="{{ route('orders.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="orders">
           <span class="relative block">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
               <path fill="currentColor"

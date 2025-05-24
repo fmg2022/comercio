@@ -50,6 +50,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function fullName(): string
+    {
+        return $this->name . ' ' . $this->surname;
+    }
+
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);

@@ -4,17 +4,7 @@
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
 @endsection
 
-@section('titleH1', 'Productos')
-
-@section('header-actions')
-  <x-buttons.ancorFill href="{{ route('products.create') }}" class="flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-      <path fill="currentColor"
-        d="M18 10h-4V6a2 2 0 0 0-4 0l.071 4H6a2 2 0 0 0 0 4l4.071-.071L10 18a2 2 0 0 0 4 0v-4.071L18 14a2 2 0 0 0 0-4" />
-    </svg>
-    Nuevo
-  </x-buttons.ancorFill>
-@endsection
+@section('titleH1', 'Ordenes')
 
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
@@ -27,30 +17,28 @@
       <!-- Obtener datos de DB -->
       <tr class="text-left">
         <th>#</th>
-        <th>Nombre</th>
         <!-- <th class="hidden sm:table-cell">SKU</th> -->
-        <th>Precio</th>
-        <th>Stock</th>
-        <th class="hidden md:table-cell">Categoría</th>
+        <th>Usuario</th>
+        <th>Fecha</th>
+        <th>Total</th>
+        <th class="hidden md:table-cell">M. Pago</th>
+        <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
     </thead>
     <tbody class="text-sm">
-      @forelse ($products as $index => $product)
+      @forelse ($orders as $order)
         <tr>
-          <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
-          <td class="flex items-center gap-3">
-            <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-              class="size-12 aspect-square">
-            <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+          <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}
           </td>
-          <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-          <td class="text-slate-300">{{ $product->quantity }}</td>
-          <!-- <td class="hidden text-xs text-slate-300 sm:table-cell">45</td> -->
-          <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
+          <td class="font-bold">{{ $order->user->fullName() }}</td>
+          <td class="text-slate-300">{{ $order->date }}</td>
+          <td class="text-slate-300"><span class="me-px">$</span>{{ $order->total }}</td>
+          <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->payments }}</td>
+          <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->status }}</td>
           <td class="relative flex justify-end">
-            <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption">
-            <label for="chproduct-{{ $product->id }}"
+            <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption">
+            <label for="chorder-{{ $order->id }}"
               class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -70,7 +58,7 @@
                       </g>
                     </svg>
                   </span>
-                  <span>Editar Producto</span>
+                  <span>Editar Orden</span>
                 </li>
                 <li class="flex gap-3">
                   <span>
@@ -83,20 +71,7 @@
                       </g>
                     </svg>
                   </span>
-                  <a href="{{ route('products.show', $product->id) }}">Ver Producto</a>
-                </li>
-                <li class="flex gap-3">
-                  <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="1.5" color="currentColor">
-                        <path
-                          d="M4.318 19.682C3 18.364 3 16.242 3 12s0-6.364 1.318-7.682S7.758 3 12 3s6.364 0 7.682 1.318S21 7.758 21 12s0 6.364-1.318 7.682S16.242 21 12 21s-6.364 0-7.682-1.318" />
-                        <path d="M6 12h2.5l2-4l3 8l2-4H18" />
-                      </g>
-                    </svg>
-                  </span>
-                  <span>Productos en Ordenes</span>
+                  <a href="{{ route('orders.show', $order->id) }}">Detalles</a>
                 </li>
                 <li class="flex gap-3">
                   <span>
@@ -109,11 +84,10 @@
                     </svg>
                   </span>
                   @php
-                    $dialogid = 'dialog' . $product->id;
+                    $dialogid = 'dialog' . $order->id;
                   @endphp
-                  <button type="button" onclick="openModal('{{ $dialogid }}')">Eliminar
-                    Producto</button>
-                  <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar el producto ' . $product->name }}">
+                  <button type="button" onclick="openModal('{{ $dialogid }}')">Eliminar Orden</button>
+                  <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar el producto ' . $order->name }}">
                     <div class="flex flex-col items-center justify-center">
                       <span class="text-slate-500">
                         <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
@@ -121,10 +95,10 @@
                             d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
                         </svg>
                       </span>
-                      <p class="px-2 py-4 mb-3">¿Está seguro de que desea eliminar este producto?</p>
+                      <p class="px-2 py-4 mb-3">¿Está seguro de que desea eliminar esta orden?</p>
                     </div>
                     <div class="flex justify-end gap-3 text-white">
-                      <form action="{{ route('products.destroy', $product->id) }}" method="POST">
+                      <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit"
@@ -143,15 +117,15 @@
         </tr>
       @empty
         <tr>
-          <td colspan="6" class="text-center font-semibold text-slate-300">Sin productos registrados</td>
+          <td colspan="7" class="text-center font-semibold text-slate-300">No hay ordenes registradas</td>
         </tr>
       @endforelse
     </tbody>
   </table>
 
-  {{ $products->links('pages.dashboard.partials.pagination') }}
+  {{ $orders->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
 
-  @if ($productsDeleted->count() > 0)
+  @if ($ordersDeleted->count() > 0)
     <section class="mt-10">
       <h2 class="mb-5 px-4 text-2xl font-semibold text-gray-300">Productos Eliminados</h2>
       <table
