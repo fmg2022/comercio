@@ -71,7 +71,6 @@
     <h4 class="text-xl font-semibold px-5 py-3">Ordenes recientes</h4> <!-- Últimos 3 dias -->
     <table class="table-auto w-full divide-y divide-slate-500 [&_td,&_th]:px-5 [&_td,&_th]:py-3">
       <thead class="text-sm dark:text-slate-400">
-        <!-- Obtener datos de DB -->
         <tr class="text-left">
           <th>Orden N°</th>
           <th class=" hidden sm:table-cell">Cliente</th>
@@ -81,7 +80,6 @@
         </tr>
       </thead>
       <tbody class="text-sm">
-        <!-- Obtener datos de DB -->
         <tr class="hover:bg-slate-200 dark:hover:bg-slate-950/30">
           <td>
             <!-- link idem a "Ver todo" -->
