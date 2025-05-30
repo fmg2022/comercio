@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             ArticleSeeder::class,
             OfferSeeder::class,
             ArticleOfferSeeder::class,
+            OrderStatusSedeer::class,
+            OrderSeeder::class,
         ]);
     }
 }

@@ -14,6 +14,13 @@ class OfferSeeder extends Seeder
     public function run(): void
     {
         DB::table('offers')->insert([
+            'name' => 'Sin oferta',
+            'code' => 'SINOFERTA',
+            'type_discount' => 'Ninguno',
+            'discount' => 0,
+        ]);
+
+        DB::table('offers')->insert([
             'name' => 'Oferta Fideo y Harina selectas',
             'code' => 'FIDE',
             'type_discount' => 'Porcentaje',

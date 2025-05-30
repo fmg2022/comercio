@@ -6,27 +6,30 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class StatusSedeer extends Seeder
+class OrderStatusSedeer extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('status')->insert([
+        DB::table('order_statuses')->insert([
             'name' => 'Pendiente',
         ]);
-        DB::table('status')->insert([
+        DB::table('order_statuses')->insert([
             'name' => 'Procesando',
         ]);
-        DB::table('status')->insert([
+        DB::table('order_statuses')->insert([
             'name' => 'Enviado',
         ]);
-        DB::table('status')->insert([
+        DB::table('order_statuses')->insert([
             'name' => 'Entregado',
         ]);
-        DB::table('status')->insert([
+        DB::table('order_statuses')->insert([
             'name' => 'Cancelado',
+        ]);
+        DB::table('order_statuses')->insert([
+            'name' => 'Completo',
         ]);
     }
 }
