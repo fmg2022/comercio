@@ -14,22 +14,12 @@ class OrderStatusSedeer extends Seeder
     public function run(): void
     {
         DB::table('order_statuses')->insert([
-            'name' => 'Pendiente',
-        ]);
-        DB::table('order_statuses')->insert([
-            'name' => 'Procesando',
-        ]);
-        DB::table('order_statuses')->insert([
-            'name' => 'Enviado',
-        ]);
-        DB::table('order_statuses')->insert([
-            'name' => 'Entregado',
-        ]);
-        DB::table('order_statuses')->insert([
-            'name' => 'Cancelado',
-        ]);
-        DB::table('order_statuses')->insert([
-            'name' => 'Completo',
+            ['name' => 'Pendiente'],
+            ['name' => 'Procesando'],
+            ['name' => 'Enviado'],
+            ['name' => 'Entregado'],
+            ['name' => 'Cancelado'],
+            ['name' => 'Completo'],
         ]);
     }
 }

@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             OfferSeeder::class,
             ArticleOfferSeeder::class,
             OrderStatusSedeer::class,
-            OrderSeeder::class,
         ]);
     }
 }

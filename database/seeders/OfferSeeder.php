@@ -14,38 +14,36 @@ class OfferSeeder extends Seeder
     public function run(): void
     {
         DB::table('offers')->insert([
-            'name' => 'Sin oferta',
-            'code' => 'SINOFERTA',
-            'type_discount' => 'Ninguno',
-            'discount' => 0,
-        ]);
-
-        DB::table('offers')->insert([
-            'name' => 'Oferta Fideo y Harina selectas',
-            'code' => 'FIDE',
-            'type_discount' => 'Porcentaje',
-            'discount' => 10,
-        ]);
-
-        DB::table('offers')->insert([
-            'name' => 'Oferta Gaseosas',
-            'code' => 'GASE',
-            'type_discount' => 'Monto fijo',
-            'discount' => 300,
-        ]);
-
-        DB::table('offers')->insert([
-            'name' => 'Oferta Leches',
-            'code' => 'LECHE',
-            'type_discount' => 'Monto fijo',
-            'discount' => 250,
-        ]);
-
-        DB::table('offers')->insert([
-            'name' => 'Oferta Arroz',
-            'code' => 'ARR',
-            'type_discount' => 'Porcentaje',
-            'discount' => 19,
+            [
+                'name' => 'Sin oferta',
+                'code' => 'SINOFERTA',
+                'type_discount' => 'Ninguno',
+                'discount' => 0
+            ],
+            [
+                'name' => 'Oferta Fideo y Harina selectas',
+                'code' => 'FIDE',
+                'type_discount' => 'Porcentaje',
+                'discount' => 10,
+            ],
+            [
+                'name' => 'Oferta Gaseosas',
+                'code' => 'GASE',
+                'type_discount' => 'Monto fijo',
+                'discount' => 300,
+            ],
+            [
+                'name' => 'Oferta Leches',
+                'code' => 'LECHE',
+                'type_discount' => 'Monto fijo',
+                'discount' => 250,
+            ],
+            [
+                'name' => 'Oferta Arroz',
+                'code' => 'ARR',
+                'type_discount' => 'Porcentaje',
+                'discount' => 19,
+            ],
         ]);
     }
 }

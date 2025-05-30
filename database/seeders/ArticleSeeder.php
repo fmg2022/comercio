@@ -19,25 +19,15 @@ class ArticleSeeder extends Seeder
                 'table_id' => $i,
             ]);
         }
-        // arroz
         DB::table('articles')->insert([
-            'table' => 'products',
-            'table_id' => 10,
-        ]);
-        // gaseosas
-        DB::table('articles')->insert([
-            'table' => 'categories',
-            'table_id' => 20,
-        ]);
-        // leches
-        DB::table('articles')->insert([
-            'table' => 'categories',
-            'table_id' => 16,
-        ]);
-        // galletas
-        DB::table('articles')->insert([
-            'table' => 'categories',
-            'table_id' => 31,
+            // arroz
+            ['table' => 'products', 'table_id' => 10],
+            // gaseosas
+            ['table' => 'categories', 'table_id' => 20],
+            // leches
+            ['table' => 'categories', 'table_id' => 16,],
+            // galletas
+            ['table' => 'categories', 'table_id' => 31,],
         ]);
     }
 }
