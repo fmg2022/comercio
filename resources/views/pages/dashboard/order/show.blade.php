@@ -6,7 +6,7 @@
   <article class="px-3">
     <div class="flex justify-between items-center">
       <h2 class="text-3xl font-semibold">Orden #{{ $order->id }}</h2>
-      <x-buttons.ancorFill href="{{ route('products.edit', $product->id) }}">
+      <x-buttons.ancorFill href="{{ route('products.edit', $order->id) }}">
         Editar
       </x-buttons.ancorFill>
     </div>
