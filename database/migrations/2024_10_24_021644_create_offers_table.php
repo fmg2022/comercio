@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('code', 50);
             $table->string('type_discount', 50); // porcentaje o monto fijo
             $table->decimal('discount', 10, 2);
+            $table->boolean('active')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });

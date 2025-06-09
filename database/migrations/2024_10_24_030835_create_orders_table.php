@@ -16,7 +16,7 @@ return new class extends Migration
             $table->date('date');
             $table->decimal('total', 10, 2);
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('order_status_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('status_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('offer_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

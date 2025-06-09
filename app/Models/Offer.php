@@ -15,11 +15,18 @@ class Offer extends Model
         'name',
         'code',
         'type_discount',
-        'discount'
+        'discount',
+        'active',
     ];
 
-    public function articles(): BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Article::class)->as('details')->withPivot(['initial_date', 'expiration_date']);
+        return $this->belongsToMany(Product::class)->withPivot(['initial_date', 'expiration_date', 'quantity'])
+            ->withTimestamps();
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->wherePivot(['initial_date', 'expiration_date', 'quantity'])->withTimestamps();
     }
 }

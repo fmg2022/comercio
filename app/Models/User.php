@@ -72,6 +72,7 @@ class User extends Authenticatable
 
     public function wishlistProduct(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList');
+        return $this->belongsToMany(Product::class)->as('wishList')->withTimestamps()
+            ->withPivot(['added_at']);
     }
 }

@@ -18,7 +18,8 @@ class Product extends Model
         'mark',
         'image',
         'price',
-        'quantity'
+        'quantity',
+        'description',
     ];
 
     public function category(): BelongsTo
@@ -28,16 +29,23 @@ class Product extends Model
 
     public function cart(): BelongsToMany
     {
-        return $this->belongsToMany(Cart::class)->as('cartProduct')->withPivot('quantity');
+        return $this->belongsToMany(Cart::class)->as('cartProduct')->withPivot(['quantity', 'price'])
+            ->withTimestamps();
     }
 
     public function orderLines(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class)->as('orderLine')->withPivot(['quantity', 'price']);
+        return $this->belongsToMany(Order::class)->as('orderLine')->withPivot(['quantity', 'price', 'discount'])->withTimestamps();
     }
 
     public function wishlistUser(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList');
+        return $this->belongsToMany(Product::class)->as('wishList')->withPivot(['added_at'])->withTimestamps();
+    }
+
+    public function offers(): BelongsToMany
+    {
+        return $this->belongsToMany(Offer::class)->withPivot(['initial_date', 'expiration_date', 'quantity'])
+            ->withTimestamps();
     }
 }

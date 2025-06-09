@@ -24,7 +24,7 @@ class Order extends Model
 
     public function status(): BelongsTo
     {
-        return $this->belongsTo(OrderStatus::class);
+        return $this->belongsTo(Status::class);
     }
 
     public function offer(): BelongsTo
@@ -39,6 +39,7 @@ class Order extends Model
 
     public function orderLines(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('details')->withPivot(['quantity', 'price']);
+        return $this->belongsToMany(Product::class)->as('details')->withPivot(['quantity', 'price', 'discount'])
+            ->withTimestamps();
     }
 }
