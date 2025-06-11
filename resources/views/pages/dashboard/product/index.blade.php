@@ -38,10 +38,12 @@
       @forelse ($products as $index => $product)
         <tr>
           <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
-          <td class="flex items-center gap-3">
-            <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-              class="size-12 aspect-square">
-            <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+          <td>
+            <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
+              <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                class="size-12 aspect-square">
+              <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+            </a>
           </td>
           <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
           <td class="text-slate-300">{{ $product->quantity }}</td>
@@ -70,19 +72,6 @@
                     </svg>
                   </span>
                   <span>Editar Producto</span>
-                </li>
-                <li class="flex gap-3">
-                  <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2">
-                        <path
-                          d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                      </g>
-                    </svg>
-                  </span>
-                  <a href="{{ route('products.show', $product->id) }}">Ver Producto</a>
                 </li>
                 <li class="flex gap-3">
                   <span>

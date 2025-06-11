@@ -15,10 +15,10 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->primary(['order_id', 'product_id']);
-            $table->unsignedSmallInteger('quantiy');
+            $table->unsignedInteger('quantiy');
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
-            $table->foreignId('offer_product_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
+            $table->foreignId('offer_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

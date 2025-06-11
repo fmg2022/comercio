@@ -15,8 +15,9 @@ return new class extends Migration
             $table->foreignId('cart_id')->constrained('carts')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
             $table->primary(['cart_id', 'product_id']);
-            $table->unsignedSmallInteger('quantity')->default(1);
+            $table->unsignedInteger('quantity')->default(1);
             $table->decimal('price', 10, 2);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
