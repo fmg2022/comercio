@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            $table->decimal('total', 10, 2);
+            $table->dateTime('date');
+            $table->decimal('total', 10, 2)->default(0);
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('status_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('offer_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('offer_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

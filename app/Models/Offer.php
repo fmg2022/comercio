@@ -21,12 +21,8 @@ class Offer extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withPivot(['initial_date', 'expiration_date', 'quantity'])
+        return $this->belongsToMany(Product::class)
+            ->withPivot(['initial_date', 'expiration_date', 'quantity', 'discount_value'])
             ->withTimestamps();
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class)->wherePivot(['initial_date', 'expiration_date', 'quantity'])->withTimestamps();
     }
 }

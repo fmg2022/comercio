@@ -15,33 +15,27 @@ class OfferSeeder extends Seeder
     {
         DB::table('offers')->insert([
             [
-                'name' => 'Sin oferta',
-                'code' => 'SINOFERTA',
-                'type_discount' => 'Ninguno',
-                'discount' => 0
-            ],
-            [
                 'name' => 'Oferta Fideo y Harina selectas',
                 'code' => 'FIDE',
-                'type_discount' => 'Porcentaje',
+                'type' => 'Porcentaje',
                 'discount' => 10,
             ],
             [
                 'name' => 'Oferta Gaseosas',
                 'code' => 'GASE',
-                'type_discount' => 'Monto fijo',
-                'discount' => 300,
+                'type' => '3x2',
+                'discount' => 0,
             ],
             [
                 'name' => 'Oferta Leches',
                 'code' => 'LECHE',
-                'type_discount' => 'Monto fijo',
-                'discount' => 250,
+                'type' => '2x1',
+                'discount' => 0,
             ],
             [
                 'name' => 'Oferta Arroz',
                 'code' => 'ARR',
-                'type_discount' => 'Porcentaje',
+                'type' => 'Porcentaje',
                 'discount' => 19,
             ],
         ]);

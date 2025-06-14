@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -29,23 +28,29 @@ class Product extends Model
 
     public function cart(): BelongsToMany
     {
-        return $this->belongsToMany(Cart::class)->as('cartProduct')->withPivot(['quantity', 'price'])
+        return $this->belongsToMany(Cart::class)->as('cartProduct')
+            ->withPivot(['quantity', 'price'])
             ->withTimestamps();
     }
 
-    public function orderLines(): BelongsToMany
+    public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class)->as('orderLine')->withPivot(['quantity', 'price', 'discount'])->withTimestamps();
+        return $this->belongsToMany(Order::class)
+            ->withPivot(['quantity', 'price', 'discount'])
+            ->withTimestamps();
     }
 
     public function wishlistUser(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList')->withPivot(['added_at'])->withTimestamps();
+        return $this->belongsToMany(Product::class)->as('wishList')
+            ->withPivot(['added_at'])
+            ->withTimestamps();
     }
 
     public function offers(): BelongsToMany
     {
-        return $this->belongsToMany(Offer::class)->withPivot(['initial_date', 'expiration_date', 'quantity'])
+        return $this->belongsToMany(Offer::class)
+            ->withPivot(['initial_date', 'expiration_date', 'discount_value'])
             ->withTimestamps();
     }
 }

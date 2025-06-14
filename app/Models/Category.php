@@ -29,10 +29,4 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
-
-    public function offers(): BelongsToMany
-    {
-        return $this->belongsToMany(Offer::class)->withPivot(['initial_date', 'expiration_date', 'quantity'])
-            ->withTimestamps();
-    }
 }
