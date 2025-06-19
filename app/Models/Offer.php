@@ -22,7 +22,7 @@ class Offer extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot(['initial_date', 'expiration_date', 'quantity', 'discount_value'])
+            ->withPivot(['initial_date', 'expiration_date'])
             ->withTimestamps();
     }
 }

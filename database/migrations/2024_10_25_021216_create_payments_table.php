@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 10, 2);
             $table->date('date');
-            $table->string('status', 50);
-            $table->enum('type', ['credit', 'debit', 'refund'])->default('credit');
+            $table->enum('type', ['tarjeta credito', 'tarjeta debito', 'transferencia', 'billetera virtual'])->default('tarjeta credito');
             $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('payment_status_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

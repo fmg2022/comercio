@@ -43,4 +43,9 @@ class Order extends Model
             ->withPivot(['quantity', 'price', 'discount'])
             ->withTimestamps();
     }
+
+    public function shipment(): BelongsTo
+    {
+        return $this->belongsTo(Shipment::class);
+    }
 }

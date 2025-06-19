@@ -15,7 +15,6 @@ return new class extends Migration
             $table->foreignId('offer_id')->constrained('offers')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->primary(['offer_id', 'product_id']);
-            $table->unsignedInteger('discount_value')->default(0);
             $table->dateTime('initial_date');
             $table->dateTime('expiration_date')->nullable();
             $table->softDeletes();

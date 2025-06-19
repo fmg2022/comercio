@@ -13,7 +13,7 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
-        Order::factory(20)->create()->each(function ($order) {
+        Order::factory(10)->create()->each(function ($order) {
             $products = DB::table('products')->inRandomOrder()
                 ->limit(rand(1, 8))
                 ->get()
