@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 10, 2)->default(0);
             $table->date('date');
             $table->enum('type', ['tarjeta credito', 'tarjeta debito', 'transferencia', 'billetera virtual'])->default('tarjeta credito');
+            $table->string('code_transaction')->nullable();
             $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('payment_status_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();

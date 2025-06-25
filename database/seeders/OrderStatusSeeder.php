@@ -13,13 +13,13 @@ class OrderStatusSeeder extends Seeder
     public function run(): void
     {
         DB::table('order_statuses')->insert([
-            ['name' => 'Pendiente', 'description' => 'Esperando confirmación de pago.'],
-            ['name' => 'Procesando', 'description' => 'Pago confirmado, preparando pedido.'],
-            ['name' => 'Completo', 'description' => 'El pedido se ha completado con éxito.'],
-            ['name' => 'Retirar', 'description' => 'Listo para recoger en la tienda.'],
-            ['name' => 'Delivery', 'description' => 'Enviado para entrega.'],
-            ['name' => 'Entregado', 'description' => 'El pedido ha sido entregado al cliente.'],
-            ['name' => 'Cancelado', 'description' => 'El pedido ha sido cancelado por el cliente/sistema.'],
+            ['name' => 'Pendiente', 'description' => 'Esperando confirmación de pago.', 'created_at' => now()],
+            ['name' => 'Procesando', 'description' => 'Pago confirmado, preparando pedido.', 'created_at' => now()],
+            ['name' => 'Completo', 'description' => 'El pedido se ha completado con éxito.', 'created_at' => now()],
+            ['name' => 'Retirar', 'description' => 'Listo para recoger en la tienda.', 'created_at' => now()],
+            ['name' => 'Delivery', 'description' => 'Enviado para entrega.', 'created_at' => now()],
+            ['name' => 'Entregado', 'description' => 'El pedido ha sido entregado al cliente.', 'created_at' => now()],
+            ['name' => 'Cancelado', 'description' => 'El pedido ha sido cancelado por el cliente/sistema.', 'created_at' => now()],
         ]);
     }
 }

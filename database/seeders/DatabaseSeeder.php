@@ -19,8 +19,9 @@ class DatabaseSeeder extends Seeder
             OrderStatusSeeder::class,
             ShippingProviderSeeder::class,
             ShipmentSeeder::class,
-            OrderSeeder::class,
             PaymentStatusSeeder::class,
+            OrderSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }

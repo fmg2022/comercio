@@ -15,7 +15,6 @@
     <x-slot:thead>
       <tr class="text-left">
         <th>#</th>
-        <!-- <th class="hidden sm:table-cell">SKU</th> -->
         <th>Usuario</th>
         <th>Fecha</th>
         <th>Total</th>
@@ -32,8 +31,8 @@
         <td class="font-bold">{{ $order->user->fullName() }}</td>
         <td class="text-slate-300">{{ $order->date }}</td>
         <td class="text-slate-300"><span class="me-px">$</span>{{ $order->total }}</td>
-        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->payments->amount ?? '' }}</td>
-        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->status->name }}</td>
+        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->payments[0]->type }}</td>
+        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $order->orderStatus->name }}</td>
         <td class="relative flex justify-end">
           <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption">
           <label for="chorder-{{ $order->id }}"
