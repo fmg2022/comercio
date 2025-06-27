@@ -42,7 +42,7 @@
                 d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
             </svg>
           </label>
-          <div class="absolute right-1/4 z-30 hidden peer-checked/checkOption:block">
+          <div class="absolute right-1/4 top-[120%] z-[5] hidden peer-checked/checkOption:block">
             <ul
               class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:px-4 [&>li]:py-2.5 [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li:hover]:bg-slate-700 [&>li]:transition-colors">
               <li class="flex gap-3">
@@ -57,33 +57,37 @@
                 </span>
                 <span>Editar Orden</span>
               </li>
-              <li class="flex gap-3">
-                <span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                      stroke-width="2">
-                      <path
-                        d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                    </g>
-                  </svg>
-                </span>
-                <a href="{{ route('orders.show', $order->id) }}">Detalles</a>
+              <li>
+                <a href="{{ route('orders.show', $order->id) }}" class="flex gap-3">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2">
+                        <path
+                          d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
+                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
+                      </g>
+                    </svg>
+                  </span>
+                  Detalles
+                </a>
               </li>
-              <li class="flex gap-3">
-                <span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
-                    <path fill="currentColor"
-                      d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z" />
-                    <path fill="currentColor"
-                      d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
-                  </svg>
-                </span>
+              <li>
                 @php
                   $dialogid = 'dialog' . $order->id;
                 @endphp
-                <button type="button" onclick="openModal('{{ $dialogid }}')">Eliminar Orden</button>
+                <button type="button" onclick="openModal('{{ $dialogid }}')" class="flex gap-3">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
+                      <path fill="currentColor"
+                        d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z" />
+                      <path fill="currentColor"
+                        d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
+                    </svg>
+                  </span>
+                  Eliminar Orden
+                </button>
                 <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar el producto ' . $order->name }}">
                   <div class="flex flex-col items-center justify-center">
                     <span class="text-slate-500">
