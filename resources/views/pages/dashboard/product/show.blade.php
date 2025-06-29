@@ -6,10 +6,14 @@
   <article class="px-3">
     <div class="flex justify-between items-center">
       <h2 class="text-3xl font-semibold">{{ $product->name }}</h2>
-      <x-buttons.ancorFill href="{{ route('products.edit', $product->id) }}" class="bg-purple-600 active:bg-purple-700">
-        Editar
-      </x-buttons.ancorFill>
-      {{-- <a href="{{ route('products.edit', $product->id) }}">Editar</a> --}}
+      <div class="flex gap-2">
+        <x-buttons.ancorFill href="{{ route('products.index') }}" class="bg-slate-500 active:bg-slate-600">
+          Volver
+        </x-buttons.ancorFill>
+        <x-buttons.ancorFill href="{{ route('products.edit', $product->id) }}" class="bg-purple-600 active:bg-purple-700">
+          Editar
+        </x-buttons.ancorFill>
+      </div>
     </div>
     <div class="flex flex-col items-center gap-5 my-4 md:items-start md:flex-row">
       <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"

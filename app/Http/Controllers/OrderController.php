@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderRequest;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -17,49 +17,25 @@ class OrderController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function show(String $id): View
     {
-        return view('pages.dashboard.order.create');
-    }
-
-    public function store(OrderRequest $request)
-    {
-        // $order = Order::create($request->all());
-        // return redirect()->route('orders.index')->with('success', 'Order created successfully.');
-        return 1;
-    }
-
-    public function edit($id)
-    {
-        $order = Order::findOrFail($id);
-        return view('pages.dashboard.order.edit', compact('order'));
-    }
-
-    public function update(OrderRequest $request, $id)
-    {
-        // $order = Order::findOrFail($id);
-        // $order->update($request->all());
-        // return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
-        return 1;
-    }
-
-    public function show($id)
-    {
-        $order = Order::findOrFail($id);
+        $order = Order::withTrashed()->findOrFail($id);
         return view('pages.dashboard.order.show', compact('order'));
     }
 
-    public function destroy($id)
+    public function destroy(String $id): RedirectResponse
     {
         $order = Order::findOrFail($id);
         $order->delete();
-        return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+        $order->deleted_at = now();
+        $order->save();
+        return redirect()->route('orders.index');
     }
 
-    public function restore($id)
+    public function restore(String $id): RedirectResponse
     {
         $order = Order::onlyTrashed()->findOrFail($id);
         $order->restore();
-        return redirect()->route('orders.index')->with('success', 'Order restored successfully.');
+        return redirect()->route('orders.index');
     }
 }

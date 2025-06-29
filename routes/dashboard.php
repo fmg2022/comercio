@@ -10,7 +10,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/products', ProductController::class);
     Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-    Route::resource('orders', OrderController::class);
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
+    Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
   });
 
   // Route::resource('categories', CategoryController::class)->except(['show']);
