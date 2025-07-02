@@ -101,24 +101,73 @@
               </label>
               <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:px-4 [&>li]:py-2.5 [&>li]:bg-slate-800 {{ !$order->trashed() ? '[&>li:hover]:bg-slate-700' : '' }} [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 {{ !$order->trashed() ? '[&>li:hover]:bg-slate-700' : '' }} [&>li]:transition-colors">
+                  @if ($order->orderStatus->name === 'Pendiente')
+                    <li>
+                      @php
+                        $dialogid = 'dialog' . $index . '-' . $orderLine->id;
+                      @endphp
+                      <button type="button" onclick="openModal('{{ $dialogid }}')"
+                        class="w-full flex gap-3 px-4 py-2.5 {{ $order->trashed() ? 'pointer-events-none text-gray-400' : 'cursor-pointer' }}">
+                        <span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2">
+                              <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
+                              <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
+                            </g>
+                          </svg>
+                        </span>
+                        Editar Linea
+                      </button>
+                      <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Editar fila #' . ($index + 1) }}"
+                        class="max-w-xl w-full">
+                        <div class="relative flex flex-col items-center justify-center text-white">
+                          <form action="{{ route('orderLine.edit', $order->id, $orderLine->id) }}" method="POST"
+                            class="w-full">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-14 flex flex-col items-center text-slate-900">
+                              <div
+                                class="p-5 mx-auto mb-4 bg-gradient-to-b from-purple-400 to-purple-200 border-purple-700 rounded-md">
+                                <img src="{{ asset('images/products/' . $orderLine->image) }}"
+                                  alt="{{ $orderLine->name }}" class="size-40 object-cover">
+                              </div>
+                              <input type="hidden" name="product_id" value="{{ $orderLine->id }}">
+                              <div class="mb-3 text-2xl">
+                                <h3 class="font-bold">
+                                  {{ $orderLine->name }}
+                                  <span class="text-purple-950">{{ $orderLine->mark }}</span>
+                                </h3>
+                                <p class="mb-3">
+                                  <span class="text-lg text-slate-700">Precio:</span>
+                                  <span class="me-px">$</span>
+                                  {{ $orderLine->pivot->price + 0 }}
+                                </p>
+                                <div>
+                                  <label class="text-lg text-slate-600" for="quantity{{ $orderLine->id }}">
+                                    Cantidad:
+                                  </label>
+                                  <input id="quantity{{ $orderLine->id }}" type="number" name="quantity"
+                                    min="1" max="{{ $orderLine->stock }}"
+                                    value="{{ $orderLine->pivot->quantity }}"
+                                    class="w-16 px-2 py-1 text-2xl rounded-md outline-none" required>
+                                </div>
+                              </div>
+                            </div>
+                            <button type="submit"
+                              class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
+                          </form>
+                          <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
+                            <button
+                              class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+                          </form>
+                        </div>
+                      </x-modals.confirm>
+                    </li>
+                  @endif
                   <li>
-                    <a href=""
-                      class="flex gap-3 {{ $order->trashed() ? 'pointer-events-none text-gray-400' : '' }}">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                            <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                          </g>
-                        </svg>
-                      </span>
-                      Editar Linea
-                    </a>
-                  </li>
-                  <li>
-                    <a href="{{ route('products.show', $orderLine->id) }}" class="flex gap-3">
+                    <a href="{{ route('products.show', $orderLine->id) }}" class="px-4 py-2.5 flex gap-3">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                           <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -137,7 +186,7 @@
                       $dialogid = 'dialog' . $index;
                     @endphp
                     <button type="button" onclick="openModal('{{ $dialogid }}')"
-                      class="flex gap-3 {{ $order->trashed() ? 'pointer-events-none text-gray-400' : 'cursor-pointer' }}">
+                      class="w-full flex gap-3 px-4 py-2.5 {{ $order->trashed() ? 'pointer-events-none text-gray-400' : 'cursor-pointer' }}">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                           <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />

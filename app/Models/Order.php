@@ -38,15 +38,31 @@ class Order extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function shipment(): BelongsTo
+    {
+        return $this->belongsTo(Shipment::class);
+    }
+
+    // This method defines a many-to-many relationship with the Product model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
+            ->using(OrderProduct::class)
             ->withPivot(['quantity', 'price', 'discount'])
             ->withTimestamps();
     }
 
-    public function shipment(): BelongsTo
+    /**
+     * Calculate the total price of the order based on the products and their pivot data.
+     * This method sums up the total price for each product in the order, taking into account
+     * the quantity, price, and any discounts applied.
+     */
+    public function calculateTotal()
     {
-        return $this->belongsTo(Shipment::class);
+        $this->total = $this->products()->sum(function ($product) {
+            return ($product->pivot->price * $product->pivot->quantity) - $product->pivot->discount;
+        });
+
+        $this->save();
     }
 }
