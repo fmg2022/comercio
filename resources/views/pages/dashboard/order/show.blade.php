@@ -85,8 +85,7 @@
           <td class="text-center hidden md:table-cell"><span class="me-px">$</span>{{ $orderLine->pivot->discount + 0 }}
           </td>
           <td class="text-center hidden md:table-cell">
-            <span
-              class="me-px">$</span>{{ $orderLine->pivot->price * $orderLine->pivot->quantity - $orderLine->pivot->discount }}
+            <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() + 0 }}
           </td>
           <td>
             <div class="relative flex justify-end items-center">
@@ -102,7 +101,7 @@
               <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 {{ !$order->trashed() ? '[&>li:hover]:bg-slate-700' : '' }} [&>li]:transition-colors">
-                  @if ($order->orderStatus->name === 'Pendiente')
+                  @if (in_array($order->orderStatus->name, ['Pendiente', 'Procesando']))
                     <li>
                       @php
                         $dialogid = 'dialog' . $index . '-' . $orderLine->id;
@@ -180,48 +179,6 @@
                       </span>
                       Ver Producto
                     </a>
-                  </li>
-                  <li>
-                    @php
-                      $dialogid = 'dialog' . $index;
-                    @endphp
-                    <button type="button" onclick="openModal('{{ $dialogid }}')"
-                      class="w-full flex gap-3 px-4 py-2.5 {{ $order->trashed() ? 'pointer-events-none text-gray-400' : 'cursor-pointer' }}">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
-                          <path fill="currentColor"
-                            d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z" />
-                          <path fill="currentColor"
-                            d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
-                        </svg>
-                      </span>
-                      Eliminar Fila
-                    </button>
-                    <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar fila #' . ($index + 1) }}">
-                      <div class="flex flex-col items-center justify-center">
-                        <span class="text-slate-500">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                              d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                          </svg>
-                        </span>
-                        <p class="px-2 py-4 mb-3 text-base">¿Está seguro de que desea quitar el producto
-                          "{{ $orderLine->name }}"?</p>
-                      </div>
-                      <div class="flex justify-end gap-3 text-white">
-                        <form action="" method="POST">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit"
-                            class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-                        </form>
-                        <form method="dialog">
-                          <button
-                            class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                        </form>
-                      </div>
-                    </x-modals.confirm>
                   </li>
                 </ul>
               </div>

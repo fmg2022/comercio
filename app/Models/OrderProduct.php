@@ -28,4 +28,9 @@ class OrderProduct extends Pivot
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function subtotal(): float
+    {
+        return ($this->price * $this->quantity) - $this->discount;
+    }
 }

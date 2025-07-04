@@ -15,7 +15,8 @@ class Order extends Model
 
     protected $fillable = [
         'date',
-        'total'
+        'total',
+        'order_status_id',
     ];
 
     public function user(): BelongsTo
@@ -50,19 +51,5 @@ class Order extends Model
             ->using(OrderProduct::class)
             ->withPivot(['quantity', 'price', 'discount'])
             ->withTimestamps();
-    }
-
-    /**
-     * Calculate the total price of the order based on the products and their pivot data.
-     * This method sums up the total price for each product in the order, taking into account
-     * the quantity, price, and any discounts applied.
-     */
-    public function calculateTotal()
-    {
-        $this->total = $this->products()->sum(function ($product) {
-            return ($product->pivot->price * $product->pivot->quantity) - $product->pivot->discount;
-        });
-
-        $this->save();
     }
 }

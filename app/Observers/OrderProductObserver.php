@@ -2,16 +2,29 @@
 
 namespace App\Observers;
 
+use App\Models\Order;
 use App\Models\OrderProduct;
 
 class OrderProductObserver
 {
     /**
+     * Handle the OrderProduct "updating" event.
+     */
+    public function updating(OrderProduct $orderProduct): void
+    {
+        if ($orderProduct->quantity < 1) {
+            throw new \Exception("La cantidad no debe ser menor a 1");
+        }
+    }
+
+    /**
      * Handle the OrderProduct "created" event.
      */
     public function created(OrderProduct $orderProduct): void
     {
-        //
+        $this->updatedOrderTotal($orderProduct->order);
+
+        $this->decreaseProductStock($orderProduct);
     }
 
     /**
@@ -20,33 +33,11 @@ class OrderProductObserver
     public function updated(OrderProduct $orderProduct): void
     {
         $this->updatedOrderTotal($orderProduct->order);
+
+        $this->updatedProductStock($orderProduct);
     }
 
-    /**
-     * Handle the OrderProduct "deleted" event.
-     */
-    public function deleted(OrderProduct $orderProduct): void
-    {
-        //
-    }
-
-    /**
-     * Handle the OrderProduct "restored" event.
-     */
-    public function restored(OrderProduct $orderProduct): void
-    {
-        //
-    }
-
-    /**
-     * Handle the OrderProduct "force deleted" event.
-     */
-    public function forceDeleted(OrderProduct $orderProduct): void
-    {
-        //
-    }
-
-    protected function updatedOrderTotal($order)
+    protected function updatedOrderTotal(Order $order): void
     {
         $order->load('products');
         $newTotal = $order->products->sum(function ($product) {
@@ -57,5 +48,22 @@ class OrderProductObserver
             'total' => $newTotal,
             'updated_at' => now()
         ]);
+    }
+
+    protected function updatedProductStock(OrderProduct $orderProduct): void
+    {
+        $product = $orderProduct->product;
+        $newStock = $product->getOriginal('stock') - $orderProduct->quantity;
+
+        if ($newStock < 0) {
+            throw new \Exception("El stock del producto no puede ser negativo");
+        }
+
+        $product->update(['stock' => $newStock]);
+    }
+
+    protected function decreaseProductStock(OrderProduct $orderProduct): void
+    {
+        $orderProduct->product->decrement('stock', $orderProduct->quantity);
     }
 }

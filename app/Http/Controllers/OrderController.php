@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\OrderStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -14,6 +15,7 @@ class OrderController extends Controller
         return view('pages.dashboard.order.index', [
             'orders' => Order::paginate(10),
             'ordersDeleted' => Order::onlyTrashed()->paginate(10),
+            'orderStatuses' => OrderStatus::all('name', 'id'),
         ]);
     }
 
@@ -50,5 +52,18 @@ class OrderController extends Controller
             'quantity' => $validated['quantity']
         ]);
         return redirect()->route('orders.show', $order->id);
+    }
+
+    public function updateStatus(Request $request, Order $order): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|exists:order_statuses,id',
+        ]);
+
+        $order->update([
+            'order_status_id' => $validated['status']
+        ]);
+
+        return redirect()->route('orders.index');
     }
 }
