@@ -44,6 +44,7 @@ class ProductController extends Controller
         return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
             'productsDeleted' => Product::onlyTrashed()->paginate(10),
+            'categories' => Category::all()->values('name', 'id'),
         ]);
     }
 

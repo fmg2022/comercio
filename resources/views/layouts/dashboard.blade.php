@@ -16,12 +16,10 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>Dashboard | {{ config('app.name', 'Comercio') }}</title>
+  <link rel="icon" href="{{ asset('favicons/favicon.ico') }}" type="image/x-icon">
 
-  <!-- Scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
-  @yield('scripts')
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
   {{-- <script>
     // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
         if (
@@ -35,8 +33,6 @@
         }
   </script> --}}
 
-  <script defer src="{{ asset('js/dashboard/asideMenu.js') }}"></script>
-
   <style>
     .toggle-input:checked~.absolute {
       opacity: 1;
@@ -48,6 +44,8 @@
       visibility: visible;
     }
   </style>
+  <script src="{{ asset('js/indexDash.js') }}" type="module"></script>
+  @stack('scripts-dashboard')
 </head>
 
 <body class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 xl:flex">
@@ -73,70 +71,12 @@
     const $$ = (el) => document.querySelectorAll(el)
     const $ = (el) => document.querySelector(el)
 
-    const inputsChecks = $$('[name="toggle-btns"]')
     const $toggleAside = $('#sidebar-toggle')
     const overlay = $('.overlay')
 
-    // Solo un dropdown este abierto a la vez
-    if (inputsChecks.length > 0) {
-      inputsChecks.forEach($input => {
-        $input.addEventListener("input", ev => {
-          inputsChecks.forEach($input => {
-            if ($input !== ev.target) $input.checked = false
-          })
-        })
-      })
-    }
-
     overlay.addEventListener("click", ev => {
       $toggleAside.checked = false
-      console.log(ev.target)
-
     })
-
-    // Gráficas
-    const optionsArea = {
-      chart: {
-        type: 'area',
-        sparkline: {
-          enabled: true
-        },
-      },
-      stroke: {
-        curve: 'smooth'
-      },
-      fill: {
-        opacity: 1,
-      },
-      series: [{
-        name: 'sales',
-        data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
-      }],
-      colors: ['#9C27B0'],
-    }
-
-    const optionsBar = {
-      chart: {
-        type: 'bar',
-        sparkline: {
-          enabled: true
-        },
-      },
-      colors: ['#EA1E8C'],
-      series: [{
-        name: 'orders',
-        data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
-      }],
-      yaxis: {
-        opposite: true,
-      }
-    }
-
-    // const chartA = new ApexCharts(document.querySelector("#chart-sales"), optionsArea)
-    // const chartB = new ApexCharts(document.querySelector("#chart-ordes"), optionsBar)
-
-    // chartA.render()
-    // chartB.render()
 
     // Toggle theme
     // const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon')

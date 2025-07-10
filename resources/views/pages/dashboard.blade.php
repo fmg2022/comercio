@@ -1,5 +1,9 @@
 @extends('layouts.dashboard')
 
+@push('scripts-dashboard')
+  {{-- <script src="{{ asset('js/dashboard/useCharts.js') }}" defer></script> --}}
+@endpush
+
 @section('content')
   <section class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-8">
     <article

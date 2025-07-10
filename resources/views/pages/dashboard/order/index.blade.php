@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@section('scripts')
+@push('scripts')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-@endsection
+@endpush
 
 @section('titleH1', 'Ordenes')
 
@@ -58,7 +58,7 @@
         </td>
         <td>
           <div class="relative flex justify-end">
-            <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption">
+            <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption" name="toggle-btns">
             <label for="chorder-{{ $order->id }}"
               class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
                     </span>
                     Cambiar Estado
                   </button>
-                  <x-modals.confirm id="{{ $dialogid }}" class="max-w-xl w-full"
+                  <x-modals.simple id="{{ $dialogid }}" class="max-w-xl w-full"
                     title="Cambiar el estado de la orden ({{ $OrderDate }})">
                     <div class="relative flex flex-col items-center justify-center text-white">
                       <form action="{{ route('orders.updateStatus', $order) }}" method="POST" class="w-full">
@@ -141,7 +141,7 @@
                           class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
                       </form>
                     </div>
-                  </x-modals.confirm>
+                  </x-modals.simple>
                 </li>
                 <li>
                   @php
@@ -160,7 +160,7 @@
                     </span>
                     Eliminar Orden
                   </button>
-                  <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Borrar la orden ' . $OrderDate }}">
+                  <x-modals.simple id="{{ $dialogid }}" title="{{ 'Borrar la orden ' . $OrderDate }}">
                     <div class="flex flex-col items-center justify-center">
                       <span class="text-slate-500">
                         <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
@@ -182,7 +182,7 @@
                           class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
                       </form>
                     </div>
-                  </x-modals.confirm>
+                  </x-modals.simple>
                 </li>
               </ul>
             </div>
@@ -228,7 +228,8 @@
             </td>
             <td>
               <div class="relative flex justify-end">
-                <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption">
+                <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption"
+                  name="toggle-btns">
                 <label for="chorder-{{ $order->id }}"
                   class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -271,7 +272,7 @@
                         </span>
                         Restaurar Orden
                       </button>
-                      <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Restaurar la orden ' . $OrderDate }}">
+                      <x-modals.simple id="{{ $dialogid }}" title="{{ 'Restaurar la orden ' . $OrderDate }}">
                         <div class="flex flex-col items-center justify-center">
                           <span class="text-slate-500">
                             <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
@@ -292,7 +293,7 @@
                               class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
                           </form>
                         </div>
-                      </x-modals.confirm>
+                      </x-modals.simple>
                     </li>
                   </ul>
                 </div>

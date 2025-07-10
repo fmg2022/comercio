@@ -1,17 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('scripts')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-@endsection
-
 @php
   $titleEdit = 'Detalles de la Orden' . ($order->trashed() ? ' (Eliminada)' : '');
 @endphp
 @section('titleH1', $titleEdit)
 
-@section('scripts')
+@push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-@endsection
+@endpush
 
 @section('content')
   <article class="px-3">
@@ -28,7 +24,7 @@
             class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">
             Restaurar Orden
           </button>
-          <x-modals.confirm id="restDialog" title="{{ 'Restaurar la orden ' . Str::substr($order->date, 0, 10) }}">
+          <x-modals.simple id="restDialog" title="{{ 'Restaurar la orden ' . Str::substr($order->date, 0, 10) }}">
             <div class="flex flex-col items-center justify-center">
               <span class="text-slate-500">
                 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
@@ -48,7 +44,7 @@
                 <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
               </form>
             </div>
-          </x-modals.confirm>
+          </x-modals.simple>
         @else
           <x-buttons.ancorFill href="" class="bg-red-700 active:bg-red-800">
             Generar PDF
@@ -89,7 +85,8 @@
           </td>
           <td>
             <div class="relative flex justify-end items-center">
-              <input type="checkbox" id="chorder-{{ $orderLine->id }}" class="hidden peer/checkOption">
+              <input type="checkbox" id="chorder-{{ $orderLine->id }}" class="hidden peer/checkOption"
+                name="toggle-btns">
               <label for="chorder-{{ $orderLine->id }}"
                 class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -119,7 +116,7 @@
                         </span>
                         Editar Linea
                       </button>
-                      <x-modals.confirm id="{{ $dialogid }}" title="{{ 'Editar fila #' . ($index + 1) }}"
+                      <x-modals.simple id="{{ $dialogid }}" title="{{ 'Editar fila #' . ($index + 1) }}"
                         class="max-w-xl w-full">
                         <div class="relative flex flex-col items-center justify-center text-white">
                           <form action="{{ route('orderLine.edit', $order->id, $orderLine->id) }}" method="POST"
@@ -162,7 +159,7 @@
                               class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
                           </form>
                         </div>
-                      </x-modals.confirm>
+                      </x-modals.simple>
                     </li>
                   @endif
                   <li>
