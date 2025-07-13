@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('dashdoard')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+
+    // Product routes
     Route::resource('/products', ProductController::class);
     Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+
+    // Order routes
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
     Route::put('/orders_line/{order}', [OrderController::class, 'editLine'])->name('orderLine.edit');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');

@@ -6,7 +6,7 @@
   <div class="flex items-center flex-wrap gap-3 py-3 px-2">
     <a href="{{ route('home') }}" class="flex flex-wrap gap-2 items-center">
       <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px">
-      <span class="font-semibold text-lg">{{ config('app.name', 'Comercio')}}</span>
+      <span class="font-semibold text-lg">{{ config('app.name', 'Comercio') }}</span>
     </a>
   </div>
   <input type="checkbox" id="toggle-nav" class="hidden peer/nav" />
@@ -73,23 +73,31 @@
               <path d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z" />
             </g>
           </svg>
-          <span>Perfil</span>
+          @auth
+            @php
+              $user = auth()->user();
+            @endphp
+            {{ $user->surname[0] . $user->name[0] }}
+          @else
+            <span>Perfil</span>
+          @endauth
         </label>
         <div
           class="absolute -top-16 inset-x-0 invisible w-max h-max px-3 py-4 flex flex-col opacity-0 divide-y divide-sky-700/50 rounded-lg bg-blue-100 dark:bg-cyan-800 peer-checked/perfil:visible peer-checked/perfil:opacity-100 peer-checked/perfil:top-16 transition-all duration-300">
 
           @if (Route::has('login'))
-          @auth
-          <a href="{{ route('dashboard') }}"
-            class="p-2 flex items-center gap-3 hover:text-sky-700 dark:hover:text-violet-400">Panel de usuario</a>
-          <a href="{{ route('logout') }}"
-            class="p-2 flex items-center gap-3 hover:text-sky-700 dark:hover:text-violet-400">Desconectarse</a>
-          @else
-          <a href="{{ route('login') }}"
-            class="p-2 flex items-center gap-3 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
-          <a href="{{ route('register') }}"
-            class="p-2 flex items-center gap-3 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
-          @endauth
+            @auth
+              <a href="{{ route('dashboard') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Panel de
+                usuario</a>
+              <form action="{{ route('logout') }}" method="post">
+                @csrf
+                <button type="submit" class="p-2 cursor-pointer hover:text-sky-700 dark:hover:text-violet-400">Cerrar
+                  sesión</button>
+              </form>
+            @else
+              <a href="{{ route('login') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
+              <a href="{{ route('register') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
+            @endauth
           @endif
         </div>
       </li>
@@ -136,13 +144,15 @@
         class="px-5 py-2 flex items-center justify-between text-lg rounded-lg hover:bg-slate-100/70 dark:hover:bg-sky-800/50">
         Ofertas
         <span class="p-2">
-          <svg class="sm:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-              d="m7 10l5 5m0 0l5-5" />
+          <svg class="sm:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
           </svg>
-          <svg class="hidden sm:block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-              d="m10 17l5-5m0 0l-5-5" />
+          <svg class="hidden sm:block" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+            viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+              stroke-width="2.5" d="m10 17l5-5m0 0l-5-5" />
           </svg>
         </span>
       </a>
@@ -183,8 +193,8 @@
                 class="w-14 py-2 bg-transparent outline-none">
             </label>
             <label class="flex gap-1 pointer-events-none">
-              $<input type="text" name="price" value="10.000" maxlength="10" class="w-24 bg-transparent outline-none"
-                readonly>
+              $<input type="text" name="price" value="10.000" maxlength="10"
+                class="w-24 bg-transparent outline-none" readonly>
             </label>
           </div>
         </div>
@@ -233,8 +243,8 @@
                 class="w-14 py-2 bg-transparent outline-none">
             </label>
             <label class="flex gap-1 pointer-events-none">
-              $<input type="text" name="price" value="10.000" maxlength="10" class="w-24 bg-transparent outline-none"
-                readonly>
+              $<input type="text" name="price" value="10.000" maxlength="10"
+                class="w-24 bg-transparent outline-none" readonly>
             </label>
           </div>
         </div>
@@ -283,8 +293,8 @@
                 class="w-14 py-2 bg-transparent outline-none">
             </label>
             <label class="flex gap-1 pointer-events-none">
-              $<input type="text" name="price" value="10.000" maxlength="10" class="w-24 bg-transparent outline-none"
-                readonly>
+              $<input type="text" name="price" value="10.000" maxlength="10"
+                class="w-24 bg-transparent outline-none" readonly>
             </label>
           </div>
         </div>

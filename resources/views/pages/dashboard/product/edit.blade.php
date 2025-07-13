@@ -6,7 +6,7 @@
 
 @section('content')
   <div class="@container px-2 md:px-4">
-    <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data"
       class="px-3 py-4 mx-auto my-4 max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
       @csrf
       @method('PUT')
@@ -43,6 +43,11 @@
           @endif
         @endforeach
       </select>
+
+      <label class="flex flex-col items-center gap-5">
+        <span class="me-auto">Descripción:</span>
+        <textarea class='w-full max-w-xs px-3 py-2 field-sizing-fixed outline-none rounded-lg bg-white/10' name="description">{{ $product->description }}</textarea>
+      </label>
 
       <div class="flex items-center gap-3 justify-end">
         <button type="submit"

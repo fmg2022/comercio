@@ -43,6 +43,11 @@
         @endforeach
       </select>
 
+      <label class="flex flex-col items-center gap-5">
+        <span class="me-auto">Descripción:</span>
+        <textarea class='w-full max-w-xs px-3 py-2 field-sizing-fixed outline-none rounded-lg bg-white/10' name="description"></textarea>
+      </label>
+
       <div class="flex items-center gap-3 justify-end">
         <button type="submit"
           class="px-3 py-2 bg-emerald-700 rounded-md hover:bg-emerald-600 cursor-pointer">Agregar</button>

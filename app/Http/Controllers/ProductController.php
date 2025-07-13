@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Nette\Utils\Strings;
 
 class ProductController extends Controller
 {
@@ -44,7 +46,7 @@ class ProductController extends Controller
         return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
             'productsDeleted' => Product::onlyTrashed()->paginate(10),
-            'categories' => Category::all()->values('name', 'id'),
+            'categories' => Category::where('parent_id', null)->get()
         ]);
     }
 
@@ -77,8 +79,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(ProductRequest $request, Product $product): RedirectResponse
+    public function update(ProductRequest $request, String $id)
     {
+        $product = Product::findOrFail($id);
         $product->update($request->validated());
 
         return redirect()->route('products.index');
@@ -90,10 +93,20 @@ class ProductController extends Controller
         return Redirect::back();
     }
 
-    public function restore($id): RedirectResponse
+    public function restore(String $id): RedirectResponse
     {
         $product = Product::withTrashed()->findOrFail($id);
         $product->restore();
         return Redirect::back();
+    }
+
+    public function fetch(String $id): JsonResponse
+    {
+        $product = Product::find($id)?->makeHidden(['created_at', 'updated_at', 'deleted_at']);
+        if (!$product) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json($product);
     }
 }
