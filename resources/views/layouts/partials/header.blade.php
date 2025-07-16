@@ -335,6 +335,7 @@
       Subtotal:
       <span class="px-3 text-xl font-semibold">$ 170.000,90</span>
     </p>
-    <a href="#" class="px-3 py-2 bg-emerald-800/80 hover:bg-emerald-900 rounded-lg">Proceder a pagar</a>
+    <x-buttons.linkFill href="#" class="bg-emerald-800/80 hover:bg-emerald-900">
+      Proceder a pagar</x-buttons.linkFill>
   </div>
 </aside>

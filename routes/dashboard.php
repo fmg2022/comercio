@@ -12,6 +12,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     // Product routes
     Route::resource('/products', ProductController::class);
     Route::post('/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::get('/products/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('products.orders');
 
     // Order routes
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);

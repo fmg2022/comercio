@@ -55,12 +55,6 @@
     @include('layouts.partials.dashboard.header')
 
     <section class="px-2 py-5 grow sm:px-5 sm:py-7">
-      <div class="px-5 mb-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">
-          @yield('titleH1', 'Dashboard')
-        </h1>
-        @yield('header-actions')
-      </div>
       @yield('content')
     </section>
 

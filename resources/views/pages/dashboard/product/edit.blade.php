@@ -1,10 +1,13 @@
 @extends('layouts.dashboard')
 
-@section('titleH1', 'Editar Producto')
 
 {{-- Agregar mensaje de error cuando sea necesario --}}
 
 @section('content')
+  <x-sections.headerTitle classTitle="text-center">
+    <x-slot:textTitle>Editar Producto</x-slot:textTitle>
+  </x-sections.headerTitle>
+
   <div class="@container px-2 md:px-4">
     <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data"
       class="px-3 py-4 mx-auto my-4 max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
@@ -51,9 +54,9 @@
 
       <div class="flex items-center gap-3 justify-end">
         <button type="submit"
-          class="px-3 py-2 bg-emerald-700 rounded-md hover:bg-emerald-600 cursor-pointer">Guardar</button>
-        <a href="{{ route('products.index') }}"
-          class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Cancelar</a>
+          class="px-4 py-2 bg-emerald-700 rounded-md hover:bg-emerald-600 cursor-pointer">Guardar</button>
+        <x-buttons.linkFill href="{{ route('products.index') }}"
+          class="bg-red-900 rounded-md hover:bg-red-800">Cancelar</x-buttons.linkFill>
       </div>
     </form>
   </div>

@@ -5,24 +5,24 @@
   <script src="{{ asset('js/dashboard/modalMix.js') }}" defer></script>
 @endpush
 
-@section('titleH1', 'Productos')
-
-@section('header-actions')
-  <x-buttons.ancorFill href="{{ route('products.create') }}"
-    class="flex items-center gap-2 bg-purple-600 active:bg-purple-700">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-      <path fill="currentColor"
-        d="M18 10h-4V6a2 2 0 0 0-4 0l.071 4H6a2 2 0 0 0 0 4l4.071-.071L10 18a2 2 0 0 0 4 0v-4.071L18 14a2 2 0 0 0 0-4" />
-    </svg>
-    Nuevo
-  </x-buttons.ancorFill>
-@endsection
-
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
     - El mensaje de éxito al crear un producto -->
 
 @section('content')
+  <x-sections.headerTitle class="flex justify-between items-center">
+    <x-slot:textTitle>Lista de Productos</x-slot:textTitle>
+
+    <x-buttons.linkFill href="{{ route('products.create') }}"
+      class="flex items-center gap-2 bg-purple-600 active:bg-purple-700">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+        <path fill="currentColor"
+          d="M18 10h-4V6a2 2 0 0 0-4 0l.071 4H6a2 2 0 0 0 0 4l4.071-.071L10 18a2 2 0 0 0 4 0v-4.071L18 14a2 2 0 0 0 0-4" />
+      </svg>
+      Nuevo
+    </x-buttons.linkFill>
+  </x-sections.headerTitle>
+
   <x-tables.table>
     <x-slot:thead>
       <tr class="text-left">
@@ -94,7 +94,8 @@
                 </button>
               </li>
               <li>
-                <a href="" class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 ">
+                <a href="{{ route('products.orders', $product->id) }}"
+                  class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 ">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                       <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"

@@ -4,13 +4,15 @@
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
 @endpush
 
-@section('titleH1', 'Ordenes')
-
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
     - El mensaje de éxito al crear un producto -->
 
 @section('content')
+  <x-sections.headerTitle>
+    <x-slot:textTitle>Ordenes</x-slot:textTitle>
+  </x-sections.headerTitle>
+
   <x-tables.table>
     <x-slot:thead>
       <tr class="text-left">
@@ -29,8 +31,7 @@
         $OrderDate = Str::substr($order->date, 0, 10);
       @endphp
       <tr>
-        <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}
-        </td>
+        <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
         <td class="font-bold">{{ $order->user->fullName() }}</td>
         <td class="text-slate-300">{{ $OrderDate }}</td>
         <td><span class="me-px font-semibold">$</span>{{ $order->total + 0 }}</td>

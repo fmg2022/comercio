@@ -109,4 +109,11 @@ class ProductController extends Controller
 
         return response()->json($product);
     }
+
+    public function ordersbyproduct(String $id): View
+    {
+        $product = Product::findOrFail($id);
+        $orders = $product->orders()->paginate(10);
+        return view('pages.dashboard.product.orders', compact('product', 'orders'));
+    }
 }
