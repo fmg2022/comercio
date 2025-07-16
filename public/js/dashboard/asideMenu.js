@@ -1,13 +1,21 @@
 export default function asideMenu() {
   const $asideMenu = document.getElementById('sidebar-menu')
   const $liArr = $asideMenu.querySelectorAll('li')
-  const $path = window.location.pathname
+  let $path = window.location.pathname
+
+  if (!$path || !$liArr.length) return
+
+  if ($path.search(/\/[a-z]+\/\w+\/\w+/i) !== -1) {
+    $path = $path.substring(0, $path.indexOf('/', 11))
+  }
 
   $liArr.forEach(($li) => {
     const text = $li.querySelector('a').dataset.section
 
-    // Controlare como funcionara al dirigirse a una página por ejemplo: '/dashboard/products/1'
-    $path.endsWith('dashboard') && text === 'dashboard' ? $li.classList.add('active') : $li.classList.remove('active')
-    $path.includes(text) ? $li.classList.add('active') : $li.classList.remove('active')
+    if (($path.endsWith('dashboard') && text === 'dashboard') || $path.includes(text)) {
+      $li.classList.add('active')
+    } else {
+      $li.classList.remove('active')
+    }
   })
 }
