@@ -19,7 +19,6 @@
   <link rel="icon" href="{{ asset('favicons/favicon.ico') }}" type="image/x-icon">
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   {{-- <script>
     // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
         if (

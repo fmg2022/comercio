@@ -1,11 +1,11 @@
 @extends('layouts.dashboard')
 
 @section('content')
-  <x-sections.headerTitle classTitle="text-center text-3xl"
+  <x-sections.headerTitle classTitle="text-center text-3xl md:grow"
     class="flex flex-col-reverse items-center md:flex-row-reverse md:justify-around">
     <x-slot:textTitle>{{ $product->name }}</x-slot:textTitle>
 
-    <div class="w-full mb-4 flex justify-around md:mb-0 md:w-max md:gap-4 md:justify-normal">
+    <div class="w-full px-3 mb-4 flex justify-around md:mb-0 md:w-max md:gap-4 md:justify-normal">
       <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-500 active:bg-slate-600">
         Volver
       </x-buttons.linkFill>

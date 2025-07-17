@@ -1,7 +1,8 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  {{-- <script src="{{ asset('js/dashboard/useCharts.js') }}" defer></script> --}}
+  {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="{{ asset('js/dashboard/useCharts.js') }}" defer></script> --}}
 @endpush
 
 @section('content')

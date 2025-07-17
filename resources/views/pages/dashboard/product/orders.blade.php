@@ -1,7 +1,80 @@
 @extends('layouts.dashboard')
 
+@pushIf($orders->count() > 0, 'scripts-dashboard')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="module">
+  const options = {
+    chart: {
+      type: 'line',
+      zoom: {
+        enabled: false
+      },
+      toolbar: {
+        show: false
+      },
+      dropShadow: {
+        enabled: true,
+        color: 'oklch(44.4% 0.177 26.899)',
+        top: 16,
+        left: 7,
+        blur: 6,
+        opacity: 0.55
+      },
+    },
+    colors: ['#EA1E8C'],
+    series: [{
+      name: 'productos',
+      data: [25, 15, 10, 30, 45, 80, 50, 62, 65]
+    }],
+    title: {
+      text: 'Productos vendidos por mes (2025)',
+      align: 'left',
+      style: {
+        fontSize: '20px',
+        fontWeight: 'bold',
+        color: '#fff'
+      }
+    },
+    dataLabels: {
+      enabled: true,
+    },
+    stroke: {
+      curve: 'smooth'
+    },
+    grid: {
+      show: false
+    },
+    yaxis: {
+      title: {
+        text: 'Cantidad',
+        style: {
+          color: '#fff',
+          fontSize: '16px',
+          fontWeight: 'semibold'
+        }
+      },
+      labels: {
+        style: {
+          colors: '#fff'
+        }
+      }
+    },
+    xaxis: {
+      categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'],
+      labels: {
+        style: {
+          colors: '#fff'
+        }
+      }
+    },
+  }
+  const chart = new ApexCharts(document.querySelector("#chart-product-orders"), options)
+  chart.render()
+</script>
+@endPushIf
+
 @section('content')
-  <article class="flex flex-col justify-center items-center gap-4 md:mb-5 md:flex-row">
+  <article class="py-4 flex flex-col justify-center items-center gap-4 md:mb-7 md:flex-row">
     <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
       class="size-56 rounded-lg md:size-32">
     <div class="grow">
@@ -92,7 +165,9 @@
         </tr>
       @endforeach
       </x-tables-table>
+
+      <div id="chart-product-orders" class="w-full py-3 mb-2 mt-10 mx-auto text-slate-900 md:max-w-xl"></div>
     @else
-      <h3 class="text-xl font-semibold text-center">No hay ordenes encotradas</h3>
+      <h3 class="text-2xl font-semibold text-center">No hay ordenes encotradas</h3>
   @endif
 @endsection
