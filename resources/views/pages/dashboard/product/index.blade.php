@@ -2,7 +2,7 @@
 
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/modalMix.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/productModalMix.js') }}" defer></script>
 @endpush
 
 <!-- Mostrar un mensaje para:
@@ -28,7 +28,7 @@
       <tr class="text-left">
         <th>#</th>
         <th>Nombre</th>
-        <!-- <th class="hidden sm:table-cell">SKU</th> -->
+        <th class="hidden sm:table-cell">SKU</th>
         <th>Precio</th>
         <th>Stock</th>
         <th class="hidden md:table-cell">Categoría</th>
@@ -48,7 +48,7 @@
         </td>
         <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
         <td class="text-slate-300">{{ $product->quantity }}</td>
-        <!-- <td class="hidden text-xs text-slate-300 sm:table-cell">45-sku-1234</td> -->
+        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->sku }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
           <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption"name="toggle-btns">

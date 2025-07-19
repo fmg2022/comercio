@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('mark', 50);
             $table->string('image', 100);
             $table->decimal('price', 10, 2);
+            $table->string('sku', 50)->unique();
             $table->unsignedSmallInteger('quantity');
             $table->text('description')->nullable();
             $table->foreignId('category_id')->constrained()->onUpdate('cascade')->onDelete('cascade');

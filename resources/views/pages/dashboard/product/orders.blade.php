@@ -85,7 +85,7 @@
       <p class="relative mb-4">
         <x-buttons.linkSimple href="{{ route('products.show', $product->id) }}"
           class="text-slate-100 hover:text-purple-500 peer/popup">
-          SKU: (el numero obtenido)
+          SKU: {{ $product->sku }}
         </x-buttons.linkSimple>
         <x-popups.text class="top-full left-0 hidden bg-purple-800/80 peer-hover/popup:inline-block">
           Ver Producto

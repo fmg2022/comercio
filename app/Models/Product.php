@@ -16,6 +16,7 @@ class Product extends Model
         'name',
         'mark',
         'image',
+        'sku',
         'price',
         'quantity',
         'description',

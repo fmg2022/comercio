@@ -14,6 +14,7 @@
       <x-inputs.withLabel title="Nombre" name="name" placeholder="Nombre del producto" required />
       <x-inputs.withLabel title="Marca" name="mark" placeholder="Marca del producto" required />
       <x-inputs.withLabel title="Precio" name="price" placeholder="$1550.65" required />
+      <x-inputs.withLabel title="SKU" name="sku" placeholder="mar-cat-nom-peso123" required />
       <x-inputs.withLabel title="Stock" name="quantity" type="number" value="0" min="0" max="9999" />
       <x-inputs.withLabel title="Imagen" name="image" placeholder=".jpg, .webp, .png, ..." />
 

@@ -18,6 +18,7 @@
       <x-inputs.withLabel title="Precio" name="price" value="{{ $product->price }}" />
       <x-inputs.withLabel title="Stock" name="quantity" type="number" value="{{ $product->quantity }}" min="0"
         max="9999" />
+      <x-inputs.withLabel title="SKU" name="sku" value="{{ $product->sku }}" />
       <x-inputs.withLabel title="Imagen" name="image" value="{{ $product->image }}" />
 
       <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">

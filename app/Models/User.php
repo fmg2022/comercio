@@ -24,6 +24,8 @@ class User extends Authenticatable
         'name',
         "surname",
         'email',
+        'phone',
+        'image',
         'password',
     ];
 
@@ -52,7 +54,7 @@ class User extends Authenticatable
 
     public function fullName(): string
     {
-        return $this->name . ' ' . $this->surname;
+        return $this->surname . ', ' . $this->name;
     }
 
     public function addresses(): HasMany

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name', 150);
             $table->string('surname', 150);
             $table->string('email')->unique();
+            $table->string('image')->default('sin_foto.webp')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

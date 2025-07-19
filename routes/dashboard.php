@@ -3,11 +3,15 @@
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('dashdoard')->group(function () {
+    // User routes
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::resource('/users', UserController::class)->except(['edit', 'update']);
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
     // Product routes
     Route::resource('/products', ProductController::class);
@@ -15,7 +19,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/products/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('products.orders');
 
     // Order routes
-    Route::resource('orders', OrderController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('/orders', OrderController::class)->only(['index', 'show', 'destroy']);
     Route::put('/orders_line/{order}', [OrderController::class, 'editLine'])->name('orderLine.edit');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');

@@ -1,18 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // fetch('/api/products/' + 5)
-  //   .then(response => {
-  //     if (!response.ok) {
-  //       throw new Error(response.statusText)
-  //     }
-  //     return response.json()
-  //   })
-  //   .then(data => {
-  //     console.log(data)
-  //   })
-  //   .catch(error => {
-  //     console.error('Error:', error)
-  //     alert(error.message)
-  //   })
   // Obtener todos los botones con el atributo data-id y data-show
   const buttons = document.querySelectorAll('button[data-id][data-show]')
   // Iterar sobre los botones y agregar un evento click a cada uno

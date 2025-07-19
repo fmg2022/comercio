@@ -25,6 +25,7 @@ class ProductRequest extends FormRequest
             'name' => 'required|string|max:255',
             'mark' => 'required|string|max:255',
             'price' => 'required|string|max:255',
+            'sku' => 'required|string|max:255|unique:products,sku,' . $this->route('product'), // Ensure SKU is unique except for the current product
             'quantity' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'image' => 'string|max:255',
