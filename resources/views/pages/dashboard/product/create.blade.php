@@ -31,7 +31,6 @@
               <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
                 class="text-purple-700">
                 {{ $child->name }}
-                {{ $child->name }}
               </option>
 
               @if ($child->children->count())

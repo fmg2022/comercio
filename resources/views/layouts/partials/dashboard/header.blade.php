@@ -1,5 +1,5 @@
 <header
-  class="sticky top-0 left-0 z-10 w-full bg-teal-50 dark:bg-slate-800 border-b border-slate-100/60 dark:border-slate-700/60">
+  class="sticky top-0 left-0 z-[24] w-full bg-teal-50 dark:bg-slate-800 border-b border-slate-100/60 dark:border-slate-700/60">
   <div class="px-4 flex justify-between items-center md:px-8 xl:justify-end">
     <div class="flex items-center gap-3 py-4 px-2 xl:hidden">
       <label for="sidebar-toggle"

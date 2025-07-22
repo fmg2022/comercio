@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
 @endpush
 
 @section('content')
@@ -92,10 +92,8 @@
                 </button>
               </li> --}}
               <li>
-                @php
-                  $dialogid = 'dialog' . $user->id;
-                @endphp
-                <button type="button" onclick="openModal('{{ $dialogid }}')"
+                <button type="button" data-uid="{{ $user->id }}"
+                  data-title="{{ 'Borrar al usuario ' . $user->fullName() }}"
                   class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -108,29 +106,6 @@
                   </span>
                   Eliminar Usuario
                 </button>
-                <x-modals.simple id="{{ $dialogid }}" title="{{ 'Borrar al usuario ' . $user->fullName() }}">
-                  <div class="flex flex-col items-center justify-center">
-                    <span class="text-slate-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                      </svg>
-                    </span>
-                    <p class="px-2 py-4 mb-3 text-sm">¿Está seguro de que desea eliminarlo?</p>
-                  </div>
-                  <div class="flex justify-end gap-3 text-white">
-                    <form action="{{ route('users.destroy', $user->id) }}" method="POST">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit"
-                        class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-                    </form>
-                    <form method="dialog">
-                      <button
-                        class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                    </form>
-                  </div>
-                </x-modals.simple>
               </li>
             </ul>
           </div>
@@ -144,4 +119,27 @@
   </x-tables.table>
 
   {{ $users->links('pages.dashboard.partials.pagination') }}
+
+  <x-modals.simple id="IDmodalSimple" class="max-w-md">
+    <div class="flex flex-col items-center justify-center">
+      <span class="my-6 text-slate-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+          <path fill="currentColor"
+            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+        </svg>
+      </span>
+      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
+      <p class="px-2 py-4 mb-3 text-lg">¿Está seguro de que desea eliminarlo?</p>
+    </div>
+    <div class="flex justify-center gap-3 text-white">
+      <form id="form-modalSimple" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
+      </form>
+      <form method="dialog">
+        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+      </form>
+    </div>
+  </x-modals.simple>
 @endsection

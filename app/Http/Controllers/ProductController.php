@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Nette\Utils\Strings;
 
+use function Pest\Laravel\json;
+
 class ProductController extends Controller
 {
     public function showOne(Request $request, $id): View

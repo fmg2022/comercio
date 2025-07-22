@@ -2,11 +2,17 @@
 
 @push('scripts')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
 @endpush
 
-<!-- Mostrar un mensaje para:
+{{-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
-    - El mensaje de éxito al crear un producto -->
+    - El mensaje de éxito al crear un producto --}}
+
+@php
+  $type1 = 'modalSimpleConfirm';
+
+@endphp
 
 @section('content')
   <x-sections.headerTitle>
@@ -86,9 +92,6 @@
                   </a>
                 </li>
                 <li>
-                  @php
-                    $dialogid = 'digStatus' . $order->id;
-                  @endphp
                   <button type="button" onclick="openModal('{{ $dialogid }}')"
                     class="w-full px-4 py-2.5 flex gap-3 {{ !in_array($order->orderStatus->name, ['Entregado', 'Cancelado'])
                         ? 'cursor-pointer hover:bg-slate-700'
@@ -145,11 +148,10 @@
                   </x-modals.simple>
                 </li>
                 <li>
-                  @php
-                    $dialogid = 'dialog' . $order->id;
-                  @endphp
-                  <button type="button" onclick="openModal('{{ $dialogid }}')"
-                    class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700">
+                  <button type="button" data-uid="{{ $order->id }}" data-modal="{{ $type1 }}"
+                    data-title="{{ 'Borrar la orden ' . $OrderDate }}"
+                    data-text="¿Está seguro de que desea eliminar esta orden?"
+                    class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
@@ -161,29 +163,6 @@
                     </span>
                     Eliminar Orden
                   </button>
-                  <x-modals.simple id="{{ $dialogid }}" title="{{ 'Borrar la orden ' . $OrderDate }}">
-                    <div class="flex flex-col items-center justify-center">
-                      <span class="text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                          <path fill="currentColor"
-                            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                        </svg>
-                      </span>
-                      <p class="px-2 py-4 mb-3">¿Está seguro de que desea eliminar esta orden?</p>
-                    </div>
-                    <div class="flex justify-end gap-3 text-white">
-                      <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                          class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-                      </form>
-                      <form method="dialog">
-                        <button
-                          class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                      </form>
-                    </div>
-                  </x-modals.simple>
                 </li>
               </ul>
             </div>
@@ -198,6 +177,29 @@
   </x-tables.table>
 
   {{ $orders->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+
+  <x-modals.simple id="{{ $type1 }}" class="max-w-md">
+    <div class="flex flex-col items-center justify-center">
+      <span class="my-6 text-slate-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+          <path fill="currentColor"
+            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+        </svg>
+      </span>
+      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
+      <p class="px-2 py-4 mb-3"></p>
+    </div>
+    <div class="flex justify-end gap-3 text-white">
+      <form id="form-modalSimple" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
+      </form>
+      <form method="dialog">
+        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+      </form>
+    </div>
+  </x-modals.simple>
 
   @if ($ordersDeleted->count() > 0)
     <section class="mt-10">

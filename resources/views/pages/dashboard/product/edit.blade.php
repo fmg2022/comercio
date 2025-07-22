@@ -32,7 +32,6 @@
               <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
                 class="text-purple-700" {{ $product->category_id == $child->id ? 'selected' : '' }}>
                 {{ $child->name }}
-                {{ $child->name }}
               </option>
 
               @if ($child->children->count())

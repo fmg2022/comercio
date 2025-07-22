@@ -1,9 +1,9 @@
 <input type="checkbox" id="sidebar-toggle" class="peer hidden" />
 <div
-  class="fixed -left-full z-[15] w-full h-full bg-slate-950/60 overlay opacity-0 peer-checked:opacity-100 peer-checked:left-0 xl:hidden">
+  class="fixed -left-full z-[25] w-full h-full bg-slate-950/60 overlay opacity-0 peer-checked:opacity-100 peer-checked:left-0 xl:hidden">
 </div>
 <aside
-  class="group fixed -left-full inset-y-0 z-20 h-screen w-72 bg-teal-50 dark:bg-slate-800 border-b border-slate-100/60 dark:border-slate-700/60 transition-all duration-500 ease-in-out peer-checked:left-0 xl:sticky xl:left-0 xl:w-[90px] hover:w-72 xl:peer-checked:w-72">
+  class="group fixed -left-full inset-y-0 z-30 h-screen w-72 bg-teal-50 dark:bg-slate-800 border-b border-slate-100/60 dark:border-slate-700/60 transition-all duration-500 ease-in-out peer-checked:left-0 xl:sticky xl:left-0 xl:w-[90px] hover:w-72 xl:peer-checked:w-72">
   <div class="flex justify-between py-5 px-3 xl:min-w-full xl:w-72">
     <a href="{{ route('home') }}" class="relative flex gap-2 items-center px-3">
       <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px">

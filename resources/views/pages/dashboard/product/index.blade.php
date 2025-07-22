@@ -46,12 +46,12 @@
             <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
           </a>
         </td>
+        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->sku }}</td>
         <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
         <td class="text-slate-300">{{ $product->quantity }}</td>
-        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->sku }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
-          <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption"name="toggle-btns">
+          <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption" name="toggle-btns">
           <label for="chproduct-{{ $product->id }}"
             class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -59,11 +59,12 @@
                 d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
             </svg>
           </label>
-          <div class="absolute right-12 z-30 hidden peer-checked/checkOption:block">
+          <div class="absolute right-12 z-20 hidden peer-checked/checkOption:block">
             <ul
-              class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
+              class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800">
               <li>
-                <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
+                <button type="button"
+                  class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors"
                   data-show="true" data-id="{{ $product->id }}">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -79,7 +80,8 @@
                 </button>
               </li>
               <li>
-                <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
+                <button type="button"
+                  class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors"
                   data-show="false" data-id="{{ $product->id }}">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -95,7 +97,7 @@
               </li>
               <li>
                 <a href="{{ route('products.orders', $product->id) }}"
-                  class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 ">
+                  class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                       <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -114,7 +116,7 @@
                   $dialogid = 'dialog' . $product->id;
                 @endphp
                 <button type="button" onclick="openModal('{{ $dialogid }}')"
-                  class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
+                  class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                       <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
@@ -164,11 +166,82 @@
   {{ $products->links('pages.dashboard.partials.pagination') }}
 
   <x-modals.simple id="modal-product-mix"
-    class="max-w-xl w-full max-h-full overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
-    <form id="form-product-mix" enctype="multipart/form-data" autocomplete="off" method="POST"
+    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    <form id="form-product-mix" enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
+      <div class="inline-block w-max p-5 bg-gradient-to-b from-purple-400 to-purple-200 border-purple-700 rounded-md">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" class="size-40 object-cover">
+      </div>
+      <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2 text-gray-700 md:px-3">
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="name"></label>
+          <input type="text" id="name" name="name" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="mark"></label>
+          <input type="text" id="mark" name="mark" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="price"></label>
+          <input type="text" id="price" name="price"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="quantity"></label>
+          <input type="number" min="1" id="quantity" name="quantity"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="sku"></label>
+          <input type="text" id="sku" name="sku"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label for="category_id" class="block mb-2 font-semibold">Categoría</label>
+          <select id="category_id" name="category_id"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+            @foreach ($categories as $category)
+              <option value="{{ $category->id }}" {{ $category->children->count() ? 'disabled' : '' }}
+                class="font-semibold text-purple-700 bg-purple-50">
+                {{ $category->name }}
+              </option>
+              @if ($category->children->count())
+                @foreach ($category->children as $child)
+                  <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
+                    class="text-purple-700">
+                    {{ $child->name }}
+                  </option>
+
+                  @if ($child->children->count())
+                    @foreach ($child->children as $grandChild)
+                      <option value="{{ $grandChild->id }}" {{ $grandChild->children->count() ? 'disabled' : '' }}>
+                        -- {{ $grandChild->name }}
+                      </option>
+                    @endforeach
+                  @endif
+                @endforeach
+              @endif
+            @endforeach
+          </select>
+        </div>
+        <div class="col-span-2">
+          <label class="block mb-2 font-semibold" for="description"></label>
+          <textarea id="description" name="description"
+            class="w-full min-h-[1lh] px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
+        </div>
+        <button type="submit"
+          class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
+      </fieldset>
     </form>
     <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-1/12 sm:left-1/5">
       <button
@@ -305,73 +378,4 @@
     <h3 class="my-3 text-center text-xl font-semibold">Sin productos eliminados</h3>
   @endif
 
-  <template id="modal-content">
-    <div class="inline-block w-max p-5 bg-gradient-to-b from-purple-400 to-purple-200 border-purple-700 rounded-md">
-      <img src="{{ asset('images/products') }}/zz_sin_producto.webp" class="size-40 object-cover">
-    </div>
-    <fieldset class="py-3 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-1 text-gray-700">
-      <div class="mb-4">
-        <label class="block mb-2 font-semibold"></label>
-        <input type="text" autocomplete="off"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required disabled>
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 font-semibold"></label>
-        <input type="text"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required disabled>
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 font-semibold"></label>
-        <input type="text"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required disabled>
-      </div>
-      <div class="mb-4">
-        <label class="block mb-2 font-semibold"></label>
-        <input type="number" min="1"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required disabled>
-      </div>
-      <div class="mb-4 col-span-2">
-        <label for="category_id" class="block mb-2 font-semibold">Categoría</label>
-        <select id="category_id" name="category_id"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required disabled>
-          @foreach ($categories as $category)
-            <option value="{{ $category->id }}" {{ $category->children->count() ? 'disabled' : '' }}
-              class="font-semibold text-purple-700 bg-purple-50">
-              {{ $category->name }}
-            </option>
-            @if ($category->children->count())
-              @foreach ($category->children as $child)
-                <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
-                  class="text-purple-700">
-                  {{ $child->name }}
-                  {{ $child->name }}
-                </option>
-
-                @if ($child->children->count())
-                  @foreach ($child->children as $grandChild)
-                    <option value="{{ $grandChild->id }}" {{ $grandChild->children->count() ? 'disabled' : '' }}>
-                      -- {{ $grandChild->name }}
-                    </option>
-                  @endforeach
-                @endif
-              @endforeach
-            @endif
-          @endforeach
-        </select>
-      </div>
-      <div class="col-span-2">
-        <label class="block mb-2 font-semibold"></label>
-        <textarea rows="4"
-          class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-          disabled></textarea>
-      </div>
-      <button type="submit"
-        class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
-    </fieldset>
-  </template>
 @endsection
