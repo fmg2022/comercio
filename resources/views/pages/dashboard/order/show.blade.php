@@ -44,11 +44,10 @@
             </form>
           </div>
         </x-modals.simple>
-      @else
-        <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
-          Generar PDF
-        </x-buttons.linkFill>
       @endif
+      <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
+        Generar PDF
+      </x-buttons.linkFill>
     </div>
   </x-sections.headerTitle>
 

@@ -199,7 +199,7 @@
       </div>
       <ul class="flex flex-col gap-3">
         <li class="flex items-center gap-4">
-          <img src="product.webp" alt="foto" class="size-10 aspect-square">
+          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="foto" class="size-10 aspect-square">
           <div class="grow">
             <h4>Nombre del producto</h4>
             <span class="font-thin dark:text-slate-400">$100</span>
@@ -210,7 +210,7 @@
           </div>
         </li>
         <li class="flex items-center gap-4">
-          <img src="product.webp" alt="foto" class="size-10 aspect-square">
+          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="foto" class="size-10 aspect-square">
           <div class="grow">
             <h4>Nombre del producto</h4>
             <span class="font-thin dark:text-slate-400">$130</span>
@@ -221,7 +221,7 @@
           </div>
         </li>
         <li class="flex items-center gap-4">
-          <img src="product.webp" alt="foto" class="size-10 aspect-square">
+          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="foto" class="size-10 aspect-square">
           <div class="grow">
             <h4>Nombre del producto</h4>
             <span class="font-thin dark:text-slate-400">$210</span>

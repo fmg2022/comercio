@@ -19,8 +19,7 @@ export default function carousel(carousel, btns) {
 
   $btns.forEach(btn => {
     btn.addEventListener('click', () => {
-      $carousel.scrollLeft += btn.id === btns.replace('#', '')+'Prev' ? -itemWidth : itemWidth
-      console.log(itemWidth);
+      $carousel.scrollLeft += btn.id === btns.replace('#', '') + 'Prev' ? -itemWidth : itemWidth
     })
   })
 
@@ -44,7 +43,7 @@ export default function carousel(carousel, btns) {
   const infiniteScroll = (e) => {
     if ($carousel.scrollLeft === 0) {
       $carousel.classList.replace('scroll-smooth', 'scroll-auto')
-      $carousel.scrollLeft = $carousel.scrollWidth -(2 * $carousel.offsetWidth)
+      $carousel.scrollLeft = $carousel.scrollWidth - (2 * $carousel.offsetWidth)
       $carousel.classList.replace('scroll-auto', 'scroll-smooth')
     } else if (Math.ceil($carousel.scrollLeft) === $carousel.scrollWidth - $carousel.offsetWidth) {
       $carousel.classList.replace('scroll-smooth', 'scroll-auto')
@@ -52,7 +51,7 @@ export default function carousel(carousel, btns) {
       $carousel.classList.replace('scroll-auto', 'scroll-smooth')
     }
   }
-  
+
   $carousel.addEventListener('mousedown', dragStart)
   $carousel.addEventListener('mousemove', dragging)
   $carousel.addEventListener('mouseup', dragStop)

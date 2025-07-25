@@ -184,7 +184,7 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto 1</h4>
           <div class="flex items-center justify-between gap-2">
@@ -209,7 +209,7 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto</h4>
           <div class="flex items-center justify-between gap-2">
@@ -234,7 +234,8 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto"
+          class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto 1</h4>
           <div class="flex items-center justify-between gap-2">
@@ -259,7 +260,8 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto"
+          class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto</h4>
           <div class="flex items-center justify-between gap-2">
@@ -284,7 +286,8 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto"
+          class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto 1</h4>
           <div class="flex items-center justify-between gap-2">
@@ -309,7 +312,8 @@
               d="M4 6v2h2v20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8h2V6zm4 22V8h16v20zm4-26h8v2h-8z" />
           </svg>
         </a>
-        <img src="product.webp" alt="producto" class="size-20 aspect-square">
+        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto"
+          class="size-20 aspect-square">
         <div class="w-full ps-2 pe-4 flex flex-col gap-1 font-semibold">
           <h4>Nombre del producto</h4>
           <div class="flex items-center justify-between gap-2">

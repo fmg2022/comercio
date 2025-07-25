@@ -73,6 +73,10 @@
 </script>
 @endPushIf
 
+@push('scripts-dashboard')
+  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+@endpush
+
 @section('content')
   <article class="py-4 flex flex-col justify-center items-center gap-4 md:mb-7 md:flex-row">
     <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
@@ -81,6 +85,7 @@
       <h1 class="text-2xl font-semibold">
         {{ $product->name }}
         <span>{{ $product->mark }}</span>
+        {{ $product->trashed() ? ' (Eliminado/a)' : '' }}
       </h1>
       <p class="relative mb-4">
         <x-buttons.linkSimple href="{{ route('products.show', $product->id) }}"
@@ -92,12 +97,39 @@
         </x-popups.text>
       </p>
     </div>
-    <div class="mb-4 flex gap-4">
+    <div class="mb-4 flex flex-wrap gap-4">
       <x-buttons.linkFill href="{{ route('products.index') }}"
         class="bg-slate-700 active:bg-slate-600">Volver</x-buttons.linkFill>
       <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
         Generar PDF
       </x-buttons.linkFill>
+      @if ($product->trashed())
+        <button type="button" onclick="openModal('restDialog')"
+          class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">
+          Restaurar Producto
+        </button>
+        <x-modals.simple id="restDialog" title="{{ 'Restaurar el producto ' . $product->name }}">
+          <div class="flex flex-col items-center justify-center">
+            <span class="text-slate-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
+                <path fill="currentColor"
+                  d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+              </svg>
+            </span>
+            <p class="px-2 py-4 mb-3">¿Está seguro de que desea restaurar el producto?</p>
+          </div>
+          <div class="flex justify-end gap-3 text-white">
+            <form action="{{ route('products.restore', $product->id) }}" method="POST">
+              @csrf
+              <button type="submit"
+                class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">Restaurar</button>
+            </form>
+            <form method="dialog">
+              <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+            </form>
+          </div>
+        </x-modals.simple>
+      @endif
     </div>
   </article>
 
@@ -116,13 +148,13 @@
       </x-slot:thead>
 
       @foreach ($orders as $index => $order)
-        <tr>
+        <tr @class(['text-slate-400' => $order->trashed()])>
           @php
             $orderDate = Str::substr($order->date, 0, 10);
           @endphp
           <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
           <td class="relative">
-            <x-buttons.linkSimple href="" class="text-slate-100 hover:text-purple-500 peer/popup">
+            <x-buttons.linkSimple href="" class="hover:text-purple-500 peer/popup">
               {{ $order->user->fullName() }}
             </x-buttons.linkSimple>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
@@ -130,8 +162,7 @@
             </x-popups.text>
           </td>
           <td class="relative">
-            <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}"
-              class="text-slate-100 hover:text-purple-500 peer/popup">
+            <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
               #{{ $order->id }}
             </x-buttons.linkSimple>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">

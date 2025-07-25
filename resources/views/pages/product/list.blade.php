@@ -104,7 +104,7 @@
       <!-- Aquí van las tarjetas de productos -->
       <article class="w-[200px] flex flex-col gap-2 rounded-lg overflow-hidden dark:bg-white/15">
         <a href="#">
-          <img src="product.webp" alt="producto" class="aspect-square">
+          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="aspect-square">
           <span class="py-2 block text-lg font-semibold text-center">Nombre del producto</span>
         </a>
         <div class="mx-3 py-4 border-t border-black/20 dark:border-white/20">
@@ -123,7 +123,7 @@
       </article>
       <article class="w-[200px] flex flex-col gap-2 rounded-lg overflow-hidden dark:bg-white/15">
         <a href="#">
-          <img src="product.webp" alt="producto" class="aspect-square">
+          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="aspect-square">
           <span class="py-2 block text-lg font-semibold text-center">Nombre del producto</span>
         </a>
         <div class="mx-3 py-4 border-t border-black/20 dark:border-white/20">

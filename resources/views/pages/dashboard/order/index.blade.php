@@ -11,7 +11,6 @@
 
 @php
   $type1 = 'modalSimpleConfirm';
-
 @endphp
 
 @section('content')

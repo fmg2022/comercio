@@ -2,12 +2,17 @@
 
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/productModalMix.js') }}" defer></script>
 @endpush
 
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
     - El mensaje de éxito al crear un producto -->
+
+@php
+  $type1 = 'modal-delete-restore';
+@endphp
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
@@ -51,15 +56,15 @@
         <td class="text-slate-300">{{ $product->quantity }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
-          <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption" name="toggle-btns">
-          <label for="chproduct-{{ $product->id }}"
-            class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-            </svg>
-          </label>
-          <div class="absolute right-12 z-20 hidden peer-checked/checkOption:block">
+          <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
+            class="right-12">
+            <x-slot:label>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+              </svg>
+            </x-slot:label>
+
             <ul
               class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800">
               <li>
@@ -112,10 +117,10 @@
                 </a>
               </li>
               <li>
-                @php
-                  $dialogid = 'dialog' . $product->id;
-                @endphp
-                <button type="button" onclick="openModal('{{ $dialogid }}')"
+                {{-- MODIFICAR: Sacar el modal del <li> --}}
+                <button type="button" data-title="{{ $product->name . ' ' . $product->mark }}"
+                  data-text="¿Estas seguro que quieres eliminar este producto?" data-uid="{{ $product->id }}"
+                  data-modal="{{ $type1 }}" data-button="Eliminar"
                   class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -128,32 +133,9 @@
                   </span>
                   Eliminar Producto
                 </button>
-                <x-modals.simple id="{{ $dialogid }}" title="{{ 'Borrar el producto ' . $product->name }}">
-                  <div class="flex flex-col items-center justify-center">
-                    <span class="text-slate-500">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                      </svg>
-                    </span>
-                    <p class="px-2 py-4 mb-3">¿Está seguro de que desea eliminar este producto?</p>
-                  </div>
-                  <div class="flex justify-end gap-3 text-white">
-                    <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit"
-                        class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-                    </form>
-                    <form method="dialog">
-                      <button
-                        class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                    </form>
-                  </div>
-                </x-modals.simple>
               </li>
             </ul>
-          </div>
+          </x-popups.contentWcheck>
         </td>
       </tr>
     @empty
@@ -165,6 +147,7 @@
 
   {{ $products->links('pages.dashboard.partials.pagination') }}
 
+  {{-- MODAL SHOW, EDIT --}}
   <x-modals.simple id="modal-product-mix"
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form id="form-product-mix" enctype="multipart/form-data" method="POST"
@@ -249,6 +232,30 @@
     </form>
   </x-modals.simple>
 
+  {{-- MODAL DELETE, RESTORE --}}
+  <x-modals.simple id="{{ $type1 }}" class="max-w-md">
+    <div class="flex flex-col items-center justify-center">
+      <span class="my-6 text-slate-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+          <path fill="currentColor"
+            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+        </svg>
+      </span>
+      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
+      <p class="px-2 py-4 mb-3"></p>
+    </div>
+    <div class="flex justify-end gap-3 text-white">
+      <form id="form-modalSimple" method="POST">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer"></button>
+      </form>
+      <form method="dialog">
+        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
+      </form>
+    </div>
+  </x-modals.simple>
+
   @if ($productsDeleted->count() > 0)
     <section class="mt-10">
       <h2 class="mb-5 px-4 text-2xl font-semibold text-gray-300">Productos Eliminados</h2>
@@ -257,41 +264,44 @@
           <tr class="text-left">
             <th>#</th>
             <th>Nombre</th>
-            <!-- <th class="hidden sm:table-cell">SKU</th> -->
+            <th class="hidden sm:table-cell">SKU</th>
             <th>Precio</th>
             <th>Stock</th>
             <th class="hidden md:table-cell">Categoría</th>
             <th class="text-end">Opciones</th>
           </tr>
         </x-slot>
-        @foreach ($productsDeleted as $product)
-          <tr>
-            <td class="flex items-center gap-3">
-              <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-                class="size-12 aspect-square">
-              <span class="hidden font-semibold sm:inline">{{ $product->name }}</span>
+        @forelse ($productsDeleted as $index => $product)
+          <tr class="text-slate-400">
+            <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
+            <td>
+              <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
+                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                  class="size-12 aspect-square">
+                <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+              </a>
             </td>
-            <td class="font-bold"><span class=" me-px">$</span>{{ $product->price }}</td>
-            <td class="text-xs text-slate-300">{{ $product->quantity }}</td>
-            <!-- <td class="hidden text-xs text-slate-300 sm:table-cell">45</td> -->
-            <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
+            <td class="hidden text-xs sm:table-cell">{{ $product->sku }}</td>
+            <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
+            <td>{{ $product->quantity }}</td>
+            <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
             <td class="relative flex justify-end">
-              <input type="checkbox" id="chproduct-{{ $product->id }}" class="hidden peer/checkOption"
-                name="toggle-btns">
-              <label for="chproduct-{{ $product->id }}"
-                class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-                </svg>
-              </label>
-              <div class="absolute right-12 z-30 hidden peer-checked/checkOption:block">
+              <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
+                class="right-12">
+                <x-slot:label>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+                  </svg>
+                </x-slot:label>
+
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
                   <li>
-                    <a href="{{ route('products.show', $product->id) }}"
-                      class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 ">
+                    <button type="button"
+                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors"
+                      data-show="true" data-id="{{ $product->id }}">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                           <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -303,10 +313,11 @@
                         </svg>
                       </span>
                       Ver Producto
-                    </a>
+                    </button>
                   </li>
                   <li>
-                    <a href="" class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 ">
+                    <a href="{{ route('products.orders', $product->id) }}"
+                      class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
                       <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                           <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -321,13 +332,6 @@
                     </a>
                   </li>
                   <li class="flex gap-3">
-                    <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
-                        <path fill="currentColor" fill-rule="evenodd"
-                          d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
-                          clip-rule="evenodd" />
-                      </svg>
-                    </span>
                     @php
                       $dialogid = 'dialog' . $product->id;
                     @endphp
@@ -366,7 +370,7 @@
                     </x-modals.simple>
                   </li>
                 </ul>
-              </div>
+              </x-popups.contentWcheck>
             </td>
           </tr>
         @endforeach
@@ -375,7 +379,6 @@
       {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
     </section>
   @else
-    <h3 class="my-3 text-center text-xl font-semibold">Sin productos eliminados</h3>
+    <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin productos eliminados</h3>
   @endif
-
 @endsection

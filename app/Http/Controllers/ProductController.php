@@ -83,8 +83,7 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, String $id)
     {
-        $product = Product::findOrFail($id);
-        $product->update($request->validated());
+        Product::findOrFail($id)->update($request->validated());
 
         return redirect()->route('products.index');
     }
@@ -97,14 +96,13 @@ class ProductController extends Controller
 
     public function restore(String $id): RedirectResponse
     {
-        $product = Product::withTrashed()->findOrFail($id);
-        $product->restore();
+        Product::onlyTrashed()->findOrFail($id)->restore();
         return Redirect::back();
     }
 
     public function fetch(String $id): JsonResponse
     {
-        $product = Product::find($id)?->makeHidden(['created_at', 'updated_at', 'deleted_at']);
+        $product = Product::withTrashed()->find($id, ['id', 'name', 'mark', 'image', 'sku', 'price', 'quantity', 'description']);
         if (!$product) {
             return response()->json(['error' => 'Producto no encontrado'], 404);
         }
@@ -112,10 +110,11 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
+    // Modificar: Obtener las ordenes de un producto eliminado
     public function ordersbyproduct(String $id): View
     {
-        $product = Product::findOrFail($id);
-        $orders = $product->orders()->paginate(10);
+        $product = Product::withTrashed()->findOrFail($id);
+        $orders = $product->orders()->withTrashed()->paginate(10);
         return view('pages.dashboard.product.orders', compact('product', 'orders'));
     }
 }
