@@ -14,7 +14,7 @@ class OrderController extends Controller
     {
         return view('pages.dashboard.order.index', [
             'orders' => Order::paginate(10),
-            'ordersDeleted' => Order::onlyTrashed()->paginate(10),
+            'ordersDeleted' => Order::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
             'orderStatuses' => OrderStatus::all('name', 'id'),
         ]);
     }

@@ -47,7 +47,7 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
-            'productsDeleted' => Product::onlyTrashed()->paginate(10),
+            'productsDeleted' => Product::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
             'categories' => Category::where('parent_id', null)->get()
         ]);
     }
@@ -110,7 +110,6 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    // Modificar: Obtener las ordenes de un producto eliminado
     public function ordersbyproduct(String $id): View
     {
         $product = Product::withTrashed()->findOrFail($id);
