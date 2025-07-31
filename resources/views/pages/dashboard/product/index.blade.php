@@ -1,8 +1,7 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/productModalMix.js') }}" defer></script>
 @endpush
 
@@ -117,7 +116,6 @@
                 </a>
               </li>
               <li>
-                {{-- MODIFICAR: Sacar el modal del <li> --}}
                 <button type="button" data-title="{{ $product->name . ' ' . $product->mark }}"
                   data-text="¿Estas seguro que quieres eliminar este producto?" data-uid="{{ $product->id }}"
                   data-modal="{{ $type1 }}" data-button="Eliminar"
@@ -147,6 +145,109 @@
 
   {{ $products->links('pages.dashboard.partials.pagination') }}
 
+  @if ($productsDeleted->count() > 0)
+    <section class="mt-10">
+      <h2 class="mb-5 px-4 text-2xl font-semibold text-gray-300">Productos Eliminados</h2>
+      <x-tables.table>
+        <x-slot:thead>
+          <tr class="text-left">
+            <th>#</th>
+            <th>Nombre</th>
+            <th class="hidden sm:table-cell">SKU</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th class="hidden md:table-cell">Categoría</th>
+            <th class="text-end">Opciones</th>
+          </tr>
+        </x-slot>
+        @foreach ($productsDeleted as $index => $product)
+          <tr class="text-slate-400">
+            <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
+            <td>
+              <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
+                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                  class="size-12 aspect-square">
+                <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+              </a>
+            </td>
+            <td class="hidden text-xs sm:table-cell">{{ $product->sku }}</td>
+            <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
+            <td>{{ $product->quantity }}</td>
+            <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
+            <td class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
+                class="right-12">
+                <x-slot:label>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+                  </svg>
+                </x-slot:label>
+
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
+                  <li>
+                    <button type="button"
+                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors"
+                      data-show="true" data-id="{{ $product->id }}">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2">
+                            <path
+                              d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
+                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
+                          </g>
+                        </svg>
+                      </span>
+                      Ver Producto
+                    </button>
+                  </li>
+                  <li>
+                    <a href="{{ route('products.orders', $product->id) }}"
+                      class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="1.5" color="currentColor">
+                            <path
+                              d="M4.318 19.682C3 18.364 3 16.242 3 12s0-6.364 1.318-7.682S7.758 3 12 3s6.364 0 7.682 1.318S21 7.758 21 12s0 6.364-1.318 7.682S16.242 21 12 21s-6.364 0-7.682-1.318" />
+                            <path d="M6 12h2.5l2-4l3 8l2-4H18" />
+                          </g>
+                        </svg>
+                      </span>
+                      Productos en Ordenes
+                    </a>
+                  </li>
+                  <li class="flex gap-3">
+                    <button type="button" data-title="{{ $product->name . ' ' . $product->mark }}"
+                      data-text="¿Estas seguro que quieres restaurar este producto?" data-uid="{{ $product->id }}"
+                      data-modal="{{ $type1 }}" data-button="Restaurar"
+                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
+                          <path fill="currentColor" fill-rule="evenodd"
+                            d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      Restaurar Producto
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </td>
+          </tr>
+        @endforeach
+      </x-tables.table>
+
+      {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    </section>
+  @else
+    <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin productos eliminados</h3>
+  @endif
+
   {{-- MODAL SHOW, EDIT --}}
   <x-modals.simple id="modal-product-mix"
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
@@ -154,9 +255,8 @@
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
-      <div class="inline-block w-max p-5 bg-gradient-to-b from-purple-400 to-purple-200 border-purple-700 rounded-md">
-        <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" class="size-40 object-cover">
-      </div>
+      <x-images.borderFill src="{{ asset('images/products') }}/zz_emptyProducto.webp"
+        alt="Producto {{ $product->name }} sin imagen" />
       <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2 text-gray-700 md:px-3">
         <div class="mb-4">
           <label class="block mb-2 font-semibold" for="name"></label>
@@ -233,152 +333,12 @@
   </x-modals.simple>
 
   {{-- MODAL DELETE, RESTORE --}}
-  <x-modals.simple id="{{ $type1 }}" class="max-w-md">
-    <div class="flex flex-col items-center justify-center">
-      <span class="my-6 text-slate-500">
-        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-        </svg>
-      </span>
-      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
-      <p class="px-2 py-4 mb-3"></p>
-    </div>
-    <div class="flex justify-end gap-3 text-white">
-      <form id="form-modalSimple" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer"></button>
-      </form>
-      <form method="dialog">
-        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-      </form>
-    </div>
-  </x-modals.simple>
-
-  @if ($productsDeleted->count() > 0)
-    <section class="mt-10">
-      <h2 class="mb-5 px-4 text-2xl font-semibold text-gray-300">Productos Eliminados</h2>
-      <x-tables.table>
-        <x-slot:thead>
-          <tr class="text-left">
-            <th>#</th>
-            <th>Nombre</th>
-            <th class="hidden sm:table-cell">SKU</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th class="hidden md:table-cell">Categoría</th>
-            <th class="text-end">Opciones</th>
-          </tr>
-        </x-slot>
-        @forelse ($productsDeleted as $index => $product)
-          <tr class="text-slate-400">
-            <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
-            <td>
-              <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
-                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-                  class="size-12 aspect-square">
-                <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
-              </a>
-            </td>
-            <td class="hidden text-xs sm:table-cell">{{ $product->sku }}</td>
-            <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-            <td>{{ $product->quantity }}</td>
-            <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
-            <td class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
-                class="right-12">
-                <x-slot:label>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-                  </svg>
-                </x-slot:label>
-
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
-                  <li>
-                    <button type="button"
-                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors"
-                      data-show="true" data-id="{{ $product->id }}">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path
-                              d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                          </g>
-                        </svg>
-                      </span>
-                      Ver Producto
-                    </button>
-                  </li>
-                  <li>
-                    <a href="{{ route('products.orders', $product->id) }}"
-                      class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" color="currentColor">
-                            <path
-                              d="M4.318 19.682C3 18.364 3 16.242 3 12s0-6.364 1.318-7.682S7.758 3 12 3s6.364 0 7.682 1.318S21 7.758 21 12s0 6.364-1.318 7.682S16.242 21 12 21s-6.364 0-7.682-1.318" />
-                            <path d="M6 12h2.5l2-4l3 8l2-4H18" />
-                          </g>
-                        </svg>
-                      </span>
-                      Productos en Ordenes
-                    </a>
-                  </li>
-                  <li class="flex gap-3">
-                    @php
-                      $dialogid = 'dialog' . $product->id;
-                    @endphp
-                    <button type="button" onclick="openModal('{{ $dialogid }}')"
-                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700">
-                      <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
-                          <path fill="currentColor" fill-rule="evenodd"
-                            d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
-                            clip-rule="evenodd" />
-                        </svg>
-                      </span>
-                      Restaurar Orden
-                    </button>
-                    <x-modals.simple id="{{ $dialogid }}" title="{{ 'Restaurar el producto ' . $product->name }}">
-                      <div class="flex flex-col items-center justify-center">
-                        <span class="text-slate-500">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                              d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                          </svg>
-                        </span>
-                        <p class="px-2 py-4 mb-3 text-lg">¿Está seguro de que desea restaurar este producto?</p>
-                      </div>
-                      <div class="flex justify-end gap-3 text-white">
-                        <form action="{{ route('products.restore', $product->id) }}" method="POST">
-                          @csrf
-                          <button type="submit"
-                            class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">Restaurar</button>
-                        </form>
-                        <form method="dialog">
-                          <button
-                            class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                        </form>
-                      </div>
-                    </x-modals.simple>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </td>
-          </tr>
-        @endforeach
-      </x-tables.table>
-
-      {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
-    </section>
-  @else
-    <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin productos eliminados</h3>
-  @endif
+  <x-modals.delete id="{{ $type1 }}" class="max-w-md" iconClass="text-slate-500">
+    <x-slot:icon>
+      <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+        <path fill="currentColor"
+          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+      </svg>
+    </x-slot:icon>
+  </x-modals.delete>
 @endsection

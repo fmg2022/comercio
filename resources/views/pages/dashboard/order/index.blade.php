@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@push('scripts')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
+@push('scripts-dashboard')
+  <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endpush
 
 {{-- Mostrar un mensaje para:
@@ -10,7 +10,8 @@
     - El mensaje de éxito al crear un producto --}}
 
 @php
-  $type1 = 'modalSimpleConfirm';
+  $type1 = 'modal-delete-restore';
+  $type2 = 'modal-change-status';
 @endphp
 
 @section('content')
@@ -91,10 +92,9 @@
                   </a>
                 </li>
                 <li>
-                  <button type="button" onclick="openModal('{{ $dialogid }}')"
-                    class="w-full px-4 py-2.5 flex gap-3 {{ !in_array($order->orderStatus->name, ['Entregado', 'Cancelado'])
-                        ? 'cursor-pointer hover:bg-slate-700'
-                        : 'text-slate-500 pointer-events-none' }}">
+                  <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $order->id }}"
+                    data-from="{{ $order->user->fullName() }}" data-amount="{{ $order->total + 0 }}"
+                    data-status="{{ $order->orderStatus->id }}" class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -106,50 +106,11 @@
                     </span>
                     Cambiar Estado
                   </button>
-                  <x-modals.simple id="{{ $dialogid }}" class="max-w-xl w-full"
-                    title="Cambiar el estado de la orden ({{ $OrderDate }})">
-                    <div class="relative flex flex-col items-center justify-center text-white">
-                      <form action="{{ route('orders.updateStatus', $order) }}" method="POST" class="w-full">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-14 grid place-items-center text-slate-900">
-                          <div class="px-5 pb-4 flex gap-5 text-2xl">
-                            <div class="flex flex-col gap-5">
-                              <span class="text-lg text-slate-600">De:</span>
-                              <span class="text-lg text-slate-600">Monto:</span>
-                              <label class="text-lg text-slate-600" for="quantity{{ $order->id }}">
-                                Estado de la orden:
-                              </label>
-                            </div>
-                            <div class="flex flex-col gap-4">
-                              <h3 class="font-bold">{{ $order->user->fullName() }}</h3>
-                              <p><span class="me-px">$</span>{{ $order->total + 0 }}</p>
-                              <select name="status" id="quantity{{ $order->id }}"
-                                class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
-                                @foreach ($orderStatuses as $status)
-                                  <option value="{{ $status->id }}"
-                                    {{ $status->id === $order->orderStatus->id ? 'selected' : '' }}>
-                                    {{ $status->name }}
-                                  </option>
-                                @endforeach
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                        <button type="submit"
-                          class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
-                      </form>
-                      <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
-                        <button
-                          class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
-                      </form>
-                    </div>
-                  </x-modals.simple>
                 </li>
                 <li>
                   <button type="button" data-uid="{{ $order->id }}" data-modal="{{ $type1 }}"
-                    data-title="{{ 'Borrar la orden ' . $OrderDate }}"
-                    data-text="¿Está seguro de que desea eliminar esta orden?"
+                    data-title="Orden #{{ $order->id . ' (' . $OrderDate }})" data-button="Eliminar"
+                    data-text="¿Está seguro de que desea eliminar la orden?"
                     class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -176,29 +137,6 @@
   </x-tables.table>
 
   {{ $orders->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
-
-  <x-modals.simple id="{{ $type1 }}" class="max-w-md">
-    <div class="flex flex-col items-center justify-center">
-      <span class="my-6 text-slate-500">
-        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-        </svg>
-      </span>
-      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
-      <p class="px-2 py-4 mb-3"></p>
-    </div>
-    <div class="flex justify-end gap-3 text-white">
-      <form id="form-modalSimple" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-      </form>
-      <form method="dialog">
-        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-      </form>
-    </div>
-  </x-modals.simple>
 
   @if ($ordersDeleted->count() > 0)
     <section class="mt-10">
@@ -260,11 +198,10 @@
                       </a>
                     </li>
                     <li>
-                      @php
-                        $dialogid = 'dialog' . $order->id;
-                      @endphp
-                      <button type="button" onclick="openModal('{{ $dialogid }}')"
-                        class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700">
+                      <button type="button" data-uid="{{ $order->id }}" data-modal="{{ $type1 }}"
+                        data-title="Orden #{{ $order->id . ' (' . $OrderDate }})" data-button="Restaurar"
+                        data-text="¿Está seguro de que desea restaurar la orden?"
+                        class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
                             <path fill="currentColor" fill-rule="evenodd"
@@ -274,28 +211,6 @@
                         </span>
                         Restaurar Orden
                       </button>
-                      <x-modals.simple id="{{ $dialogid }}" title="{{ 'Restaurar la orden ' . $OrderDate }}">
-                        <div class="flex flex-col items-center justify-center">
-                          <span class="text-slate-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                              <path fill="currentColor"
-                                d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-                            </svg>
-                          </span>
-                          <p class="px-2 py-4 mb-3">¿Está seguro de que desea restaurar esta orden?</p>
-                        </div>
-                        <div class="flex justify-end gap-3 text-white">
-                          <form action="{{ route('orders.restore', $order->id) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                              class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">Restaurar</button>
-                          </form>
-                          <form method="dialog">
-                            <button
-                              class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-                          </form>
-                        </div>
-                      </x-modals.simple>
                     </li>
                   </ul>
                 </div>
@@ -310,4 +225,52 @@
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin ordenes eliminados</h3>
   @endif
+
+  {{-- Modal CHANGE STATUS --}}
+  <x-modals.simple id="{{ $type2 }}" class="max-w-xl w-full"
+    title="Cambiar el estado de la orden ({{ $OrderDate }})">
+    <div class="relative mt-4 flex flex-col items-center justify-center text-white">
+      <form method="POST" class="w-full" id="form-modalSimple">
+        @csrf
+        @method('PUT')
+        <div class="mb-16 grid place-items-center text-slate-900">
+          <div class="px-5 pb-4 flex gap-5 text-2xl">
+            <div class="flex flex-col gap-5">
+              <span class="text-lg text-slate-600">De:</span>
+              <span class="text-lg text-slate-600">Monto:</span>
+              <label class="text-lg text-slate-600" for="">
+                Estado de la orden:
+              </label>
+            </div>
+            <div class="flex flex-col gap-4">
+              <h3 class="font-bold"></h3>
+              <p><span class="me-px">$</span>0</p>
+              <select name="status" class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+                @foreach ($orderStatuses as $status)
+                  <option value="{{ $status->id }}">
+                    {{ $status->name }}
+                  </option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="submit"
+          class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
+      </form>
+      <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
+        <button class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+      </form>
+    </div>
+  </x-modals.simple>
+
+  {{-- Modal DELETE y RESTORE --}}
+  <x-modals.delete id="{{ $type1 }}" class="max-w-md" iconClass="text-slate-500">
+    <x-slot:icon>
+      <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+        <path fill="currentColor"
+          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+      </svg>
+    </x-slot:icon>
+  </x-modals.delete>
 @endsection
