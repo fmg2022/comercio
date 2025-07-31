@@ -121,11 +121,8 @@
                           @csrf
                           @method('PUT')
                           <div class="mb-14 flex flex-col items-center text-slate-900">
-                            <div
-                              class="p-5 mx-auto mb-4 bg-gradient-to-b from-purple-400 to-purple-200 border-purple-700 rounded-md">
-                              <img src="{{ asset('images/products/' . $orderLine->image) }}"
-                                alt="{{ $orderLine->name }}" class="size-40 object-cover">
-                            </div>
+                            <x-images.borderFill src="{{ asset('images/products/' . $orderLine->image) }}"
+                              alt="{{ $orderLine->name }}" />
                             <input type="hidden" name="product_id" value="{{ $orderLine->id }}">
                             <div class="mb-3 text-2xl">
                               <h3 class="font-bold">
