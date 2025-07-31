@@ -1,8 +1,13 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalSimple.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/userModalMix.js') }}" defer></script>
 @endpush
+
+@php
+  $type1 = 'modal-delete-restore';
+@endphp
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
@@ -60,6 +65,7 @@
             <ul
               class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
               <li>
+                {{-- Crear el modal y .js --}}
                 <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
                   data-show="true" data-id="{{ $user->id }}">
                   <span>
@@ -75,7 +81,6 @@
                   Ver Usuario
                 </button>
               </li>
-              {{--               Solo para administrador principal
               <li>
                 <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
                   data-show="false" data-id="{{ $user->id }}">
@@ -90,10 +95,11 @@
                   </span>
                   Editar Usuario
                 </button>
-              </li> --}}
+              </li>
               <li>
-                <button type="button" data-uid="{{ $user->id }}"
-                  data-title="{{ 'Borrar al usuario ' . $user->fullName() }}"
+                <button type="button" data-uid="{{ $user->id }}" data-modal="{{ $type1 }}"
+                  data-title="{{ $user->fullName() }}" data-button="Eliminar"
+                  data-text="¿Está seguro de que desea eliminar al usuario?"
                   class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
                   <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
@@ -120,26 +126,147 @@
 
   {{ $users->links('pages.dashboard.partials.pagination') }}
 
-  <x-modals.simple id="IDmodalSimple" class="max-w-md">
-    <div class="flex flex-col items-center justify-center">
-      <span class="my-6 text-slate-500">
-        <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-        </svg>
-      </span>
-      <h2 class="mt-3 text-2xl text-center text-purple-900 font-semibold"></h2>
-      <p class="px-2 py-4 mb-3 text-lg">¿Está seguro de que desea eliminarlo?</p>
-    </div>
-    <div class="flex justify-center gap-3 text-white">
-      <form id="form-modalSimple" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="px-3 py-2 bg-red-900 rounded-md hover:bg-red-800 cursor-pointer">Eliminar</button>
-      </form>
-      <form method="dialog">
-        <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-      </form>
-    </div>
+  @if ($usersDeleted->count() > 0)
+    <section class="mt-10">
+      <h2 class="mb-5 px-4 text-2xl font-semibold text-gray-300">Usuarios Eliminados</h2>
+      <x-tables.table>
+        <x-slot:thead>
+          <tr class="text-left">
+            <th>#</th>
+            <th>Foto</th>
+            <th>Nombre completo</th>
+            <th>Correo</th>
+            <th>Telefono</th>
+            <th class="text-end">Opciones</th>
+          </tr>
+        </x-slot>
+
+        @foreach ($usersDeleted as $index => $user)
+          <tr>
+            <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
+            <td>
+              <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}"
+                class="h-12 aspect-auto">
+            </td>
+            <td class="relative">
+              <x-buttons.linkSimple href="{{ route('users.show', $user->id) }}"
+                class="text-slate-100 hover:text-purple-500 peer/popup">
+                {{ $user->fullName() }}
+              </x-buttons.linkSimple>
+              <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+                Ver Usuario
+              </x-popups.text>
+            </td>
+            <td>{{ $user->email }}</td>
+            <td>{{ $user->phone }}</td>
+            <td class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-12">
+                <x-slot:label>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+                  </svg>
+                </x-slot:label>
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
+                  <li>
+                    {{-- Crear el modal y .js --}}
+                    <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
+                      data-id="{{ $user->id }}" data-show="true">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2">
+                            <path
+                              d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
+                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
+                          </g>
+                        </svg>
+                      </span>
+                      Ver Usuario
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" data-uid="{{ $user->id }}" data-modal="{{ $type1 }}"
+                      data-title="{{ $user->fullName() }}" data-button="Restaurar"
+                      data-text="¿Está seguro de que desea restaurar al usuario?"
+                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
+                      <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
+                          <path fill="currentColor" fill-rule="evenodd"
+                            d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </span>
+                      Restaurar Usuario
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </td>
+          </tr>
+        @endforeach
+      </x-tables.table>
+
+      {{ $usersDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    </section>
+  @else
+    <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin usuarios eliminados</h3>
+  @endif
+
+  {{-- MODAL SHOW, EDIT --}}
+  <x-modals.simple id="modal-user-mix"
+    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    <form id="form-user-mix" enctype="multipart/form-data" method="POST"
+      class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+      @csrf
+      @method('PUT')
+      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp"
+        alt="Foto de usuario {{ $user->name }}" />
+
+      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2 text-gray-700 md:px-3">
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="name"></label>
+          <input type="text" id="name" name="name" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="surname"></label>
+          <input type="text" id="surname" name="surname" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="email"></label>
+          <input type="email" id="email" name="email" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="phone"></label>
+          <input type="text" id="phone" name="phone" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <button type="submit"
+          class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
+      </fieldset>
+    </form>
+    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-1/12 sm:left-1/5">
+      <button
+        class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+    </form>
   </x-modals.simple>
+
+  {{-- MODAL DELETE, RESTORE --}}
+  <x-modals.delete id="{{ $type1 }}" class="max-w-md" iconClass="text-slate-500">
+    <x-slot:icon>
+      <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
+        <path fill="currentColor"
+          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
+      </svg>
+    </x-slot:icon>
+  </x-modals.delete>
 @endsection

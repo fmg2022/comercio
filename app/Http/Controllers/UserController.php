@@ -11,7 +11,8 @@ class UserController extends Controller
     public function index(): View
     {
         return view('pages.dashboard.user.index', [
-            'users' => User::paginate(10)
+            'users' => User::paginate(10),
+            'usersDeleted' => User::onlyTrashed()->paginate(10)
         ]);
     }
 
@@ -38,5 +39,16 @@ class UserController extends Controller
     public function restore($id)
     {
         return 1;
+    }
+
+    public function fetch($id)
+    {
+        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image']);
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        return response()->json($user);
     }
 }
