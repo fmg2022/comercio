@@ -9,14 +9,15 @@
 
   <div class="@container px-2 md:px-4">
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"
-      class="px-3 py-4 mx-auto mb-4 max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
+      class="px-3 py-4 mx-auto mb-4 max-w-xl flex flex-col gap-5 justify-center items-center border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
       @csrf
-      <x-inputs.withLabel title="Nombre" name="name" placeholder="Nombre del producto" required />
-      <x-inputs.withLabel title="Marca" name="mark" placeholder="Marca del producto" required />
-      <x-inputs.withLabel title="Precio" name="price" placeholder="$1550.65" required />
-      <x-inputs.withLabel title="SKU" name="sku" placeholder="mar-cat-nom-peso123" required />
-      <x-inputs.withLabel title="Stock" name="quantity" type="number" value="0" min="0" max="9999" />
-      <x-inputs.withLabel title="Imagen" name="image" placeholder=".jpg, .webp, .png, ..." />
+      <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" required />
+      <x-inputs.withLabel forLabel="mark" title="Marca" id="mark" name="mark" required />
+      <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" />
+      <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" required />
+      <x-inputs.withLabel forLabel="quantity" title="Stock" id="quantity" name="quantity" type="number" value="0"
+        min="0" max="9999" />
+      <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" />
 
       <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
         <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una categoría

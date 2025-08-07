@@ -1,6 +1,5 @@
 @extends('layouts.dashboard')
 
-
 {{-- Agregar mensaje de error cuando sea necesario --}}
 
 @section('content')
@@ -13,13 +12,13 @@
       class="px-3 py-4 mx-auto my-4 max-w-xl flex flex-col gap-5 border border-slate-100/20 rounded-md @xl:[&>label]:flex-row @xl:px-6">
       @csrf
       @method('PUT')
-      <x-inputs.withLabel title="Nombre" name="name" value="{{ $product->name }}" />
-      <x-inputs.withLabel title="Marca" name="mark" value="{{ $product->mark }}" />
-      <x-inputs.withLabel title="Precio" name="price" value="{{ $product->price }}" />
-      <x-inputs.withLabel title="Stock" name="quantity" type="number" value="{{ $product->quantity }}" min="0"
-        max="9999" />
-      <x-inputs.withLabel title="SKU" name="sku" value="{{ $product->sku }}" />
-      <x-inputs.withLabel title="Imagen" name="image" value="{{ $product->image }}" />
+      <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" value="{{ $product->name }}" />
+      <x-inputs.withLabel forLabel="mark" title="Marca" id="mark" name="mark" value="{{ $product->mark }}" />
+      <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" value="{{ $product->price }}" />
+      <x-inputs.withLabel forLabel="quantity" title="Stock" id="quantity" name="quantity" type="number"
+        value="{{ $product->quantity }}" min="0" max="9999" />
+      <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" value="{{ $product->sku }}" />
+      <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" value="{{ $product->image }}" />
 
       <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
         @foreach ($categories as $category)
