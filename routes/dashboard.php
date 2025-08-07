@@ -10,7 +10,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('dashdoard')->group(function () {
     // User routes
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-    Route::resource('/users', UserController::class)->except(['edit', 'update']);
+    Route::resource('/users', UserController::class);
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
     // Product routes

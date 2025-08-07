@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
@@ -16,9 +18,9 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): View
     {
-        return 1;
+        return view('pages.dashboard.user.create');
     }
 
     public function store(Request $request)
@@ -26,19 +28,31 @@ class UserController extends Controller
         return 1;
     }
 
-    public function show($id)
+    public function show(User $user)
     {
         return 1;
     }
 
-    public function destroy($id)
+    public function edit(User $user)
     {
         return 1;
     }
 
-    public function restore($id)
+    public function update(Request $request, String $id)
     {
         return 1;
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        $user->delete();
+        return Redirect::back();
+    }
+
+    public function restore(String $id): RedirectResponse
+    {
+        User::onlyTrashed()->findOrFail($id)->restore();
+        return Redirect::back();
     }
 
     public function fetch($id)
