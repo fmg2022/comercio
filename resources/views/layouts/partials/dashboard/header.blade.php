@@ -164,14 +164,20 @@
               </a>
             </div>
             <div class="px-7 py-2 flex flex-col">
-              <a href="{{ route('logout') }}"
-                class="py-2 flex items-center gap-3 hover:text-slate-900 dark:hover:text-violet-400">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-                  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                    stroke-width="1.5"
-                    d="M13.496 21H6.5c-1.105 0-2-1.151-2-2.571V5.57c0-1.419.895-2.57 2-2.57h7M16 15.5l3.5-3.5L16 8.5m-6.5 3.496h10" />
-                </svg><span>Desconectar</span>
+              <a href="{{ route('logout') }}">
+
               </a>
+              <form action="{{ route('logout') }}" method="post">
+                @csrf
+                <button type="submit" class="py-2 flex items-center gap-3 hover:text-violet-400 cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M13.496 21H6.5c-1.105 0-2-1.151-2-2.571V5.57c0-1.419.895-2.57 2-2.57h7M16 15.5l3.5-3.5L16 8.5m-6.5 3.496h10" />
+                  </svg>
+                  <span>Desconectar</span>
+                </button>
+              </form>
             </div>
           </div>
         </li>

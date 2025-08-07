@@ -56,7 +56,7 @@
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
-            class="right-12">
+            class="right-14">
             <x-slot:label>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -176,7 +176,7 @@
             <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
             <td class="relative flex justify-end">
               <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
-                class="right-12">
+                class="right-14">
                 <x-slot:label>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -289,7 +289,7 @@
             required>
         </div>
         <div class="mb-4">
-          <label for="category_id" class="block mb-2 font-semibold">Categoría</label>
+          <label for="category_id" class="block mb-2 font-semibold"></label>
           <select id="category_id" name="category_id"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>

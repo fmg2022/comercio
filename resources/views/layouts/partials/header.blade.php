@@ -91,8 +91,8 @@
                 usuario</a>
               <form action="{{ route('logout') }}" method="post">
                 @csrf
-                <button type="submit" class="p-2 cursor-pointer hover:text-sky-700 dark:hover:text-violet-400">Cerrar
-                  sesión</button>
+                <button type="submit"
+                  class="p-2 cursor-pointer hover:text-sky-700 dark:hover:text-violet-400">Desconectarse</button>
               </form>
             @else
               <a href="{{ route('login') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
