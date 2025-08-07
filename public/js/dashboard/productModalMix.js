@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('button[data-id][data-show]')
   const $modal = document.getElementById('modal-product-mix')
   const $form = $modal.querySelector('#form-product-mix')
+  const labelNames = { 'name': 'Nombre', 'mark': 'Marca', 'price': 'Precio', 'quantity': 'Cantidad', 'sku': 'SKU', 'category_id': 'Categoría', 'description': 'Descripción' }
 
   // Iterar sobre los botones y agregar un evento click a cada uno
   buttons.forEach(button => {
@@ -35,50 +36,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const divs = $modal.querySelectorAll('fieldset > div')
 
-          let $input = divs[0].querySelector('input')
-          $input.value = response.data.name
-          $input.disabled = show === 'true'
-
-          divs[0].querySelector('label').textContent = 'Nombre'
-
-          $input = divs[1].querySelector('input')
-          $input.value = response.data.mark
-          $input.disabled = show === 'true'
-
-          divs[1].querySelector('label').textContent = 'Marca'
-
-          $input = divs[2].querySelector('input')
-          $input.value = response.data.price
-          $input.disabled = show === 'true'
-
-          divs[2].querySelector('label').textContent = 'Precio'
-
-          $input = divs[3].querySelector('input')
-          $input.value = response.data.quantity
-          $input.disabled = show === 'true'
-
-          divs[3].querySelector('label').textContent = 'Cantidad'
-
-          $input = divs[4].querySelector('input')
-          $input.value = response.data.sku
-          $input.disabled = show === 'true'
-
-          divs[4].querySelector('label').textContent = 'SKU'
-
-          divs[5].querySelector('select').disabled = show === 'true'
-          divs[5].querySelectorAll('select > option').forEach(option => {
-            if (option.value == response.data.category_id) {
-              option.setAttribute('selected', '')
+          divs.forEach($div => {
+            let $input = $div.querySelector('input')
+            if ($input) {
+              $input.value = response.data[$input.name]
+            } else if ($input = $div.querySelector('textarea')) {
+              $input.value = response.data[$input.name]
             } else {
-              option.removeAttribute('selected')
+              $input = $div.querySelector('select')
+              $input.querySelectorAll('option').forEach(option => {
+                if (option.value == response.data[$input.name]) {
+                  option.setAttribute('selected', '')
+                } else {
+                  option.removeAttribute('selected')
+                }
+              })
             }
+            $input.disabled = show === 'true'
+            $div.querySelector('label').textContent = labelNames[$input.name]
           })
-
-          $input = divs[6].querySelector('textarea')
-          $input.value = response.data.description
-          $input.disabled = show === 'true'
-
-          divs[6].querySelector('label').textContent = 'Descripción'
 
           $modal.showModal()
         })
