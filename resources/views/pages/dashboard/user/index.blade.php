@@ -53,19 +53,17 @@
         <td>{{ $user->email }}</td>
         <td>{{ $user->phone }}</td>
         <td class="relative flex justify-end">
-          <input type="checkbox" id="chuser-{{ $user->id }}" class="hidden peer/checkOption" name="toggle-btns">
-          <label for="chuser-{{ $user->id }}"
-            class="inline-block p-1.5 hover:bg-slate-900 rounded-full cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-            </svg>
-          </label>
-          <div class="absolute right-14 z-30 hidden peer-checked/checkOption:block">
+          <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
+            <x-slot:label>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+              </svg>
+            </x-slot:label>
+
             <ul
               class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
               <li>
-                {{-- Crear el modal y .js --}}
                 <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
                   data-show="true" data-id="{{ $user->id }}">
                   <span>
@@ -114,7 +112,7 @@
                 </button>
               </li>
             </ul>
-          </div>
+          </x-popups.contentWcheck>
         </td>
       </tr>
     @empty
@@ -160,7 +158,7 @@
             <td>{{ $user->email }}</td>
             <td>{{ $user->phone }}</td>
             <td class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-12">
+              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
                 <x-slot:label>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -171,7 +169,6 @@
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
                   <li>
-                    {{-- Crear el modal y .js --}}
                     <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
                       data-id="{{ $user->id }}" data-show="true">
                       <span>

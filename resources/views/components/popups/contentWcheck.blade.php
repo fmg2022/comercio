@@ -4,6 +4,6 @@
 <label for="{{ $iid }}" class="inline-block p-1.5 rounded-full cursor-pointer {{ $labelClass }}">
   {{ $label ?? 'Opcion' }}
 </label>
-<div {{ $attributes->merge(['class' => 'absolute z-20 hidden peer-checked/checkOption:block']) }}>
+<div {{ $attributes->merge(['class' => 'absolute z-[5] hidden peer-checked/checkOption:block']) }}>
   {{ $slot }}
 </div>

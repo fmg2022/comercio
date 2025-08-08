@@ -65,15 +65,16 @@
         </td>
         <td>
           <div class="relative flex justify-end">
-            <input type="checkbox" id="chorder-{{ $order->id }}" class="hidden peer/checkOption" name="toggle-btns">
-            <label for="chorder-{{ $order->id }}"
-              class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-              </svg>
-            </label>
-            <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
+            <x-popups.contentWcheck iid="chorder-{{ $order->id }}" labelClass="hover:bg-slate-900"
+              class="right-12 -top-1/4">
+              <x-slot:label>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
+                </svg>
+              </x-slot:label>
+
               <ul
                 class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                 <li>
@@ -125,7 +126,7 @@
                   </button>
                 </li>
               </ul>
-            </div>
+            </x-popups.contentWcheck>
           </div>
         </td>
       </tr>
@@ -182,8 +183,7 @@
                   <ul
                     class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                     <li>
-                      <a href="{{ route('orders.show', $order->id) }}"
-                        class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                      <a href="{{ route('orders.show', $order->id) }}" class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                             <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
