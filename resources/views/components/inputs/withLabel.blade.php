@@ -2,9 +2,9 @@
   <script src="{{ asset('js/dashboard/labelInput.js') }}" defer></script>
 @endpush
 
-@props(['title', 'forLabel', 'containerClass' => ''])
+@props(['title', 'forLabel'])
 
-<div class="form-item relative max-w-xs mt-6 {{ $containerClass }}">
+<div class="form-item relative w-full max-w-xs mt-6">
   <input
     {{ $attributes->merge(['class' => 'peer/formItem w-full px-3 py-2 outline-none rounded-lg bg-white/10 focus:ring focus:ring-purple-500/50 transition-color']) }} />
   <label for="{{ $forLabel }}"
