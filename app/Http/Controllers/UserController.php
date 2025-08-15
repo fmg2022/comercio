@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -23,9 +24,10 @@ class UserController extends Controller
         return view('pages.dashboard.user.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        return 1;
+        User::create($request->validated());
+        return redirect()->route('users.index');
     }
 
     public function show(User $user)
