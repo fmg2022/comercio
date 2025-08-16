@@ -30,19 +30,25 @@ class UserController extends Controller
         return redirect()->route('users.index');
     }
 
-    public function show(User $user)
+    public function show(User $user): View
     {
-        return 1;
+        return view('pages.dashboard.user.show', [
+            'user' => $user
+        ]);
     }
 
-    public function edit(User $user)
+    public function edit(User $user): View
     {
-        return 1;
+        return view('pages.dashboard.user.edit', [
+            'user' => $user
+        ]);
     }
 
-    public function update(Request $request, String $id)
+    public function update(StoreUserRequest $request, String $id): RedirectResponse
     {
-        return 1;
+        User::findOrFail($id)->update($request->validated());
+
+        return redirect()->route('users.index');
     }
 
     public function destroy(User $user): RedirectResponse
