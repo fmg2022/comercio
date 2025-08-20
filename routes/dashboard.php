@@ -26,7 +26,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   });
 
   // Route::resource('categories', CategoryController::class)->except(['show']);
-  // Route::resource('users', ProfileController::class);
   // Route::resource('states', StateController::class)->except(['show']);
   // Route::resource('payments', PaymentController::class);
   // Route::resource('addresses', AddressController::class);
