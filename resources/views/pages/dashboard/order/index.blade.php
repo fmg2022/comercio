@@ -179,7 +179,7 @@
                       d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
                   </svg>
                 </label>
-                <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
+                <div class="absolute right-12 -top-2/3 z-5 hidden peer-checked/checkOption:block">
                   <ul
                     class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                     <li>

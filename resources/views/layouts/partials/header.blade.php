@@ -64,7 +64,7 @@
         </button>
       </li>
       <li
-        class="relative w-full flex items-center justify-center rounded-lg hover:bg-black/10 dark:hover:bg-white/10 has-[:checked]:bg-black/10 has-[:checked]:dark:bg-white/10 sm:w-max">
+        class="relative w-full flex items-center justify-center rounded-lg hover:bg-black/10 dark:hover:bg-white/10 has-checked:bg-black/10 has-checked:dark:bg-white/10 sm:w-max">
         <input type="checkbox" id="toggle-perf" class="peer/perfil hidden" />
         <label for="toggle-perf" class="p-3 flex gap-3 cursor-pointer sm:py-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -161,7 +161,7 @@
 </aside>
 <!-- carrito -->
 <aside
-  class="fixed top-0 -right-full z-20 w-full h-screen py-5 px-4 flex flex-col overflow-y-hidden bg-blue-100 dark:bg-sky-950 peer-checked/cart:right-0 sm:w-[30rem] transition-all duration-300">
+  class="fixed top-0 -right-full z-20 w-full h-screen py-5 px-4 flex flex-col overflow-y-hidden bg-blue-100 dark:bg-sky-950 peer-checked/cart:right-0 sm:w-120 transition-all duration-300">
   <div class="flex justify-between mb-6">
     <h2 class="grow text-center text-xl font-semibold">Carrito</h2>
     <label for="toggle-cart"

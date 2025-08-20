@@ -9,7 +9,7 @@
   <div class="relative flex divide-x divide-slate-700">
     <input type="checkbox" id="info-toggle" class="hidden peer/aside">
     <div
-      class="overlay fixed -left-full top-[73px] z-[15] w-full h-full bg-slate-950/60 opacity-0 peer-checked/aside:opacity-100 peer-checked/aside:left-0 lg:hidden">
+      class="overlay fixed -left-full top-[73px] z-15 w-full h-full bg-slate-950/60 opacity-0 peer-checked/aside:opacity-100 peer-checked/aside:left-0 lg:hidden">
     </div>
     <aside
       class="fixed -left-full top-[73px] z-40 w-full h-full max-w-[300px] dark:bg-slate-800 divide-y divide-slate-700 transition-all duration-500 ease-in-out [&>section]:px-5 [&>section]:p-6 lg:static lg:left-0 lg:h-auto lg:z-0 peer-checked/aside:left-0">
