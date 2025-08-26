@@ -2,10 +2,10 @@
 
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/navDesplace.js') }}" defer></script>
 @endpush
 
 @section('content')
-  {{-- <section class="px-2 py-5 grow sm:px-5 sm:py-7"> ... </section> --}}
   <div class="relative flex divide-x divide-slate-700">
     <input type="checkbox" id="info-toggle" class="hidden peer/aside">
     <div
@@ -146,7 +146,6 @@
               </button>
             </div>
           </li>
-          {{-- Fecha de nacimiento??? --}}
           <li class="flex justify-between text-slate-400 cursor-pointer">
             <div class="flex flex-col md:flex-row md:w-full">
               <p class="md:w-1/2">Teléfono</p>
@@ -177,119 +176,68 @@
           </li>
         </ul>
 
-        <x-modals.simple title="Actualizar Perfil" titleClass="text-shadow-md/20 text-shadow-white" id="dialog-perf"
-          class="max-w-2xl bg-slate-800">
-          <div class="px-12 pb-12 pt-6 text-white">
+        <x-modals.simple title="Actualizar Perfil" titleClass="text-white" id="dialog-perf"
+          class="max-w-2xl w-full bg-slate-800">
+          <div class="w-full px-9 pb-8 pt-6 text-white">
             <nav
-              class="mb-5 flex gap-3 border-b border-slate-600/75 text-slate-400 [&>button]:pb-4 [&>button.active]:border-b-4 [&>button]:px-2 [&>button.active]:border-purple-700 [&>button.active]:text-purple-700 [&>button:hover]:text-white"
+              class="mb-5 flex gap-3 border-b border-slate-600/75 text-slate-400 [&>button.active]:border-b-4 [&>button.active]:border-purple-700 [&>button.active]:text-purple-700"
               data-navbar="true">
-              <button class="active">Personal</button>
-              <button>Dirección</button>
+              <button data-pos="0" class="active pb-3 px-2 hover:text-white">Personal</button>
+              <button data-pos="1.1" class="pb-3 px-2 hover:text-white">Dirección</button>
             </nav>
             <form class="overflow-x-hidden">
-              <div class="relative left-0 top-0 w-[200%] mb-4 grid grid-cols-2">
+              <div class="relative top-0 w-[210%] mb-10 grid grid-cols-2 gap-x-[5%] transition-[left] duration-500"
+                data-navcontent="true" style="left: 0%">
                 <fieldset class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
                   <div class="flex flex-col gap-y-2">
                     <label for="pf-name" class="text-sm font-semibold">Nombre</label>
-                    <input value="Admin" id="pf-name"
+                    <input value="{{ $user->name }}" id="pf-name"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
                   <div class="flex flex-col gap-y-2">
                     <label for="pf-surname" class="text-sm font-semibold">Apellido</label>
-                    <input value="Master" id="pf-surname"
+                    <input value="{{ $user->surname }}" id="pf-surname"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
                   <div class="flex flex-col gap-y-2">
                     <label for="pf-phone" class="text-sm font-semibold">Telefono</label>
-                    <input value="+548524611133" id="pf-phone"
+                    <input value="{{ $user->phone }}" id="pf-phone"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
                   <div class="flex flex-col gap-y-2">
-                    <label for="pf-date" class="text-sm font-semibold">Fecha de nacimiento</label>
-                    <input value="1990-03-31" id="pf-date" type="date"
+                    <label for="pf-email" class="text-sm font-semibold">Email</label>
+                    <input value="{{ $user->email }}" id="pf-email" type="email"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
                 </fieldset>
-                <fieldset class="grid sm:grid-cols-2 gap-x-2 gap-y-4">
-                  <label>
-                    Dirección
-                    <input value="2337 Calle">
-                  </label>
-                  <label>
-                    Ciudad
-                    <input value="Ciudad">
-                  </label>
-                  <label>
-                    Provincia
-                    <input value="Provincia">
-                  </label>
+                <fieldset class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
+                  <div class="flex flex-col gap-y-2">
+                    <label for="pf-dir" class="text-sm font-semibold">Dirección</label>
+                    <input value="2337 Calle" id="pf-dir"
+                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
+                  </div>
+                  <div class="flex flex-col gap-y-2">
+                    <label for="pf-city" class="text-sm font-semibold">Ciudad</label>
+                    <input value="Ciudad" id="pf-city"
+                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
+                  </div>
+                  <div class="flex flex-col gap-y-2">
+                    <label for="pf-prov" class="text-sm font-semibold">Provincia</label>
+                    <input value="Provincia" id="pf-prov"
+                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
+                  </div>
                 </fieldset>
               </div>
-              <div class="flex gap-8 justify-end">
+              <div class="me-24 flex justify-end">
                 <button type="submit"
-                  class="px-4 py-3 bg-purple-700 rounded-md font-semibold hover:bg-purple-800 transition-colors">Guardar</button>
-                <button type="button" class="text-slate-400 hover:text-white/90 transition-colors">Cancelar</button>
+                  class="px-3 py-2 bg-purple-700 rounded-md text-lg hover:bg-purple-800 cursor-pointer">Guardar</button>
               </div>
+            </form>
+            <form method="dialog" class="absolute bottom-12 right-[3.25rem]">
+              <button class="px-3 py-2 bg-red-700 rounded-md text-lg hover:bg-red-800 cursor-pointer">Cancelar</button>
             </form>
           </div>
         </x-modals.simple>
-        {{-- <dialog id="dialog-perf" class="w-full rounded-lg sm:max-w-md md:max-w-2xl">
-          <div class="relative p-12 bg-slate-800/90">
-            <h3 class="mb-4 text-xl font-bold">Actualizar Perfil</h3>
-            <button type="button" class="absolute top-4 right-4 outline-none">X</button>
-            <nav
-              class="mb-5 flex gap-3 border-b border-slate-600/75 text-slate-400 [&>button]:pb-4 [&>button.active]:border-b-4 [&>button]:px-2 [&>button.active]:border-purple-700 [&>button.active]:text-purple-700 [&>button:hover]:text-white"
-              data-navbar="true">
-              <button class="active">Personal</button>
-              <button>Dirección</button>
-            </nav>
-            <form method="dialog" class="overflow-x-hidden">
-              <div class="relative left-0 top-0 w-[200%] mb-4 grid grid-cols-2">
-                <fieldset class="grid md:grid-cols-2 gap-6">
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-name" class="text-sm font-semibold">Nombre</label>
-                    <input value="Admin" id="pf-name"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-surname" class="text-sm font-semibold">Apellido</label>
-                    <input value="Master" id="pf-surname"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-phone" class="text-sm font-semibold">Telefono</label>
-                    <input value="+548524611133" id="pf-phone"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-date" class="text-sm font-semibold">Fecha de nacimiento</label>
-                    <input value="1990-03-31" id="pf-date" type="date"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                </fieldset>
-                <fieldset class="grid md:grid-cols-2 gap-x-2 gap-y-4">
-                  <label>
-                    Dirección
-                    <input value="2337 Calle">
-                  </label>
-                  <label>
-                    Ciudad
-                    <input value="Ciudad">
-                  </label>
-                  <label>
-                    Provincia
-                    <input value="Provincia">
-                  </label>
-                </fieldset>
-              </div>
-              <div class="flex gap-8 justify-end">
-                <button type="submit"
-                  class="px-4 py-3 bg-purple-700 rounded-md font-semibold hover:bg-purple-800 transition-colors">Guardar</button>
-                <button type="button" class="text-slate-400 hover:text-white/90 transition-colors">Cancelar</button>
-              </div>
-            </form>
-          </div>
-        </dialog> --}}
       </section>
     </div>
   </div>
