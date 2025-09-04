@@ -13,7 +13,8 @@ class ProfileController extends Controller
 {
     public function index(Request $request): View
     {
-        return view('pages.profile.index', ['user' => $request->user()]);
+        $address = $request->user()->addresses()->where('is_default', true)->first();
+        return view('pages.profile.index', ['user' => $request->user(), 'address' => $address]);
     }
 
     /**
