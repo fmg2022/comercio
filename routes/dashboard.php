@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
@@ -12,6 +13,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/users', UserController::class);
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+
+    // Address routes
+    Route::resource('/addresses', AddressController::class)->except(['show']);
+    Route::post('/addresses/{id}/restore', [AddressController::class, 'restore'])->name('addresses.restore');
 
     // Product routes
     Route::resource('/products', ProductController::class);
@@ -28,5 +33,4 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
   // Route::resource('categories', CategoryController::class)->except(['show']);
   // Route::resource('states', StateController::class)->except(['show']);
   // Route::resource('payments', PaymentController::class);
-  // Route::resource('addresses', AddressController::class);
 });

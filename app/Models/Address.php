@@ -14,11 +14,17 @@ class Address extends Model
     protected $fillable = [
         'street',
         'city',
-        'state',
+        'province',
+        'is_default',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function fullAddress(): string
+    {
+        return "{$this->street}, {$this->city}, {$this->province}";
     }
 }
