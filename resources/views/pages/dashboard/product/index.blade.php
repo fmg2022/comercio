@@ -242,7 +242,7 @@
         @endforeach
       </x-tables.table>
 
-      {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+      {{ $productsDeleted->links('pages.dashboard.partials.pagination') }}
     </section>
   @else
     <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin productos eliminados</h3>

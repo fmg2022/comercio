@@ -137,7 +137,7 @@
     @endforelse
   </x-tables.table>
 
-  {{ $orders->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+  {{ $orders->links('pages.dashboard.partials.pagination') }}
 
   @if ($ordersDeleted->count() > 0)
     <section class="mt-10">
@@ -221,7 +221,7 @@
       </x-tables.table>
     </section>
 
-    {{ $ordersDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    {{ $ordersDeleted->links('pages.dashboard.partials.pagination') }}
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin ordenes eliminados</h3>
   @endif

@@ -7,7 +7,6 @@
 
 @php
   $type1 = 'modal-delete-restore';
-  $type2 = 'modal-change-status';
 @endphp
 
 @section('content')
@@ -134,7 +133,7 @@
       @endforeach
     </x-tables.table>
 
-    {{ $addresses->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    {{ $addresses->links('pages.dashboard.partials.pagination') }}
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin Direcciones registradas</h3>
   @endif
@@ -231,7 +230,7 @@
       </x-tables.table>
     </section>
 
-    {{ $addressesDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    {{ $addressesDeleted->links('pages.dashboard.partials.pagination') }}
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin Direcciones eliminadas</h3>
   @endif
