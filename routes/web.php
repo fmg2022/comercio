@@ -13,9 +13,6 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::get('/products/{id}', [ProductController::class, 'showOne'])->name('product.show');
 Route::get('/products', [ProductController::class, 'getAllProducts'])->name('product.listAll');
 
-// Ruta para las categorías
-Route::get('/fetch-categories', [CategoryController::class, 'getCategories']);
-
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

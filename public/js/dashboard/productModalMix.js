@@ -12,24 +12,23 @@ document.addEventListener('DOMContentLoaded', function () {
       const id = button.getAttribute('data-id')
       const show = button.getAttribute('data-show')
 
+      // Toggle de la clase editable
+      if (show !== 'true') {
+        $form.classList.add('editable')
+        let url = window.location.href
+
+        // Si la URL contiene parámetros de búsqueda, los eliminamos
+        if ((/\?\w+/).test(url)) {
+          url = url.replace(window.location.search, '')
+        }
+        $form.action = url + '/' + id
+      } else {
+        $form.classList.remove('editable')
+        $form.action = ''
+      }
+
       axios.get('/api/products/' + id)
         .then(response => {
-
-          // Toggle de la clase editable
-          if (show !== 'true') {
-            $form.classList.add('editable')
-            let url = window.location.href
-
-            // Si la URL contiene parámetros de búsqueda, los eliminamos
-            if ((/\?\w+/).test(url)) {
-              url = url.replace(window.location.search, '')
-            }
-            $form.action = url + '/' + id
-          } else {
-            $form.classList.remove('editable')
-            $form.action = ''
-          }
-
           const $img = $modal.querySelector('img')
           $img.src = $img.src.replace(/([a-z]{2}_\w+\.webp)$/i, response.data.image)
           $img.alt = response.data.name
