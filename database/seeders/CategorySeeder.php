@@ -16,6 +16,7 @@ class CategorySeeder extends Seeder
             DB::table('categories')->insert([
                 'name' => $category['name'],
                 'parent_id' => $category['parent_id'],
+                'nivel' => $category['nivel'],
             ]);
         }
     }
