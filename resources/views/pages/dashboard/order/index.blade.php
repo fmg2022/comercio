@@ -44,21 +44,14 @@
         <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->payments[0]->type }}</td>
         <td class="hidden md:table-cell">
           <span @class([
-              "px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-px",
-              'bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100' =>
-                  $order->orderStatus->name === 'Pendiente',
-              'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' =>
-                  $order->orderStatus->name === 'Procesando',
-              'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' =>
-                  $order->orderStatus->name === 'Completo',
-              'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100' =>
-                  $order->orderStatus->name === 'Delivery',
-              'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100' =>
-                  $order->orderStatus->name === 'Retirar',
-              'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' =>
-                  $order->orderStatus->name === 'Entregado',
-              'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' =>
-                  $order->orderStatus->name === 'Cancelado',
+              "font-semibold before:content-['●'] before:me-px",
+              'text-amber-400' => $order->orderStatus->name === 'Pendiente',
+              'text-blue-400' => $order->orderStatus->name === 'Procesando',
+              'text-purple-400' => $order->orderStatus->name === 'Completo',
+              'text-cyan-400' => $order->orderStatus->name === 'Delivery',
+              'text-indigo-400' => $order->orderStatus->name === 'Retirar',
+              'text-green-400' => $order->orderStatus->name === 'Entregado',
+              'text-red-400' => $order->orderStatus->name === 'Cancelado',
           ])>
             {{ $order->orderStatus->name }}
           </span>
