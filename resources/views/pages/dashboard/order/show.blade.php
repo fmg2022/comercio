@@ -76,11 +76,11 @@
           </div>
         </td>
         <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
-        <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price + 0 }}</td>
-        <td class="text-center hidden md:table-cell"><span class="me-px">$</span>{{ $orderLine->pivot->discount + 0 }}
+        <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price_formated }}</td>
+        <td class="text-center hidden md:table-cell">{{ $orderLine->pivot->discount + 0 }}
         </td>
         <td class="text-center hidden md:table-cell">
-          <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() + 0 }}
+          <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
         </td>
         <td>
           <div class="relative flex justify-end items-center">
@@ -132,7 +132,7 @@
                               <p class="mb-3">
                                 <span class="text-lg text-slate-700">Precio:</span>
                                 <span class="me-px">$</span>
-                                {{ $orderLine->pivot->price + 0 }}
+                                {{ $orderLine->pivot->price_formated }}
                               </p>
                               <div>
                                 <label class="text-lg text-slate-600" for="quantity{{ $orderLine->id }}">
@@ -180,6 +180,6 @@
   <div
     class="w-full max-w-2xs px-10 py-3 ms-auto flex justify-between items-center text-xl font-bold bg-slate-700 rounded-b-md">
     <span>Total</span>
-    <span><span class="me-px">$</span>{{ $order->total + 0 }}</span>
+    <span><span class="me-px">$</span>{{ $order->total_formated }}</span>
   </div>
 @endsection

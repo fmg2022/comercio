@@ -40,8 +40,8 @@
         <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
         <td class="font-bold">{{ $order->user->fullName() }}</td>
         <td class="text-slate-300">{{ $OrderDate }}</td>
-        <td><span class="me-px font-semibold">$</span>{{ $order->total + 0 }}</td>
-        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->payments[0]->type }}</td>
+        <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
+        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
         <td class="hidden md:table-cell">
           <span @class([
               "font-semibold before:content-['●'] before:me-px",
@@ -155,7 +155,7 @@
             <td class="font-bold">{{ $order->user->fullName() }}</td>
             <td>{{ $OrderDate }}</td>
             <td><span class="me-px">$</span>{{ $order->total + 0 }}</td>
-            <td class="hidden capitalize md:table-cell">{{ $order->payments[0]->type }}</td>
+            <td class="hidden capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
             <td class="hidden md:table-cell">
               <span
                 class="px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-1">{{ $order->orderStatus->name }}</span>
