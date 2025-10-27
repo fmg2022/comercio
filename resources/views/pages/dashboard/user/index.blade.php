@@ -141,7 +141,7 @@
     @endforelse
   </x-tables.table>
 
-  {{ $users->onEachSide(0)->links('pages.dashboard.partials.pagination') }}
+  {{ $users->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   @if ($usersDeleted->count() > 0)
     <section class="mt-10">
@@ -226,7 +226,7 @@
         @endforeach
       </x-tables.table>
 
-      {{ $usersDeleted->onEachSide(0)->links('pages.dashboard.partials.pagination') }}
+      {{ $usersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
     </section>
   @else
     <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin usuarios eliminados</h3>

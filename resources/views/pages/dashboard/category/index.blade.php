@@ -136,7 +136,7 @@
       @endforeach
     </x-tables.table>
 
-    {{ $categories->onEachSide(0)->links('pages.dashboard.partials.pagination') }}
+    {{ $categories->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin Categorías registradas</h3>
   @endif
