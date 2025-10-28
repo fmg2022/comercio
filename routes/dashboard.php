@@ -3,9 +3,11 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderPaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Models\OrderPayment;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
@@ -31,10 +33,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
 
     // Category, State & Payment routes
-    Route::resource('categories', CategoryController::class)->except(['show', 'create', 'edit']);
+    Route::resource('/categories', CategoryController::class)->except(['show', 'create', 'edit']);
     Route::post('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+    Route::resource('/payments', OrderPaymentController::class)->only(['index', 'update', 'destroy']);
+    Route::post('/payments/{id}/restore', [OrderPaymentController::class, 'restore'])->name('payments.restore');
   });
 
   // Route::resource('states', StateController::class)->except(['show']);
-  // Route::resource('payments', PaymentController::class);
 });

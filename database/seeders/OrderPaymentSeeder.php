@@ -29,7 +29,7 @@ class OrderPaymentSeeder extends Seeder
 			if ($valor != 'Cancelado') {
 
 				$methodPayment = Payment::inRandomOrder()->first();
-				$paymentState_id = DB::table('payment_statuses')->whereLike('name', "%{$valor}%")->value('id');
+				$paymentState_id = DB::table('payment_statuses')->inRandomOrder()->first()->id;
 
 				$fees = $methodPayment->name == 'tarjeta credito' ? $fees = rand(1, 12) : 1;
 				OrderPayment::factory($fees)->create([

@@ -48,6 +48,14 @@
         </a>
       </li>
       <li class="hover:bg-slate-700 hover:text-purple-500">
+        <a href="{{ route('payments.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="payments">
+          <span>
+            <x-icons.payment />
+          </span>
+          <span class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Pagos</span>
+        </a>
+      </li>
+      <li class="hover:bg-slate-700 hover:text-purple-500">
         <a href="{{ route('products.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="products">
           <span>
             <x-icons.product />
