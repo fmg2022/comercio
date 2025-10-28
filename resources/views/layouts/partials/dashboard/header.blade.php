@@ -107,10 +107,9 @@
               </li>
             </ul>
             <div class="flex justify-center py-3 px-5">
-              <a href="#"
-                class="text-purple-950 hover:text-purple-900 dark:text-purple-500 dark:hover:text-purple-600 hover:underline hover:underline-offset-4 transition-all duration-300 ease-in-out">
+              <x-buttons.linkSimple href="#" class="text-purple-500 hover:text-purple-600">
                 Ver todo
-              </a>
+              </x-buttons.linkSimple>
             </div>
           </div>
         </li>

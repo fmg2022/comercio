@@ -12,7 +12,7 @@
       <section class="p-6 flex flex-col gap-3 md:p-5">
         <div class="flex justify-between">
           <h4 class="text-xl font-semibold">Total de ventas</h4>
-          <x-buttons.linkSimple href="#!" class="text-purple-500 hover:text-purple-600 hover:underline-offset-4">
+          <x-buttons.linkSimple href="#!" class="text-purple-500 hover:text-purple-600">
             Ver reporte
           </x-buttons.linkSimple>
         </div>
@@ -96,7 +96,7 @@
         <tr>
           <td>
             <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}"
-              class="font-semibold text-purple-500 hover:text-purple-600 hover:underline-offset-4">
+              class="font-semibold text-purple-500 hover:text-purple-600">
               #{{ $order->id }}
             </x-buttons.linkSimple>
           </td>
