@@ -6,7 +6,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -27,8 +27,26 @@ class CategoryController extends Controller
 
 	public function update(CategoryRequest $request, Category $category): RedirectResponse
 	{
-		$category->update($request->validated());
-		return redirect()->back();
+		$validated = $request->validated();
+
+		try {
+			DB::transaction(function () use ($validated, $category) {
+				// Actualizar categoría principal
+				$category->update([
+					'name' => $validated['name'],
+					'parent_id' => $validated['parent_id'] ?? null
+				]);
+
+				// Actualizar subcategorías
+				if (isset($validated['children'])) {
+					$this->updateChildrenParent($category, $validated['children']);
+				}
+			});
+
+			return redirect()->back();
+		} catch (\Throwable $th) {
+			return redirect()->back()->withErrors(['error' => 'Error al actualizar la categoría. ' . $th->getMessage()]);
+		}
 	}
 
 	public function destroy(Category $category): RedirectResponse
@@ -79,5 +97,20 @@ class CategoryController extends Controller
 		}
 
 		return $result;
+	}
+
+	private function updateChildrenParent(Category $category, array $newChildren): void
+	{
+		$oldChildrenID = $category->children()->pluck('id')->toArray();
+		$newSub = array_diff($newChildren, $oldChildrenID);
+		$removedSub = array_diff($oldChildrenID, $newChildren);
+
+		if (!empty($newSub)) {
+			Category::whereIn('id', $newSub)->update(['parent_id' => $category->id]);
+		}
+
+		if (!empty($removedSub)) {
+			Category::whereIn('id', $removedSub)->update(['parent_id' => null]);
+		}
 	}
 }

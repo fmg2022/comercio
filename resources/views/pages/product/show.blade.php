@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('scripts')
+@push('scripts-app')
   <script type="module">
     const $nav = document.getElementById('nav-info')
     const inputs = $nav.querySelectorAll('input')
@@ -14,7 +14,7 @@
       })
     })
   </script>
-@endsection
+@endpush
 
 @section('content')
   <nav class="px-2 my-4 flex" aria-label="Breadcrumb">
