@@ -15,7 +15,7 @@ class UserController extends Controller
     {
         return view('pages.dashboard.user.index', [
             'users' => User::paginate(10),
-            'usersDeleted' => User::onlyTrashed()->paginate(10)
+            'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted')
         ]);
     }
 

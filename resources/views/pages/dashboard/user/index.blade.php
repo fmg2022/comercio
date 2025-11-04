@@ -95,6 +95,25 @@
                 </button>
               </li>
               <li>
+                <a href="{{ route('addresses.index') }}"
+                  class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
+                  <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
+                      <path d="M10 16h6" />
+                      <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                      <path d="M4 8h3" />
+                      <path d="M4 12h3" />
+                      <path d="M4 16h3" />
+                    </svg>
+                  </span>
+                  Ver Dirección
+                </a>
+              </li>
+              <li>
                 <button type="button" data-uid="{{ $user->id }}" data-modal="{{ $type1 }}"
                   data-title="{{ $user->fullName() }}" data-button="Eliminar"
                   data-text="¿Está seguro de que desea eliminar al usuario?"
@@ -122,7 +141,7 @@
     @endforelse
   </x-tables.table>
 
-  {{ $users->links('pages.dashboard.partials.pagination') }}
+  {{ $users->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   @if ($usersDeleted->count() > 0)
     <section class="mt-10">
@@ -158,7 +177,8 @@
             <td>{{ $user->email }}</td>
             <td>{{ $user->phone }}</td>
             <td class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
+              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900"
+                class="right-14">
                 <x-slot:label>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -206,7 +226,7 @@
         @endforeach
       </x-tables.table>
 
-      {{ $usersDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+      {{ $usersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
     </section>
   @else
     <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin usuarios eliminados</h3>

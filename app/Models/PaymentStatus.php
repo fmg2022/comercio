@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PaymentStatus extends Model
@@ -12,8 +13,8 @@ class PaymentStatus extends Model
 
     protected $fillable = ['name', 'description'];
 
-    public function payments()
+    public function orders(): HasMany
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(OrderPayment::class);
     }
 }

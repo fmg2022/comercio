@@ -1,12 +1,12 @@
 @if ($paginator->hasPages())
   <nav class="px-5 py-6 bg-slate-800 rounded-b-md">
-    <ul class="w-full grid grid-cols-3 gap-4 border-t border-slate-700 [&>li>a]:pt-3">
+    <ul class="w-full flex gap-4 border-t border-slate-700 [&>li>a]:pt-3 sm:gap-10">
       <li class="flex items-center justify-start">
         @php
           $previousPageUrl = !$paginator->onFirstPage() ? $paginator->previousPageUrl() : '#';
-          $disabledStyle = $paginator->onFirstPage() ? 'opacity-75 pointer-events-none' : '';
+          $disabledStyle = $paginator->onFirstPage() ? 'opacity-75 pointer-events-none' : 'hover:text-purple-500';
         @endphp
-        <a href="{{ $previousPageUrl }}" class="flex items-center gap-3 text-xs xl:text-lg {{ $disabledStyle }}">
+        <a href="{{ $previousPageUrl }}" class="me-3 flex items-center gap-3 text-xs xl:text-lg {{ $disabledStyle }}">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
             <path fill="currentColor"
               d="m4.836 12l6.207 6.207l1.414-1.414L7.664 12l4.793-4.793l-1.414-1.414zm5.65 0l6.207 6.207l1.414-1.414L13.314 12l4.793-4.793l-1.414-1.414z" />
@@ -15,11 +15,11 @@
         </a>
       </li>
       <li
-        class="flex items-start justify-center [&>a]:px-4 [&>a]:border-t-2 [&>a]:border-transparent [&>a.active]:border-purple-800 [&>a.active]:text-purple-500 [&>a]:transition-colors">
+        class="grow flex justify-center items-center gap-2 [&>a]:px-2.5 [&>a]:border-t-2 [&>a]:border-transparent [&>a.active]:border-purple-800 [&>a.active]:text-purple-500 [&>a]:transition-colors [&>a]:hover:text-purple-500">
         @foreach ($elements as $element)
           {{-- "Three Dots" Separator --}}
           @if (is_string($element))
-            <span aria-disabled="true">
+            <span aria-disabled="true" class="h-full flex items-end">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
                 <path fill="currentColor"
                   d="M3 9.5a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3a1.5 1.5 0 0 1 0 3" />
@@ -45,9 +45,9 @@
       <li class="flex items-center justify-end">
         @php
           $nextPageUrl = $paginator->hasMorePages() ? $paginator->nextPageUrl() : '#';
-          $disabledStyle = !$paginator->hasMorePages() ? 'opacity-75 pointer-events-none' : '';
+          $disabledStyle = !$paginator->hasMorePages() ? 'opacity-75 pointer-events-none' : 'hover:text-purple-500';
         @endphp
-        <a href="{{ $nextPageUrl }}" class="flex items-center gap-3 text-xs xl:text-lg {{ $disabledStyle }}">
+        <a href="{{ $nextPageUrl }}" class="ms-3 flex items-center gap-3 text-xs xl:text-lg {{ $disabledStyle }}">
           Siguiente
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
             <path fill="currentColor"

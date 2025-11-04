@@ -143,7 +143,7 @@
     @endforelse
   </x-tables.table>
 
-  {{ $products->links('pages.dashboard.partials.pagination') }}
+  {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   @if ($productsDeleted->count() > 0)
     <section class="mt-10">
@@ -242,7 +242,7 @@
         @endforeach
       </x-tables.table>
 
-      {{ $productsDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+      {{ $productsDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
     </section>
   @else
     <h3 class="mb-3 mt-7 text-center text-xl font-semibold">Sin productos eliminados</h3>
@@ -320,7 +320,7 @@
         <div class="col-span-2">
           <label class="block mb-2 font-semibold" for="description"></label>
           <textarea id="description" name="description"
-            class="w-full min-h-[1lh] px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
+            class="w-full min-h-lh px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
         </div>
         <button type="submit"
           class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
