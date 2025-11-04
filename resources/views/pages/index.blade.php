@@ -2,7 +2,8 @@
 
 @section('content')
   <!-- SECCION: Carrusel de ofertas -->
-  <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'" :fullwidth="true">
+  {{-- https://preview.themeforest.net/item/superkart-supermarket-bigcommerce-stencil-template/full_screen_preview/40302953 --}}
+  <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'">
     @foreach ($offers as $offer)
       <li class="item snap-start">
         <img src="https://picsum.photos/seed/{{ $offer->code }}/768/360.webp" alt="Offer"

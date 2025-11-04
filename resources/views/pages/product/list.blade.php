@@ -31,7 +31,7 @@
       <span class="hidden sm:grid sm:place-content-center md:px-2">Ver en</span>
       <!-- Falta agregar funcionalidad de aplicar estilos en el estado checked a las tarjetas de los productos -->
       <label
-        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-[:checked]:bg-white/10 dark:hover:bg-white/10">
+        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-checked:bg-white/10 dark:hover:bg-white/10">
         <input type="radio" name="vista" class="hidden">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor"
@@ -39,7 +39,7 @@
         </svg>
       </label>
       <label
-        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-[:checked]:bg-white/10 dark:hover:bg-white/10">
+        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-checked:bg-white/10 dark:hover:bg-white/10">
         <input type="radio" name="vista" class="hidden" checked>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

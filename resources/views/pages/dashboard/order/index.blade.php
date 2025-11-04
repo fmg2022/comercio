@@ -40,25 +40,18 @@
         <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
         <td class="font-bold">{{ $order->user->fullName() }}</td>
         <td class="text-slate-300">{{ $OrderDate }}</td>
-        <td><span class="me-px font-semibold">$</span>{{ $order->total + 0 }}</td>
-        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->payments[0]->type }}</td>
+        <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
+        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
         <td class="hidden md:table-cell">
           <span @class([
-              "px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-px",
-              'bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100' =>
-                  $order->orderStatus->name === 'Pendiente',
-              'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' =>
-                  $order->orderStatus->name === 'Procesando',
-              'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' =>
-                  $order->orderStatus->name === 'Completo',
-              'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100' =>
-                  $order->orderStatus->name === 'Delivery',
-              'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100' =>
-                  $order->orderStatus->name === 'Retirar',
-              'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' =>
-                  $order->orderStatus->name === 'Entregado',
-              'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' =>
-                  $order->orderStatus->name === 'Cancelado',
+              "font-semibold before:content-['●'] before:me-px",
+              'text-amber-400' => $order->orderStatus->name === 'Pendiente',
+              'text-blue-400' => $order->orderStatus->name === 'Procesando',
+              'text-purple-400' => $order->orderStatus->name === 'Completo',
+              'text-cyan-400' => $order->orderStatus->name === 'Delivery',
+              'text-indigo-400' => $order->orderStatus->name === 'Retirar',
+              'text-green-400' => $order->orderStatus->name === 'Entregado',
+              'text-red-400' => $order->orderStatus->name === 'Cancelado',
           ])>
             {{ $order->orderStatus->name }}
           </span>
@@ -137,7 +130,7 @@
     @endforelse
   </x-tables.table>
 
-  {{ $orders->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+  {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   @if ($ordersDeleted->count() > 0)
     <section class="mt-10">
@@ -162,7 +155,7 @@
             <td class="font-bold">{{ $order->user->fullName() }}</td>
             <td>{{ $OrderDate }}</td>
             <td><span class="me-px">$</span>{{ $order->total + 0 }}</td>
-            <td class="hidden capitalize md:table-cell">{{ $order->payments[0]->type }}</td>
+            <td class="hidden capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
             <td class="hidden md:table-cell">
               <span
                 class="px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-1">{{ $order->orderStatus->name }}</span>
@@ -179,7 +172,7 @@
                       d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
                   </svg>
                 </label>
-                <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
+                <div class="absolute right-12 -top-2/3 z-5 hidden peer-checked/checkOption:block">
                   <ul
                     class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                     <li>
@@ -221,7 +214,7 @@
       </x-tables.table>
     </section>
 
-    {{ $ordersDeleted->onEachSide(5)->links('pages.dashboard.partials.pagination') }}
+    {{ $ordersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
   @else
     <h3 class="my-3 text-center text-xl font-semibold">Sin ordenes eliminados</h3>
   @endif

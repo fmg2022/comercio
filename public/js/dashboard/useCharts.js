@@ -1,45 +1,74 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Gráficas
-  const optionsArea = {
-    chart: {
-      type: 'area',
-      sparkline: {
-        enabled: true
-      },
-    },
-    stroke: {
-      curve: 'smooth'
-    },
-    fill: {
-      opacity: 1,
-    },
-    series: [{
-      name: 'sales',
-      data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
-    }],
-    colors: ['#9C27B0'],
-  }
+  const promise1 = axios.get('/api/dashboard/sellers/cant')
+  const promise2 = axios.get('/api/dashboard/orders/cant')
 
-  const optionsBar = {
-    chart: {
-      type: 'bar',
-      sparkline: {
-        enabled: true
-      },
-    },
-    colors: ['#EA1E8C'],
-    series: [{
-      name: 'orders',
-      data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
-    }],
-    yaxis: {
-      opposite: true,
-    }
-  }
+  Promise.all([promise1, promise2])
+    .then(resps => {
+      const [resSellers, resOrders] = resps
 
-  const chartA = new ApexCharts(document.querySelector("#chart-sales"), optionsArea)
-  const chartB = new ApexCharts(document.querySelector("#chart-ordes"), optionsBar)
+      // Gráficas
+      const optionsArea = {
+        chart: {
+          type: 'area',
+          sparkline: {
+            enabled: true
+          },
+          height: 200,
+        },
+        stroke: {
+          curve: 'smooth',
+          lineCap: 'round',
+        },
+        fill: {
+          opacity: 1,
+        },
+        markers: {
+          size: 1
+        },
+        series: [{
+          name: 'ventas',
+          data: resSellers.data.values
+        }],
+        xaxis: {
+          categories: resSellers.data.labels,
+          type: 'datetime'
+        },
+        yaxis: {
+          opposite: true
+        },
+        colors: ['#9C27B0'],
+        grid: {
+          borderColor: '#f1f1f1',
+        }
+      }
 
-  chartA.render()
-  chartB.render()
+      const optionsBar = {
+        chart: {
+          type: 'bar',
+          sparkline: {
+            enabled: true
+          },
+          height: 200,
+        },
+        colors: ['#EA1E8C'],
+        series: [{
+          name: 'ordenes',
+          data: resOrders.data.values
+        }],
+        xaxis: {
+          categories: resSellers.data.labels,
+          type: 'datetime'
+        },
+        yaxis: {
+          opposite: true,
+        }
+      }
+
+      const chartA = new ApexCharts(document.querySelector("#chart-sales"), optionsArea)
+      chartA.render()
+
+      const chartB = new ApexCharts(document.querySelector("#chart-ordes"), optionsBar)
+      chartB.render()
+    })
+
 })

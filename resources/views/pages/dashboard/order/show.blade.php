@@ -76,11 +76,11 @@
           </div>
         </td>
         <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
-        <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price + 0 }}</td>
-        <td class="text-center hidden md:table-cell"><span class="me-px">$</span>{{ $orderLine->pivot->discount + 0 }}
+        <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price_formated }}</td>
+        <td class="text-center hidden md:table-cell">{{ $orderLine->pivot->discount + 0 }}
         </td>
         <td class="text-center hidden md:table-cell">
-          <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() + 0 }}
+          <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
         </td>
         <td>
           <div class="relative flex justify-end items-center">
@@ -92,7 +92,7 @@
                   d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
               </svg>
             </label>
-            <div class="absolute right-12 -top-2/3 z-[5] hidden peer-checked/checkOption:block">
+            <div class="absolute right-12 -top-2/3 z-5 hidden peer-checked/checkOption:block">
               <ul
                 class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 {{ !$order->trashed() ? '[&>li:hover]:bg-slate-700' : '' }} [&>li]:transition-colors">
                 @if (in_array($order->orderStatus->name, ['Pendiente', 'Procesando']))
@@ -132,7 +132,7 @@
                               <p class="mb-3">
                                 <span class="text-lg text-slate-700">Precio:</span>
                                 <span class="me-px">$</span>
-                                {{ $orderLine->pivot->price + 0 }}
+                                {{ $orderLine->pivot->price_formated }}
                               </p>
                               <div>
                                 <label class="text-lg text-slate-600" for="quantity{{ $orderLine->id }}">
@@ -180,6 +180,6 @@
   <div
     class="w-full max-w-2xs px-10 py-3 ms-auto flex justify-between items-center text-xl font-bold bg-slate-700 rounded-b-md">
     <span>Total</span>
-    <span><span class="me-px">$</span>{{ $order->total + 0 }}</span>
+    <span><span class="me-px">$</span>{{ $order->total_formated }}</span>
   </div>
 @endsection
