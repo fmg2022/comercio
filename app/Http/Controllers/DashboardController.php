@@ -34,7 +34,7 @@ class DashboardController extends Controller
 				'total' => Product::count()
 			],
 			[
-				'icon' => 'user',
+				'icon' => 'users',
 				'color' => 'fuchsia',
 				'name' => 'Usuarios',
 				'total' => User::count()

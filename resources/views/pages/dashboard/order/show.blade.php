@@ -5,7 +5,7 @@
 @endphp
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/modal.js') }}" defer></script>
 @endpush
 
 @section('content')

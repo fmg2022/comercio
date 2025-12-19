@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/modal.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/navDesplace.js') }}" defer></script>
 @endpush
 
