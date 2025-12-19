@@ -74,7 +74,7 @@
 @endPushIf
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/modal.js') }}" defer></script>
 @endpush
 
 @section('content')
@@ -88,10 +88,10 @@
         {{ $product->trashed() ? ' (Eliminado/a)' : '' }}
       </h1>
       <p class="relative mb-4">
-        <x-buttons.linkSimple href="{{ route('products.show', $product->id) }}"
+        <x-buttons.link href="{{ route('products.show', $product->id) }}"
           class="text-slate-100 hover:text-purple-500 peer/popup">
           SKU: {{ $product->sku }}
-        </x-buttons.linkSimple>
+        </x-buttons.link>
         <x-popups.text class="top-full left-0 hidden bg-purple-800/80 peer-hover/popup:inline-block">
           Ver Producto
         </x-popups.text>
@@ -154,17 +154,17 @@
           @endphp
           <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
           <td class="relative">
-            <x-buttons.linkSimple href="" class="hover:text-purple-500 peer/popup">
+            <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
               {{ $order->user->fullName() }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Perfil
             </x-popups.text>
           </td>
           <td class="relative">
-            <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+            <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
               #{{ $order->id }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Orden
             </x-popups.text>

@@ -41,10 +41,10 @@
         <tr>
           <td>{{ ($addresses->currentPage() - 1) * $addresses->perPage() + $index + 1 }}</td>
           <td class="relative">
-            <x-buttons.linkSimple href="{{ route('users.show', $address->user) }}"
+            <x-buttons.link href="{{ route('users.show', $address->user) }}"
               class="text-slate-100 hover:text-purple-500 peer/popup">
               {{ $address->user->fullName() }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Usuario
             </x-popups.text>
@@ -158,10 +158,10 @@
           <tr>
             <td>{{ ($addressesDeleted->currentPage() - 1) * $addressesDeleted->perPage() + $index + 1 }}</td>
             <td class="relative">
-              <x-buttons.linkSimple href="{{ route('users.show', $address->user) }}"
+              <x-buttons.link href="{{ route('users.show', $address->user) }}"
                 class="text-slate-100 hover:text-purple-500 peer/popup">
                 {{ $address->user->fullName() }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
               <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
                 Ver Usuario
               </x-popups.text>

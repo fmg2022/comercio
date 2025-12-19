@@ -32,9 +32,9 @@
       <tr>
         <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
         <td class="font-bold">
-          <x-buttons.linkSimple href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
+          <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
             #{{ $payment->order->id }}
-          </x-buttons.linkSimple>
+          </x-buttons.link>
         </td>
         <td class="text-slate-300">{{ $payment->payment->name }}</td>
         <td class="text-slate-300">{{ $payment->date_formated }}</td>
@@ -138,9 +138,9 @@
           <tr>
             <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
             <td class="font-bold">
-              <x-buttons.linkSimple href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
+              <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
                 #{{ $payment->order->id }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
             </td>
             <td class="text-slate-300">{{ $payment->payment->name }}</td>
             <td class="text-slate-300">{{ $payment->date_formated }}</td>

@@ -42,10 +42,10 @@
           <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
         </td>
         <td class="relative">
-          <x-buttons.linkSimple href="{{ route('users.show', $user->id) }}"
+          <x-buttons.link href="{{ route('users.show', $user->id) }}"
             class="text-slate-100 hover:text-purple-500 peer/popup">
             {{ $user->fullName() }}
-          </x-buttons.linkSimple>
+          </x-buttons.link>
           <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
             Ver Usuario
           </x-popups.text>
@@ -166,10 +166,10 @@
                 class="h-12 aspect-auto">
             </td>
             <td class="relative">
-              <x-buttons.linkSimple href="{{ route('users.show', $user->id) }}"
+              <x-buttons.link href="{{ route('users.show', $user->id) }}"
                 class="text-slate-100 hover:text-purple-500 peer/popup">
                 {{ $user->fullName() }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
               <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
                 Ver Usuario
               </x-popups.text>

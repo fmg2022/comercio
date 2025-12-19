@@ -12,9 +12,9 @@
       <section class="p-6 flex flex-col gap-3 md:p-5">
         <div class="flex justify-between">
           <h4 class="text-xl font-semibold">Total de ventas</h4>
-          <x-buttons.linkSimple href="#!" class="text-purple-500 hover:text-purple-600">
+          <x-buttons.link href="#!" class="text-purple-500 hover:text-purple-600">
             Ver reporte
-          </x-buttons.linkSimple>
+          </x-buttons.link>
         </div>
         <div class="flex flex-col gap-1 mb-3">
           <h2 class="text-3xl font-bold">{{ $totalSellers['lastYear'] }}</h2>
@@ -95,10 +95,10 @@
         @endphp
         <tr>
           <td>
-            <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}"
+            <x-buttons.link href="{{ route('orders.show', $order->id) }}"
               class="font-semibold text-purple-500 hover:text-purple-600">
               #{{ $order->id }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
           </td>
           <td>
             <span>{{ $order->user->fullName() }}</span>
@@ -131,7 +131,6 @@
     </x-tables.table>
   </section>
   <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <!-- section: Ranking de productos vendidos -->
     <article class="p-6 bg-slate-800">
       <div class="mb-2 flex justify-between">
         <h3 class="text-lg font-semibold">Top productos</h3>
