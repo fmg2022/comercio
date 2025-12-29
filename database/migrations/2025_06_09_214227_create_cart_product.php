@@ -17,7 +17,6 @@ return new class extends Migration
             $table->primary(['cart_id', 'product_id']);
             $table->unsignedInteger('quantity')->default(1);
             $table->decimal('price', 10, 2);
-            $table->softDeletes();
             $table->timestamps();
         });
     }

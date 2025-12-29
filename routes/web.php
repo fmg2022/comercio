@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
@@ -9,13 +10,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
 // Rutas para los productos
 Route::get('/products/{id}', [ProductController::class, 'showOne'])->name('product.show');
 Route::get('/products', [ProductController::class, 'getAllProducts'])->name('product.listAll');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas para el carrito
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
+    Route::put('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
-Route::middleware('auth')->group(function () {
+    // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -26,22 +34,3 @@ require __DIR__ . '/dashboard.php';
 
 // Autenticación de usuarios
 require __DIR__ . '/auth.php';
-
-// Route::group(['middleware' => ['auth', 'verified']], function () {
-    // Route::prefix('comercio')->name('comercio.')->group(function () {
-        // Route::get('/', [IndexController::class, 'index'])->name('home');
-        // Route::post('/add-to-cart', [IndexController::class, 'addToCart'])->name('add_to_cart');
-        // Route::post('/increment', [IndexController::class, 'increment'])->name('increment'); // hacer un fetch
-        // Route::post('/decrement', [IndexController::class, 'decrement'])->name('decrement'); // hacer un fetch
-        // Route::post('/remove', [IndexController::class, 'remove'])->name('remove');
-    // });
-
-    // View de carrito
-    // Route::prefix('cart')->name('cart.')->group(function () {
-    // Route::get('/', [CartController::class, 'index'])->name('index');
-    // Route::post('/increment', [CartController::class, 'increment'])->name('increment'); // hacer un fetch
-    // Route::post('/decrement', [CartController::class, 'decrement'])->name('decrement'); // hacer un fetch
-    // Route::post('/remove', [CartController::class, 'remove'])->name('remove');
-    // Route::post('/clear', [CartController::class, 'clear'])->name('clear');
-    // });
-// });

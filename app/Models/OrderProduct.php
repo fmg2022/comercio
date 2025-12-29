@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderProduct extends Pivot
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     public $timestamps = true;
 

@@ -13,8 +13,15 @@
   <!-- Scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('scripts-app')
-
-  <script type="module" src="{{ asset('js/index.js') }}" defer></script>
+  <script src="{{ asset('js/modal.js') }}" defer></script>
+  <script src="{{ asset('js/alert.js') }}" defer></script>
+  <style>
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 
 <body class="relative antialiased min-h-screen flex flex-col bg-neutral-100">
