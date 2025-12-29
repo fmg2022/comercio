@@ -19,7 +19,6 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
             $table->foreignId('offer_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('set null');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
