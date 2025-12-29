@@ -27,7 +27,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Order routes
     Route::resource('/orders', OrderController::class)->only(['index', 'show', 'destroy']);
-    Route::put('/orders_line/{order}', [OrderController::class, 'editLine'])->name('orderLine.edit');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
 

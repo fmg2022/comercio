@@ -41,19 +41,6 @@ class OrderController extends Controller
         return redirect()->route('orders.index');
     }
 
-    public function editLine(Request $request, Order $order): RedirectResponse
-    {
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:1',
-            'product_id' => 'required|exists:products,id',
-        ]);
-
-        $order->products()->updateExistingPivot($validated['product_id'], [
-            'quantity' => $validated['quantity']
-        ]);
-        return redirect()->route('orders.show', $order->id);
-    }
-
     public function updateStatus(Request $request, Order $order): RedirectResponse
     {
         $validated = $request->validate([
