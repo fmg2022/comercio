@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Joelwmale\Cart\Facades\CartFacade as Cart;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CartController extends Controller
 {
@@ -65,7 +66,7 @@ class CartController extends Controller
 		return redirect()->back()->with('success', 'Producto agregado al carrito');
 	}
 
-	public function update(Request $request): RedirectResponse
+	public function update(Request $request): JsonResponse
 	{
 		$validated = $request->validate([
 			'id' => 'required|exists:products,id',
@@ -85,7 +86,10 @@ class CartController extends Controller
 		auth()->user()->cart->products()
 			->updateExistingPivot($validated['id'], ['quantity' => $validated['quantity']]);
 
-		return redirect()->back()->with('success', 'Producto actualizado en el carrito');
+		return response()->json([
+			'success' => 'Producto actualizado en el carrito',
+			'new_subtotal' => Cart::getSubTotalWithoutConditions(),
+		]);
 	}
 
 	public function remove(string $id): RedirectResponse

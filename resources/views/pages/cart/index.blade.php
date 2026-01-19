@@ -5,16 +5,13 @@
 @endpush
 
 @section('content')
-  <section class="px-4 py-16 max-w-2xl mx-auto md:px-6 lg:px-8 lg:max-w-7xl">
+  <article class="px-4 py-16 max-w-2xl mx-auto md:px-6 lg:px-8 lg:max-w-7xl">
     <h1 class="text-3xl text-gray-900 font-bold tracking-tight sm:text-4xl">Mi carrito</h1>
 
-    <form action="#" class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
-      @csrf
-      <fieldset class="lg:col-span-7">
+    <section class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+      <div class="lg:col-span-7">
         <ul role="list" class="border-y divide-y divide-gray-200 border-gray-200">
-          @php $total = 0; @endphp
           @forelse ($cart as $details)
-            @php $total += $details->price * $details->quantity; @endphp
             <li class="py-6 flex gap-4 sm:py-10" data-id="{{ $details->id }}">
               <div class="shrink-0">
                 <img src="{{ asset('images/products/' . $details->attributes->image) }}"
@@ -37,7 +34,7 @@
                     <input type="number" name="quantity" value="{{ $details->quantity }}" min="1" max="99"
                       class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 outline-gray-300 focus:outline-indigo-600 focus:outline-offset-2 focus:outline-2 sm:text-sm">
                   </label>
-                  <p class="ml-4 text-lg font-medium text-gray-900">
+                  <p class="ml-4 text-lg font-medium text-gray-900" data-value="{{ $details->price }}">
                     ${{ number_format($details->price, 2, ',', '.') }}
                   </p>
                 </div>
@@ -52,25 +49,37 @@
             <li class="py-10 text-center text-2xl font-medium">Sin productos en el carrito</li>
           @endforelse
         </ul>
-      </fieldset>
-      <fieldset class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
+      </div>
+      <form action="{{ route('orders.store') }}" method="POST"
+        class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
+        @csrf
+        @php $total = Cart::getSubTotalWithoutConditions(); @endphp
+        <input type="hidden" name="cart_id" value="{{ auth()->user()->cart->id }}">
         <h2 class="text-lg font-medium text-gray-900">Resumen del pedido</h2>
         <div class="space-y-4">
           <div class="pt-4 flex items-center justify-between text-base">
             <p class="text-gray-600">Subtotal</p>
-            <p class="font-medium text-gray-900">${{ number_format($total, 2, ',', '.') }}</p>
+            <p class="font-medium text-gray-900" id="cart-subtotal">
+              ${{ number_format($total, 2, ',', '.') }}
+            </p>
           </div>
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
             <p class="text-gray-600">Costo de envio estimado</p>
-            <p class="font-medium text-gray-900">${{ number_format($shipping, 2, ',', '.') }}</p>
+            <p class="font-medium text-gray-900" id="cart-shipping" data-value="{{ $shipping }}">
+              ${{ number_format($shipping, 2, ',', '.') }}
+            </p>
           </div>
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
+            @php $finalTax = $total * $tax; @endphp
             <p class="text-gray-600">Impuestos estimados</p>
-            <p class="font-medium text-gray-900">${{ number_format($total * $tax, 2, ',', '.') }}</p>
+            <p class="font-medium text-gray-900" id="cart-tax" data-value="{{ $tax }}">
+              ${{ number_format($finalTax, 2, ',', '.') }}
+            </p>
           </div>
           <div class="pt-4 flex items-center justify-between text-lg font-medium text-gray-900 border-t border-gray-200">
             <p>Total del pedido</p>
-            <p>${{ number_format($total + $shipping + $total * $tax, 2, ',', '.') }}</p>
+            <p id="cart-total">${{ number_format($total + $shipping + $finalTax, 2, ',', '.') }}
+            </p>
           </div>
         </div>
         <button type="submit"
@@ -83,7 +92,7 @@
             <span aria-hidden="true"> &rarr;</span>
           </x-buttons.link>
         </div>
-      </fieldset>
-    </form>
-  </section>
+      </form>
+    </section>
+  </article>
 @endsection

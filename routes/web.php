@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -18,10 +19,15 @@ Route::get('/products', [ProductController::class, 'getAllProducts'])->name('pro
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el carrito
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
-    Route::put('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add', [CartController::class, 'addToCart'])->name('addToCart');
+        Route::put('/update', [CartController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CartController::class, 'remove'])->name('remove');
+    });
+
+    // Ruta para la orden
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
     // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

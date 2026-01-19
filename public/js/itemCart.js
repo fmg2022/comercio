@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
         .then(response => {
-          window.location.reload()
+          updateTotalCart(response.data.new_subtotal)
         })
-    }, 300))
+    }, 250))
   })
 
   $deleteBtns.forEach($button => {
@@ -45,5 +45,29 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     })
   })
+
+  // Actualizar el total del carrito
+  function updateTotalCart($newTotal) {
+
+    const $subtotal = document.querySelector('#cart-subtotal')
+    const $shipping = document.querySelector('#cart-shipping')
+    const $tax = document.querySelector('#cart-tax')
+    const $total = document.querySelector('#cart-total')
+
+    const $taxTotal = $tax.dataset.value * $newTotal
+
+    $subtotal.innerHTML = formatCurrency($newTotal)
+    $tax.innerHTML = formatCurrency($taxTotal)
+    $total.innerHTML = formatCurrency($newTotal + $taxTotal + $shipping.dataset.value * 1)
+
+    function formatCurrency(value) {
+      return value.toLocaleString('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+    }
+  }
 
 })
