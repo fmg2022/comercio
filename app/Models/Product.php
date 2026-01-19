@@ -19,7 +19,7 @@ class Product extends Model
         'image',
         'sku',
         'price',
-        'quantity',
+        'stock',
         'description',
     ];
 
@@ -35,7 +35,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function cart(): BelongsToMany
+    public function carts(): BelongsToMany
     {
         return $this->belongsToMany(Cart::class)
             ->withPivot(['quantity', 'price'])

@@ -52,7 +52,7 @@
         </td>
         <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->sku }}</td>
         <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-        <td class="text-slate-300">{{ $product->quantity }}</td>
+        <td class="text-slate-300">{{ $product->stock }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
@@ -172,7 +172,7 @@
             </td>
             <td class="hidden text-xs sm:table-cell">{{ $product->sku }}</td>
             <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-            <td>{{ $product->quantity }}</td>
+            <td>{{ $product->stock }}</td>
             <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
             <td class="relative flex justify-end">
               <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
@@ -277,8 +277,8 @@
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="quantity"></label>
-          <input type="number" min="1" id="quantity" name="quantity"
+          <label class="block mb-2 font-semibold" for="stock"></label>
+          <input type="number" min="1" id="stock" name="stock"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>

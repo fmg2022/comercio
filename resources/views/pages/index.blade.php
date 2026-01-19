@@ -44,7 +44,7 @@
               <p class="py-1 text-slate-600 text-xl">${{ $product->price }}</p>
               <div class="flex flex-col items-center justify-center">
                 <label class="w-full max-w-16 grid grid-cols-1">
-                  <input type="number" name="quantity" value="1" min="1" max="{{ $product->quantity }}"
+                  <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}"
                     class="px-3 py-1.5 text-base text-gray-900 bg-white rounded-md outline outline-offset-1 outline-gray-400 sm:text-sm">
                 </label>
               </div>

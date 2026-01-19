@@ -19,7 +19,7 @@
     <x-inputs.withLabel forLabel="mark" title="Marca" id="mark" name="mark" required />
     <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" />
     <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" required />
-    <x-inputs.withLabel forLabel="quantity" title="Stock" id="quantity" name="quantity" type="number" value="0"
+    <x-inputs.withLabel forLabel="stock" title="Stock" id="stock" name="stock" type="number" value="0"
       min="0" max="9999" />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" />
 

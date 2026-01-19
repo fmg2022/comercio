@@ -22,7 +22,7 @@
       <h3 class="text-xl">Marca: {{ $product->mark }}</h3>
       <h3 class="text-xl">SKU: {{ $product->sku }}</h3>
       <h3 class="text-xl">Precio: {{ $product->price }}</h3>
-      <h3 class="text-xl">Stock: {{ $product->quantity }}</h3>
+      <h3 class="text-xl">Stock: {{ $product->stock }}</h3>
       <h3 class="text-xl">Categoría: {{ $product->category->name }}</h3>
       <p class="text-xl">Descripción: {{ $product->description }}</p>
     </div>
