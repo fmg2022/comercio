@@ -22,7 +22,7 @@ class OrderFactory extends Factory
         $shipment_id = DB::table('shipments')->inRandomOrder()->value('id');
 
         return [
-            'date' => $this->faker->dateTimeBetween('-6 months')->format('Y-m-d'),
+            'date' => $this->faker->dateTimeBetween('-5 months', 'now')->format('Y-m-d'),
             'total' => 0,
             'user_id' => $user_id,
             'order_status_id' => $status_id,
