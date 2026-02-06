@@ -111,15 +111,14 @@
           <td class="hidden md:table-cell">
             <span @class([
                 "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $order->orderStatus->name === 'Pendiente',
-                'text-blue-400' => $order->orderStatus->name === 'Procesando',
-                'text-purple-400' => $order->orderStatus->name === 'Completo',
-                'text-cyan-400' => $order->orderStatus->name === 'Delivery',
-                'text-indigo-400' => $order->orderStatus->name === 'Retirar',
-                'text-green-400' => $order->orderStatus->name === 'Entregado',
-                'text-red-400' => $order->orderStatus->name === 'Cancelado',
+                'text-amber-400' => $order->orderState->code === 'CREADO',
+                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderState->code === 'PAGADO',
+                'text-green-400' => $order->orderState->code === 'COMPLETO',
+                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderState->code === 'CANCELADO',
             ])>
-              {{ $order->orderStatus->name }}
+              {{ $order->orderState->code }}
             </span>
           </td>
         </tr>
@@ -140,15 +139,15 @@
       <ul class="flex flex-col gap-3">
         @foreach ($bestSellers as $seller)
           <li class="flex items-center gap-4">
-            <img src="{{ asset('images/products') }}/{{ $seller['image'] ?? 'zz_emptyProducto.webp' }}"
-              alt="{{ $seller['name'] }}" class="size-10 aspect-square">
+            <img src="{{ asset('images/products') }}/{{ $seller->image ?? 'zz_emptyProducto.webp' }}"
+              alt="{{ $seller->name }}" class="size-10 aspect-square">
             <div class="grow">
-              <h4>{{ $seller['name'] }}</h4>
-              <span class="font-thin text-slate-400">${{ $seller['price_formated'] }}</span>
+              <h4>{{ $seller->name }}</h4>
+              <span class="font-thin text-slate-400">${{ number_format($seller->price, 2, ',', '.') }}</span>
             </div>
             <div class="text-right">
-              <h4>${{ $seller['orders_count'] * $seller['price'] }}</h4>
-              <span class="font-thin text-slate-400">{{ $seller['orders_count'] }} vendidos</span>
+              <h4>${{ number_format($seller->total_sold * $seller->price, 2, ',', '.') }}</h4>
+              <span class="font-thin text-slate-400">{{ $seller->total_sold }} vendidos</span>
             </div>
           </li>
         @endforeach

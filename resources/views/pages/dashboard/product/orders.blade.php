@@ -84,7 +84,7 @@
     <div class="grow">
       <h1 class="text-2xl font-semibold">
         {{ $product->name }}
-        <span>{{ $product->mark }}</span>
+        <span>{{ $product->brand->name }}</span>
         {{ $product->trashed() ? ' (Eliminado/a)' : '' }}
       </h1>
       <p class="relative mb-4">
@@ -172,23 +172,15 @@
           <td>{{ $orderDate }}</td>
           <td class="hidden md:table-cell">
             <span @class([
-                "px-2 py-1 mx-auto font-semibold rounded-xl before:content-['●'] before:me-px",
-                'bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100' =>
-                    $order->orderStatus->name === 'Pendiente',
-                'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' =>
-                    $order->orderStatus->name === 'Procesando',
-                'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' =>
-                    $order->orderStatus->name === 'Completo',
-                'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100' =>
-                    $order->orderStatus->name === 'Delivery',
-                'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100' =>
-                    $order->orderStatus->name === 'Retirar',
-                'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' =>
-                    $order->orderStatus->name === 'Entregado',
-                'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' =>
-                    $order->orderStatus->name === 'Cancelado',
+                "font-semibold before:content-['●'] before:me-px",
+                'text-amber-400' => $order->orderStates->code === 'CREADO',
+                'text-blue-400' => $order->orderStates->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderStates->code === 'PAGADO',
+                'text-green-400' => $order->orderStates->code === 'COMPLETO',
+                'text-purple-400' => $order->orderStates->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderStates->code === 'CANCELADO',
             ])>
-              {{ $order->orderStatus->name }}
+              {{ $order->orderStates->code }}
             </span>
           </td>
           <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
