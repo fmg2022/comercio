@@ -19,11 +19,19 @@ class OrderSeeder extends Seeder
 				->limit(rand(1, 8))
 				->get()
 				->mapWithKeys(function ($product) {
+					$percentage = DB::table('offer_product')
+						->join('offers', 'offer_product.offer_id', '=', 'offers.id')
+						->join('offer_templates', 'offers.offer_template_id', '=', 'offer_templates.id')
+						->join('offer_percentages', 'offer_templates.id', '=', 'offer_percentages.offer_template_id')
+						->where('offer_product.product_id', $product->id)
+						->inRandomOrder()
+						->value('offer_percentages.percentage');
+					$qty = rand(1, 6);
 					return [
 						$product->id => [
-							'quantity' => rand(1, 6),
+							'quantity' => $qty,
 							'price' => $product->price,
-							'discount' => 0
+							'discount' => $product->price * $percentage
 						]
 					];
 				})

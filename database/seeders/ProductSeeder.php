@@ -18,15 +18,16 @@ class ProductSeeder extends Seeder
 
         foreach ($data as $product) {
             $category_id = DB::table('categories')->where('name', $product['category'])->value('id');
+            $brand_id = DB::table('brands')->where('name', $product['brand'])->value('id');
             DB::table('products')->insert([
                 'name' => $product['name'],
-                'mark' => $product['mark'],
                 'price' => $product['price'],
                 'sku' => $product['SKU'],
                 'description' => $product['description'],
                 'stock' => $product['stock'],
-                'category_id' => $category_id,
                 'image' => $product['image'],
+                'category_id' => $category_id,
+                'brand_id' => $brand_id
             ]);
         }
     }

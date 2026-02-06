@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 1234567890',
                 'email' => 'admin@gmail.com',
                 'password' => bcrypt('123456'),
+                'active' => true,
             ],
             [
                 'name' => 'Juan Carlos',
@@ -27,6 +28,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 0987654321',
                 'email' => 'juan@gmail.com',
                 'password' => bcrypt('123456'),
+                'active' => true,
             ],
             [
                 'name' => 'Fernando',
@@ -34,6 +36,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 0987654321',
                 'email' => 'fernando@gmail.com',
                 'password' => bcrypt('123456'),
+                'active' => false,
             ]
         ]);
 
