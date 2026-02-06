@@ -4,18 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\OrderPayment;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class DashboardController extends Controller
 {
 	public function index()
 	{
-		$orders = Order::select('id', 'date', 'total', 'user_id', 'order_status_id')
+		$orders = Order::select('id', 'date', 'total', 'user_id', 'order_state_id')
 			->dateRange(now()->subWeek())
 			->orderBy('date', 'desc')
 			->limit(5)->get();
@@ -47,20 +49,35 @@ class DashboardController extends Controller
 			]
 		];
 
-		$bestSellers = Product::select(['id', 'name', 'image', 'price'])
-			->withCount('orders')->orderBy('orders_count', 'desc')
-			->limit(5)->get();
+		$bestSellers = DB::table('products')
+			->join('order_product', 'products.id', '=', 'order_product.product_id')
+			->join('orders', 'order_product.order_id', '=', 'orders.id')
+			->join('order_states', function (JoinClause $join) {
+				$join->on('orders.order_state_id', '=', 'order_states.id')
+					->where('order_states.code', '=', 'COMPLETO');
+			})
+			->select(
+				'products.id',
+				'products.name',
+				'products.image',
+				'products.price',
+				DB::raw('SUM(order_product.quantity) as total_sold')
+			)
+			->groupBy('products.id', 'products.name', 'products.image', 'products.price')
+			->orderByDesc('total_sold')
+			->limit(5)
+			->get();
 
-		$totalYear =  OrderPayment::onlyCompleted()
+		$totalYear =  Payment::OnlyAprobed()
 			->dateRange(now()->startOfYear())
 			->sum('amount');
-		$totalMonth = OrderPayment::onlyCompleted()
+		$totalMonth = Payment::OnlyAprobed()
 			->dateRange(now()->subMonth())
 			->sum('amount');
-		$totalWeek = OrderPayment::onlyCompleted()
+		$totalWeek = Payment::OnlyAprobed()
 			->dateRange(now()->subWeek())
 			->sum('amount');
-		$total2Week = OrderPayment::onlyCompleted()
+		$total2Week = Payment::OnlyAprobed()
 			->dateRange(now()->subWeeks(2), now()->subWeek())
 			->sum('amount');
 		$totalSellers = [
@@ -89,16 +106,16 @@ class DashboardController extends Controller
 
 	public function cantSellers(): JsonResponse
 	{
-		$sellers = OrderPayment::selectRaw('COUNT(*) as total, date')
-			->onlyCompleted()
-			->whereMonth('date', now()->month)
-			->groupBy('date')
-			->orderBy('date', 'asc')
+		$sellers = Payment::selectRaw('COUNT(*) as total, paid_at')
+			->OnlyAprobed()
+			->whereMonth('paid_at', now()->month)
+			->groupBy('paid_at')
+			->orderBy('paid_at', 'asc')
 			->get();
 
 		[$data, $labels] = $sellers->reduce(function ($carry, $item) {
 			$carry[0][] = $item->total;
-			$carry[1][] = $item->date;
+			$carry[1][] = $item->paid_at;
 			return $carry;
 		}, [[], []]);
 
