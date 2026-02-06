@@ -41,7 +41,7 @@ class OrderProductObserver
     {
         $order->load('products');
         $newTotal = $order->products->sum(function ($product) {
-            return ($product->pivot->price * $product->pivot->quantity) - $product->pivot->discount;
+            return ($product->pivot->price * $product->pivot->quantity) - $product->pivot->discount * $product->pivot->quantity;
         });
 
         $order->update([
