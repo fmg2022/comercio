@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_statuses', function (Blueprint $table) {
+        Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
-            $table->text('description')->nullable();
+            $table->dateTime('start_date');
+            $table->dateTime('end_date')->nullable();
+            $table->foreignId('offer_state_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('offer_template_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_statuses');
+        Schema::dropIfExists('offers');
     }
 };

@@ -12,11 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('offer_product', function (Blueprint $table) {
-            $table->foreignId('offer_id')->constrained('offers')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->primary(['offer_id', 'product_id']);
-            $table->dateTime('initial_date');
-            $table->dateTime('expiration_date')->nullable();
+            $table->id();
+            $table->foreignId('offer_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offers_products');
+        Schema::dropIfExists('offer_product');
     }
 };

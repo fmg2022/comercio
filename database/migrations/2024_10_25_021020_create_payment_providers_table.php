@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_statuses', function (Blueprint $table) {
+        Schema::create('payment_providers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->string('code', 50);
+            $table->string('name', 50);
+            $table->boolean('active')->default(true);
+            $table->string('default_currency', 10);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_statuses');
+        Schema::dropIfExists('payment_providers');
     }
 };

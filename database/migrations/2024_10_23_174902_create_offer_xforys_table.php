@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('providers', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->string('email', 100);
-            $table->string('phone')->nullable();
-            $table->boolean('active')->default(true);
+        Schema::create('offer_xforys', function (Blueprint $table) {
+            $table->foreignId('offer_template_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedSmallInteger('buy_qty');
+            $table->unsignedSmallInteger('pay_qty');
+            $table->primary(['offer_template_id']);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('providers');
+        Schema::dropIfExists('offer_xforys');
     }
 };

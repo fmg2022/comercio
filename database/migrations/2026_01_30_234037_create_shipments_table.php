@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
+            $table->string('carrier_name', 100);
             $table->string('tracking_number')->unique(); // EMP-1242-AR (EMP)prefijo + (1242)numero de seguimiento + (AR)codigo de pais
-            $table->date('shipped_at')->nullable(); // Fecha de envio
-            $table->date('delivered_at')->nullable(); // Fecha de entrega
-            $table->foreignId('shipping_provider_id')->constrained('shipping_providers')->onUpdate('cascade')->onDelete('cascade');
+            $table->decimal('shipping_cost', 10, 2);
+            $table->dateTime('shipped_at'); // Fecha de envio
+            $table->dateTime('delivered_at')->nullable(); // Fecha de entrega
+            $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('shipment_state_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
             $table->softDeletes();
             $table->timestamps();
         });

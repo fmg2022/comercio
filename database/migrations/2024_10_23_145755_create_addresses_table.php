@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date');
-            $table->decimal('total', 12, 2)->default(0);
+            $table->string('name', 60); // Nombre de la dirección (CASA, TRABAJO, etc.)
+            $table->string('street', 250); // Calle
+            $table->string('city', 100); // Ciudad
+            $table->string('province', 100); // Provincia
+            $table->string('postal_code', 20); // Código postal
+            $table->boolean('is_default')->default(true); // Indica si es la dirección por defecto
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('order_state_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('address_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('addresses');
     }
 };
