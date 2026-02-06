@@ -17,12 +17,21 @@
     @csrf
     @method('PUT')
     <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" value="{{ $product->name }}" />
-    <x-inputs.withLabel forLabel="mark" title="Marca" id="mark" name="mark" value="{{ $product->mark }}" />
     <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" value="{{ $product->price }}" />
     <x-inputs.withLabel forLabel="stock" title="Stock" id="stock" name="stock" type="number"
       value="{{ $product->stock }}" min="0" max="9999" />
     <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" value="{{ $product->sku }}" />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" value="{{ $product->image }}" />
+
+    <select name="brand_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
+      <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una marca
+      </option>
+      @foreach ($brands as $brand)
+        <option value="{{ $brand->id }}" {{ $product->brand_id == $brand->id ? 'selected' : '' }}>
+          {{ $brand->name }}
+        </option>
+      @endforeach
+    </select>
 
     {{-- Modificar y probar estilo --}}
     <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">

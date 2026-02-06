@@ -197,7 +197,7 @@
                           </h3>
                           <p class="ml-4">${{ number_format($item->price, 2, ',', '.') }}</p>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500">{{ $item->attributes->mark }}</p>
+                        <p class="mt-1 text-sm text-gray-500">{{ $item->attributes->brand }}</p>
                       </div>
                       <div class="flex flex-1 items-end justify-between text-sm">
                         <p class="text-gray-500">Cantidad: {{ $item->quantity }}</p>

@@ -72,12 +72,12 @@
             <img src="{{ asset('images/products/' . $orderLine->image) }}" alt="{{ $orderLine->name }}"
               class="w-16 h-16 object-cover hidden lg:block">
             <span class="text-slate-400 font-semibold">{{ $orderLine->name }}</span>
-            <span class="me-2 font-bold">{{ $orderLine->mark }}</span>
+            <span class="me-2 font-bold">{{ $orderLine->brand->name }}</span>
           </div>
         </td>
         <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
         <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price_formated }}</td>
-        <td class="text-center hidden md:table-cell">{{ $orderLine->pivot->discount + 0 }}
+        <td class="text-center hidden md:table-cell">${{ $orderLine->pivot->discount_formated }}
         </td>
         <td class="text-center hidden md:table-cell">
           <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}

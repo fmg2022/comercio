@@ -10,7 +10,7 @@
   <x-sections.carousel-img :listId="'list-oferta'" :btnsId="'btns-oferta'">
     @foreach ($offers as $offer)
       <li class="item snap-start">
-        <img src="https://picsum.photos/seed/{{ $offer->code }}/768/360.webp" alt="Offer"
+        <img src="https://picsum.photos/seed/{{ $offer->id }}offer/768/360.webp" alt="{{ $offer->name }}"
           class="h-full w-full object-cover" draggable="false" />
       </li>
     @endforeach
@@ -33,7 +33,7 @@
               draggable="false" width="310">
           </a>
           <div class="px-6 py-4">
-            <h2 class="font-bold text-2xl mb-1 text-slate-700">{{ $product->mark }}</h2>
+            <h2 class="font-bold text-2xl mb-1 text-slate-700">{{ $product->brand->name }}</h2>
             <p class="text-slate-500 text-base">{{ $product->name }}</p>
           </div>
           <form action="{{ route('cart.addToCart') }}" method="POST"
@@ -58,5 +58,5 @@
   </x-sections.carousel-img>
 
   <!-- SECCION: Listado de marcas -->
-  <x-sections.list-items :title="'Marcas Destacadas'" :items="$marks" />
+  <x-sections.list-items :title="'Marcas Destacadas'" :items="$brands" />
 @endsection
