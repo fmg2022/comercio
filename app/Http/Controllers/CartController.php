@@ -37,7 +37,7 @@ class CartController extends Controller
 			'price' => $product->price,
 			'quantity' => $validated['quantity'],
 			'attributes' => [
-				'mark' => $product->mark,
+				'brand' => $product->brand->name,
 				'image' => $product->image,
 				'description' => $product->description,
 				'category' => $product->category,
@@ -56,10 +56,7 @@ class CartController extends Controller
 		} else {
 			$cart->products()->attach(
 				$validated['id'],
-				[
-					'price' => $product->price,
-					'quantity' => $validated['quantity']
-				]
+				['quantity' => $validated['quantity']]
 			);
 		}
 

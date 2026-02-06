@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Offer;
+use App\Models\OfferTemplate;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -13,10 +14,10 @@ class IndexController extends Controller
     {
         $categories = Category::where('parent_id', null)->get()->values('name', 'id');
         $selectedCategories = Category::where('parent_id', '!=', null)->limit(5)->get()->values('name', 'id');
-        $products = Product::limit(6)->get()->values('id', 'name', 'mark', 'image', 'price');
-        $offers = Offer::limit(10)->get()->values('name');
-        $marks = Product::select('mark as name')->distinct()->limit(5)->get();
+        $products = Product::with('brand:id,name')->select('id', 'name', 'brand_id', 'image', 'price')->inRandomOrder()->limit(6)->get();
+        $offers = OfferTemplate::all('id', 'name');
+        $brands = Brand::inRandomOrder()->limit(7)->get()->values('name', 'id');
 
-        return view('pages.index', compact('categories', 'products', 'offers', 'selectedCategories', 'marks'));
+        return view('pages.index', compact('categories', 'products', 'offers', 'selectedCategories', 'brands'));
     }
 }

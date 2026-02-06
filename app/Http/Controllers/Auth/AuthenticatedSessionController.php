@@ -99,10 +99,10 @@ class AuthenticatedSessionController extends Controller
                 'price' => $product->price,
                 'quantity' => $quantity,
                 'attributes' => [
-                    'mark' => $product->mark,
+                    'brand' => $product->brand->name,
                     'image' => $product->image,
                     'description' => $product->description,
-                    'category' => $product->category,
+                    'category' => $product->category->name,
                 ]
             ]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
@@ -10,9 +11,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Nette\Utils\Strings;
-
-use function Pest\Laravel\json;
 
 class ProductController extends Controller
 {
@@ -48,14 +46,16 @@ class ProductController extends Controller
         return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
             'productsDeleted' => Product::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
-            'categories' => Category::where('parent_id', null)->get()
+            'categories' => Category::where('parent_id', null)->get(),
+            'brands' => Brand::all()
         ]);
     }
 
     public function create(): View
     {
         return view('pages.dashboard.product.create', [
-            'categories' => Category::where('parent_id', null)->get()
+            'categories' => Category::where('parent_id', null)->get(),
+            'brands' => Brand::all()
         ]);
     }
 
@@ -77,7 +77,8 @@ class ProductController extends Controller
     {
         return view('pages.dashboard.product.edit', [
             'product' => Product::findOrFail($id),
-            'categories' => Category::where('parent_id', null)->get()
+            'categories' => Category::where('parent_id', null)->get(),
+            'brands' => Brand::all()
         ]);
     }
 
@@ -102,7 +103,7 @@ class ProductController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $product = Product::withTrashed()->find($id, ['id', 'name', 'mark', 'image', 'sku', 'price', 'stock', 'description']);
+        $product = Product::withTrashed()->with('brand:id,name')->find($id, ['id', 'name', 'brand_id', 'image', 'sku', 'price', 'stock', 'description']);
         if (!$product) {
             return response()->json(['error' => 'Producto no encontrado'], 404);
         }
