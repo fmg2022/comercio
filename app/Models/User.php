@@ -28,6 +28,7 @@ class User extends Authenticatable
         'phone',
         'image',
         'password',
+        'active',
     ];
 
     /**
@@ -73,9 +74,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function wishlistProduct(): BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList')->withTimestamps()
-            ->withPivot(['added_at']);
+        return $this->belongsToMany(Product::class)
+            ->withTimestamps();
     }
 }

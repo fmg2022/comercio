@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class OrderStatus extends Model
+class OfferType extends Model
 {
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'code',
         'description',
     ];
 
-    public function orders(): HasMany
+    public function Offers(): HasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Offer::class);
     }
 }

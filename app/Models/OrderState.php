@@ -4,23 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ShippingProvider extends Model
+class OrderState extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'code',
+        'description',
     ];
 
-    public function shipments()
+    public function orders(): HasMany
     {
-        return $this->hasMany(Shipment::class);
-    }
-
-    public function provider()
-    {
-        return $this->belongsTo(Provider::class);
+        return $this->hasMany(Order::class);
     }
 }

@@ -15,7 +15,6 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'mark',
         'image',
         'sku',
         'price',
@@ -23,6 +22,7 @@ class Product extends Model
         'description',
     ];
 
+    // Accessors & Mutators
     protected function priceFormated(): Attribute
     {
         return Attribute::make(
@@ -30,15 +30,21 @@ class Product extends Model
         );
     }
 
+    // Relationships
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
     public function carts(): BelongsToMany
     {
         return $this->belongsToMany(Cart::class)
-            ->withPivot(['quantity', 'price'])
+            ->withPivot(['quantity'])
             ->withTimestamps();
     }
 
@@ -50,17 +56,22 @@ class Product extends Model
             ->withTimestamps();
     }
 
-    public function wishlistUser(): BelongsToMany
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList')
-            ->withPivot(['added_at'])
+        return $this->belongsToMany(User::class)
             ->withTimestamps();
     }
 
     public function offers(): BelongsToMany
     {
         return $this->belongsToMany(Offer::class)
-            ->withPivot(['initial_date', 'expiration_date'])
+            ->withTimestamps();
+    }
+
+    public function providers(): BelongsToMany
+    {
+        return $this->belongsToMany(Provider::class)
+            ->withPivot(['price', 'stock', 'delivery_date'])
             ->withTimestamps();
     }
 }

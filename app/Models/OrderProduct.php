@@ -19,6 +19,7 @@ class OrderProduct extends Pivot
         'discount'
     ];
 
+    // Accessors
     protected function priceFormated(): Attribute
     {
         return Attribute::make(
@@ -26,6 +27,14 @@ class OrderProduct extends Pivot
         );
     }
 
+    protected function discountFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => number_format($this->discount, 2, ',', '.'),
+        );
+    }
+
+    // Relationships
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
