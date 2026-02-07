@@ -14,7 +14,7 @@ class AddressController extends Controller
     public function index(): View
     {
         return view('pages.dashboard.address.index', [
-            'addresses' => Address::paginate(10),
+            'addresses' => Address::where('is_default', true)->paginate(10),
             'addressesDeleted' => Address::onlyTrashed()->paginate(10, pageName: 'pageDeleted')
         ]);
     }
@@ -60,7 +60,7 @@ class AddressController extends Controller
 
     public function fetch($id): JsonResponse
     {
-        $address = Address::withTrashed()->findOrFail($id, ['street', 'city', 'province', 'is_default']);
+        $address = Address::withTrashed()->findOrFail($id, ['name', 'street', 'city', 'province', 'postal_code', 'is_default']);
 
         if (!$address) {
             return response()->json(['error' => 'Dirección no encontrada'], 404);

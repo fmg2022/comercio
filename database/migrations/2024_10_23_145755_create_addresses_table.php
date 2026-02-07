@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('city', 100); // Ciudad
             $table->string('province', 100); // Provincia
             $table->string('postal_code', 20); // Código postal
-            $table->boolean('is_default')->default(true); // Indica si es la dirección por defecto
+            $table->boolean('is_default')->default(false); // Indica si es la dirección por defecto
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

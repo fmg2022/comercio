@@ -11,8 +11,11 @@
     autocomplete="off">
     @csrf
     @method('PUT')
+    <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" value="{{ $address->name }}" />
     <x-inputs.withLabel forLabel="street" title="Calle" id="street" name="street" value="{{ $address->street }}" />
     <x-inputs.withLabel forLabel="city" title="Ciudad" id="city" name="city" value="{{ $address->city }}" />
+    <x-inputs.withLabel forLabel="postal_code" title="Código Postal" id="postal_code" name="postal_code"
+      value="{{ $address->postal_code }}" />
     <x-inputs.withLabel forLabel="province" title="Provincia" id="province" name="province"
       value="{{ $address->province }}" />
     <div class="mb-4 col-span-full flex flex-wrap gap-x-10 gap-y-5 items-center justify-center">

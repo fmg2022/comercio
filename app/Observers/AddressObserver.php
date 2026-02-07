@@ -32,20 +32,4 @@ class AddressObserver
                 ->first()?->update(['is_default' => true]);
         }
     }
-
-    /**
-     * Handle the Address "restored" event.
-     */
-    public function restored(Address $address): void
-    {
-        //
-    }
-
-    /**
-     * Handle the Address "force deleted" event.
-     */
-    public function forceDeleted(Address $address): void
-    {
-        //
-    }
 }

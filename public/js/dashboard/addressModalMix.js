@@ -37,8 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
 						const $input = $div.querySelector('input')
 						$input.value = response.data[$input.name]
 						$input.disabled = show === 'true'
-
-						$div.querySelector('label').textContent = textLabels[$input.name]
 					})
 
 					const $section = $modal.querySelector('fieldset > section')

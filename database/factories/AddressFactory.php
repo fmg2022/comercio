@@ -17,7 +17,7 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => array_rand(['CASA', 'TRABAJO', 'FAMILIA']),
+            'name' => $this->faker->randomElement(['CASA', 'TRABAJO', 'FAMILIA', 'AMIGOS', 'OTRO', 'SUEGROS']),
             'street' => $this->faker->streetAddress(),
             'city' => $this->faker->city(),
             'province' => $this->faker->state(),
