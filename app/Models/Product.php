@@ -30,6 +30,35 @@ class Product extends Model
         );
     }
 
+    public function getCurrentOffer(): ?object
+    {
+        return $this->belongsToMany(Offer::class)
+            ->whereHas('offerState', function ($query) {
+                $query->where('code', 'ACTIVA');
+            })
+            ->first()
+            ?->offerTemplate;
+    }
+
+    public function getDiscountTotal(int $quantity, int $offerId): float
+    {
+        $offerT = OfferTemplate::find($offerId);
+        $offerType = $offerT->offerType->code;
+
+        if ($offerT) {
+            if ($offerType === 'PERCENTAGE') {
+                return $this->price * $offerT->pay_qty * $quantity;
+            }
+            if ($offerType === 'X_FOR_Y') {
+                return $this->price * (intdiv($quantity, $offerT->buy_qty) * $offerT->pay_qty);
+            }
+            if ($offerType === 'FIXED') {
+                return $offerT->pay_qty * $quantity;
+            }
+        }
+        return 0;
+    }
+
     // Relationships
     public function category(): BelongsTo
     {
