@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 150);
             $table->text('description')->nullable();
+            $table->decimal('buy_qty', 10, 2);
+            $table->decimal('pay_qty', 10, 2);
             $table->foreignId('offer_type_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();

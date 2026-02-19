@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OfferTemplate extends Model
 {
@@ -13,6 +12,9 @@ class OfferTemplate extends Model
         'name',
         'description',
         'offer_type_id',
+        'buy_qty',
+        'pay_qty',
+
     ];
 
     public function offerType(): BelongsTo
@@ -23,15 +25,5 @@ class OfferTemplate extends Model
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class);
-    }
-
-    public function percentages(): HasOne
-    {
-        return $this->hasOne(OfferPercentage::class);
-    }
-
-    public function xforys(): HasOne
-    {
-        return $this->hasOne(OfferXfory::class);
     }
 }

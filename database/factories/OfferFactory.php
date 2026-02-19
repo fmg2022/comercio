@@ -23,7 +23,7 @@ class OfferFactory extends Factory
         $type_state = 'ACTIVA';
 
         $startDate > now()
-            ? $type_state = 'BORRADOR'
+            ? $type_state = 'PENDIENTE'
             : ($endDate > now() ?: $type_state = 'EXPIRADA');
 
         return [
