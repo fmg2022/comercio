@@ -18,6 +18,8 @@ return new class extends Migration
             $table->unsignedInteger('quantity');
             $table->decimal('price', 10, 2);
             $table->decimal('discount', 10, 2)->default(0);
+            $table->string('offer_template_id', 10)->default('');
+            $table->string('offer_type_code', 50)->default('');
             $table->timestamps();
         });
     }

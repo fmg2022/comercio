@@ -16,7 +16,9 @@ class OrderProduct extends Pivot
     protected $fillable = [
         'quantity',
         'price',
-        'discount'
+        'discount',
+        'offer_template_id',
+        'offer_type_code',
     ];
 
     // Accessors
@@ -45,6 +47,7 @@ class OrderProduct extends Pivot
         return $this->belongsTo(Product::class);
     }
 
+    // Functions
     public function subtotal(): string
     {
         return number_format(($this->price * $this->quantity) - $this->discount, 2, ',', '.');
