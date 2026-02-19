@@ -14,7 +14,7 @@ class PaymentController extends Controller
 	public function index(): View
 	{
 		return view('pages.dashboard.payment.index', [
-			'payments' => Payment::paginate(10),
+			'payments' => Payment::orderByDesc('paid_at')->paginate(10),
 			'paymentsDeleted' => Payment::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
 			'statuses' => PaymentState::all(['id', 'code']),
 		]);

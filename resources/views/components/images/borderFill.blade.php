@@ -6,6 +6,6 @@
   ];
 @endphp
 
-<div class="p-5 mx-auto mb-4 bg-linear-to-b {{ $colorClasses[$color] }} rounded-md">
+<div class="p-1 mx-auto my-4 bg-linear-to-b {{ $colorClasses[$color] }} rounded-md">
   <img {{ $attributes->merge(['class' => 'size-40 object-cover rounded-sm']) }}>
 </div>
