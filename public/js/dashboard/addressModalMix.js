@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-	const textLabels = { 'street': 'Calle', 'city': 'Ciudad', 'province': 'Provincia' }
 	// Obtener todos los botones con el atributo data-id y data-show
 	const buttons = document.querySelectorAll('button[data-id][data-show]')
 	const $modal = document.getElementById('modal-address-mix')

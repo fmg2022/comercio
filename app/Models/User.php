@@ -59,6 +59,12 @@ class User extends Authenticatable
         return $this->surname . ', ' . $this->name;
     }
 
+    public function getCurrentAddress(): ?Address
+    {
+        return $this->addresses()->where('is_default', true)->first();
+    }
+
+    // Relationships
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);

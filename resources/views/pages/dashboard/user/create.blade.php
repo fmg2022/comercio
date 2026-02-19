@@ -7,7 +7,7 @@
 
     <x-buttons.linkFill href="{{ route('users.index') }}"
       class="bg-slate-700 active:bg-slate-600 sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2">
-      Volver
+      Volver al listado
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
