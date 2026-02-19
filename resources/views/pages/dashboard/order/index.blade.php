@@ -87,7 +87,8 @@
                 <li>
                   <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $order->id }}"
                     data-from="{{ $order->user->fullName() }}" data-amount="{{ $order->total + 0 }}"
-                    data-status="{{ $order->orderState->id }}" class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                    data-status="{{ $order->orderState->code }}"
+                    class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -230,17 +231,18 @@
             <div class="flex flex-col gap-5">
               <span class="text-lg text-slate-600">De:</span>
               <span class="text-lg text-slate-600">Monto:</span>
-              <label class="text-lg text-slate-600" for="">
+              <label class="text-lg text-slate-600" for="select_states">
                 Estado de la orden:
               </label>
             </div>
             <div class="flex flex-col gap-4">
               <h3 class="font-bold"></h3>
               <p><span class="me-px">$</span>0</p>
-              <select name="states" class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+              <select id="select_states" name="states"
+                class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
                 @foreach ($orderStates as $states)
                   <option value="{{ $states->id }}">
-                    {{ $states->name }}
+                    {{ $states->code }}
                   </option>
                 @endforeach
               </select>

@@ -20,6 +20,8 @@ class Order extends Model
 		'date',
 		'total',
 		'order_state_id',
+		'user_id',
+		'address_id',
 	];
 
 	// Accesores

@@ -106,16 +106,16 @@ class DashboardController extends Controller
 
 	public function cantSellers(): JsonResponse
 	{
-		$sellers = Payment::selectRaw('COUNT(*) as total, paid_at')
+		$sellers = Payment::selectRaw('COUNT(*) as total, DATE(paid_at) as paid_date')
 			->OnlyAprobed()
 			->whereMonth('paid_at', now()->month)
-			->groupBy('paid_at')
-			->orderBy('paid_at', 'asc')
+			->groupBy('paid_date')
+			->orderBy('paid_date', 'asc')
 			->get();
 
 		[$data, $labels] = $sellers->reduce(function ($carry, $item) {
 			$carry[0][] = $item->total;
-			$carry[1][] = $item->paid_at;
+			$carry[1][] = $item->paid_date;
 			return $carry;
 		}, [[], []]);
 

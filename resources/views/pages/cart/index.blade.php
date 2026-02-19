@@ -23,7 +23,7 @@
                     <a href="{{ route('product.show', $details->id) }}">{{ $details->name }}</a>
                   </h3>
                   <p class="mt-1 text-gray-500">
-                    {{ $details->attributes->brand->name }}
+                    {{ $details->attributes->brand }}
                     <span class="ms-2 ps-2 border-s border-gray-300">
                       {{ $details->category }}
                     </span>
