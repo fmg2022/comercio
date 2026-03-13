@@ -15,7 +15,7 @@ class CartController extends Controller
 {
 	public function index(): View
 	{
-		return view('pages.cart.index', [
+		return view('pages.home.cart.index', [
 			'cart' => Cart::getContent(),
 			'shipping' => 532,
 			'tax' => 0.06 // rand(0, 15) / 100 Impuesto establecido por el comercio
