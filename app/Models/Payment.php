@@ -4,26 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'amount',
-        'date',
-        'status',
-    ];
+    protected $fillable = ['name'];
 
-    public function paymentStatus(): BelongsTo
+    public function orders(): HasMany
     {
-        return $this->belongsTo(PaymentStatus::class);
-    }
-
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
+        return $this->hasMany(OrderPayment::class);
     }
 }

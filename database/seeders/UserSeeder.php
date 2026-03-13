@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -35,5 +36,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('123456'),
             ]
         ]);
+
+        User::factory()->count(10)->create();
     }
 }

@@ -1,4 +1,4 @@
-<footer class="flex flex-col items-center bg-zinc-100 text-center dark:bg-gray-700 dark:text-slate-300 lg:text-left">
+<footer class="flex flex-col items-center text-center bg-[oklch(0.33_0.09_253.09)] text-slate-300 lg:text-left">
   <div class="container p-3">
     <div class="w-full p-4 mb-6 flex items-center justify-center flex-wrap gap-5 bg-black/10 rounded-lg">
       <x-application-logo />
@@ -93,10 +93,9 @@
       </div>
     </div>
   </div>
-  <div
-    class="w-full px-7 py-6 bg-slate-200 dark:bg-black/10 border-t border-slate-100/60 dark:border-slate-600/70 text-center text-slate-800 dark:text-slate-400">
+  <div class="w-full px-7 py-6 bg-black/10 border-t border-slate-600/70 text-center">
     <p>&copy; 2024 Página principal. Template por <x-buttons.linkSimple class="hover:text-purple-500"
-        href="#!">Comercio</x-buttons.linkSimple>
+        href="#!">Author</x-buttons.linkSimple>
     </p>
   </div>
 </footer>

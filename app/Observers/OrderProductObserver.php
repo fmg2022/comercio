@@ -45,8 +45,7 @@ class OrderProductObserver
         });
 
         $order->update([
-            'total' => $newTotal,
-            'updated_at' => now()
+            'total' => $newTotal
         ]);
     }
 

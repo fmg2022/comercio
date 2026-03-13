@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,13 @@ class OrderProduct extends Pivot
         'discount'
     ];
 
+    protected function priceFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => number_format($this->price, 2, ',', '.'),
+        );
+    }
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
@@ -29,8 +37,8 @@ class OrderProduct extends Pivot
         return $this->belongsTo(Product::class);
     }
 
-    public function subtotal(): float
+    public function subtotal(): string
     {
-        return ($this->price * $this->quantity) - $this->discount;
+        return number_format(($this->price * $this->quantity) - $this->discount, 2, ',', '.');
     }
 }
