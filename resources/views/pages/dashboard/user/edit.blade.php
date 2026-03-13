@@ -7,7 +7,7 @@
 
     <x-buttons.linkFill href="{{ route('users.index') }}"
       class="bg-slate-700 active:bg-slate-600 sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2">
-      Volver
+      Volver al listado
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
@@ -15,9 +15,12 @@
     @method('PUT')
     @csrf
     <x-inputs.withLabel forLabel="name1" title="Nombre" id="name1" name="name" value="{{ $user->name }}" required />
-    <x-inputs.withLabel forLabel="surname" title="Apellido" id="surname" name="surname" value="{{ $user->surname }}" required />
-    <x-inputs.withLabel forLabel="email" title="Correo" id="email" name="email" type="email" value="{{ $user->email }}" required />
-    <x-inputs.withLabel forLabel="phone" title="Telefono" id="phone" name="phone" type="tel" value="{{ $user->phone }}" required />
+    <x-inputs.withLabel forLabel="surname" title="Apellido" id="surname" name="surname" value="{{ $user->surname }}"
+      required />
+    <x-inputs.withLabel forLabel="email" title="Correo" id="email" name="email" type="email"
+      value="{{ $user->email }}" required />
+    <x-inputs.withLabel forLabel="phone" title="Telefono" id="phone" name="phone" type="tel"
+      value="{{ $user->phone }}" required />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" value="{{ $user->image }}" />
 
     <div class="my-4 flex items-center gap-3 justify-around sm:col-span-2">

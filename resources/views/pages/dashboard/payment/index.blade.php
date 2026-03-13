@@ -32,28 +32,27 @@
       <tr>
         <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
         <td class="font-bold">
-          <x-buttons.linkSimple href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
+          <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
             #{{ $payment->order->id }}
-          </x-buttons.linkSimple>
+          </x-buttons.link>
         </td>
-        <td class="text-slate-300">{{ $payment->payment->name }}</td>
+        <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
         <td class="text-slate-300">{{ $payment->date_formated }}</td>
         <td class="hidden sm:table-cell">{{ $payment->nr_fee }}</td>
         <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
         <td class="hidden md:table-cell">
           <span @class([
               "font-semibold before:content-['●'] before:me-px",
-              'text-amber-400' => $payment->paymentStatus->name === 'Pendiente',
-              'text-blue-400' => $payment->paymentStatus->name === 'Procesando',
-              'text-purple-400' => $payment->paymentStatus->name === 'Completado',
-              'text-cyan-400' => $payment->paymentStatus->name === 'Reembolsado',
-              'text-blue-400' =>
-                  $payment->paymentStatus->name === 'Parcialmente Reembolsado',
-              'text-rose-400' => $payment->paymentStatus->name === 'Fallido',
-              'text-green-400' => $payment->paymentStatus->name === 'Entregado',
-              'text-red-400' => $payment->paymentStatus->name === 'Cancelado',
+              'text-amber-400' => $payment->paymentState->code === 'PENDIENTE',
+              'text-green-400' => $payment->paymentState->code === 'APROBADO',
+              'text-blue-400' => $payment->paymentState->code === 'EN_PROCESO',
+              'text-cyan-400' => $payment->paymentState->code === 'REEMBOLSADO',
+              'text-lime-400' => $payment->paymentState->code === 'EXPIRADO',
+              'text-rose-400' => $payment->paymentState->code === 'EN_DEVOLUCION',
+              'text-purple-400' => $payment->paymentState->code === 'RECHAZADO',
+              'text-red-400' => $payment->paymentState->code === 'CANCELADO',
           ])>
-            {{ $payment->paymentStatus->name }}
+            {{ $payment->paymentState->codeFormated }}
           </span>
         </td>
         <td>
@@ -138,17 +137,17 @@
           <tr>
             <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
             <td class="font-bold">
-              <x-buttons.linkSimple href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
+              <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
                 #{{ $payment->order->id }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
             </td>
-            <td class="text-slate-300">{{ $payment->payment->name }}</td>
+            <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
             <td class="text-slate-300">{{ $payment->date_formated }}</td>
             <td class="hidden sm:table-cell">{{ $payment->nr_fee }}</td>
             <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
             <td class="hidden md:table-cell">
               <span class="text-gray-300 font-semibold before:content-['●'] before:me-px">
-                {{ $payment->paymentStatus->name }}
+                {{ $payment->paymentState->codeFormated }}
               </span>
             </td>
             <td>
@@ -204,8 +203,8 @@
 
       <fieldset class="w-full py-3 flex flex-col gap-2 text-gray-700 md:px-3">
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="date">Fecha</label>
-          <input type="date" id="date" name="date" autocomplete="off"
+          <label class="block mb-2 font-semibold" for="paid_at">Fecha</label>
+          <input type="date" id="paid_at" name="paid_at" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
@@ -216,14 +215,10 @@
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="method">Métodos de Pago</label>
-          <select name="method" id="method"
-            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md">
-            <option value="">Ninguna</option>
-            @foreach ($methods as $method)
-              <option value="{{ $method->id }}">{{ $method->name }}</option>
-            @endforeach
-          </select>
+          <label class="block mb-2 font-semibold" for="method">Método</label>
+          <input id="method" name="method" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-purple-500"
+            required>
         </div>
         <div class="mb-4">
           <label class="block mb-2 font-semibold" for="status">Estado del Pago</label>

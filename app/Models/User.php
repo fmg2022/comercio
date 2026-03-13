@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'phone',
         'image',
         'password',
+        'active',
     ];
 
     /**
@@ -57,14 +59,20 @@ class User extends Authenticatable
         return $this->surname . ', ' . $this->name;
     }
 
+    public function getCurrentAddress(): ?Address
+    {
+        return $this->addresses()->where('is_default', true)->first();
+    }
+
+    // Relationships
     public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
-    public function carts(): HasMany
+    public function cart(): HasOne
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasOne(Cart::class);
     }
 
     public function orders(): HasMany
@@ -72,9 +80,9 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function wishlistProduct(): BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList')->withTimestamps()
-            ->withPivot(['added_at']);
+        return $this->belongsToMany(Product::class)
+            ->withTimestamps();
     }
 }

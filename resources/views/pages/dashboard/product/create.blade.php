@@ -16,12 +16,19 @@
   <x-forms.grid2 action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" required />
-    <x-inputs.withLabel forLabel="mark" title="Marca" id="mark" name="mark" required />
     <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" />
     <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" required />
-    <x-inputs.withLabel forLabel="quantity" title="Stock" id="quantity" name="quantity" type="number" value="0"
+    <x-inputs.withLabel forLabel="stock" title="Stock" id="stock" name="stock" type="number" value="0"
       min="0" max="9999" />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" />
+
+    <select name="brand_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
+      <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una marca
+      </option>
+      @foreach ($brands as $brand)
+        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+      @endforeach
+    </select>
 
     {{-- Componetizar, Revisar estilos --}}
     <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">

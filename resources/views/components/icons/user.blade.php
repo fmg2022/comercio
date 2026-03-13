@@ -2,6 +2,8 @@
 
 <svg {{ $attributes->merge(['class' => $class]) }} xmlns = 'http://www.w3.org/2000/svg' width = '32' height = '32'
   viewBox = '0 0 24 24'>
-  <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-    d="M17 19.5c0-1.657-2.239-3-5-3s-5 1.343-5 3m14-3c0-1.23-1.234-2.287-3-2.75M3 16.5c0-1.23 1.234-2.287 3-2.75m12-4.014a3 3 0 1 0-4-4.472M6 9.736a3 3 0 0 1 4-4.472m2 8.236a3 3 0 1 1 0-6a3 3 0 0 1 0 6" />
+  <g fill="none" stroke="currentColor" stroke-width="1.5">
+    <circle cx="12" cy="6" r="4" />
+    <path d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z" />
+  </g>
 </svg>

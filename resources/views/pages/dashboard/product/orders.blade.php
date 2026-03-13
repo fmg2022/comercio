@@ -74,7 +74,7 @@
 @endPushIf
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modal.js') }}" defer></script>
+  <script src="{{ asset('js/modal.js') }}" defer></script>
 @endpush
 
 @section('content')
@@ -84,14 +84,14 @@
     <div class="grow">
       <h1 class="text-2xl font-semibold">
         {{ $product->name }}
-        <span>{{ $product->mark }}</span>
+        <span>{{ $product->brand->name }}</span>
         {{ $product->trashed() ? ' (Eliminado/a)' : '' }}
       </h1>
       <p class="relative mb-4">
-        <x-buttons.linkSimple href="{{ route('products.show', $product->id) }}"
+        <x-buttons.link href="{{ route('products.show', $product->id) }}"
           class="text-slate-100 hover:text-purple-500 peer/popup">
           SKU: {{ $product->sku }}
-        </x-buttons.linkSimple>
+        </x-buttons.link>
         <x-popups.text class="top-full left-0 hidden bg-purple-800/80 peer-hover/popup:inline-block">
           Ver Producto
         </x-popups.text>
@@ -154,17 +154,17 @@
           @endphp
           <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
           <td class="relative">
-            <x-buttons.linkSimple href="" class="hover:text-purple-500 peer/popup">
+            <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
               {{ $order->user->fullName() }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Perfil
             </x-popups.text>
           </td>
           <td class="relative">
-            <x-buttons.linkSimple href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+            <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
               #{{ $order->id }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Orden
             </x-popups.text>
@@ -172,23 +172,15 @@
           <td>{{ $orderDate }}</td>
           <td class="hidden md:table-cell">
             <span @class([
-                "px-2 py-1 mx-auto font-semibold rounded-xl before:content-['●'] before:me-px",
-                'bg-amber-100 text-amber-800 dark:bg-amber-800 dark:text-amber-100' =>
-                    $order->orderStatus->name === 'Pendiente',
-                'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' =>
-                    $order->orderStatus->name === 'Procesando',
-                'bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100' =>
-                    $order->orderStatus->name === 'Completo',
-                'bg-cyan-100 text-cyan-800 dark:bg-cyan-800 dark:text-cyan-100' =>
-                    $order->orderStatus->name === 'Delivery',
-                'bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100' =>
-                    $order->orderStatus->name === 'Retirar',
-                'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' =>
-                    $order->orderStatus->name === 'Entregado',
-                'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' =>
-                    $order->orderStatus->name === 'Cancelado',
+                "font-semibold before:content-['●'] before:me-px",
+                'text-amber-400' => $order->orderStates->code === 'CREADO',
+                'text-blue-400' => $order->orderStates->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderStates->code === 'PAGADO',
+                'text-green-400' => $order->orderStates->code === 'COMPLETO',
+                'text-purple-400' => $order->orderStates->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderStates->code === 'CANCELADO',
             ])>
-              {{ $order->orderStatus->name }}
+              {{ $order->orderStates->code }}
             </span>
           </td>
           <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>

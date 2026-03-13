@@ -32,7 +32,8 @@
       <tr class="text-left">
         <th>#</th>
         <th>Nombre</th>
-        <th class="hidden sm:table-cell">SKU</th>
+        <th class="hidden sm:table-cell">Marca</th>
+        <th class="hidden md:table-cell">SKU</th>
         <th>Precio</th>
         <th>Stock</th>
         <th class="hidden md:table-cell">Categoría</th>
@@ -50,9 +51,10 @@
             <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
           </a>
         </td>
-        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->sku }}</td>
+        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->brand->name }}</td>
+        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->sku }}</td>
         <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-        <td class="text-slate-300">{{ $product->quantity }}</td>
+        <td class="text-slate-300">{{ $product->stock }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
@@ -116,7 +118,7 @@
                 </a>
               </li>
               <li>
-                <button type="button" data-title="{{ $product->name . ' ' . $product->mark }}"
+                <button type="button" data-title="{{ $product->name . ' ' . $product->brand->name }}"
                   data-text="¿Estas seguro que quieres eliminar este producto?" data-uid="{{ $product->id }}"
                   data-modal="{{ $type1 }}" data-button="Eliminar"
                   class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
@@ -153,7 +155,8 @@
           <tr class="text-left">
             <th>#</th>
             <th>Nombre</th>
-            <th class="hidden sm:table-cell">SKU</th>
+            <th class="hidden sm:table-cell">Marca</th>
+            <th class="hidden md:table-cell">SKU</th>
             <th>Precio</th>
             <th>Stock</th>
             <th class="hidden md:table-cell">Categoría</th>
@@ -170,9 +173,10 @@
                 <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
               </a>
             </td>
-            <td class="hidden text-xs sm:table-cell">{{ $product->sku }}</td>
+            <td class="hidden text-xs sm:table-cell">{{ $product->brand->name }}</td>
+            <td class="hidden text-xs md:table-cell">{{ $product->sku }}</td>
             <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-            <td>{{ $product->quantity }}</td>
+            <td>{{ $product->stock }}</td>
             <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
             <td class="relative flex justify-end">
               <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
@@ -221,7 +225,7 @@
                     </a>
                   </li>
                   <li class="flex gap-3">
-                    <button type="button" data-title="{{ $product->name . ' ' . $product->mark }}"
+                    <button type="button" data-title="{{ $product->name . ' ' . $product->brand->name }}"
                       data-text="¿Estas seguro que quieres restaurar este producto?" data-uid="{{ $product->id }}"
                       data-modal="{{ $type1 }}" data-button="Restaurar"
                       class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
@@ -265,10 +269,14 @@
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="mark"></label>
-          <input type="text" id="mark" name="mark" autocomplete="off"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
+          <label for="brand" class="block mb-2 font-semibold"></label>
+          <select id="brand" name="brand_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
+            <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una marca
+            </option>
+            @foreach ($brands as $brand)
+              <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+            @endforeach
+          </select>
         </div>
         <div class="mb-4">
           <label class="block mb-2 font-semibold" for="price"></label>
@@ -277,8 +285,8 @@
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="quantity"></label>
-          <input type="number" min="1" id="quantity" name="quantity"
+          <label class="block mb-2 font-semibold" for="stock"></label>
+          <input type="number" min="1" id="stock" name="stock"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>

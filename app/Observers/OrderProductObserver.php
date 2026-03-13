@@ -52,17 +52,17 @@ class OrderProductObserver
     protected function updatedProductStock(OrderProduct $orderProduct): void
     {
         $product = $orderProduct->product;
-        $newStock = $product->getOriginal('quantity') - $orderProduct->quantity;
+        $newStock = $product->getOriginal('stock') - $orderProduct->quantity;
 
         if ($newStock < 0) {
             throw new \Exception("El stock del producto no puede ser negativo");
         }
 
-        $product->update(['quantity' => $newStock]);
+        $product->update(['stock' => $newStock]);
     }
 
     protected function decreaseProductStock(OrderProduct $orderProduct): void
     {
-        $orderProduct->product->decrement('quantity', $orderProduct->quantity);
+        $orderProduct->product->decrement('stock', $orderProduct->quantity);
     }
 }

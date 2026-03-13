@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const $form = modal.querySelector('#form-modalSimple')
   const $select = modal.querySelector('select')
 
-  const arrayStatusDenied = ["3", "6"]
+  const arrayStatusDenied = ["COMPLETO", "REEMBOLSADO", "CANCELADO"]
   let url = window.location.href
   // Si la URL contiene parámetros de búsqueda, los eliminamos
   if ((/\?\w+/).test(url)) {
@@ -12,25 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   modalButtons.forEach(button => {
-    if (arrayStatusDenied.includes(button.dataset.status)) {
-      button.classList.remove(['cursor-pointer'])
-      button.classList.add('pointer-events-none', 'text-slate-500')
-    } else {
+    if (!arrayStatusDenied.includes(button.dataset.status)) {
       button.classList.remove('pointer-events-none', 'text-slate-500')
       button.classList.add(['cursor-pointer'])
+
+      button.addEventListener('click', () => {
+        modal.querySelector('h3').textContent = button.dataset.from
+        modal.querySelector('p').childNodes[1].textContent = button.dataset.amount
+        modal.querySelector('label').for = 'state-' + button.dataset.uid
+        $select.id = 'state-' + button.dataset.uid
+
+        $select.querySelectorAll('option').forEach(option => option.value === button.dataset.status ? option.setAttribute('selected', '') : option.removeAttribute('selected'))
+
+        $form.action = `${url}/${button.dataset.uid}/states`
+
+        modal.showModal()
+      })
+    } else {
+      button.classList.remove(['cursor-pointer'])
+      button.classList.add('pointer-events-none', 'text-slate-500')
     }
-
-    button.addEventListener('click', () => {
-      modal.querySelector('h3').textContent = button.dataset.from
-      modal.querySelector('p').childNodes[1].textContent = button.dataset.amount
-      modal.querySelector('label').for = 'status-' + button.dataset.uid
-      $select.id = 'status-' + button.dataset.uid
-
-      $select.querySelectorAll('option').forEach(option => option.value === button.dataset.status ? option.setAttribute('selected', '') : option.removeAttribute('selected'))
-
-      $form.action = `${url}/${button.dataset.uid}/status`
-
-      modal.showModal()
-    })
   })
 })

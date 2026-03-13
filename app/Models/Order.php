@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 
@@ -19,7 +19,9 @@ class Order extends Model
 	protected $fillable = [
 		'date',
 		'total',
-		'order_status_id',
+		'order_state_id',
+		'user_id',
+		'address_id',
 	];
 
 	// Accesores
@@ -43,9 +45,9 @@ class Order extends Model
 	 */
 	public function scopeNotCanceled(Builder $query): void
 	{
-		$query->join('order_statuses', function (JoinClause $join) {
-			$join->on('orders.order_status_id', '=', 'order_statuses.id')
-				->where('order_statuses.name', '!=', 'Cancelado');
+		$query->join('order_states', function (JoinClause $join) {
+			$join->on('orders.order_state_id', '=', 'order_states.id')
+				->where('order_states.code', '!=', 'CANCELADO');
 		});
 	}
 
@@ -64,24 +66,24 @@ class Order extends Model
 		return $this->belongsTo(User::class);
 	}
 
-	public function orderStatus(): BelongsTo
+	public function address(): BelongsTo
 	{
-		return $this->belongsTo(OrderStatus::class);
+		return $this->belongsTo(Address::class);
 	}
 
-	public function offer(): BelongsTo
+	public function orderState(): BelongsTo
 	{
-		return $this->belongsTo(Offer::class);
+		return $this->belongsTo(OrderState::class);
 	}
 
-	public function shipment(): BelongsTo
+	public function shipment(): HasOne
 	{
-		return $this->belongsTo(Shipment::class);
+		return $this->hasOne(Shipment::class);
 	}
 
-	public function payments(): HasMany
+	public function payment(): HasOne
 	{
-		return $this->hasMany(OrderPayment::class);
+		return $this->hasOne(Payment::class);
 	}
 
 	public function products(): BelongsToMany
@@ -90,12 +92,5 @@ class Order extends Model
 			->using(OrderProduct::class)
 			->withPivot(['quantity', 'price', 'discount'])
 			->withTimestamps();
-	}
-
-	public function getPaymentName(): string
-	{
-		return $this->first_payment instanceof OrderPayment
-			? $this->first_payment->payment->name
-			: 'Sin Pago';
 	}
 }

@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
       ev.preventDefault()
       const id = button.getAttribute('data-id')
       const $selectStatus = $form.querySelector('fieldset select[name="status"]')
-      const $selectMethod = $form.querySelector('fieldset select[name="method"]')
 
       // Si la URL contiene parámetros de búsqueda, los eliminamos
       let url = window.location.href
@@ -26,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
             div.querySelector('input').value = response.data[div.querySelector('input').name] || ''
           });
 
-          $selectMethod.value = response.data.payment_id || ''
           $selectStatus.value = response.data.payment_status_id || ''
         })
         .catch(error => {

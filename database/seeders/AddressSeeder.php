@@ -17,11 +17,9 @@ class AddressSeeder extends Seeder
         $users = User::all(['id']);
         foreach ($users as $user) {
             $intRand = rand(1, 3);
-            $addresses = Address::factory()->count($intRand)->create([
+            Address::factory()->count($intRand)->create([
                 'user_id' => $user->id,
             ]);
-
-            $addresses[$intRand - rand(1, $intRand)]->update(['is_default' => true]);
         }
     }
 }

@@ -31,6 +31,7 @@
         <th>Nombre completo</th>
         <th>Correo</th>
         <th>Telefono</th>
+        <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
     </x-slot>
@@ -42,16 +43,19 @@
           <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
         </td>
         <td class="relative">
-          <x-buttons.linkSimple href="{{ route('users.show', $user->id) }}"
+          <x-buttons.link href="{{ route('users.show', $user->id) }}"
             class="text-slate-100 hover:text-purple-500 peer/popup">
             {{ $user->fullName() }}
-          </x-buttons.linkSimple>
+          </x-buttons.link>
           <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
             Ver Usuario
           </x-popups.text>
         </td>
         <td>{{ $user->email }}</td>
         <td>{{ $user->phone }}</td>
+        <td {{ $user->active ? 'data-active' : 'Inactivo' }}
+          class="hidden text-red-700 md:table-cell font-semibold before:content-['●'] before:me-px data-active:text-green-700">
+          {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
             <x-slot:label>
@@ -95,10 +99,10 @@
                 </button>
               </li>
               <li>
-                <a href="{{ route('addresses.index') }}"
+                <a href="{{ route('users.show', $user->id) }}"
                   class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
                   <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                       class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
                       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -154,6 +158,7 @@
             <th>Nombre completo</th>
             <th>Correo</th>
             <th>Telefono</th>
+            <th class="hidden md:table-cell">Estado</th>
             <th class="text-end">Opciones</th>
           </tr>
         </x-slot>
@@ -166,16 +171,18 @@
                 class="h-12 aspect-auto">
             </td>
             <td class="relative">
-              <x-buttons.linkSimple href="{{ route('users.show', $user->id) }}"
+              <x-buttons.link href="{{ route('users.show', $user->id) }}"
                 class="text-slate-100 hover:text-purple-500 peer/popup">
                 {{ $user->fullName() }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
               <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
                 Ver Usuario
               </x-popups.text>
             </td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->phone }}</td>
+            <td class="text-slate-600">{{ $user->email }}</td>
+            <td class="text-slate-600">{{ $user->phone }}</td>
+            <td class="hidden text-slate-600 md:table-cell font-semibold before:content-['●'] before:me-px">
+              {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
             <td class="relative flex justify-end">
               <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900"
                 class="right-14">
@@ -234,39 +241,44 @@
 
   {{-- MODAL SHOW, EDIT --}}
   <x-modals.simple id="modal-user-mix"
-    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form id="form-user-mix" enctype="multipart/form-data" method="POST"
-      class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+      class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
       <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp"
         alt="Foto de usuario {{ $user->name }}" />
 
-      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2 text-gray-700 md:px-3">
+      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-2 text-gray-700 md:px-3">
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="name"></label>
+          <label class="block mb-2 font-semibold" for="name">Nombre</label>
           <input type="text" id="name" name="name" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="surname"></label>
+          <label class="block mb-2 font-semibold" for="surname">Apellido</label>
           <input type="text" id="surname" name="surname" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="email"></label>
+          <label class="block mb-2 font-semibold" for="email">Email</label>
           <input type="email" id="email" name="email" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="phone"></label>
+          <label class="block mb-2 font-semibold" for="phone">Teléfono</label>
           <input type="text" id="phone" name="phone" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
+        <section class="col-span-full group-[.editable]:hidden">
+          <h4 class="mb-2 font-semibold">Dirección</h4>
+          <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
+            {{ $user->getCurrentAddress()->fullAddress() }}</p>
+        </section>
         <button type="submit"
           class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
       </fieldset>
