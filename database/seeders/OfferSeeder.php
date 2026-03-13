@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Offer;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class OfferSeeder extends Seeder
 {
@@ -13,31 +13,10 @@ class OfferSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('offers')->insert([
-            [
-                'name' => 'Oferta Fideo y Harina selectas',
-                'code' => 'FIDE',
-                'type' => 'Porcentaje',
-                'discount' => 10,
-            ],
-            [
-                'name' => 'Oferta Gaseosas',
-                'code' => 'GASE',
-                'type' => '3x2',
-                'discount' => 0,
-            ],
-            [
-                'name' => 'Oferta Leches',
-                'code' => 'LECHE',
-                'type' => '2x1',
-                'discount' => 0,
-            ],
-            [
-                'name' => 'Oferta Arroz',
-                'code' => 'ARR',
-                'type' => 'Porcentaje',
-                'discount' => 19,
-            ],
-        ]);
+        Offer::factory(16)->create()->each(function ($offer) {
+            $offer->products()->attach(
+                Product::pluck('id')->random(rand(1, 3))
+            );
+        });
     }
 }

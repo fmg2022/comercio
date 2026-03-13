@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-	const textLabels = { 'street': 'Calle', 'city': 'Ciudad', 'province': 'Provincia' }
 	// Obtener todos los botones con el atributo data-id y data-show
 	const buttons = document.querySelectorAll('button[data-id][data-show]')
 	const $modal = document.getElementById('modal-address-mix')
@@ -37,8 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
 						const $input = $div.querySelector('input')
 						$input.value = response.data[$input.name]
 						$input.disabled = show === 'true'
-
-						$div.querySelector('label').textContent = textLabels[$input.name]
 					})
 
 					const $section = $modal.querySelector('fieldset > section')

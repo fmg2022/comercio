@@ -15,14 +15,14 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'mark',
         'image',
         'sku',
         'price',
-        'quantity',
+        'stock',
         'description',
     ];
 
+    // Accessors & Mutators
     protected function priceFormated(): Attribute
     {
         return Attribute::make(
@@ -30,15 +30,69 @@ class Product extends Model
         );
     }
 
+    public function getCurrentOffer(): ?object
+    {
+        return $this->belongsToMany(Offer::class)
+            ->whereHas('offerState', function ($query) {
+                $query->where('code', 'ACTIVA');
+            })
+            ->first()
+            ?->offerTemplate;
+    }
+
+    public function getDiscountTotal(int $quantity, int $offerId): float
+    {
+        $offerT = OfferTemplate::find($offerId);
+        $offerType = $offerT->offerType->code;
+
+        if ($offerT) {
+            if ($offerType === 'PERCENTAGE') {
+                return $this->price * $offerT->pay_qty * $quantity;
+            }
+            if ($offerType === 'X_FOR_Y') {
+                return $this->price * (intdiv($quantity, $offerT->buy_qty) * $offerT->pay_qty);
+            }
+            if ($offerType === 'FIXED') {
+                return $offerT->pay_qty * $quantity;
+            }
+        }
+        return 0;
+    }
+
+    private function getRecursiveCategories(array $categories, $parent): array
+    {
+        if (!$parent) {
+            return $categories;
+        }
+
+        $categories =  [[
+            'id' => $parent->id,
+            'name' => $parent->name,
+        ], ...$categories];
+
+        return $this->getRecursiveCategories($categories, $parent->parent);
+    }
+
+    public function getParentCategories(): array
+    {
+        return $this->getRecursiveCategories([], $this->category()->first());
+    }
+
+    // Relationships
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function cart(): BelongsToMany
+    public function brand(): BelongsTo
     {
-        return $this->belongsToMany(Cart::class)->as('cartProduct')
-            ->withPivot(['quantity', 'price'])
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function carts(): BelongsToMany
+    {
+        return $this->belongsToMany(Cart::class)
+            ->withPivot(['quantity'])
             ->withTimestamps();
     }
 
@@ -50,17 +104,22 @@ class Product extends Model
             ->withTimestamps();
     }
 
-    public function wishlistUser(): BelongsToMany
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->as('wishList')
-            ->withPivot(['added_at'])
+        return $this->belongsToMany(User::class)
             ->withTimestamps();
     }
 
     public function offers(): BelongsToMany
     {
         return $this->belongsToMany(Offer::class)
-            ->withPivot(['initial_date', 'expiration_date'])
+            ->withTimestamps();
+    }
+
+    public function providers(): BelongsToMany
+    {
+        return $this->belongsToMany(Provider::class)
+            ->withPivot(['price', 'stock', 'delivery_date'])
             ->withTimestamps();
     }
 }

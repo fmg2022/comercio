@@ -14,7 +14,7 @@ class ProfileController extends Controller
     public function index(Request $request): View
     {
         $address = $request->user()->addresses()->where('is_default', true)->first();
-        return view('pages.profile.index', ['user' => $request->user(), 'address' => $address]);
+        return view('pages.home.profile.index', ['user' => $request->user(), 'address' => $address]);
     }
 
     /**
@@ -22,7 +22,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('pages.profile.edit', [
+        return view('pages.home.profile.edit', [
             'user' => $request->user(),
         ]);
     }
@@ -40,7 +40,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('pages.profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('pages.home.profile.edit')->with('status', 'profile-updated');
     }
 
     /**

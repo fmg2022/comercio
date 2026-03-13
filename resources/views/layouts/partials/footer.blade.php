@@ -1,7 +1,7 @@
 <footer class="flex flex-col items-center text-center bg-[oklch(0.33_0.09_253.09)] text-slate-300 lg:text-left">
   <div class="container p-3">
     <div class="w-full p-4 mb-6 flex items-center justify-center flex-wrap gap-5 bg-black/10 rounded-lg">
-      <x-application-logo />
+      <x-application-logo class="rounded-md" />
       <h5>Siguenos en: </h5>
       <ul class="flex gap-4 items-center justify-center flex-wrap">
         <li>
@@ -77,25 +77,25 @@
       <div class="mb-6">
         <h5 class="mb-2.5 font-bold uppercase sm:text-start">Conocenos</h5>
         <nav class="flex flex-col gap-1 text-center sm:text-start">
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Historia</x-buttons.linkSimple>
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Nuestro compromiso</x-buttons.linkSimple>
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Preguntas frecuentes</x-buttons.linkSimple>
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Contacto</x-buttons.linkSimple>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Historia</x-buttons.link>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Nuestro compromiso</x-buttons.link>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Preguntas frecuentes</x-buttons.link>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Contacto</x-buttons.link>
         </nav>
       </div>
       <div class="mb-6">
         <h5 class="mb-2.5 font-bold uppercase sm:text-start">Descubre</h5>
         <nav class="flex flex-col gap-1 text-center sm:text-start">
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Eventos</x-buttons.linkSimple>
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Promociones</x-buttons.linkSimple>
-          <x-buttons.linkSimple class="hover:text-purple-500" href="#!">Folletos</x-buttons.linkSimple>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Eventos</x-buttons.link>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Promociones</x-buttons.link>
+          <x-buttons.link class="hover:text-purple-500" href="#!">Folletos</x-buttons.link>
         </nav>
       </div>
     </div>
   </div>
   <div class="w-full px-7 py-6 bg-black/10 border-t border-slate-600/70 text-center">
-    <p>&copy; 2024 Página principal. Template por <x-buttons.linkSimple class="hover:text-purple-500"
-        href="#!">Author</x-buttons.linkSimple>
+    <p>&copy; 2024 Página principal. Template por <x-buttons.link class="hover:text-purple-500"
+        href="#!">Author</x-buttons.link>
     </p>
   </div>
 </footer>

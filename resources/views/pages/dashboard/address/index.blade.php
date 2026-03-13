@@ -29,10 +29,11 @@
         <tr class="text-left">
           <th>#</th>
           <th>Usuario</th>
-          <th>Calle</th>
+          <th>Dirección</th>
           <th>Ciudad</th>
-          <th>Provincia</th>
-          <th class="hidden md:table-cell">Estado</th>
+          <th class="hidden sm:table-cell">Provincia</th>
+          <th class="hidden md:table-cell">Código Postal</th>
+          <th class="hidden lg:table-cell">Nombre</th>
           <th class="text-right">Opciones</th>
         </tr>
       </x-slot>
@@ -41,26 +42,19 @@
         <tr>
           <td>{{ ($addresses->currentPage() - 1) * $addresses->perPage() + $index + 1 }}</td>
           <td class="relative">
-            <x-buttons.linkSimple href="{{ route('users.show', $address->user) }}"
+            <x-buttons.link href="{{ route('users.show', $address->user) }}"
               class="text-slate-100 hover:text-purple-500 peer/popup">
               {{ $address->user->fullName() }}
-            </x-buttons.linkSimple>
+            </x-buttons.link>
             <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
               Ver Usuario
             </x-popups.text>
           </td>
           <td>{{ $address->street }}</td>
           <td>{{ $address->city }}</td>
-          <td>{{ $address->province }}</td>
-          <td class="hidden md:table-cell">
-            <span @class([
-                "px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-px",
-                'bg-green-800 text-green-100' => $address->is_default,
-                'bg-slate-700 text-slate-100' => !$address->is_default,
-            ])>
-              {{ $address->is_default ? 'Activo' : 'No activo' }}
-            </span>
-          </td>
+          <td class="hidden sm:table-cell">{{ $address->province }}</td>
+          <td class="hidden md:table-cell">{{ $address->postal_code }}</td>
+          <td class="hidden lg:table-cell">{{ $address->name }}</td>
           <td>
             <div class="relative flex justify-end">
               <x-popups.contentWcheck iid="chaddress-{{ $address->id }}" labelClass="hover:bg-slate-900"
@@ -146,10 +140,11 @@
           <tr class="text-left">
             <th>#</th>
             <th>Usuario</th>
-            <th>Calle</th>
+            <th>Dirección</th>
             <th>Ciudad</th>
-            <th>Provincia</th>
-            <th class="hidden md:table-cell">Estado</th>
+            <th class="hidden sm:table-cell">Provincia</th>
+            <th class="hidden md:table-cell">Código Postal</th>
+            <th class="hidden lg:table-cell">Nombre</th>
             <th class="text-right">Opciones</th>
           </tr>
         </x-slot:thead>
@@ -158,23 +153,19 @@
           <tr>
             <td>{{ ($addressesDeleted->currentPage() - 1) * $addressesDeleted->perPage() + $index + 1 }}</td>
             <td class="relative">
-              <x-buttons.linkSimple href="{{ route('users.show', $address->user) }}"
+              <x-buttons.link href="{{ route('users.show', $address->user) }}"
                 class="text-slate-100 hover:text-purple-500 peer/popup">
                 {{ $address->user->fullName() }}
-              </x-buttons.linkSimple>
+              </x-buttons.link>
               <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
                 Ver Usuario
               </x-popups.text>
             </td>
             <td>{{ $address->street }}</td>
             <td>{{ $address->city }}</td>
-            <td>{{ $address->province }}</td>
-            <td class="hidden md:table-cell">
-              <span
-                class="px-2 py-1 font-semibold bg-slate-700 text-slate-100 rounded-xl before:content-['●'] before:me-px">
-                {{ $address->is_default ? 'Activo' : 'No activo' }}
-              </span>
-            </td>
+            <td class="hidden sm:table-cell">{{ $address->province }}</td>
+            <td class="hidden md:table-cell">{{ $address->postal_code }}</td>
+            <td class="hidden lg:table-cell">{{ $address->name }}</td>
             <td>
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chaddress-{{ $address->id }}" labelClass="hover:bg-slate-900"
@@ -245,20 +236,32 @@
 
       <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-2 text-gray-700 md:px-3">
         <div class="mb-4 col-span-full">
-          <label class="block mb-2 font-semibold" for="street"></label>
+          <label class="block mb-2 font-semibold" for="name">Nombre</label>
+          <input type="text" id="name" name="name" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4 col-span-full">
+          <label class="block mb-2 font-semibold" for="street">Dirección</label>
           <input type="text" id="street" name="street" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="city"></label>
+          <label class="block mb-2 font-semibold" for="city">Ciudad</label>
           <input type="text" id="city" name="city" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="mb-4">
-          <label class="block mb-2 font-semibold" for="province"></label>
+          <label class="block mb-2 font-semibold" for="province">Provincia</label>
           <input type="text" id="province" name="province"
+            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="mb-4">
+          <label class="block mb-2 font-semibold" for="postal_code">Código Postal</label>
+          <input type="text" id="postal_code" name="postal_code"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
@@ -266,7 +269,7 @@
           <p class="w-max">¿Establecer dirección por defecto?</p>
           <x-inputs.checkSwitch
             class="bg-slate-200 checked:bg-green-700 pointer-events-none group-[.editable]:cursor-pointer group-[.editable]:pointer-events-auto"
-            classLabel="bg-white border-slate-300 peer-checked/switch:border-green-700 pointer-events-none group-[.editable]:cursor-pointer group-[.editable]:pointer-events-auto" />
+            classLabel="z-10 bg-white border-slate-300 peer-checked/switch:border-green-700 pointer-events-none group-[.editable]:cursor-pointer group-[.editable]:pointer-events-auto" />
         </section>
         <button type="submit"
           class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>

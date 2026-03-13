@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('button[data-id][data-show]')
   const $modal = document.getElementById('modal-product-mix')
   const $form = $modal.querySelector('#form-product-mix')
-  const labelNames = { 'name': 'Nombre', 'mark': 'Marca', 'price': 'Precio', 'quantity': 'Cantidad', 'sku': 'SKU', 'category_id': 'Categoría', 'description': 'Descripción' }
+  const labelNames = { 'name': 'Nombre', 'brand_id': 'Marca', 'price': 'Precio', 'quantity': 'Cantidad', 'sku': 'SKU', 'category_id': 'Categoría', 'description': 'Descripción' }
 
   // Iterar sobre los botones y agregar un evento click a cada uno
   buttons.forEach(button => {

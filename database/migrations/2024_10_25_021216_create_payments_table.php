@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('provider_transaction_id', 50);
+            $table->string('provider_state', 50);
+            $table->text('checkout_url')->nullable();
+            $table->string('method', 50); // Método de pago: tarjeta, transferencia, etc
+            $table->decimal('amount', 10, 2);
+            $table->dateTime('paid_at')->nullable();
+            $table->foreignId('payment_state_id')->constrained('payment_states')->onDelete('cascade');
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->foreignId('payment_provider_id')->constrained('payment_providers')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

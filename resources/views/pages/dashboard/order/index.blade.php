@@ -41,19 +41,18 @@
         <td class="font-bold">{{ $order->user->fullName() }}</td>
         <td class="text-slate-300">{{ $OrderDate }}</td>
         <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
-        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
+        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->payment->paymentProvider->name }}</td>
         <td class="hidden md:table-cell">
           <span @class([
               "font-semibold before:content-['●'] before:me-px",
-              'text-amber-400' => $order->orderStatus->name === 'Pendiente',
-              'text-blue-400' => $order->orderStatus->name === 'Procesando',
-              'text-purple-400' => $order->orderStatus->name === 'Completo',
-              'text-cyan-400' => $order->orderStatus->name === 'Delivery',
-              'text-indigo-400' => $order->orderStatus->name === 'Retirar',
-              'text-green-400' => $order->orderStatus->name === 'Entregado',
-              'text-red-400' => $order->orderStatus->name === 'Cancelado',
+              'text-amber-400' => $order->orderState->code === 'CREADO',
+              'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+              'text-cyan-400' => $order->orderState->code === 'PAGADO',
+              'text-green-400' => $order->orderState->code === 'COMPLETO',
+              'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+              'text-red-400' => $order->orderState->code === 'CANCELADO',
           ])>
-            {{ $order->orderStatus->name }}
+            {{ $order->orderState->code }}
           </span>
         </td>
         <td>
@@ -88,7 +87,8 @@
                 <li>
                   <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $order->id }}"
                     data-from="{{ $order->user->fullName() }}" data-amount="{{ $order->total + 0 }}"
-                    data-status="{{ $order->orderStatus->id }}" class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                    data-status="{{ $order->orderState->code }}"
+                    class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                     <span>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -155,10 +155,10 @@
             <td class="font-bold">{{ $order->user->fullName() }}</td>
             <td>{{ $OrderDate }}</td>
             <td><span class="me-px">$</span>{{ $order->total + 0 }}</td>
-            <td class="hidden capitalize md:table-cell">{{ $order->getPaymentName() }}</td>
+            <td class="hidden capitalize md:table-cell">{{ $order->payment->paymentProvider->name }}</td>
             <td class="hidden md:table-cell">
               <span
-                class="px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-1">{{ $order->orderStatus->name }}</span>
+                class="px-2 py-1 font-semibold rounded-xl before:content-['●'] before:me-1">{{ $order->orderState->code }}</span>
             </td>
             <td>
               <div class="relative flex justify-end">
@@ -231,17 +231,18 @@
             <div class="flex flex-col gap-5">
               <span class="text-lg text-slate-600">De:</span>
               <span class="text-lg text-slate-600">Monto:</span>
-              <label class="text-lg text-slate-600" for="">
+              <label class="text-lg text-slate-600" for="select_states">
                 Estado de la orden:
               </label>
             </div>
             <div class="flex flex-col gap-4">
               <h3 class="font-bold"></h3>
               <p><span class="me-px">$</span>0</p>
-              <select name="status" class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
-                @foreach ($orderStatuses as $status)
-                  <option value="{{ $status->id }}">
-                    {{ $status->name }}
+              <select id="select_states" name="states"
+                class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+                @foreach ($orderStates as $states)
+                  <option value="{{ $states->id }}">
+                    {{ $states->code }}
                   </option>
                 @endforeach
               </select>

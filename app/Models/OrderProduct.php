@@ -6,20 +6,22 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderProduct extends Pivot
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     public $timestamps = true;
 
     protected $fillable = [
         'quantity',
         'price',
-        'discount'
+        'discount',
+        'offer_template_id',
+        'offer_type_code',
     ];
 
+    // Accessors
     protected function priceFormated(): Attribute
     {
         return Attribute::make(
@@ -27,6 +29,14 @@ class OrderProduct extends Pivot
         );
     }
 
+    protected function discountFormated(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => number_format($this->discount, 2, ',', '.'),
+        );
+    }
+
+    // Relationships
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
@@ -37,6 +47,7 @@ class OrderProduct extends Pivot
         return $this->belongsTo(Product::class);
     }
 
+    // Functions
     public function subtotal(): string
     {
         return number_format(($this->price * $this->quantity) - $this->discount, 2, ',', '.');

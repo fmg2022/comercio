@@ -9,8 +9,11 @@
     class="max-w-md w-full mx-auto py-7 grid gap-4 place-items-center border border-purple-900/40 rounded-xl"
     autocomplete="off">
     @csrf
+    <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name"
+      placeholder="Casa, Trabajo, Familia, etc" />
     <x-inputs.withLabel forLabel="street" title="Calle" id="street" name="street" />
     <x-inputs.withLabel forLabel="city" title="Ciudad" id="city" name="city" />
+    <x-inputs.withLabel forLabel="postal_code" title="Código Postal" id="postal_code" name="postal_code" />
     <x-inputs.withLabel forLabel="province" title="Provincia" id="province" name="province" />
     <div class="mb-4 col-span-full flex flex-wrap gap-x-10 gap-y-5 items-center justify-center">
       <p class="w-max">¿Establecer dirección por defecto?</p>
