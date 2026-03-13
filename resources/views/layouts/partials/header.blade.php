@@ -129,33 +129,52 @@
 
 <!-- categorias -->
 <aside
-  class="fixed top-0 -left-full z-20 w-full h-screen p-6 bg-blue-100 dark:bg-sky-950 text-white overflow-y-auto peer-checked/category:left-0 sm:w-96 transition-all duration-300">
+  class="fixed top-0 -left-full z-20 w-full h-screen p-6 bg-sky-950 text-white overflow-y-auto sm:w-96 peer-checked/category:left-0 transition-all duration-300">
   <div class="flex justify-between mb-4">
     <h2 class="grow text-center text-xl font-semibold">Categorias</h2>
-    <label for="toggle-category"
-      class="hover:text-blue-200 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg cursor-pointer">
+    <label for="toggle-category" class="hover:text-blue-200 hover:bg-white/10 rounded-lg cursor-pointer">
       <x-icons.x />
     </label>
   </div>
-  <ul class="h-[95%] py-5 grid content-start gap-2 overflow-y-auto" id="list-categories">
+  <ul class="h-[95%] grid content-start gap-2 ">
     <li class="border-b border-white/20 sm:border-none">
-      <a href="#!"
-        class="px-5 py-2 flex items-center justify-between text-lg rounded-lg hover:bg-slate-100/70 dark:hover:bg-sky-800/50">
+      <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
+      <label for="ofertas-check"
+        class="px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg cursor-pointer hover:bg-sky-800/50">
         Ofertas
         <span class="p-2">
-          <svg class="sm:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
               stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
           </svg>
-          <svg class="hidden sm:block" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-              stroke-width="2.5" d="m10 17l5-5m0 0l-5-5" />
-          </svg>
         </span>
-      </a>
+      </label>
+      <div
+        class="px-8 mb-2 hidden divide-y divide-white/50 bg-sky-900 rounded-lg sm:w-full peer-checked/ofertas:block">
+        <ul class="py-5 grid content-start gap-2">
+          <li class="border-b border-white/20">
+            <a href="#!"
+              class="w-full px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
+              Oferta 1
+            </a>
+          </li>
+          <li class="border-b border-white/20">
+            <a href="#!"
+              class="w-full px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
+              Oferta 2
+            </a>
+          </li>
+          <li>
+            <a href="#!"
+              class="w-full px-5 py-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
+              Oferta 13
+            </a>
+          </li>
+        </ul>
+      </div>
     </li>
+
+    <x-sections.category-tree :categories="$categories" />
   </ul>
 </aside>
 @if (!Route::is('cart.index'))

@@ -30,8 +30,7 @@
           Inicio
         </a>
       </li>
-      {{-- @dd($categories) --}}
-      @forelse ($categories as $category)
+      @forelse ($categoriesNav as $category)
         <li>
           <div class="flex items-center gap-1">
             <svg width="10" height="10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -39,7 +38,7 @@
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="m1 9 4-4-4-4" />
             </svg>
-            <a href="#" class="ms-1 md:ms-2">{{ $category->id }}</a>
+            <a href="#" class="ms-1 md:ms-2">{{ $category['name'] }}</a>
           </div>
         </li>
       @empty
@@ -56,34 +55,36 @@
       </li>
     </ol>
   </nav>
-  <section class="px-3 py-4 border border-slate-300 dark:border-slate-700 rounded-md bg-slate-200 dark:bg-black/10">
-    <article class=" py-3 flex flex-col dark:divide-white/10 md:divide-x-2 md:divide-black/10 md:flex-row">
-      <section class="flex items-center justify-center md:w-4/7">
+  <section class="px-3 py-4 border border-slate-300 rounded-md bg-slate-200">
+    <article class=" py-3 flex flex-col md:divide-x-2 md:divide-black/10 md:flex-row">
+      <section class="pe-5 flex items-center justify-center gap-3 md:w-3/7">
         <!-- Pre-visualización de las imágenes -->
-        <div class="h-full w-1/5 hidden flex-col justify-start items-center gap-2 md:flex">
-          <img class="size-32" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
+        <div class="h-full w-1/5 hidden flex-col justify-center items-center gap-2 md:flex">
+          <img class="w-full max-w-32" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
         </div>
         <div class="md:w-4/5">
-          <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
+          <img class="max-w-md w-full" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}">
         </div>
       </section>
-      <section class="w-full px-4 py-8 md:w-3/7 md:py-4">
+      <section class="w-full px-4 py-8 md:w-4/7 md:py-4">
         <!-- Nomre producto: Categoria + nombre del producto -->
         <div>
-          <h3 class="text-2xl font-semibold">{{ $product->name }} x CTDO</h3>
+          <h3 class="text-2xl font-semibold">{{ $product->name }} x (Lt. KG. ...)</h3>
           <p class="text-sm">
             <span class="me-3 font-bold uppercase">{{ $product->category->name }}</span> |
             <span class="ms-3 font-semibold">SKU: {{ $product->sku }}</span>
           </p>
         </div>
-        <h4 class="my-8 text-xl font-bold">${{ $product->price }}</h4>
-        <ul class="ms-6 mb-8 list-disc text-sm">
+        <h4 class="my-8 text-xl font-bold sm:text-2xl">${{ number_format($product->price, 2, ',', '.') }}</h4>
+        <ul class="ms-6 mb-12 list-disc text-sm">
           <li>Tipo de producto: {{ $product->name }}</li>
           <li>Contenido: Contenido</li>
-          <li>Envase: Botella de vidrio</li>
+          <li>Envase: Botella de vidrio, Páquete, Frasco</li>
         </ul>
-        <button
-          class="w-full px-4 py-3 bg-emerald-800 rounded-lg font-bold cursor-pointer hover:bg-emerald-700 active:bg-emerald-800">Agregar</button>
+        <div class="flex justify-center">
+          <button
+            class="w-full max-w-sm p-4 bg-emerald-800 rounded-lg font-bold uppercase text-white cursor-pointer hover:bg-emerald-700 active:bg-emerald-800">Agregar</button>
+        </div>
       </section>
     </article>
   </section>

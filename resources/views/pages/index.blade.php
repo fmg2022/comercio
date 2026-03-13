@@ -19,7 +19,7 @@
   <!-- SECCION: Listado de categorias -->
   <x-sections.list-items :title="'Categorías Destacadas'" :items="$selectedCategories">
     <div class="flex items-center justify-center">
-      <a class="px-4 py-2 rounded-lg bg-purple-700" href="{{ route('product.listAll') }}">Ver más productos</a>
+      <a class="px-4 py-2 rounded-lg bg-purple-700" href="!#">Ver más productos</a>
     </div>
   </x-sections.list-items>
 

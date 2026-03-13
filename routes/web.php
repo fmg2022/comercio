@@ -14,8 +14,8 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas para los productos
-Route::get('/products/{id}', [ProductController::class, 'showOne'])->name('product.show');
-Route::get('/products', [ProductController::class, 'getAllProducts'])->name('product.listAll');
+Route::get('/products/{id}', [IndexController::class, 'showProduct'])->name('product.show');
+Route::get('/products/category/{id}', [IndexController::class, 'getProductsCategory'])->name('product.findForCategory');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el carrito

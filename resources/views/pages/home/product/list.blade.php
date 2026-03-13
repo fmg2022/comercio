@@ -102,33 +102,17 @@
     </aside>
     <section class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center lg:grow">
       <!-- Aquí van las tarjetas de productos -->
+      @foreach ($products as $product)
+        <x-card.product :product="$product" />
+      @endforeach
       <article class="w-[200px] flex flex-col gap-2 rounded-lg overflow-hidden dark:bg-white/15">
         <a href="#">
-          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="aspect-square">
-          <span class="py-2 block text-lg font-semibold text-center">Nombre del producto</span>
+          <img src="{{ asset('images/products') }}/zz_emptyProduct.webp" alt="Product" class="aspect-square">
+          <span class="py-2 block text-lg font-semibold text-center">Product</span>
         </a>
         <div class="mx-3 py-4 border-t border-black/20 dark:border-white/20">
           <div class="pb-3">
-            <h4 class="ms-3 text-lg">$1.500</h4>
-          </div>
-          <form class="flex flex-col items-center gap-5">
-            <div class="input-container flex items-center justify-center gap-3">
-              <button class="bg-red-400/50 hover:bg-red-500/80 size-6 font-bold rounded-full">-</button>
-              <input type="number" name="qty" value="1" class="w-12 p-2 bg-white/5 outline-none rounded-md">
-              <button class="bg-green-400/50 hover:bg-green-500/80 size-6 font-bold rounded-full">+</button>
-            </div>
-            <button type="submit" class="px-4 py-2 rounded-xl bg-green-500/50 hover:bg-green-500/80">Agergar</button>
-          </form>
-        </div>
-      </article>
-      <article class="w-[200px] flex flex-col gap-2 rounded-lg overflow-hidden dark:bg-white/15">
-        <a href="#">
-          <img src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="producto" class="aspect-square">
-          <span class="py-2 block text-lg font-semibold text-center">Nombre del producto</span>
-        </a>
-        <div class="mx-3 py-4 border-t border-black/20 dark:border-white/20">
-          <div class="pb-3">
-            <h4 class="ms-3 text-lg">$1.500</h4>
+            <h4 class="ms-3 text-lg">$150.25</h4>
           </div>
           <form class="flex flex-col items-center gap-5">
             <div class="input-container flex items-center justify-center gap-3">
