@@ -47,10 +47,11 @@
         </label>
         <div
           class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:w-auto md:p-0 peer-checked/search:sm:top-14 transition-all duration-300">
-          <form class="p-3 flex items-center justify-center sm:p-0">
+          <form method="GET" action="{{ route('product.search') }}"
+            class="p-3 flex items-center justify-center sm:p-0">
             <label
               class="sm:w-sm md:w-auto lg:w-sm shadow-inner hover:shadow-emerald-500/25 focus-within:shadow-emerald-500/25 transition-shadow duration-300 ease-in-out">
-              <input type="search" name="q" placeholder="Buscar producto..."
+              <input type="search" name="query" placeholder="Buscar producto..."
                 class="p-[9px] w-full bg-black/10 rounded-l-lg outline-none placeholder:text-slate-400 placeholder:italic">
             </label>
             <button type="submit" class="p-3 rounded-r-lg bg-emerald-700/25 hover:bg-emerald-600/50 cursor-pointer">
@@ -93,7 +94,7 @@
                 @endphp
                 {{ $user->surname[0] . $user->name[0] }}
               @else
-                Perfil
+                Mi Cuenta
               @endauth
             </span>
           </div>
@@ -111,7 +112,8 @@
               </form>
             @else
               <a href="{{ route('login') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
-              <a href="{{ route('register') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
+              <a href="{{ route('register') }}"
+                class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
             @endauth
           @endif
         </div>
@@ -137,6 +139,7 @@
     </label>
   </div>
   <ul class="h-[95%] grid content-start gap-2 ">
+    {{-- Implementar para cuando tiene Ofertas activas en Services. Caso contrario no mostrar --}}
     <li class="border-b border-white/20 sm:border-none">
       <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
       <label for="ofertas-check"

@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+  <x-breadcrumbs.categories :categoriesNav="$categoriesNav" />
   <div
-    class="w-full px-3 py-5 mb-7 grid grid-cols-3 gap-3 items-center divide-x dark:divide-slate-100/20 border-b dark:border-slate-100/20">
+    class="w-full px-3 py-2 mb-10 grid grid-cols-3 gap-3 items-center divide-x-2 divide-slate-300 border-b border-slate-300 bg-slate-200/65 rounded-xl">
     <div>
-      <div class="hidden py-2 ms-5 lg:block">
-        {{-- <h3 class="text-lg font-semibold"></h3> --}}
-        <span class="text-gray-300 text-sm">{{ $products->count() }} productos</span>
+      <div class="hidden py-2 ms-5 text-base lg:flex lg:justify-start lg:items-baseline lg:gap-4">
+        <h3 class="font-semibold">{{ end($categoriesNav) }}</h3>
+        <span class="text-gray-500">{{ $products->count() }} productos</span>
       </div>
       <label for="toggle-filter"
         class="py-3 flex items-center justify-center gap-3 cursor-pointer rounded-lg dark:hover:bg-white/10 lg:hidden">
@@ -18,7 +19,7 @@
       </label>
     </div>
     <div class="ps-3">
-      <label class="py-3 flex items-center justify-center gap-3 cursor-pointer rounded-lg dark:hover:bg-white/10">
+      <label class="py-3 flex items-center justify-center gap-3 cursor-pointer rounded-lg hover:bg-slate-800/10">
         <input type="checkbox" id="" disabled class="hidden">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +32,7 @@
       <span class="hidden sm:grid sm:place-content-center md:px-2">Ver en</span>
       <!-- Falta agregar funcionalidad de aplicar estilos en el estado checked a las tarjetas de los productos -->
       <label
-        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-checked:bg-white/10 dark:hover:bg-white/10">
+        class="py-3 flex items-center justify-center cursor-pointer rounded-lg has-checked:bg-slate-800/10 has-checked:pointer-events-none hover:bg-slate-800/10">
         <input type="radio" name="vista" class="hidden">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor"
@@ -39,7 +40,7 @@
         </svg>
       </label>
       <label
-        class="py-3 flex items-center justify-center cursor-pointer rounded-lg dark:has-checked:bg-white/10 dark:hover:bg-white/10">
+        class="py-3 flex items-center justify-center cursor-pointer rounded-lg has-checked:bg-slate-800/10 has-checked:pointer-events-none hover:bg-slate-800/10">
         <input type="radio" name="vista" class="hidden" checked>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -49,10 +50,10 @@
       </label>
     </div>
   </div>
-  <section class="relative px-3 pb-6 mb-8 lg:flex lg:gap-4">
+  <section class="relative px-3 pb-6 mb-8 lg:flex lg:gap-10">
     <input type="checkbox" id="toggle-filter" class="hidden peer/filter" />
     <aside
-      class="absolute top-0 left-[5%] hidden w-[90%] px-4 py-6 bg-blue-50 dark:bg-sky-900/95 rounded-lg peer-checked/filter:block lg:static lg:w-72 lg:block lg:rounded-sm">
+      class="absolute top-0 left-[5%] hidden w-[90%] px-4 pt-4 pb-8 bg-sky-800 text-white rounded-xl peer-checked/filter:block lg:static lg:w-72 lg:block lg:h-max lg:shadow-xl/20">
       <div class="relative">
         <label for="toggle-filter"
           class="absolute top-0 right-0 p-2 hover:text-slate-900 dark:hover:text-blue-200 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg cursor-pointer lg:hidden">
@@ -63,67 +64,34 @@
           </svg>
         </label>
       </div>
-      <form class="mt-4 grid grid-cols-2 gap-y-2 lg:grid-cols-1 lg:m-0">
-        <fieldset class="flex flex-col mx-4">
-          <legend class="font-semibold py-1 px-3 mb-2 border-b border-white/20 lg:text-center">Categorias</legend>
-          {{-- @php
-        $prodCategory = $product->category;
-        @endphp
-        @while ($prodCategory->parent_id != null)
-        <label class="text-white/80">
-          <input type="checkbox" name="categorias" value="{{ $prodCategory->id }}">
-        {{ $prodCategory->name }}
-        </label>
-        @php
-        $prodCategory = $prodCategory->parent;
-        @endphp
-        @endwhile --}}
-        </fieldset>
-        <fieldset class="flex flex-col mx-4">
-          <legend class="font-semibold py-1 px-3 mb-2 border-b border-white/20 lg:text-center">Marcas</legend>
-          <label class="text-white/80">
-            <input type="checkbox" name="marcas" value="1888">
-            1888
-          </label>
-          <label class="text-white/80">
-            <input type="checkbox" name="marcas" value="1930">
-            1930
-          </label>
-          <label class="text-white/80">
-            <input type="checkbox" name="marcas" value="real">
-            Real
-          </label>
-          <label class="text-white/80">
-            <input type="checkbox" name="marcas" value="delValle">
-            Del Valle
-          </label>
-        </fieldset>
+      <form class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:m-0">
+        <x-forms.fieldset>
+          <x-slot:legend>Categorias</x-slot:legend>
+
+          @foreach ($categoriesProduct as $key => $name)
+            <label>
+              <input type="checkbox" name="categorias" value="{{ $key }}">
+              {{ $name }}
+            </label>
+          @endforeach
+        </x-forms.fieldset>
+        <x-forms.fieldset>
+          <x-slot:legend>Marcas</x-slot:legend>
+          @foreach ($brandsProducts as $brand)
+            <label>
+              <input type="checkbox" name="marcas" value="{{ $brand->id }}">
+              {{ $brand->name }}
+            </label>
+          @endforeach
+        </x-forms.fieldset>
       </form>
     </aside>
-    <section class="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] justify-items-center lg:grow">
+    <section class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] justify-items-center gap-5 lg:grow">
       <!-- Aquí van las tarjetas de productos -->
       @foreach ($products as $product)
-        <x-card.product :product="$product" />
+        <x-cards.product :product="$product" />
       @endforeach
-      <article class="w-[200px] flex flex-col gap-2 rounded-lg overflow-hidden dark:bg-white/15">
-        <a href="#">
-          <img src="{{ asset('images/products') }}/zz_emptyProduct.webp" alt="Product" class="aspect-square">
-          <span class="py-2 block text-lg font-semibold text-center">Product</span>
-        </a>
-        <div class="mx-3 py-4 border-t border-black/20 dark:border-white/20">
-          <div class="pb-3">
-            <h4 class="ms-3 text-lg">$150.25</h4>
-          </div>
-          <form class="flex flex-col items-center gap-5">
-            <div class="input-container flex items-center justify-center gap-3">
-              <button class="bg-red-400/50 hover:bg-red-500/80 size-6 font-bold rounded-full">-</button>
-              <input type="number" name="qty" value="1" class="w-12 p-2 bg-white/5 outline-none rounded-md">
-              <button class="bg-green-400/50 hover:bg-green-500/80 size-6 font-bold rounded-full">+</button>
-            </div>
-            <button type="submit" class="px-4 py-2 rounded-xl bg-green-500/50 hover:bg-green-500/80">Agergar</button>
-          </form>
-        </div>
-      </article>
     </section>
+    {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
   </section>
 @endsection
