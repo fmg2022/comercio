@@ -21,27 +21,54 @@ class IndexController extends Controller
         return view('pages.index', compact('products', 'offers', 'selectedCategories', 'brands'));
     }
 
-    public function showProduct($id): View
+    public function showProduct(Product $product): View
     {
-        $product = Product::findOrFail($id);
-        $products = Product::where('category_id', $product->category_id)->get();
-        $categoriesNav = $product->getParentCategories();
+        $products = Product::where('category_id', $product->category_id)->limit(5)->get();
+        $categoriesNav = $product->category->breadcrumbs();
+
+        $categoriesNav[] = $product->name;
         return view('pages.home.product.show', compact('product', 'products', 'categoriesNav'));
     }
 
-    /* Buscar productos
-        -> [Producto, ...], [Categoría, ...], String
-    */
-    // public function findProducts(Request $request, $q): View
-    // {
-    //     $products = Product::where('name', 'like', '%' . $q . '%')->get();
-    //     return view('pages.home.product.list', compact('products', 'q'));
-    // }
-
-    public function getProductsCategory(string $id): View
+    public function search(Request $request): View
     {
-        $categories = Category::findOrFail($id)->childrenTree()->pluck('id');
-        $products = Product::whereIn('category_id', $categories)->get();
-        return view('pages.home.product.list', compact('products'));
+        $validated = $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+
+        $products = Product::query()->with('brand:id,name')->with('category:id,name,parent_id')
+            ->when($validated['query'], function ($query, $search) {
+                $query->whereLike('name', "%{search}%")
+                    ->orWhereHas('brand', fn($query) => $query->whereLike('name', "%{$search}%"))
+                    ->orWhereHas('category', fn($query) => $query->whereLike('name', "%{$search}%"));
+            })
+            ->paginate(10);
+        $categoriesNav[] = $validated['query'];
+        $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
+        $categoriesProduct = [];
+        foreach ($products as $product) {
+            $categoriesProduct = $product->category->breadcrumbs() + $categoriesProduct;
+        }
+
+        return view('pages.home.product.list', compact('products', 'categoriesNav', 'brandsProducts', 'categoriesProduct'));
+    }
+
+    public function getProductsCategory(Category $category): View
+    {
+        $categoriesProduct = $category
+            ->childrenTree
+            ->mapWithKeys(
+                fn($child) =>
+                $child->childrenTree
+                    ->prepend($child)
+                    ->pluck('name', 'id')
+            )
+            ->prepend($category->name, $category->id)
+            ->toArray();
+
+        $products = Product::whereIn('category_id', array_keys($categoriesProduct))->paginate(10);
+        $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
+        $categoriesNav = $category->breadcrumbs();
+        return view('pages.home.product.list', compact('products', 'brandsProducts', 'categoriesProduct', 'categoriesNav'));
     }
 }

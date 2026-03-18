@@ -59,25 +59,6 @@ class Product extends Model
         return 0;
     }
 
-    private function getRecursiveCategories(array $categories, $parent): array
-    {
-        if (!$parent) {
-            return $categories;
-        }
-
-        $categories =  [[
-            'id' => $parent->id,
-            'name' => $parent->name,
-        ], ...$categories];
-
-        return $this->getRecursiveCategories($categories, $parent->parent);
-    }
-
-    public function getParentCategories(): array
-    {
-        return $this->getRecursiveCategories([], $this->category()->first());
-    }
-
     // Relationships
     public function category(): BelongsTo
     {

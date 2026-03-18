@@ -1,11 +1,9 @@
 <?php
 
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +12,9 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 // Rutas para los productos
-Route::get('/products/{id}', [IndexController::class, 'showProduct'])->name('product.show');
-Route::get('/products/category/{id}', [IndexController::class, 'getProductsCategory'])->name('product.findForCategory');
+Route::get('/products/search', [IndexController::class, 'search'])->name('product.search');
+Route::get('/products/{product}', [IndexController::class, 'showProduct'])->name('product.show');
+Route::get('/products/category/{category}', [IndexController::class, 'getProductsCategory'])->name('product.findForCategory');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el carrito

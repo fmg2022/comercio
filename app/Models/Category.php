@@ -45,4 +45,17 @@ class Category extends Model
     {
         return static::tree()->get();
     }
+
+    public function breadcrumbs(): array
+    {
+        $breadcrumbs = [];
+        $category = $this;
+
+        while ($category) {
+            $breadcrumbs = [$category->id => $category->name] + $breadcrumbs;
+            $category = $category->parent;
+        }
+
+        return $breadcrumbs;
+    }
 }
