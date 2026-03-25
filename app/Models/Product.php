@@ -103,4 +103,10 @@ class Product extends Model
             ->withPivot(['price', 'stock', 'delivery_date'])
             ->withTimestamps();
     }
+
+    // Functions
+    public function activeOffer()
+    {
+        return $this->offers()->active()->first()?->id;
+    }
 }

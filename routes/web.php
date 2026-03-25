@@ -15,6 +15,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::get('/products/search', [IndexController::class, 'search'])->name('product.search');
 Route::get('/products/{product}', [IndexController::class, 'showProduct'])->name('product.show');
 Route::get('/products/category/{category}', [IndexController::class, 'getProductsCategory'])->name('product.findForCategory');
+Route::get('/products/offers/{offer}', [IndexController::class, 'getProductsOffer'])->name('product.findForOffer');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para el carrito

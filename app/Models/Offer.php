@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,15 @@ class Offer extends Model
         'offer_template_id',
     ];
 
+    // Scopes
+    public function scopeActive(Builder $query): void
+    {
+        $query->whereHas('offerState', fn($query) => $query->where('code', 'ACTIVA'))
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now());
+    }
+
+    // Relationships
     public function offerState(): BelongsTo
     {
         return $this->belongsTo(OfferState::class);

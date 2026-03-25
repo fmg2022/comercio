@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Offer;
 use App\Models\OfferTemplate;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -36,13 +37,14 @@ class IndexController extends Controller
             'query' => 'required|string|max:255',
         ]);
 
-        $products = Product::query()->with('brand:id,name')->with('category:id,name,parent_id')
+        $products = Product::query()
+            ->with(['brand:id,name', 'category'])
             ->when($validated['query'], function ($query, $search) {
-                $query->whereLike('name', "%{search}%")
+                $query->whereLike('name', "%{$search}%")
                     ->orWhereHas('brand', fn($query) => $query->whereLike('name', "%{$search}%"))
                     ->orWhereHas('category', fn($query) => $query->whereLike('name', "%{$search}%"));
             })
-            ->paginate(10);
+            ->paginate(12);
         $categoriesNav[] = $validated['query'];
         $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
         $categoriesProduct = [];
@@ -66,9 +68,25 @@ class IndexController extends Controller
             ->prepend($category->name, $category->id)
             ->toArray();
 
-        $products = Product::whereIn('category_id', array_keys($categoriesProduct))->paginate(10);
+        $products = Product::whereIn('category_id', array_keys($categoriesProduct))->paginate(12);
         $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
         $categoriesNav = $category->breadcrumbs();
         return view('pages.home.product.list', compact('products', 'brandsProducts', 'categoriesProduct', 'categoriesNav'));
+    }
+
+    public function getProductsOffer(Offer $offer): View
+    {
+        $products = $offer->products()
+            ->with('category')
+            ->paginate(12);
+        $categoriesNav[] = $offer->offerTemplate->name;
+        $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
+        $categoriesProduct = [];
+
+        foreach ($products as $product) {
+            $categoriesProduct = $product->category->breadcrumbs() + $categoriesProduct;
+        }
+
+        return view('pages.home.product.list', compact('products', 'categoriesNav', 'brandsProducts', 'categoriesProduct'));
     }
 }

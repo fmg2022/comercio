@@ -18,7 +18,7 @@ class OfferTemplatesSeeder extends Seeder
                 'description' => '10% de descuento en productos seleccionados',
                 'offer_type_id' => 1,
                 'buy_qty' => 1,
-                'pay_qty' => 0.1,
+                'pay_qty' => 0.9,
             ],
             [
                 'name' => '2 x 1',
@@ -39,7 +39,7 @@ class OfferTemplatesSeeder extends Seeder
                 'description' => '25% de descuento en productos seleccionados',
                 'offer_type_id' => 1,
                 'buy_qty' => 1,
-                'pay_qty' => 0.25,
+                'pay_qty' => 0.75,
             ],
             [
                 'name' => 'Precio fijo $50',
