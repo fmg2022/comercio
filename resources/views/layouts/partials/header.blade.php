@@ -139,43 +139,33 @@
     </label>
   </div>
   <ul class="h-[95%] grid content-start gap-2 ">
-    {{-- Implementar para cuando tiene Ofertas activas en Services. Caso contrario no mostrar --}}
-    <li class="border-b border-white/20 sm:border-none">
-      <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
-      <label for="ofertas-check"
-        class="px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg cursor-pointer hover:bg-sky-800/50">
-        Ofertas
-        <span class="p-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-              stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
-          </svg>
-        </span>
-      </label>
-      <div
-        class="px-8 mb-2 hidden divide-y divide-white/50 bg-sky-900 rounded-lg sm:w-full peer-checked/ofertas:block">
-        <ul class="py-5 grid content-start gap-2">
-          <li class="border-b border-white/20">
-            <a href="#!"
-              class="w-full px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
-              Oferta 1
-            </a>
-          </li>
-          <li class="border-b border-white/20">
-            <a href="#!"
-              class="w-full px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
-              Oferta 2
-            </a>
-          </li>
-          <li>
-            <a href="#!"
-              class="w-full px-5 py-2 flex items-center justify-between text-lg rounded-lg hover:bg-sky-800/50">
-              Oferta 13
-            </a>
-          </li>
-        </ul>
-      </div>
-    </li>
+    @if ($offers)
+      <li class="border-b border-white/20">
+        <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
+        <label for="ofertas-check"
+          class="px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg cursor-pointer hover:bg-sky-800/50">
+          Ofertas
+          <span class="p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
+            </svg>
+          </span>
+        </label>
+        <div class="px-8 mb-2 hidden bg-sky-900 rounded-lg sm:w-full peer-checked/ofertas:block">
+          <ul class="py-5 grid content-start gap-3">
+            @foreach ($offers as $offer)
+              <li>
+                <x-buttons.link href="{{ route('product.findForOffer', $offer['id']) }}"
+                  class="block text-lg hover:text-sky-400">
+                  {{ $offer['offer_template']['name'] }}
+                </x-buttons.link>
+              </li>
+            @endforeach
+          </ul>
+        </div>
+      </li>
+    @endif
 
     <x-sections.category-tree :categories="$categories" />
   </ul>

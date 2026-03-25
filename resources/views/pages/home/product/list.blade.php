@@ -86,10 +86,10 @@
         </x-forms.fieldset>
       </form>
     </aside>
-    <section class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] justify-items-center gap-5 lg:grow">
+    <section class="grid grid-cols-[repeat(auto-fill,minmax(264px,1fr))] justify-items-center gap-5 lg:grow">
       <!-- Aquí van las tarjetas de productos -->
       @foreach ($products as $product)
-        <x-cards.product :product="$product" />
+        <x-cards.product :product="$product" :offers="$offers" />
       @endforeach
     </section>
     {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

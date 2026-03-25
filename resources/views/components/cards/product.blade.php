@@ -1,3 +1,6 @@
+@php
+  $offerID = $product->activeOffer();
+@endphp
 <article class="max-w-sm h-max pb-3 rounded-xl shadow-lg bg-slate-300 overflow-hidden">
   <a href="{{ route('product.show', $product->id) }}"
     class="relative hover:[&>span]:bg-slate-500 hover:[&>span]:sm:opacity-100">
@@ -13,17 +16,46 @@
     <p class="text-slate-500 text-base">{{ $product->name }}</p>
   </div>
   <form action="{{ route('cart.addToCart') }}" method="POST"
-    class="px-6 pt-4 pb-2 flex flex-col justify-between gap-5">
+    class="px-6 pt-2 pb-2 flex flex-col justify-between gap-5">
     @csrf
     <input type="hidden" name="id" value="{{ $product->id }}">
-    <section class="flex justify-between items-center">
-      <p class="py-1 text-slate-600 text-xl">${{ $product->priceFormated }}</p>
-      <div class="flex flex-col items-center justify-center">
-        <label class="w-full max-w-16 grid grid-cols-1">
-          <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}"
-            class="px-3 py-1.5 text-base text-gray-900 bg-white rounded-md outline outline-offset-1 outline-gray-400 sm:text-sm">
-        </label>
+    <section class="flex justify-between items-center gap-4">
+      <div class="flex flex-col items-start justify-center">
+        @if ($offerID)
+          <p class="flex justify-star items-center gap-3">
+            @php
+              $offerType = $offers[$offerID]['offer_template']['offer_type']['code'];
+              $newPrice =
+                  $offerType === 'FIXED'
+                      ? $product->price - $offers[$offerID]['offer_template']['pay_qty']
+                      : ($product->price * $offers[$offerID]['offer_template']['pay_qty']) /
+                          $offers[$offerID]['offer_template']['buy_qty'];
+              $newPrice = number_format($newPrice, 2, ',', '.');
+            @endphp
+            <span class="text-lg font-bold text-slate-700">
+              {!! "\$$newPrice" .
+                  ($offers[$offerID]['offer_template']['offer_type']['code'] === 'X_FOR_Y' ? '<sup>c/u</sup>' : '') !!}
+            </span>
+            <span class="px-1 py-0.5 bg-amber-400 rounded-lg">
+              {{ $offerType === 'FIXED'
+                  ? '$' . $offers[$offerID]['offer_template']['pay_qty']
+                  : ($offerType === 'PERCENTAGE'
+                      ? '-' . (1 - $offers[$offerID]['offer_template']['pay_qty']) * 100 . '%'
+                      : $offers[$offerID]['offer_template']['pay_qty'] * 1 .
+                          'x' .
+                          $offers[$offerID]['offer_template']['buy_qty'] * 1) }}
+            </span>
+          </p>
+        @endif
+        <p @class([
+            'text-slate-600 line-through' => $offerID,
+            'py-3 text-lg font-bold text-slate-700' => $offerID === null,
+        ])>${{ $product->priceFormated }}</p>
       </div>
+      <label class="w-full max-w-16 grid grid-cols-1">
+        <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}"
+          class="ps-2 pe-0.5 py-1.5 text-base text-gray-900 bg-white rounded-md outline outline-offset-1 outline-gray-400 sm:text-sm">
+      </label>
     </section>
     <button type="submit"
       class="bg-slate-700 text-white px-4 py-2 rounded-md hover:bg-slate-600 cursor-pointer">Agregar</button>
