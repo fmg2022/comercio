@@ -1,7 +1,7 @@
 @php
   $offerID = $product->activeOffer();
 @endphp
-<article class="max-w-sm h-max pb-3 rounded-xl shadow-lg bg-slate-300 overflow-hidden">
+<article class="max-w-fit h-max pb-3 rounded-xl shadow-lg bg-slate-300 overflow-hidden">
   <a href="{{ route('product.show', $product->id) }}"
     class="relative hover:[&>span]:bg-slate-500 hover:[&>span]:sm:opacity-100">
     <img class="aspect-square" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
@@ -38,7 +38,7 @@
             </span>
             <span class="px-1 py-0.5 bg-amber-400 rounded-lg">
               {{ $offerType === 'FIXED'
-                  ? '$' . $offers[$offerID]['offer_template']['pay_qty']
+                  ? '-$' . $offers[$offerID]['offer_template']['pay_qty']
                   : ($offerType === 'PERCENTAGE'
                       ? '-' . (1 - $offers[$offerID]['offer_template']['pay_qty']) * 100 . '%'
                       : $offers[$offerID]['offer_template']['pay_qty'] * 1 .
