@@ -15,6 +15,9 @@
   @stack('scripts-app')
   <script src="{{ asset('js/modal.js') }}" defer></script>
   <script src="{{ asset('js/alert.js') }}" defer></script>
+
+  <!-- Styles -->
+  @stack('styles-app')
   <style>
     @keyframes fadeOut {
       to {
@@ -28,7 +31,7 @@
   <!-- Page Header -->
   @include('layouts.partials.header')
   <!-- Page Content -->
-  <main class="grow sm:px-3 lg:px-6">
+  <main class="grow sm:px-3 md:px-6 lg:px-10">
     @yield('content')
   </main>
   <!-- Page Footer -->
