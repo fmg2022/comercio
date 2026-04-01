@@ -1,59 +1,63 @@
-export default function carousel(carousel, btns) {
-  const $carousel = document.querySelector(carousel)
-  const $btns = document.querySelectorAll(btns + ' button')
-  const itemWidth = $carousel.querySelector('.item').offsetWidth
-  const carouselChildren = [...$carousel.children]
+/**
+ * Antes y después del slot:
 
-  let isDragging = false, startX, starScrollLeft
-  let itemsPedrView = Math.round($carousel.offsetWidth / itemWidth)
+<ul class="carousel-track ...">
+  {{-- Clon del último --}}
+  {{ $slot[$length - 1] }}
 
-  // Copia en el principio el último elemento del carrusel
-  carouselChildren.slice(-itemsPedrView).reverse().forEach(item => {
-    $carousel.insertAdjacentHTML('afterbegin', item.outerHTML)
-  })
+  {{-- Originales --}}
+  {{ $slot }}
 
-  // Copia en el principio el último elemento del carrusel
-  carouselChildren.slice(0, itemsPedrView).forEach(item => {
-    $carousel.insertAdjacentHTML('beforeend', item.outerHTML)
-  })
+  {{-- Clon del primero --}}
+  {{ $slot[0] }}
+</ul>
+ * 
 
-  $btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      $carousel.scrollLeft += btn.id === btns.replace('#', '') + 'Prev' ? -itemWidth : itemWidth
-    })
-  })
+ *Empezar en índice 1
+let index = 1;
+inputs[index].checked = true;
 
-  const dragStart = (e) => {
-    isDragging = true
-    $carousel.classList.add('dragging')
-    startX = e.pageX
-    starScrollLeft = $carousel.scrollLeft
-  }
+** EMPEZAR EN **
+if (index < 0) index = sliders - 1;
+else if (index > (sliders - 1)) index = 0;
+** FIN EMPEZAR EN **
 
-  const dragging = (e) => {
-    if (!isDragging) return
-    $carousel.scrollLeft = starScrollLeft - (e.pageX - startX)
-  }
+ * const track = carousel.querySelector('.carousel-track');
 
-  const dragStop = () => {
-    isDragging = false
-    $carousel.classList.remove('dragging')
-  }
-
-  const infiniteScroll = (e) => {
-    if ($carousel.scrollLeft === 0) {
-      $carousel.classList.replace('scroll-smooth', 'scroll-auto')
-      $carousel.scrollLeft = $carousel.scrollWidth - (2 * $carousel.offsetWidth)
-      $carousel.classList.replace('scroll-auto', 'scroll-smooth')
-    } else if (Math.ceil($carousel.scrollLeft) === $carousel.scrollWidth - $carousel.offsetWidth) {
-      $carousel.classList.replace('scroll-smooth', 'scroll-auto')
-      $carousel.scrollLeft = $carousel.offsetWidth
-      $carousel.classList.replace('scroll-auto', 'scroll-smooth')
-    }
-  }
-
-  $carousel.addEventListener('mousedown', dragStart)
-  $carousel.addEventListener('mousemove', dragging)
-  $carousel.addEventListener('mouseup', dragStop)
-  $carousel.addEventListener('scroll', infiniteScroll)
+function moveTo(i) {
+  track.style.transition = 'transform 0.6s ease-out';
+  index = i;
+  inputs[index].checked = true;
 }
+
+track.addEventListener('transitionend', () => {
+  // Si estamos en el clon del final
+  if (index === sliders + 1) {
+    track.style.transition = 'none';
+    index = 1;
+    inputs[index].checked = true;
+  }
+
+  // Si estamos en el clon del inicio
+  if (index === 0) {
+    track.style.transition = 'none';
+    index = sliders;
+    inputs[index].checked = true;
+  }
+});
+
+ * Botones
+button.addEventListener('click', e => {
+  moveTo(index + +e.currentTarget.dataset.control);
+});
+
+ * Autoplay infinito
+let autoplay = setInterval(() => {
+  moveTo(index + 1);
+}, 3000);
+
+carousel.addEventListener('mouseenter', () => clearInterval(autoplay));
+carousel.addEventListener('mouseleave', () => {
+  autoplay = setInterval(() => moveTo(index + 1), 3000);
+});
+ */

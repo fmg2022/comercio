@@ -79,11 +79,14 @@
   </section>
 
   <!-- SECCION: Slider de productos recomendados -->
-  <x-sections.carousel-img :listId="'list-product'" :btnsId="'btns-product'" :class="'px-3'" title="Productos recomendados">
-    @foreach ($products as $product)
-      <li class="item flex justify-center items-center snap-start">
-        <x-card :product="$product" />
-      </li>
-    @endforeach
-  </x-sections.carousel-img>
+  <div>
+    <h2 class="py-3 mb-4 text-2xl font-bold text-center">Productos recomendados</h2>
+    <x-sections.carousel :length="count($products)">
+      @foreach ($products as $product)
+        <li class="item flex justify-center items-center snap-start">
+          <x-card :product="$product" />
+        </li>
+      @endforeach
+    </x-sections.carousel>
+  </div>
 @endsection
