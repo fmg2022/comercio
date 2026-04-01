@@ -4,7 +4,7 @@
 @php $cart = Cart::getContent(); @endphp
 
 <header
-  class="sticky top-0 left-0 z-20 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 lg:px-6">
+  class="sticky top-0 left-0 z-20 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 md:px-6 lg:px-10 xl:gap-5">
   <div class="flex items-center flex-wrap gap-3 py-3 px-2">
     <a href="{{ route('home') }}" class="flex flex-wrap gap-2 items-center">
       <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px" class="rounded-md">
@@ -23,8 +23,8 @@
       </svg>
     </label>
     <ul
-      class="h-full flex flex-col items-center justify-center gap-4 text-lg sm:flex-row sm:justify-end sm:gap-3 sm:text-base">
-      <li class="w-full rounded-lg hover:bg-cyan-800/50 sm:w-max sm:ms-6 sm:me-auto md:me-0 lg:ms-12">
+      class="h-full flex flex-col items-center justify-center gap-4 text-lg sm:flex-row sm:justify-between sm:gap-3 sm:text-base">
+      <li class="w-full rounded-lg hover:bg-cyan-800/50 sm:w-max sm:ms-4 sm:me-auto md:m-0 ">
         <div>
           <label for="toggle-category" class="p-3 flex items-center justify-center gap-3 cursor-pointer sm:py-2">
             <span class="font-semibold">Categorias</span>
@@ -35,9 +35,10 @@
           </label>
         </div>
       </li>
-      <li class="flex rounded-lg md:list-item md:grow hover:bg-white/10 has-checked:bg-white/10">
+      <li
+        class="flex items-center justify-center rounded-lg lg:grow hover:bg-white/10 has-checked:bg-white/10 lg:hover:bg-transparent lg:has-checked:bg-transparent">
         <input type="checkbox" id="search-toggle" class="hidden peer/search">
-        <label for="search-toggle" class="hidden p-3 cursor-pointer sm:inline-block md:hidden">
+        <label for="search-toggle" class="hidden p-3 cursor-pointer sm:inline-block lg:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
             <g fill="currentColor">
               <path
@@ -46,11 +47,10 @@
           </svg>
         </label>
         <div
-          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:w-auto md:p-0 peer-checked/search:sm:top-14 transition-all duration-300">
+          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg lg:static lg:max-w-sm lg:p-0 peer-checked/search:sm:top-14 transition-all duration-300">
           <form method="GET" action="{{ route('product.search') }}"
             class="p-3 flex items-center justify-center sm:p-0">
-            <label
-              class="sm:w-sm md:w-auto lg:w-sm shadow-inner hover:shadow-emerald-500/25 focus-within:shadow-emerald-500/25 transition-shadow duration-300 ease-in-out">
+            <label class="sm:w-sm lg:w-full">
               <input type="search" name="query" placeholder="Buscar producto..."
                 class="p-[9px] w-full bg-black/10 rounded-l-lg outline-none placeholder:text-slate-400 placeholder:italic">
             </label>
