@@ -26,15 +26,14 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/products/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('products.orders');
 
     // Order routes
-    Route::resource('/orders', OrderController::class)->only(['index', 'show', 'destroy']);
+    Route::resource('/orders', OrderController::class)->only(['index', 'show']);
     Route::put('/orders/{order}/states', [OrderController::class, 'updateStates'])->name('orders.updateStates');
-    Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
 
     // Category, State & Payment routes
     Route::resource('/categories', CategoryController::class)->except(['show', 'create', 'edit']);
     Route::post('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-    Route::resource('/payments', PaymentController::class)->only(['index', 'update', 'destroy']);
-    Route::post('/payments/{id}/restore', [PaymentController::class, 'restore'])->name('payments.restore');
+    Route::resource('/payments', PaymentController::class)->only(['index', 'update']);
+    Route::put('/payments/{payment}/states', [PaymentController::class, 'updateStates'])->name('payments.updateStates');
   });
 
   // Route::resource('states', StateController::class)->except(['show']);

@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 
 class Order extends Model
 {
-	use HasFactory, SoftDeletes;
+	use HasFactory;
 
 	protected $fillable = [
 		'date',
@@ -36,6 +35,13 @@ class Order extends Model
 	{
 		return Attribute::make(
 			get: fn() => $this->payments->first() ?? 'Sin pago',
+		);
+	}
+
+	protected function dateFormated(): Attribute
+	{
+		return Attribute::make(
+			get: fn() => date('d/m/Y', strtotime($this->paid_at))
 		);
 	}
 

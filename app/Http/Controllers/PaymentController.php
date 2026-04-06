@@ -8,6 +8,7 @@ use App\Models\PaymentState;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -15,7 +16,6 @@ class PaymentController extends Controller
 	{
 		return view('pages.dashboard.payment.index', [
 			'payments' => Payment::orderByDesc('paid_at')->paginate(10),
-			'paymentsDeleted' => Payment::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
 			'statuses' => PaymentState::all(['id', 'code']),
 		]);
 	}
@@ -26,24 +26,24 @@ class PaymentController extends Controller
 		return redirect()->back();
 	}
 
-	public function destroy(Payment $payment): RedirectResponse
-	{
-		$payment->delete();
-		return redirect()->route('payments.index');
-	}
-
-	public function restore(string $id): RedirectResponse
-	{
-		$payment = Payment::onlyTrashed()->findOrFail($id);
-		$payment->restore();
-		return redirect()->route('payments.index');
-	}
-
 	public function fetch(string $id): JsonResponse
 	{
 		$dataJson = Payment::select(['id', 'paid_at', 'amount', 'payment_id', 'payment_state_id'])->findOrFail($id);
 
 		$dataJson->amount = '$' . number_format($dataJson->amount, 2, ',', '.');
 		return response()->json($dataJson);
+	}
+
+	public function updateStates(Request $request, Payment $payment): RedirectResponse
+	{
+		$validated = $request->validate([
+			'states' => 'required|exists:payment_states,id',
+		]);
+
+		$payment->update([
+			'payment_state_id' => $validated['states']
+		]);
+
+		return redirect()->route('payments.index');
 	}
 }

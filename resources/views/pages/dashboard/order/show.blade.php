@@ -1,50 +1,20 @@
 @extends('layouts.dashboard')
 
-@php
-  $titleEdit = 'Detalles de la Orden #' . $order->id . ($order->trashed() ? ' (Eliminada)' : '');
-@endphp
-
 @push('scripts-dashboard')
   <script src="{{ asset('js/modal.js') }}" defer></script>
 @endpush
 
 @section('content')
-  <x-sections.headerTitle classTitle="flex flex-col md:grow" class="flex justify-between items-center flex-wrap">
+  <x-sections.headerTitle classTitle="flex flex-wrap items-center gap-3"
+    class="flex justify-between items-center flex-wrap">
     <x-slot:textTitle>
-      {{ $titleEdit }}
-      <span class="mx-auto text-base">({{ Str::substr($order->date, 0, 10) }})</span>
+      {{ 'Detalles de la Orden #' . $order->id }}
+      <span class="text-base">({{ Str::substr($order->date, 0, 10) }})</span>
     </x-slot:textTitle>
     <div class="flex gap-2">
       <x-buttons.linkFill href="{{ route('orders.index') }}" class="bg-slate-500 active:bg-slate-600">
-        Volver
+        Lista de Ordenes
       </x-buttons.linkFill>
-      @if ($order->trashed())
-        <button type="button" onclick="openModal('restDialog')"
-          class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">
-          Restaurar Orden
-        </button>
-        <x-modals.simple id="restDialog" title="{{ 'Restaurar la orden ' . Str::substr($order->date, 0, 10) }}">
-          <div class="flex flex-col items-center justify-center">
-            <span class="text-slate-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-              </svg>
-            </span>
-            <p class="px-2 py-4 mb-3">¿Está seguro de que desea restaurar esta orden?</p>
-          </div>
-          <div class="flex justify-end gap-3 text-white">
-            <form action="{{ route('orders.restore', $order->id) }}" method="POST">
-              @csrf
-              <button type="submit"
-                class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">Restaurar</button>
-            </form>
-            <form method="dialog">
-              <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-            </form>
-          </div>
-        </x-modals.simple>
-      @endif
       <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
         Generar PDF
       </x-buttons.linkFill>
@@ -94,7 +64,7 @@
             </label>
             <div class="absolute right-12 -top-2/3 z-5 hidden peer-checked/checkOption:block">
               <ul
-                class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 {{ !$order->trashed() ? '[&>li:hover]:bg-slate-700' : '' }} [&>li]:transition-colors">
+                class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                 <li>
                   <a href="{{ route('products.show', $orderLine->id) }}" class="px-4 py-2.5 flex gap-3">
                     <span>

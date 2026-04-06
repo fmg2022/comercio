@@ -20,14 +20,13 @@ class OrderController extends Controller
     {
         return view('pages.dashboard.order.index', [
             'orders' => Order::orderByDesc('date')->paginate(10),
-            'ordersDeleted' => Order::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
             'orderStates' => OrderState::all('code', 'id'),
         ]);
     }
 
     public function show(String $id): View
     {
-        $order = Order::withTrashed()->findOrFail($id);
+        $order = Order::findOrFail($id);
         return view('pages.dashboard.order.show', compact('order'));
     }
 
@@ -97,22 +96,6 @@ class OrderController extends Controller
             'shipment_state_id' => DB::table('shipment_states')->where('code', 'PENDIENTE')->value('id'),
         ]);
         return redirect()->route('home')->with('success', 'La orden ha sido creada exitosamente');
-    }
-
-    public function destroy(String $id): RedirectResponse
-    {
-        $order = Order::findOrFail($id);
-        $order->delete();
-        $order->deleted_at = now();
-        $order->save();
-        return redirect()->route('orders.index');
-    }
-
-    public function restore(String $id): RedirectResponse
-    {
-        $order = Order::onlyTrashed()->findOrFail($id);
-        $order->restore();
-        return redirect()->route('orders.index');
     }
 
     public function updateStates(Request $request, Order $order): RedirectResponse

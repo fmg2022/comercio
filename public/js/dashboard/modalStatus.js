@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const $form = modal.querySelector('#form-modalSimple')
   const $select = modal.querySelector('select')
 
-  const arrayStatusDenied = ["COMPLETO", "REEMBOLSADO", "CANCELADO"]
+  const arrayStatusDenied = ["COMPLETO", "REEMBOLSADO", "CANCELADO", "APROBADO"]
   let url = window.location.href
   // Si la URL contiene parámetros de búsqueda, los eliminamos
   if ((/\?\w+/).test(url)) {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       button.addEventListener('click', () => {
         modal.querySelector('h3').textContent = button.dataset.from
-        modal.querySelector('p').childNodes[1].textContent = button.dataset.amount
+        modal.querySelector('p').textContent = button.dataset.amount
         modal.querySelector('label').for = 'state-' + button.dataset.uid
         $select.id = 'state-' + button.dataset.uid
 

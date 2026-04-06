@@ -19,10 +19,9 @@ return new class extends Migration
             $table->string('method', 50); // Método de pago: tarjeta, transferencia, etc
             $table->decimal('amount', 10, 2);
             $table->dateTime('paid_at')->nullable();
-            $table->foreignId('payment_state_id')->constrained('payment_states')->onDelete('cascade');
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('payment_provider_id')->constrained('payment_providers')->onDelete('cascade');
-            $table->softDeletes();
+            $table->foreignId('payment_state_id')->constrained('payment_states');
+            $table->foreignId('order_id')->constrained('orders');
+            $table->foreignId('payment_provider_id')->constrained('payment_providers');
             $table->timestamps();
         });
     }
