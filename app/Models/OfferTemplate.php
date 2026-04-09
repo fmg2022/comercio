@@ -14,7 +14,6 @@ class OfferTemplate extends Model
         'offer_type_id',
         'buy_qty',
         'pay_qty',
-
     ];
 
     public function offerType(): BelongsTo
