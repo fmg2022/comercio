@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const modalButtons = document.querySelectorAll('[data-uid][data-title]')
-  const modal = document.getElementById(modalButtons[0].dataset.modal)
+  const modalButtons = document.querySelectorAll('.button-delete-restore')
+  const modal = document.getElementById(modalButtons[0].dataset.modalid)
   const $form = modal.querySelector('#form-modalSimple')
   const submitButton = $form.querySelector('button[type="submit"]')
 
@@ -12,12 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   modalButtons.forEach(button => {
     button.addEventListener('click', () => {
-      const isDelete = button.dataset.button === 'Eliminar'
+      const isDelete = button.dataset.delete === "true"
 
-      modal.querySelector('h2').textContent = button.dataset.title
-      modal.querySelector('p').textContent = button.dataset.text
+      modal.querySelector('#form-text').textContent = button.dataset.text
+      modal.querySelector('#form-type').textContent = isDelete ? 'eliminar' : 'restaurar'
+      submitButton.textContent = isDelete ? 'Eliminar' : 'Restaurar'
 
-      $form.action = `${url}/${button.dataset.uid}` + (isDelete ? '' : '/restore')
+      $form.action = `${url}/${button.dataset.path}`
       $form.querySelector('input[name="_method"]').value = isDelete ? 'DELETE' : 'POST'
 
       if (isDelete) {
