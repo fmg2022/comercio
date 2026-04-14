@@ -32,6 +32,7 @@
         <th>Correo</th>
         <th>Telefono</th>
         <th class="hidden md:table-cell">Estado</th>
+        <th class="hidden xl:table-cell">Rol</th>
         <th class="text-end">Opciones</th>
       </tr>
     </x-slot>
@@ -42,7 +43,7 @@
         <td>
           <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
         </td>
-        <td class="relative">
+        <td class="relative max-w-44">
           <x-buttons.link href="{{ route('users.show', $user->id) }}"
             class="text-slate-100 hover:text-purple-500 peer/popup">
             {{ $user->fullName() }}
@@ -51,49 +52,40 @@
             Ver Usuario
           </x-popups.text>
         </td>
-        <td>{{ $user->email }}</td>
+        <td class="max-w-44 truncate">{{ $user->email }}</td>
         <td>{{ $user->phone }}</td>
         <td {{ $user->active ? 'data-active' : 'Inactivo' }}
           class="hidden text-red-700 md:table-cell font-semibold before:content-['●'] before:me-px data-active:text-green-700">
           {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
+        <td class="hidden xl:table-cell">
+          <h4 class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
+            {{ $user->getRoleNames()->first() }}
+          </h4>
+        </td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
             <x-slot:label>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-              </svg>
+              <x-icons.threeDotsX class="size-6" />
             </x-slot:label>
 
             <ul
               class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
               <li>
-                <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
-                  data-show="true" data-id="{{ $user->id }}">
+                <button type="button"
+                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700" data-show="true"
+                  data-id="{{ $user->id }}">
                   <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2">
-                        <path
-                          d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                        <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                      </g>
-                    </svg>
+                    <x-icons.show class="size-5" />
                   </span>
                   Ver Usuario
                 </button>
               </li>
               <li>
-                <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
-                  data-show="false" data-id="{{ $user->id }}">
+                <button type="button"
+                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700" data-show="false"
+                  data-id="{{ $user->id }}">
                   <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                        stroke-width="2">
-                        <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                        <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                      </g>
-                    </svg>
+                    <x-icons.edit class="size-5" />
                   </span>
                   Editar Usuario
                 </button>
@@ -102,34 +94,17 @@
                 <a href="{{ route('users.show', $user->id) }}"
                   class="flex gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
                   <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="icon icon-tabler icons-tabler-outline icon-tabler-address-book">
-                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                      <path d="M20 6v12a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2z" />
-                      <path d="M10 16h6" />
-                      <path d="M13 11m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-                      <path d="M4 8h3" />
-                      <path d="M4 12h3" />
-                      <path d="M4 16h3" />
-                    </svg>
+                    <x-icons.address class="size-5" />
                   </span>
                   Ver Dirección
                 </a>
               </li>
               <li>
-                <button type="button" data-uid="{{ $user->id }}" data-modal="{{ $type1 }}"
-                  data-title="{{ $user->fullName() }}" data-button="Eliminar"
-                  data-text="¿Está seguro de que desea eliminar al usuario?"
-                  class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
+                <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                  data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
+                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                   <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M20 8.7H4a.75.75 0 1 1 0-1.5h16a.75.75 0 0 1 0 1.5" />
-                      <path fill="currentColor"
-                        d="M16.44 20.75H7.56A2.4 2.4 0 0 1 5 18.49V8a.75.75 0 0 1 1.5 0v10.49c0 .41.47.76 1 .76h8.88c.56 0 1-.35 1-.76V8A.75.75 0 1 1 19 8v10.49a2.4 2.4 0 0 1-2.56 2.26m.12-13a.74.74 0 0 1-.75-.75V5.51c0-.41-.48-.76-1-.76H9.22c-.55 0-1 .35-1 .76V7a.75.75 0 1 1-1.5 0V5.51a2.41 2.41 0 0 1 2.5-2.26h5.56a2.41 2.41 0 0 1 2.53 2.26V7a.75.75 0 0 1-.75.76Z" />
-                      <path fill="currentColor"
-                        d="M10.22 17a.76.76 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.75.75 0 0 1-.75.76m3.56 0a.75.75 0 0 1-.75-.75v-4.53a.75.75 0 0 1 1.5 0v4.52a.76.76 0 0 1-.75.76" />
-                    </svg>
+                    <x-icons.trash class="size-5" />
                   </span>
                   Eliminar Usuario
                 </button>
@@ -184,44 +159,28 @@
             <td class="hidden text-slate-600 md:table-cell font-semibold before:content-['●'] before:me-px">
               {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
             <td class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900"
-                class="right-14">
+              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
                 <x-slot:label>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-                  </svg>
+                  <x-icons.threeDotsX class="size-6" />
                 </x-slot:label>
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer [&>li]:transition-colors">
                   <li>
-                    <button type="button" class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700"
+                    <button type="button"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700"
                       data-id="{{ $user->id }}" data-show="true">
                       <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                          <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="2">
-                            <path
-                              d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                          </g>
-                        </svg>
+                        <x-icons.show class="size-5" />
                       </span>
                       Ver Usuario
                     </button>
                   </li>
                   <li>
-                    <button type="button" data-uid="{{ $user->id }}" data-modal="{{ $type1 }}"
-                      data-title="{{ $user->fullName() }}" data-button="Restaurar"
-                      data-text="¿Está seguro de que desea restaurar al usuario?"
-                      class="w-full px-4 py-2.5 flex gap-3 cursor-pointer hover:bg-slate-700 ">
+                    <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                      data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                       <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512">
-                          <path fill="currentColor" fill-rule="evenodd"
-                            d="M256 448c-97.974 0-178.808-73.383-190.537-168.183l42.341-5.293c9.123 73.734 71.994 130.809 148.196 130.809c82.475 0 149.333-66.858 149.333-149.333S338.475 106.667 256 106.667c-50.747 0-95.581 25.312-122.567 64h79.9v42.666H64V64h42.667v71.31C141.866 91.812 195.685 64 256 64c106.039 0 192 85.961 192 192s-85.961 192-192 192"
-                            clip-rule="evenodd" />
-                        </svg>
+                        <x-icons.restore class="size-5" />
                       </span>
                       Restaurar Usuario
                     </button>
@@ -246,8 +205,7 @@
       class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
-      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp"
-        alt="Foto de usuario {{ $user->name }}" />
+      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp" alt="Foto de usuario {{ $user->name }}" />
 
       <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-2 text-gray-700 md:px-3">
         <div class="mb-4">
@@ -290,12 +248,5 @@
   </x-modals.simple>
 
   {{-- MODAL DELETE, RESTORE --}}
-  <x-modals.delete id="{{ $type1 }}" class="max-w-md" iconClass="text-slate-500">
-    <x-slot:icon>
-      <svg xmlns="http://www.w3.org/2000/svg" width="112" height="112" viewBox="0 0 24 24">
-        <path fill="currentColor"
-          d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-      </svg>
-    </x-slot:icon>
-  </x-modals.delete>
+  <x-modals.delete id="{{ $type1 }}" />
 @endsection

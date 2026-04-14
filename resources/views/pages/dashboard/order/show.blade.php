@@ -1,9 +1,5 @@
 @extends('layouts.dashboard')
 
-@push('scripts-dashboard')
-  <script src="{{ asset('js/modal.js') }}" defer></script>
-@endpush
-
 @section('content')
   <x-sections.headerTitle classTitle="flex flex-wrap items-center gap-3"
     class="flex justify-between items-center flex-wrap">
@@ -54,34 +50,24 @@
         </td>
         <td>
           <div class="relative flex justify-end items-center">
-            <input type="checkbox" id="chorder-{{ $orderLine->id }}" class="hidden peer/checkOption" name="toggle-btns">
-            <label for="chorder-{{ $orderLine->id }}"
-              class="inline-block p-1.5 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-full cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0m7 0a1 1 0 1 0 2 0a1 1 0 1 0-2 0" />
-              </svg>
-            </label>
-            <div class="absolute right-12 -top-2/3 z-5 hidden peer-checked/checkOption:block">
+            <x-popups.contentWcheck iid="chorderline-{{ $order->id }}" labelClass="hover:bg-slate-900"
+              class="right-12 -top-1/4">
+              <x-slot:label>
+                <x-icons.threeDotsX class="size-6" />
+              </x-slot:label>
+
               <ul
                 class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
                 <li>
                   <a href="{{ route('products.show', $orderLine->id) }}" class="px-4 py-2.5 flex gap-3">
                     <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2">
-                          <path
-                            d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                          <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                        </g>
-                      </svg>
+                      <x-icons.show class="size-5" />
                     </span>
                     Ver Producto
                   </a>
                 </li>
               </ul>
-            </div>
+            </x-popups.contentWcheck>
           </div>
         </td>
       </tr>
