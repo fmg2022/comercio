@@ -21,6 +21,10 @@
       opacity: 1;
       visibility: visible;
     }
+
+    #sidebar-toggle:checked~aside label[for='sidebar-toggle'] {
+      background-color: oklch(20.8% 0.042 265.755);
+    }
   </style>
   <script src="{{ asset('js/indexDash.js') }}" type="module"></script>
   @stack('scripts-dashboard')

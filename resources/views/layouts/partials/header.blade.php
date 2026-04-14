@@ -100,7 +100,7 @@
           </div>
         </label>
         <div
-          class="absolute -top-16 left-1/2 -translate-x-1/2 invisible w-1/2 h-max px-3 py-4 flex flex-col opacity-0 rounded-lg text-center bg-cyan-800 peer-checked/perfil:visible peer-checked/perfil:opacity-100 peer-checked/perfil:top-16 sm:-left-full sm:translate-0 sm:w-max transition-all duration-300">
+          class="absolute -top-16 left-1/2 -translate-x-1/2 invisible w-1/2 h-max px-3 py-4 flex flex-col opacity-0 rounded-lg text-center bg-cyan-800 divide-y divide-cyan-700 peer-checked/perfil:visible peer-checked/perfil:opacity-100 peer-checked/perfil:top-16 sm:left-full sm:-translate-x-full sm:w-max transition-all duration-300">
           @if (Route::has('login'))
             @auth
               <a href="{{ route('dashboard') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Panel de
