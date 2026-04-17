@@ -22,7 +22,7 @@ class ProductController extends Controller
         return view('pages.dashboard.product.index', [
             'products' => Product::paginate(10),
             'productsDeleted' => Product::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
-            'categories' => Category::where('parent_id', null)->get(),
+            'categories' => $this->formatFlat(Category::getFullTree()),
             'brands' => Brand::all()
         ]);
     }
@@ -30,7 +30,7 @@ class ProductController extends Controller
     public function create(): View
     {
         return view('pages.dashboard.product.create', [
-            'categories' => Category::where('parent_id', null)->get(),
+            'categories' => $this->formatFlat(Category::getFullTree()),
             'brands' => Brand::all()
         ]);
     }
@@ -42,25 +42,25 @@ class ProductController extends Controller
         return redirect()->route('products.index');
     }
 
-    public function show(string $id): View
+    public function show(Product $product): View
     {
         return view('pages.dashboard.product.show', [
-            'product' => Product::findOrFail($id),
+            'product' => $product,
         ]);
     }
 
-    public function edit(String $id): View
+    public function edit(Product $product): View
     {
         return view('pages.dashboard.product.edit', [
-            'product' => Product::findOrFail($id),
-            'categories' => Category::where('parent_id', null)->get(),
+            'product' => $product,
+            'categories' => $this->formatFlat(Category::getFullTree()),
             'brands' => Brand::all()
         ]);
     }
 
-    public function update(ProductRequest $request, String $id)
+    public function update(ProductRequest $request, Product $product)
     {
-        Product::findOrFail($id)->update($request->validated());
+        $product->update($request->validated());
 
         return redirect()->route('products.index');
     }
@@ -92,5 +92,22 @@ class ProductController extends Controller
         $product = Product::withTrashed()->findOrFail($id);
         $orders = $product->orders()->withTrashed()->paginate(10);
         return view('pages.dashboard.product.orders', compact('product', 'orders'));
+    }
+
+    private function formatFlat($categories, &$result = []): array
+    {
+        foreach ($categories as $category) {
+            $result[] = [
+                'id' => $category->id,
+                'name' => $category->name,
+                'nivel' => $category->nivel
+            ];
+
+            if ($category->childrenTree->isNotEmpty()) {
+                $this->formatFlat($category->childrenTree, $result);
+            }
+        }
+
+        return $result;
     }
 }

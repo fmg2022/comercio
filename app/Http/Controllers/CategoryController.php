@@ -64,11 +64,8 @@ class CategoryController extends Controller
 
 	public function fetch(String $id): JsonResponse
 	{
-		$category = Category::withTrashed()->findOrFail($id, ['id', 'name', 'parent_id']);
-
-		$category->load(['parent:id,name', 'children' => fn($query) => $query->select('id', 'name', 'nivel', 'parent_id')->orderBy('name')]);
-
-		return response()->json($category, 200);
+		$category = Category::withTrashed()->with('childrenTree')->find($id, ['id', 'name', 'nivel', 'parent_id']);
+		return response()->json($this->formatFlat(collect([$category])), 200);
 	}
 
 	public function getCategories(): JsonResponse
@@ -76,23 +73,17 @@ class CategoryController extends Controller
 		return response()->json($this->formatFlat(Category::getFullTree()), 200);
 	}
 
-	private function formatFlat($categories)
+	private function formatFlat($categories, &$result = []): array
 	{
-		$result = [];
-
 		foreach ($categories as $category) {
-			$prefix = str_repeat('-- ', $category->nivel);
 			$result[] = [
 				'id' => $category->id,
-				'name' => $prefix . $category->name,
-				'level' => $category->nivel
+				'name' => $category->name,
+				'nivel' => $category->nivel
 			];
 
 			if ($category->childrenTree->isNotEmpty()) {
-				$result = array_merge(
-					$result,
-					$this->formatFlat($category->childrenTree)
-				);
+				$this->formatFlat($category->childrenTree, $result);
 			}
 		}
 

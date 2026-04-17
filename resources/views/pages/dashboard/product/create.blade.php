@@ -9,7 +9,7 @@
 
     <x-buttons.linkFill href="{{ route('products.index') }}"
       class="bg-slate-700 active:bg-slate-600 sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2">
-      Volver
+      Volver a la lista
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
@@ -30,30 +30,19 @@
       @endforeach
     </select>
 
-    {{-- Componetizar, Revisar estilos --}}
     <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
       <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una categoría
       </option>
       @foreach ($categories as $category)
-        <option value="{{ $category->id }}" {{ $category->children->count() ? 'disabled' : '' }}
-          class="font-semibold text-purple-700 bg-purple-50">
-          {{ $category->name }}
+        <option value="{{ $category['id'] }}" {{ $category['nivel'] != 2 ? 'disabled' : '' }}
+          @class([
+              'text-slate-800',
+              'bg-purple-100 font-bold' => $category['nivel'] === 0,
+              'bg-purple-50 font-semibold' => $category['nivel'] === 1,
+              'bg-slate-50' => $category['nivel'] === 2,
+          ])>
+          {{ ($category['nivel'] === 3 ? '--' : '') . $category['name'] }}
         </option>
-        @if ($category->children->count())
-          @foreach ($category->children as $child)
-            <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }} class="text-purple-700">
-              {{ $child->name }}
-            </option>
-
-            @if ($child->children->count())
-              @foreach ($child->children as $grandChild)
-                <option value="{{ $grandChild->id }}" {{ $grandChild->children->count() ? 'disabled' : '' }}>
-                  -- {{ $grandChild->name }}
-                </option>
-              @endforeach
-            @endif
-          @endforeach
-        @endif
       @endforeach
     </select>
 

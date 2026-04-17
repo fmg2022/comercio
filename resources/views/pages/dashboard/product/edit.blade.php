@@ -33,30 +33,19 @@
       @endforeach
     </select>
 
-    {{-- Modificar y probar estilo --}}
     <select name="category_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">
+      <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una categoría
+      </option>
       @foreach ($categories as $category)
-        <option value="{{ $category->id }}" {{ $category->children->count() ? 'disabled' : '' }}
-          class="font-semibold text-purple-700 bg-purple-50">
-          {{ $category->name }}
+        <option value="{{ $category['id'] }}" {{ $category['nivel'] != 2 ? 'disabled' : '' }}
+          @class([
+              'text-slate-800',
+              'bg-purple-100 font-bold' => $category['nivel'] === 0,
+              'bg-purple-50 font-semibold' => $category['nivel'] === 1,
+              'bg-slate-50' => $category['nivel'] === 2,
+          ])>
+          {{ ($category['nivel'] === 3 ? '--' : '') . $category['name'] }}
         </option>
-        @if ($category->children->count())
-          @foreach ($category->children as $child)
-            <option value="{{ $child->id }}" {{ $child->children->count() ? 'disabled' : '' }}
-              class="text-purple-700" {{ $product->category_id == $child->id ? 'selected' : '' }}>
-              {{ $child->name }}
-            </option>
-
-            @if ($child->children->count())
-              @foreach ($child->children as $grandChild)
-                <option value="{{ $grandChild->id }}" {{ $grandChild->children->count() ? 'disabled' : '' }}
-                  {{ $product->category_id == $grandChild->id ? 'selected' : '' }}>
-                  -- {{ $grandChild->name }}
-                </option>
-              @endforeach
-            @endif
-          @endforeach
-        @endif
       @endforeach
     </select>
 

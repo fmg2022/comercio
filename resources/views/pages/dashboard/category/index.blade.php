@@ -12,13 +12,8 @@
     <button type="button"
       class="px-4 py-2 rounded-md cursor-pointer flex items-center gap-2 bg-purple-600 active:bg-purple-700"
       data-type="create" data-id="0">
-      <span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-          <path fill="currentColor"
-            d="M18 10h-4V6a2 2 0 0 0-4 0l.071 4H6a2 2 0 0 0 0 4l4.071-.071L10 18a2 2 0 0 0 4 0v-4.071L18 14a2 2 0 0 0 0-4" />
-        </svg>
-      </span>
-      Nuevo
+      <x-icons.plus class="size-6" />
+      Nueva Categoría
     </button>
   </x-sections.headerTitle>
 
@@ -136,9 +131,10 @@
           <label class="block mb-2 font-semibold" for="parent">Categoría Padre</label>
           <select name="parent_id" id="parent"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md">
-            <option value="">Ninguna</option>
+            <option value="">-- Ninguna --</option>
             @foreach ($categoriesList as $category)
-              <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+              <option value="{{ $category['id'] }}">
+                {{ str_repeat('-', $category['nivel']) . ' ' . $category['name'] }}</option>
             @endforeach
           </select>
         </div>
@@ -150,10 +146,10 @@
             @foreach ($categoriesList as $category)
               <label @class([
                   'px-3 py-1 mx-4 flex items-center gap-2 [&:has(:disabled:not(:checked))]:hidden',
-                  'mt-3 text-purple-900 font-bold' => $category['level'] === 0,
+                  'mt-3 text-purple-900 font-bold' => $category['nivel'] === 0,
                   'mt-2 border border-slate-200 rounded-md text-purple-900 font-semibold' =>
-                      $category['level'] === 1,
-                  'bg-slate-100/75 rounded-md' => $category['level'] === 2,
+                      $category['nivel'] === 1,
+                  'bg-slate-100/75 rounded-md' => $category['nivel'] === 2,
               ])>
                 <input type="checkbox" name="children[]" class="size-4 accent-purple-600" value="{{ $category['id'] }}">
                 <span class="ms-1">{{ $category['name'] }}</span>
@@ -162,10 +158,10 @@
           </div>
         </div>
         <button type="submit"
-          class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
+          class="absolute bottom-4 right-1/6 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/3">Actualizar</button>
       </fieldset>
     </form>
-    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-1/12 sm:left-1/5">
+    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-1/6 sm:left-1/3">
       <button class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
     </form>
   </x-modals.simple>

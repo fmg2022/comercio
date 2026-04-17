@@ -60,7 +60,6 @@ class OrderController extends Controller
                     'offer_type_code' => $offerTemplate ? $offerTemplate->offerType->code : '',
                 ]);
             }
-            Log::info('Order created successfully', ['order_id' => $order->id, 'order_total' => $order->total]);
             return $order;
         });
 
