@@ -12,8 +12,8 @@ class OfferType extends Model
         'description',
     ];
 
-    public function Offers(): HasMany
+    public function offerTemplates(): HasMany
     {
-        return $this->hasMany(Offer::class);
+        return $this->hasMany(OfferTemplate::class);
     }
 }

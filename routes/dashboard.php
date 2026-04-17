@@ -1,11 +1,18 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OfferStateController;
+use App\Http\Controllers\OfferTypeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderStateController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentStateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShipmentStateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,7 +41,19 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
     Route::resource('/payments', PaymentController::class)->only(['index', 'update']);
     Route::put('/payments/{payment}/states', [PaymentController::class, 'updateStates'])->name('payments.updateStates');
-  });
 
-  // Route::resource('states', StateController::class)->except(['show']);
+    // Brand routes
+    Route::resource('/brands', BrandController::class)->except(['create', 'edit']);
+    Route::post('/brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
+
+    // Model states & types routes
+    Route::prefix('states-types')->group(function () {
+      Route::get('/', [DashboardController::class, 'indexStatesTypes'])->name('states-types.index');
+      Route::resource('/order-states', OrderStateController::class)->only(['store', 'update', 'destroy']);
+      Route::resource('/offer-states', OfferStateController::class)->only(['store', 'update', 'destroy']);
+      Route::resource('/offer-types', OfferTypeController::class)->only(['store', 'update', 'destroy']);
+      Route::resource('/payment-states', PaymentStateController::class)->only(['store', 'update', 'destroy']);
+      Route::resource('/shipment-states', ShipmentStateController::class)->only(['store', 'update', 'destroy']);
+    });
+  });
 });

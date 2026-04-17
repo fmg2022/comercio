@@ -12,7 +12,7 @@ class OfferState extends Model
         'description',
     ];
 
-    public function Offers(): HasMany
+    public function offers(): HasMany
     {
         return $this->hasMany(Offer::class);
     }

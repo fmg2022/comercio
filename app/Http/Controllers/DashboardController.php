@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\OfferState;
+use App\Models\OfferType;
 use App\Models\Order;
+use App\Models\OrderState;
 use App\Models\Payment;
+use App\Models\PaymentState;
 use App\Models\Product;
+use App\Models\ShipmentState;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
@@ -135,5 +141,16 @@ class DashboardController extends Controller
 		}, [[], []]);
 
 		return response()->json(['values' => $data, 'labels' => $labels]);
+	}
+
+	public function indexStatesTypes(): View
+	{
+		return view('pages.dashboard.statetype.index', [
+			'orderStates' => OrderState::get(['id', 'code', 'description']),
+			'offerStates' => OfferState::get(['id', 'code', 'description']),
+			'offerTypes' => OfferType::get(['id', 'code', 'description']),
+			'paymentStates' => PaymentState::get(['id', 'code', 'description']),
+			'shipmentStates' => ShipmentState::get(['id', 'code', 'description']),
+		]);
 	}
 }
