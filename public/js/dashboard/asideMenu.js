@@ -1,21 +1,25 @@
 export default function asideMenu() {
   const $asideMenu = document.getElementById('sidebar-menu')
+
+  if (!$asideMenu) return
+
   const $liArr = $asideMenu.querySelectorAll('li')
-  let $path = window.location.pathname
+  let pathName = window.location.pathname
 
-  if (!$path || !$liArr.length) return
+  if (!pathName || !$liArr.length) return
 
-  if ($path.search(/\/[a-z]+\/\w+\/\w+/i) !== -1) {
-    $path = $path.substring(0, $path.indexOf('/', 11))
+  const $pattern = /\/dashboard\/\w+\/\w+/i
+  if ($pattern.test(pathName)) {
+    pathName = pathName.substring(0, pathName.indexOf('/', 11))
   }
 
   $liArr.forEach(($li) => {
-    const text = $li.querySelector('a').dataset.section
+    const $a = $li.querySelector('a')
 
-    if (($path.endsWith('dashboard') && text === 'dashboard') || $path.includes(text)) {
-      $li.classList.add('active')
-    } else {
-      $li.classList.remove('active')
-    }
+    if (!$a) return
+
+    const text = $a.dataset.section
+    const isActive = (pathName.endsWith('dashboard') && text === '') || (pathName.endsWith(text) && text)
+    $li.classList.toggle('active', isActive)
   })
 }
