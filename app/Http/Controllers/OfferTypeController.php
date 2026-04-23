@@ -2,23 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StateTypeRequest;
 use App\Models\OfferType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OfferTypeController extends Controller
 {
-    public function store(StateTypeRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        OfferType::create($request->validated());
+        $validated = $request->validate([
+            'code' => 'required|string|max:255|unique:offer_type,code',
+            'description' => 'required|string|max:255'
+        ]);
+        OfferType::create($validated);
 
         return redirect()->route('states-types.index');
     }
 
-    public function update(StateTypeRequest $request, OfferType $offerType): RedirectResponse
+    public function update(Request $request, OfferType $offerType): RedirectResponse
     {
-        $offerType->update($request->validated());
+        $validated = $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('offer_type', 'code')->ignore($offerType->id),
+            ],
+            'description' => 'required|string|max:255',
+        ]);
+        $offerType->update($validated);
 
         return redirect()->route('states-types.index');
     }

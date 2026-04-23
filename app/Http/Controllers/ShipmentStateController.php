@@ -6,19 +6,34 @@ use App\Http\Requests\StateTypeRequest;
 use App\Models\ShipmentState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ShipmentStateController extends Controller
 {
-    public function store(StateTypeRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        ShipmentState::create($request->validated());
+        $validated = $request->validate([
+            'code' => 'required|string|max:255|unique:shipment_states,code',
+            'description' => 'required|string|max:255'
+        ]);
+        ShipmentState::create($validated);
 
         return redirect()->route('states-types.index');
     }
 
-    public function update(StateTypeRequest $request, ShipmentState $shipmentState): RedirectResponse
+    public function update(Request $request, ShipmentState $shipmentState): RedirectResponse
     {
-        $shipmentState->update($request->validated());
+        $validated = $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('shipment_states', 'code')->ignore($shipmentState->id),
+            ],
+            'description' => 'required|string|max:255',
+        ]);
+        $shipmentState->update($validated);
 
         return redirect()->route('states-types.index');
     }

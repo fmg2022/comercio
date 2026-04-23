@@ -2,23 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StateTypeRequest;
 use App\Models\OrderState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderStateController extends Controller
 {
-    public function store(StateTypeRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        OrderState::create($request->validated());
+        $validated = $request->validate([
+            'code' => 'required|string|max:255|unique:order_states,code',
+            'description' => 'required|string|max:255'
+        ]);
+        OrderState::create($validated);
 
         return redirect()->route('states-types.index');
     }
 
-    public function update(StateTypeRequest $request, OrderState $orderState): RedirectResponse
+    public function update(Request $request, OrderState $orderState): RedirectResponse
     {
-        $orderState->update($request->validated());
+        $validated = $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('order_states', 'code')->ignore($orderState->id),
+            ],
+            'description' => 'required|string|max:255',
+        ]);
+        $orderState->update($validated);
 
         return redirect()->route('states-types.index');
     }

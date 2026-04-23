@@ -6,19 +6,34 @@ use App\Http\Requests\StateTypeRequest;
 use App\Models\PaymentState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PaymentStateController extends Controller
 {
-    public function store(StateTypeRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        PaymentState::create($request->validated());
+        $validated = $request->validate([
+            'code' => 'required|string|max:255|unique:payment_states,code',
+            'description' => 'required|string|max:255'
+        ]);
+        PaymentState::create($validated);
 
         return redirect()->route('states-types.index');
     }
 
-    public function update(StateTypeRequest $request, PaymentState $paymentState): RedirectResponse
+    public function update(Request $request, PaymentState $paymentState): RedirectResponse
     {
-        $paymentState->update($request->validated());
+        $validated = $request->validate([
+            'code' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('payment_states', 'code')->ignore($paymentState->id),
+            ],
+            'description' => 'required|string|max:255',
+        ]);
+        $paymentState->update($validated);
 
         return redirect()->route('states-types.index');
     }
