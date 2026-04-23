@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class UserSeeder extends Seeder
 {
@@ -13,15 +12,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->insert([
-            [
-                'name' => 'Admin Frame',
-                'surname' => 'Prime',
-                'phone' => '+54 1234567890',
-                'email' => 'admin@gmail.com',
-                'password' => bcrypt('123456'),
-                'active' => true,
-            ],
+        $users = [
             [
                 'name' => 'Juan Carlos',
                 'surname' => 'Perez',
@@ -34,12 +25,30 @@ class UserSeeder extends Seeder
                 'name' => 'Fernando',
                 'surname' => 'Suarez',
                 'phone' => '+54 0987654321',
-                'email' => 'fernando@gmail.com',
+                'email' => 'vendedor@gmail.com',
                 'password' => bcrypt('123456'),
-                'active' => false,
-            ]
-        ]);
+                'active' => true,
+            ],
+            [
+                'name' => 'Carlos',
+                'surname' => 'Perez',
+                'phone' => '+54 0987654321',
+                'email' => 'cliente@gmail.com',
+                'password' => bcrypt('123456'),
+                'active' => true,
+            ],
+        ];
+        $roleAsign = ['Admin', 'Vendedor', 'Cliente'];
+        for ($i = 0; $i < 3; $i++) {
+            (User::create($users[$i]))->assignRole($roleAsign[$i]);
+        }
 
-        User::factory()->count(10)->create();
+        User::factory(4)->create(['active' => fake()->boolean(80)])->each(function (User $user) {
+            $user->assignRole('Vendedor');
+        });
+
+        User::factory(10)->create(['active' => fake()->boolean(40)])->each(function (User $user) {
+            $user->assignRole('Cliente');
+        });
     }
 }
