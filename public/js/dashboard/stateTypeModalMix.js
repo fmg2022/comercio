@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
       $form.querySelector('input[name="_method"]').value = type === 'edit' ? 'PUT' : 'POST'
 
       if (type === 'edit') {
-        modalType.classList.add('hidden')
+        modalType.parentElement.classList.add('hidden')
         $submit.textContent = 'Actualizar'
 
         axios.get('/api/' + button.dataset.path)
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error:', error)
           })
       } else if (type === 'create') {
-        modalType.classList.remove('hidden')
+        modalType.parentElement.classList.remove('hidden')
         $submit.textContent = 'Crear'
         $form.querySelector('input[name="code"]').value = ''
         $form.querySelector('textarea[name="description"]').value = ''
