@@ -11,10 +11,12 @@
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
-  <x-forms.grid2 action="{{ route('users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+  <x-forms.grid2 class="max-w-md" action="{{ route('users.update', $user->id) }}" method="POST"
+    enctype="multipart/form-data">
     @method('PUT')
     @csrf
-    <x-inputs.withLabel forLabel="name1" title="Nombre" id="name1" name="name" value="{{ $user->name }}" required />
+    <x-inputs.withLabel forLabel="name1" title="Nombre" id="name1" name="name" value="{{ $user->name }}"
+      required />
     <x-inputs.withLabel forLabel="surname" title="Apellido" id="surname" name="surname" value="{{ $user->surname }}"
       required />
     <x-inputs.withLabel forLabel="email" title="Correo" id="email" name="email" type="email"

@@ -11,7 +11,7 @@
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
-  <x-forms.grid2 action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
+  <x-forms.grid2 class="max-w-md" action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <x-inputs.withLabel forLabel="name1" title="Nombre" id="name1" name="name" required />
     <x-inputs.withLabel forLabel="surname" title="Apellido" id="surname" name="surname" required />
