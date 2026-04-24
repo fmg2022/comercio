@@ -17,14 +17,19 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-  Route::prefix('dashdoard')->group(function () {
+
+  Route::prefix('dashboard')->group(function () {
+    Route::group(['middleware' => ['permission:list my_section']], function () {
+      Route::get('/addresses/my', [AddressController::class, 'myIndex'])->name('addresses.myIndex');
+    });
+
     // User routes
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/users', UserController::class);
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
 
     // Address routes
-    Route::resource('/addresses', AddressController::class)->except(['show']);
+    Route::resource('/addresses', AddressController::class)->except(['show', 'create']);
     Route::post('/addresses/{id}/restore', [AddressController::class, 'restore'])->name('addresses.restore');
 
     // Product routes
@@ -33,7 +38,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/products/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('products.orders');
 
     // Order routes
-    Route::resource('/orders', OrderController::class)->only(['index', 'show']);
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index')->middleware('permission:list orders');
+    Route::get('/orders/{id}/show', [OrderController::class, 'show'])->name('orders.show')->middleware('permission:show orders');
     Route::put('/orders/{order}/states', [OrderController::class, 'updateStates'])->name('orders.updateStates');
 
     // Category, State & Payment routes
