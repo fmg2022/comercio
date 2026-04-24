@@ -64,8 +64,16 @@ class CategoryController extends Controller
 
 	public function fetch(String $id): JsonResponse
 	{
-		$category = Category::withTrashed()->with('childrenTree')->find($id, ['id', 'name', 'nivel', 'parent_id']);
-		return response()->json($this->formatFlat(collect([$category])), 200);
+		$category = Category::withTrashed()->with('childrenTree:id,parent_id')->find($id, ['id', 'name', 'nivel', 'parent_id']);
+
+		$category->setAttribute(
+			'children',
+			$category->childrenTree->pluck('id')
+		);
+		$category->children[] = $category->id;
+		$category->unsetRelation('childrenTree');
+
+		return response()->json($category, 200);
 	}
 
 	public function getCategories(): JsonResponse
@@ -79,7 +87,8 @@ class CategoryController extends Controller
 			$result[] = [
 				'id' => $category->id,
 				'name' => $category->name,
-				'nivel' => $category->nivel
+				'nivel' => $category->nivel,
+				'parent_id' => $category->parent_id
 			];
 
 			if ($category->childrenTree->isNotEmpty()) {
