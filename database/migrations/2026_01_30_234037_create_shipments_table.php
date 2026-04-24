@@ -20,7 +20,6 @@ return new class extends Migration
             $table->dateTime('delivered_at')->nullable(); // Fecha de entrega
             $table->foreignId('order_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('shipment_state_id')->constrained()->onUpdate('cascade')->onDelete('restrict');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
