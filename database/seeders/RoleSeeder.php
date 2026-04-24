@@ -20,6 +20,7 @@ class RoleSeeder extends Seeder
             'add my_cart',
             'manage addresses',
             'manage carts-details',
+            'list products',
             'show orders',
         ];
         $customer->givePermissionTo(Permission::whereIn('name', $customerPermission)->get());
@@ -29,7 +30,6 @@ class RoleSeeder extends Seeder
             ...$customerPermission,
             'list users',
             'list addresses',
-            'list products',
             'list orders',
             'list offers', // + Offer Template
         ];

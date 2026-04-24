@@ -8,8 +8,8 @@
       <span class="text-base">({{ Str::substr($order->date, 0, 10) }})</span>
     </x-slot:textTitle>
     <div class="flex gap-2">
-      <x-buttons.linkFill href="{{ route('orders.index') }}" class="bg-slate-500 active:bg-slate-600">
-        Lista de Ordenes
+      <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
+        Volver
       </x-buttons.linkFill>
       <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
         Generar PDF
@@ -58,13 +58,15 @@
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                 <li>
-                  <a href="{{ route('products.show', $orderLine->id) }}"
-                    class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Producto
-                  </a>
+                  @can('list products')
+                    <a href="{{ route('products.show', $orderLine->id) }}"
+                      class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                      <span>
+                        <x-icons.show class="size-5" />
+                      </span>
+                      Ver Producto
+                    </a>
+                  @endcan
                 </li>
               </ul>
             </x-popups.contentWcheck>

@@ -1,9 +1,9 @@
 @extends('layouts.dashboard')
 
-@push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpush
+@pushIf(auth()->check() && auth()->user()?->can('manage addresses'), 'scripts-dashboard')
+<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+<script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@endpushIf
 
 @php
   $type1 = 'addressDeleteRestore';
@@ -13,7 +13,7 @@
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Direcciones</x-slot:textTitle>
 
-    @can('create addresses')
+    @can('manage addresses')
       <button type="button" data-type="create" data-modalID="addressCSE"
         class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
         <x-icons.plus class="size-6" />
@@ -62,7 +62,7 @@
               </x-slot:label>
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @can('show addresses')
+                @can('manage addresses')
                   <li>
                     <button type="button" data-type="show" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
                       data-modalID="addressCSE"
@@ -74,7 +74,7 @@
                     </button>
                   </li>
                 @endcan
-                @can('edit addresses')
+                @can('manage addresses')
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
                       data-modalID="addressCSE"
@@ -86,7 +86,7 @@
                     </button>
                   </li>
                 @endcan
-                @can('delete addresses')
+                @can('manage addresses')
                   <li>
                     <button type="button" data-text="Dirección: '{{ $address->fullAddress() }}'"
                       data-uid="{{ $address->id }}" data-modalID="{{ $type1 }}" data-path="{{ $address->id }}"
@@ -156,7 +156,7 @@
               </x-slot:label>
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @can('show addresses')
+                @can('manage addresses')
                   <li>
                     <button type="button" data-type="show" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
                       data-modalID="addressCSE"
@@ -168,7 +168,7 @@
                     </button>
                   </li>
                 @endcan
-                @can('delete addresses')
+                @can('manage addresses')
                   <li>
                     <button type="button" data-text="Dirección: '{{ $address->fullAddress() }}'"
                       data-uid="{{ $address->id }}" data-modalID="{{ $type1 }}"
