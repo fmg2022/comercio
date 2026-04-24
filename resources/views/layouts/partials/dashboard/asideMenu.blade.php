@@ -1,9 +1,11 @@
+@props(['menuItems', 'isActive'])
+
 <input type="checkbox" id="sidebar-toggle" class="peer hidden" />
 <div
   class="fixed -left-full z-25 w-full h-full bg-slate-950/60 overlay opacity-0 peer-checked:opacity-100 peer-checked:left-0 xl:hidden">
 </div>
 <aside
-  class="group fixed -left-full inset-y-0 z-30 h-screen w-72 bg-slate-800 border-b border-slate-700/60 transition-all duration-500 ease-in-out peer-checked:left-0 xl:sticky xl:left-0 xl:w-[90px] hover:w-72 xl:peer-checked:w-72">
+  class="group fixed -left-full inset-y-0 z-30 h-screen w-72 flex flex-col bg-slate-800 border-b-4 border-slate-700/60 transition-all duration-500 ease-in-out peer-checked:left-0 xl:sticky xl:left-0 xl:w-[90px] hover:w-72 xl:peer-checked:w-72">
   <div class="flex justify-between py-5 px-3 xl:min-w-full xl:w-72">
     <a href="{{ route('home') }}" class="relative flex gap-2 items-center px-3">
       <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px">
@@ -26,103 +28,26 @@
       </span>
     </label>
   </div>
-  <div class="relative h-[89%] overflow-y-auto py-4 xl:overflow-x-hidden">
-    <ul id="sidebar-menu"
-      class="relative flex flex-col space-y-3 px-3 text-slate-200/75 [&>li]:transition-colors [&>li]:duration-200 [&>li]:rounded-md [&>li.active]:bg-slate-700 [&>li.active]:text-purple-500">
-      <li class="hover:bg-slate-700 hover:text-purple-500">
-        <a href="{{ route('dashboard') }}" class="px-3 py-2 flex items-center gap-3" data-section="dashboard">
-          <span>
-            <x-icons.dashboard />
-          </span>
-          <span
-            class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Dashboard</span>
-        </a>
-      </li>
-      <li class="hover:bg-slate-700 hover:text-purple-500">
-        <a href="{{ route('orders.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="orders">
-          <span>
-            <x-icons.order />
-          </span>
-          <span
-            class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Ordenes</span>
-        </a>
-      </li>
-      <li class="hover:bg-slate-700 hover:text-purple-500">
-        <a href="{{ route('payments.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="payments">
-          <span>
-            <x-icons.payment />
-          </span>
-          <span class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Pagos</span>
-        </a>
-      </li>
-      @can('list product')
-        <li class="hover:bg-slate-700 hover:text-purple-500">
-          <a href="{{ route('products.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="products">
-            <span>
-              <x-icons.product />
-            </span>
-            <span
-              class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Productos</span>
-          </a>
-        </li>
-        <li class="hover:bg-slate-700 hover:text-purple-500">
-          <a href="{{ route('categories.index') }}" class="px-3 py-2 flex items-center gap-3" data-section="categories">
-            <span>
-              <x-icons.category />
-            </span>
-            <span
-              class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Categorías</span>
-          </a>
-        </li>
-        <li class="hover:bg-slate-700 hover:text-purple-500">
-          <a href="{{ route('users.index') }}" class="relative px-3 py-2 flex items-center gap-3" data-section="users">
-            <span>
-              <x-icons.users />
-            </span>
-            <span
-              class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Usuarios</span>
-          </a>
-        </li>
-      @endcan
-      <li class="hover:bg-slate-700 hover:text-purple-500">
-        <a href="{{ route('addresses.index') }}" class="relative px-3 py-2 flex items-center gap-3"
-          data-section="addresses">
-          <span>
-            <x-icons.address />
-          </span>
-          <span
-            class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Direcciones</span>
-        </a>
-      </li>
-      @can('static-tables-list')
-        <li class="hover:bg-slate-700 hover:text-purple-500">
-          <a href="{{ route('states-types.index') }}" class="relative px-3 py-2 flex items-center gap-3"
-            data-section="states-types">
-            <span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="M11.063 1.456a1.75 1.75 0 0 1 1.874 0l8.383 5.316a1.75 1.75 0 0 1 0 2.956l-8.383 5.316a1.75 1.75 0 0 1-1.874 0L2.68 9.728a1.75 1.75 0 0 1 0-2.956Zm1.071 1.267a.25.25 0 0 0-.268 0L3.483 8.039a.25.25 0 0 0 0 .422l8.383 5.316a.25.25 0 0 0 .268 0l8.383-5.316a.25.25 0 0 0 0-.422Z" />
-                <path fill="currentColor"
-                  d="M1.867 12.324a.75.75 0 0 1 1.035-.232l8.964 5.685a.25.25 0 0 0 .268 0l8.964-5.685a.75.75 0 0 1 .804 1.267l-8.965 5.685a1.75 1.75 0 0 1-1.874 0l-8.965-5.685a.75.75 0 0 1-.231-1.035" />
-                <path fill="currentColor"
-                  d="M1.867 16.324a.75.75 0 0 1 1.035-.232l8.964 5.685a.25.25 0 0 0 .268 0l8.964-5.685a.75.75 0 0 1 .804 1.267l-8.965 5.685a1.75 1.75 0 0 1-1.874 0l-8.965-5.685a.75.75 0 0 1-.231-1.035" />
-              </svg>
-            </span>
-            <span class="text-nowrap xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">
-              Estados y Tipos
-            </span>
-          </a>
-        </li>
-      @endcan
-      <li class="hover:bg-slate-700 hover:text-purple-500">
-        <a href="#" class="px-3 py-2 flex items-center gap-3" data-section="support">
-          <span>
-            <x-icons.support />
-          </span>
-          <span
-            class="xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible">Soporte</span>
-        </a>
-      </li>
+  <div
+    class="py-4 grow overflow-y-auto xl:overflow-x-hidden [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    <ul id="sidebar-menu" class="relative flex flex-col space-y-3 px-3 text-slate-200/75">
+      @foreach ($menuItems as $item)
+        @if ($item['route'])
+          <x-sidebar.item route="{{ $item['route'] }}" isActive="{{ $isActive($item['route']) }}">
+            <x-slot:title>{{ $item['name'] }}</x-slot:title>
+            <x-slot:icon>
+              <x-dynamic-component :component="'icons.' . $studly($item['icon'])" />
+            </x-slot:icon>
+          </x-sidebar.item>
+        @else
+          <li class="relative flex justify-center">
+            <div class="absolute top-1/2 -translate-y-1/2 w-full h-0.5 bg-slate-500"></div>
+            <p
+              class="relative z-10 px-3 py-2 bg-slate-800 text-nowrap xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-500 ease-in-out check-visible">
+              {{ $item['name'] }}</p>
+          </li>
+        @endif
+      @endforeach
     </ul>
   </div>
 </aside>

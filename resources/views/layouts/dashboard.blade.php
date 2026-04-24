@@ -31,7 +31,7 @@
 </head>
 
 <body class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 xl:flex">
-  @include('layouts.partials.dashboard.asideMenu')
+  <x-asideMenu />
 
   <main class="min-h-screen flex flex-col grow">
     @include('layouts.partials.dashboard.header')
