@@ -10,7 +10,6 @@ use App\Models\Payment;
 use App\Models\Shipment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Joelwmale\Cart\Facades\CartFacade;
 
