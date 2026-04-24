@@ -19,6 +19,7 @@ class Address extends Model
         'province',
         'postal_code',
         'is_default',
+        'user_id',
     ];
 
     public function user(): BelongsTo

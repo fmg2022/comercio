@@ -14,6 +14,13 @@ class AddressRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_default' => $this->boolean('is_default'),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,7 +34,8 @@ class AddressRequest extends FormRequest
             'city' => 'required|string|max:100',
             'province' => 'required|string|max:100',
             'postal_code' => 'required|string|max:20',
-            'is_default' => 'sometimes|boolean',
+            'is_default' => 'required|boolean',
+            'user_id' => 'required|exists:users,id',
         ];
     }
 }
