@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OfferStateController;
@@ -26,3 +27,4 @@ Route::get('/offer-states/{id}', [OfferStateController::class, 'fetch']);
 Route::get('/offer-types/{id}', [OfferTypeController::class, 'fetch']);
 Route::get('/payment-states/{id}', [PaymentStateController::class, 'fetch']);
 Route::get('/shipment-states/{id}', [ShipmentStateController::class, 'fetch']);
+Route::get('/brands/{id}', [BrandController::class, 'fetch']);
