@@ -98,8 +98,9 @@
       </p>
     </div>
     <div class="mb-4 flex flex-wrap gap-4">
-      <x-buttons.linkFill href="{{ route('products.index') }}"
-        class="bg-slate-700 active:bg-slate-600">Volver</x-buttons.linkFill>
+      <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-700 active:bg-slate-600">
+        Volver al listado
+      </x-buttons.linkFill>
       <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
         Generar PDF
       </x-buttons.linkFill>
@@ -148,7 +149,7 @@
       </x-slot:thead>
 
       @foreach ($orders as $index => $order)
-        <tr @class(['text-slate-400' => $order->trashed()])>
+        <tr>
           @php
             $orderDate = Str::substr($order->date, 0, 10);
           @endphp
@@ -173,14 +174,14 @@
           <td class="hidden md:table-cell">
             <span @class([
                 "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $order->orderStates->code === 'CREADO',
-                'text-blue-400' => $order->orderStates->code === 'PENDIENTE',
-                'text-cyan-400' => $order->orderStates->code === 'PAGADO',
-                'text-green-400' => $order->orderStates->code === 'COMPLETO',
-                'text-purple-400' => $order->orderStates->code === 'REEMBOLSADO',
-                'text-red-400' => $order->orderStates->code === 'CANCELADO',
+                'text-amber-400' => $order->orderState->code === 'CREADO',
+                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderState->code === 'PAGADO',
+                'text-green-400' => $order->orderState->code === 'COMPLETO',
+                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderState->code === 'CANCELADO',
             ])>
-              {{ $order->orderStates->code }}
+              {{ $order->orderState->code }}
             </span>
           </td>
           <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
