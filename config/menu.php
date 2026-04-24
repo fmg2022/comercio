@@ -20,9 +20,15 @@ return [
       'permission' => 'list my_section',
     ],
     [
+      'name' => 'Mis Ordenes',
+      'icon' => 'order',
+      'route' => 'orders.myIndex',
+      'permission' => 'list my_section',
+    ],
+    [
       'name' => 'Sección Administrativa',
       'route' => '',
-      'permission' => null,
+      'permission' => 'list orders',
     ],
     [
       'name' => 'Ordenes',

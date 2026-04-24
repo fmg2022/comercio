@@ -108,4 +108,13 @@ class OrderController extends Controller
 
         return redirect()->route('orders.index');
     }
+
+    public function myIndex(): View
+    {
+        $user = auth()->user();
+        return view('pages.dashboard.order.index', [
+            'orders' => $user->orders()->orderByDesc('date')->paginate(10),
+            'orderStates' => OrderState::all('code', 'id'),
+        ]);
+    }
 }
