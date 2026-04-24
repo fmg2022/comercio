@@ -6,11 +6,9 @@
 @endpush
 
 @section('content')
-  {{-- <x-sections.headerTitle> --}}
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Estados y Tipos de Secciones</x-slot:textTitle>
 
-    {{-- Testear --}}
     <button type="button" data-type="create" data-modalID="stateTypeCSE" data-path=""
       class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
       <x-icons.plus class="size-6" />
@@ -19,7 +17,7 @@
   </x-sections.headerTitle>
 
   <div
-    class="relative max-h-[calc(100vh-17rem)] overflow-y-auto lg:max-w-7xl lg:mx-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    class="relative max-h-[calc(100vh-16rem)] overflow-y-auto lg:max-w-7xl lg:mx-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <x-tables.table>
       <x-slot:thead>
         <tr class="text-left [&>th]:sticky [&>th]:top-0 [&>th]:bg-slate-800">
@@ -47,7 +45,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                       data-path="offer-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -96,7 +94,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $type->id }}"
                       data-path="offer-types/{{ $type->id }}" data-modalID="stateTypeCSE"
@@ -145,7 +143,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                       data-path="order-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -194,7 +192,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                       data-path="payment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -243,7 +241,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                       data-path="shipment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -297,23 +295,23 @@
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
-      <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2 text-gray-700 md:px-3">
-        <div class="mb-4">
+      <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6 text-gray-700 md:px-3">
+        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
           <label class="block mb-2 font-semibold" for="code">Código</label>
           <input type="text" id="code" name="code" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
-        <div class="col-span-2">
+        <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
           <label class="block mb-2 font-semibold" for="description">Descripción</label>
           <textarea id="description" name="description"
             class="w-full max-w-lg min-h-lh px-3 py-2 text-gray-900 text-base resize-none overflow-hidden bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
         </div>
         <button type="submit"
-          class="absolute bottom-4 right-1/12 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-1/5">Actualizar</button>
+          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
       </fieldset>
     </form>
-    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-1/12 sm:left-1/5">
+    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
       <button
         class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
     </form>

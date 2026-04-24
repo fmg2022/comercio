@@ -49,17 +49,17 @@
           <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
         </td>
         <td>
-          <div class="relative flex justify-end items-center">
-            <x-popups.contentWcheck iid="chorderline-{{ $order->id }}" labelClass="hover:bg-slate-900"
+          <div class="relative flex justify-end">
+            <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
               class="right-12 -top-1/4">
               <x-slot:label>
                 <x-icons.threeDotsX class="size-6" />
               </x-slot:label>
 
-              <ul
-                class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-200 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                 <li>
-                  <a href="{{ route('products.show', $orderLine->id) }}" class="px-4 py-2.5 flex gap-3">
+                  <a href="{{ route('products.show', $orderLine->id) }}"
+                    class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                     <span>
                       <x-icons.show class="size-5" />
                     </span>

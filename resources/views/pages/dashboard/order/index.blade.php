@@ -58,19 +58,12 @@
                 <x-icons.threeDotsX class="size-6" />
               </x-slot:label>
 
-              <ul
-                class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:transition-colors">
+              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                 <li>
-                  <a href="{{ route('orders.show', $order->id) }}" class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                  <a href="{{ route('orders.show', $order->id) }}"
+                    class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
                     <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2">
-                          <path
-                            d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22s6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159" />
-                          <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0" />
-                        </g>
-                      </svg>
+                      <x-icons.show class="size-5" />
                     </span>
                     Detalles
                   </a>
@@ -79,15 +72,9 @@
                   <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $order->id }}"
                     data-from="{{ $fullName }}" data-amount="{{ $order->total_formated }}"
                     data-status="{{ $order->orderState->code }}"
-                    class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                    class="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
                     <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2">
-                          <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                          <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                        </g>
-                      </svg>
+                      <x-icons.edit class="size-5" />
                     </span>
                     Cambiar Estado
                   </button>
