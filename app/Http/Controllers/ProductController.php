@@ -79,7 +79,7 @@ class ProductController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $product = Product::withTrashed()->with('brand:id,name')->find($id, ['id', 'name', 'brand_id', 'image', 'sku', 'price', 'stock', 'description']);
+        $product = Product::withTrashed()->with(['brand:id', 'category:id'])->find($id, ['id', 'name', 'brand_id', 'category_id', 'image', 'sku', 'price', 'stock', 'description']);
         if (!$product) {
             return response()->json(['error' => 'Producto no encontrado'], 404);
         }
@@ -90,7 +90,7 @@ class ProductController extends Controller
     public function ordersbyproduct(String $id): View
     {
         $product = Product::withTrashed()->findOrFail($id);
-        $orders = $product->orders()->withTrashed()->paginate(10);
+        $orders = $product->orders()->paginate(10);
         return view('pages.dashboard.product.orders', compact('product', 'orders'));
     }
 
