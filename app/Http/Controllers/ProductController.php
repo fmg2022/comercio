@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -79,10 +78,7 @@ class ProductController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $product = Product::withTrashed()->with(['brand:id', 'category:id'])->find($id, ['id', 'name', 'brand_id', 'category_id', 'image', 'sku', 'price', 'stock', 'description']);
-        if (!$product) {
-            return response()->json(['error' => 'Producto no encontrado'], 404);
-        }
+        $product = Product::withTrashed()->findOrFail($id, ['id', 'name', 'brand_id', 'category_id', 'image', 'sku', 'price', 'stock', 'description']);
 
         return response()->json($product);
     }
