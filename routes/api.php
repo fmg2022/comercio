@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentStateController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShipmentStateController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,3 +29,4 @@ Route::get('/offer-types/{id}', [OfferTypeController::class, 'fetch']);
 Route::get('/payment-states/{id}', [PaymentStateController::class, 'fetch']);
 Route::get('/shipment-states/{id}', [ShipmentStateController::class, 'fetch']);
 Route::get('/brands/{id}', [BrandController::class, 'fetch']);
+Route::get('/roles/{id}', [RoleController::class, 'fetch']);

@@ -23,7 +23,7 @@ class RoleSeeder extends Seeder
             'list products',
             'show orders',
         ];
-        $customer->givePermissionTo(Permission::whereIn('name', $customerPermission)->get());
+        $customer->givePermissionTo($customerPermission);
 
         $vendor = Role::create(['name' => 'Vendedor']);
         $vendorPermission = [
@@ -33,9 +33,24 @@ class RoleSeeder extends Seeder
             'list orders',
             'list offers', // + Offer Template
         ];
-        $vendor->givePermissionTo(Permission::whereIn('name', $vendorPermission)->get());
+        $vendor->givePermissionTo($vendorPermission);
 
         $admin = Role::create(['name' => 'Admin']);
-        $admin->givePermissionTo(Permission::whereNot('name', 'manage roles')->get());
+        $adminPermission = [
+            ...$vendorPermission,
+            'list roles',
+            'manage users',
+            'list product-attributes',
+            'manage products-and-attributes',
+            'list state-type-tables',
+            'manage state-type-tables',
+            'list payments',
+            'manage offers',
+            'list carts',
+            'list shipments',
+            'manage shipments',
+            'manage providers',
+        ];
+        $admin->givePermissionTo($adminPermission);
     }
 }

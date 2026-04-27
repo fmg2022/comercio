@@ -28,7 +28,7 @@ return [
     [
       'name' => 'Sección Administrativa',
       'route' => '',
-      'permission' => 'list orders',
+      'permission' => 'list products',
     ],
     [
       'name' => 'Ordenes',
@@ -46,7 +46,7 @@ return [
       'name' => 'Productos',
       'icon' => 'product',
       'route' => 'products.index',
-      'permission' => 'list product',
+      'permission' => 'list products',
     ],
     [
       'name' => 'Categorías',
@@ -61,22 +61,28 @@ return [
       'permission' => 'list product-attributes',
     ],
     [
+      'name' => 'Estados y Tipos',
+      'icon' => 'states-types',
+      'route' => 'states-types.index',
+      'permission' => 'list state-type-tables',
+    ],
+    [
       'name' => 'Usuarios',
       'icon' => 'users',
       'route' => 'users.index',
       'permission' => 'list users',
     ],
     [
+      'name' => 'Roles y Permisos',
+      'icon' => 'role',
+      'route' => 'roles.index',
+      'permission' => 'list roles',
+    ],
+    [
       'name' => 'Direcciones',
       'icon' => 'address',
       'route' => 'addresses.index',
       'permission' => 'list addresses',
-    ],
-    [
-      'name' => 'Estados y Tipos',
-      'icon' => 'states-types',
-      'route' => 'states-types.index',
-      'permission' => 'list state-type-tables',
     ],
     [
       'name' => 'Sección de Soporte',

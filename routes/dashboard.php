@@ -12,6 +12,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentStateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShipmentStateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -69,6 +70,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('/payment-states', PaymentStateController::class)->only(['store', 'update', 'destroy']);
         Route::resource('/shipment-states', ShipmentStateController::class)->only(['store', 'update', 'destroy']);
       });
+    });
+
+    Route::middleware(['permission:manage roles'])->group(function () {
+      Route::resource('/roles', RoleController::class)->except(['show', 'create', 'edit']);
     });
   });
 });
