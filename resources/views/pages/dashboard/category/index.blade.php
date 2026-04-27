@@ -1,7 +1,9 @@
 @extends('layouts.dashboard')
 
+@pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
+<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@endpushIf
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
 @endpush
 
@@ -32,22 +34,16 @@
         <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $index + 1 }}</td>
         <td>{{ $category->name }}</td>
         <td class="relative hidden sm:table-cell">
-          @if ($category->children->count() > 0 && !$category->trashed())
-            <x-popups.contentWcheck iid="chcategory-children-{{ $category->id }}"
-              class="left-0 top-full md:top-1/2 md:-translate-y-1/2 md:left-36"
-              labelClass="underline-offset-4 hover:underline hover:text-purple-500">
-              <x-slot:label>Ver subcategorías</x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @foreach ($category->children as $item)
-                  <li class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700 transition-colors">
-                    {{ $item->name }}</li>
-                @endforeach
-              </ul>
-            </x-popups.contentWcheck>
-          @else
-            <span class="text-center">---</span>
-          @endif
+          @php
+            $contChildren = $category->children->count();
+          @endphp
+          <span {{ $category->trashed() ? 'class="px-4 text-gray-300"' : '' }}>
+            @if ($category->trashed())
+              ---
+            @else
+              {{ $contChildren > 0 ? $contChildren : 'Sin' }} subcategorías
+            @endif
+          </span>
         </td>
         <td>
           <div class="relative flex justify-end">
@@ -69,33 +65,35 @@
                     Ver Categoría
                   </button>
                 </li>
-                @if (!$category->trashed())
+                @can('manage products-and-attributes')
+                  @if (!$category->trashed())
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $category->id }}"
+                        data-path="{{ $category->id }}" data-modalID="categoryCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Categoría
+                      </button>
+                    </li>
+                  @endif
                   <li>
-                    <button type="button" data-type="edit" data-uid="{{ $category->id }}"
-                      data-path="{{ $category->id }}" data-modalID="categoryCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                    <button type="button" data-text="Categoria: '{{ $category->name }}'" data-uid="{{ $category->id }}"
+                      data-modalID="categoryDeleteRestore" data-delete="{{ $category->trashed() ? 'false' : 'true' }}"
+                      data-path="{{ $category->id . ($category->trashed() ? '/restore' : '') }}"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                       <span>
-                        <x-icons.edit class="size-5" />
+                        @if ($category->trashed())
+                          <x-icons.restore class="size-5" />
+                        @else
+                          <x-icons.trash class="size-5" />
+                        @endif
                       </span>
-                      Editar Categoría
+                      {{ $category->trashed() ? 'Restaurar' : 'Eliminar' }} Categoría
                     </button>
                   </li>
-                @endif
-                <li>
-                  <button type="button" data-text="Categoria: '{{ $category->name }}'" data-uid="{{ $category->id }}"
-                    data-modalID="categoryDeleteRestore"
-                    data-path="{{ $category->id . $category->trashed() ? '/restore' : '' }}" data-delete="true"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      @if ($category->trashed())
-                        <x-icons.restore class="size-5" />
-                      @else
-                        <x-icons.trash class="size-5" />
-                      @endif
-                    </span>
-                    {{ $category->trashed() ? 'Restaurar' : 'Eliminar' }} Categoría
-                  </button>
-                </li>
+                @endcan
               </ul>
             </x-popups.contentWcheck>
           </div>
@@ -117,8 +115,10 @@
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @csrf
-      @method('PUT')
+      @can('manage products-and-attributes')
+        @csrf
+        @method('PUT')
+      @endcan
 
       <fieldset class="w-full py-3 flex flex-col gap-6 text-gray-700 md:px-3">
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
@@ -149,7 +149,7 @@
                   'mt-2 text-purple-900 font-semibold' => $category['nivel'] === 1,
                   'bg-slate-100/75 rounded-lg' => $category['nivel'] === 2,
               ])>
-                <input type="checkbox" name="children" class="size-4 accent-purple-600" value="{{ $category['id'] }}">
+                <input type="checkbox" name="children[]" class="size-4 accent-purple-600" value="{{ $category['id'] }}">
                 <span class="ms-1">{{ $category['name'] }}</span>
               </label>
             @endforeach
@@ -165,5 +165,7 @@
   </x-modals.simple>
 
   {{-- Modal DELETE y RESTORE --}}
-  <x-modals.delete id="categoryDeleteRestore" />
+  @can('manage products-and-attributes')
+    <x-modals.delete id="categoryDeleteRestore" />
+  @endcan
 @endsection
