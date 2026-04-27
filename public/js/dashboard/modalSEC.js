@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function setFormValues(data) {
     Object.entries(data).forEach(([key, value]) => {
-      const fields = $form.querySelectorAll(`[name="${key}"]`)
+      const isArray = Array.isArray(value)
+      const selector = Array.isArray(value) ? `[name="${key}[]"]` : `[name="${key}"]`;
+      const fields = $form.querySelectorAll(selector);
 
       if (!fields.length) return
 
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
           field.checked = field.value === value
         } else if (field.type === 'checkbox') {
 
-          if (Array.isArray(value)) {
+          if (isArray) {
             field.checked = value.includes(+field.value)
           } else {
             field.checked = Boolean(value)
