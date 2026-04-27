@@ -2,7 +2,7 @@
 
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/stateTypeModalMix.js') }}" defer></script>
+  <script src="{{ asset('js/dashboard/modalStateType.js') }}" defer></script>
 @endpush
 
 @section('content')
@@ -291,7 +291,7 @@
         <option value="shipment-states">Estados de Envío</option>
       </select>
     </div>
-    <form id="form-state-type-mix" enctype="multipart/form-data" method="POST"
+    <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')

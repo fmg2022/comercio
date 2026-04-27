@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('.button-create-edit-show')
   const $modal = document.getElementById(buttons[0].dataset.modalid)
-  const $form = $modal.querySelector('#form-state-type-mix')
+  const $form = $modal.querySelector('form.group')
   const $submit = $form.querySelector('button[type="submit"]')
   const modalType = $modal.querySelector('#modelTypeid') // ID del select
 
