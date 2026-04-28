@@ -1,8 +1,8 @@
 @extends('layouts.dashboard')
 
-@push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
-@endpush
+@pushIf(auth()->check() && auth()->user()?->can('manage state-type-tables'), 'scripts-dashboard')
+<script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
+@endpushIf
 
 @php
   $type2 = 'modal-change-status';
@@ -55,28 +55,32 @@
           </span>
         </td>
         <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chpayment-{{ $payment->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
+          @can('manage state-type-tables')
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chpayment-{{ $payment->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                <li>
-                  <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $payment->id }}"
-                    data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
-                    data-status="{{ $payment->paymentState->code }}"
-                    class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                    <span>
-                      <x-icons.edit class="size-5" />
-                    </span>
-                    Cambiar Estado
-                  </button>
-                </li>
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
+                <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  <li>
+                    <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $payment->id }}"
+                      data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
+                      data-status="{{ $payment->paymentState->code }}"
+                      class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                      <span>
+                        <x-icons.edit class="size-5" />
+                      </span>
+                      Cambiar Estado
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          @else
+            <p class="px-2 text-end">---</p>
+          @endcan
         </td>
       </tr>
     @empty
@@ -89,40 +93,42 @@
   {{ $payments->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   {{-- Modal CHANGE STATUS --}}
-  <x-modals.simple id="{{ $type2 }}" class="max-w-xl w-full" title="Cambiar el estado del pago">
-    <div class="relative mt-4 flex flex-col items-center justify-center text-white">
-      <form method="POST" class="w-full" id="form-modalSimple">
-        @csrf
-        @method('PUT')
-        <div class="mb-16 grid place-items-center text-slate-900">
-          <div class="px-5 pb-4 flex gap-5 text-2xl">
-            <div class="flex flex-col gap-5">
-              <span class="text-lg text-slate-600">De:</span>
-              <span class="text-lg text-slate-600">Monto:</span>
-              <label class="text-lg text-slate-600" for="select_states">
-                Estado del pago:
-              </label>
-            </div>
-            <div class="flex flex-col gap-4">
-              <h3 class="font-bold"></h3>
-              <p>$0</p>
-              <select id="select_states" name="states"
-                class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
-                @foreach ($statuses as $states)
-                  <option value="{{ $states->code }}">
-                    {{ $states->code }}
-                  </option>
-                @endforeach
-              </select>
+  @can('manage state-type-tables')
+    <x-modals.simple id="{{ $type2 }}" class="max-w-xl w-full" title="Cambiar el estado del pago">
+      <div class="relative mt-4 flex flex-col items-center justify-center text-white">
+        <form method="POST" class="w-full" id="form-modalSimple">
+          @csrf
+          @method('PUT')
+          <div class="mb-16 grid place-items-center text-slate-900">
+            <div class="px-5 pb-4 flex gap-5 text-2xl">
+              <div class="flex flex-col gap-5">
+                <span class="text-lg text-slate-600">De:</span>
+                <span class="text-lg text-slate-600">Monto:</span>
+                <label class="text-lg text-slate-600" for="select_states">
+                  Estado del pago:
+                </label>
+              </div>
+              <div class="flex flex-col gap-4">
+                <h3 class="font-bold"></h3>
+                <p>$0</p>
+                <select id="select_states" name="states"
+                  class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+                  @foreach ($statuses as $states)
+                    <option value="{{ $states->code }}">
+                      {{ $states->code }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-        <button type="submit"
-          class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
-      </form>
-      <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
-        <button class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
-      </form>
-    </div>
-  </x-modals.simple>
+          <button type="submit"
+            class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
+        </form>
+        <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
+          <button class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+        </form>
+      </div>
+    </x-modals.simple>
+  @endcan
 @endsection
