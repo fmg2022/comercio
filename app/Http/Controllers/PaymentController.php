@@ -46,4 +46,13 @@ class PaymentController extends Controller
 
 		return redirect()->route('payments.index');
 	}
+
+	public function myIndex(): View
+	{
+		$user = auth()->user();
+		return view('pages.dashboard.payment.index', [
+			'payments' => $user->paymentsBuilder()->paginate(10),
+			'statuses' => PaymentState::all(['id', 'code']),
+		]);
+	}
 }

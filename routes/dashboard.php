@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::group(['middleware' => ['permission:list my_section']], function () {
       Route::get('/addresses/my', [AddressController::class, 'myIndex'])->name('addresses.myIndex');
       Route::get('/orders/my', [OrderController::class, 'myIndex'])->name('orders.myIndex');
+      Route::get('/payments/my', [PaymentController::class, 'myIndex'])->name('payments.myIndex');
     });
 
     // User routes

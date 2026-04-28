@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -86,5 +85,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Product::class)
             ->withTimestamps();
+    }
+
+    public function paymentsBuilder()
+    {
+        return Payment::join('orders', 'payments.order_id', '=', 'orders.id')
+            ->where('orders.user_id', $this->id)
+            ->orderBy('paid_at', 'desc');
     }
 }

@@ -26,6 +26,12 @@ return [
       'permission' => 'list my_section',
     ],
     [
+      'name' => 'Mis Pagos',
+      'icon' => 'payment',
+      'route' => 'payments.myIndex',
+      'permission' => 'list my_section',
+    ],
+    [
       'name' => 'Sección Administrativa',
       'route' => '',
       'permission' => 'list products',
