@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 
@@ -62,13 +63,9 @@ class UserController extends Controller
         return Redirect::back();
     }
 
-    public function fetch($id)
+    public function fetch(String $id): JsonResponse
     {
         $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image']);
-
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no encontrado'], 404);
-        }
 
         return response()->json($user);
     }

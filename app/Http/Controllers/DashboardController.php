@@ -63,11 +63,13 @@ class DashboardController extends Controller
 					->where('order_states.code', '=', 'COMPLETO');
 			})
 			->select(
-				'products.id',
-				'products.name',
-				'products.image',
-				'products.price',
-				DB::raw('SUM(order_product.quantity) as total_sold')
+				[
+					'products.id',
+					'products.name',
+					'products.image',
+					'products.price',
+					DB::raw('SUM(order_product.quantity) as total_sold')
+				]
 			)
 			->groupBy('products.id', 'products.name', 'products.image', 'products.price')
 			->orderByDesc('total_sold')

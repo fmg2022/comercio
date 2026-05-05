@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -90,7 +91,7 @@ class ProductController extends Controller
         return view('pages.dashboard.product.orders', compact('product', 'orders'));
     }
 
-    private function formatFlat($categories, &$result = []): array
+    private function formatFlat(Collection $categories, array &$result = []): array
     {
         foreach ($categories as $category) {
             $result[] = [

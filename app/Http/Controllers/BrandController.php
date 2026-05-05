@@ -47,7 +47,7 @@ class BrandController extends Controller
         return redirect()->back();
     }
 
-    public function restore($id): RedirectResponse
+    public function restore(String $id): RedirectResponse
     {
         Brand::withTrashed()->findOrFail($id)->restore();
         return redirect()->back();

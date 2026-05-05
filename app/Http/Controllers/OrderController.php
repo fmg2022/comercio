@@ -19,7 +19,7 @@ class OrderController extends Controller
     {
         return view('pages.dashboard.order.index', [
             'orders' => Order::orderByDesc('date')->paginate(10),
-            'orderStates' => OrderState::all('code', 'id'),
+            'orderStates' => OrderState::all(['code', 'id']),
         ]);
     }
 
@@ -114,7 +114,7 @@ class OrderController extends Controller
         $user = auth()->user();
         return view('pages.dashboard.order.index', [
             'orders' => $user->orders()->orderByDesc('date')->paginate(10),
-            'orderStates' => OrderState::all('code', 'id'),
+            'orderStates' => OrderState::all(['code', 'id']),
         ]);
     }
 }

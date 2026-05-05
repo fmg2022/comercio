@@ -6,6 +6,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -55,7 +56,7 @@ class CategoryController extends Controller
 		return redirect()->back();
 	}
 
-	public function restore($id): RedirectResponse
+	public function restore(String $id): RedirectResponse
 	{
 		$category = Category::withTrashed()->findOrFail($id);
 		$category->restore();
@@ -81,7 +82,7 @@ class CategoryController extends Controller
 		return response()->json($this->formatFlat(Category::getFullTree()), 200);
 	}
 
-	private function formatFlat($categories, &$result = []): array
+	private function formatFlat(Collection $categories, array &$result = []): array
 	{
 		foreach ($categories as $category) {
 			$result[] = [

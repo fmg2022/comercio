@@ -59,13 +59,9 @@ class AddressController extends Controller
         return redirect()->route('addresses.index');
     }
 
-    public function fetch($id): JsonResponse
+    public function fetch(String $id): JsonResponse
     {
         $address = Address::withTrashed()->findOrFail($id, ['name', 'street', 'city', 'province', 'postal_code', 'is_default', 'user_id']);
-
-        if (!$address) {
-            return response()->json(['error' => 'Dirección no encontrada'], 404);
-        }
 
         return response()->json($address);
     }

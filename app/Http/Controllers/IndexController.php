@@ -15,8 +15,8 @@ class IndexController extends Controller
     public function index()
     {
         $selectedCategories = Category::where('parent_id', '!=', null)->limit(5)->get()->values('name', 'id');
-        $products = Product::with('brand:id,name')->select('id', 'name', 'brand_id', 'image', 'price')->inRandomOrder()->limit(6)->get();
-        $offers = OfferTemplate::all('id', 'name');
+        $products = Product::with('brand:id,name')->select(['id', 'name', 'brand_id', 'image', 'price'])->inRandomOrder()->limit(6)->get();
+        $offers = OfferTemplate::all(['id', 'name']);
         $brands = Brand::inRandomOrder()->limit(7)->get()->values('name', 'id');
 
         return view('pages.index', compact('products', 'offers', 'selectedCategories', 'brands'));
