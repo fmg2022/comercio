@@ -50,6 +50,6 @@ class RegisteredUserController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('dashboard.index', absolute: false));
     }
 }
