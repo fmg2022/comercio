@@ -73,8 +73,6 @@
                       Ver Dirección
                     </button>
                   </li>
-                @endcan
-                @can('manage addresses')
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
                       data-modalID="addressCSE"
@@ -85,8 +83,6 @@
                       Editar Dirección
                     </button>
                   </li>
-                @endcan
-                @can('manage addresses')
                   <li>
                     <button type="button" data-text="Dirección: '{{ $address->fullAddress() }}'"
                       data-uid="{{ $address->id }}" data-modalID="{{ $type1 }}" data-path="{{ $address->id }}"
@@ -167,8 +163,6 @@
                       Ver Dirección
                     </button>
                   </li>
-                @endcan
-                @can('manage addresses')
                   <li>
                     <button type="button" data-text="Dirección: '{{ $address->fullAddress() }}'"
                       data-uid="{{ $address->id }}" data-modalID="{{ $type1 }}"
@@ -207,7 +201,7 @@
       @method('PUT')
 
       <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-6 text-gray-700 md:px-3">
-        @if (request()->routeIs('addresses.myIndex'))
+        @if (request()->routeIs('my.addresses.index'))
           <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
           <h3 class="my-3 font-semibold text-xl text-slate-900 text-center col-span-full">
             {{ auth()->user()->fullName() }}</h3>

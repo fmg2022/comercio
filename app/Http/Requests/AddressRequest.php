@@ -11,7 +11,7 @@ class AddressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->can('manage addresses');
     }
 
     protected function prepareForValidation(): void
