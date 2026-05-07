@@ -11,7 +11,7 @@
     <section class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <div class="lg:col-span-7">
         <ul role="list" class="border-y divide-y divide-gray-200 border-gray-200">
-          @forelse ($cart as $details)
+          @forelse ($cartItems as $details)
             <li class="py-6 flex gap-4 sm:py-10" data-id="{{ $details->id }}">
               <div class="shrink-0">
                 <img src="{{ asset('images/products/' . $details->attributes->image) }}"
@@ -29,21 +29,29 @@
                     </span>
                   </p>
                 </div>
-                <div class="flex flex-1 items-end justify-between text-sm">
-                  <label class="w-full max-w-16 grid grid-cols-1" data-form>
+                <form class="flex flex-1 items-end justify-between text-sm" action="{{ route('cart.update') }}"
+                  method="POST" data-submit="empty">
+                  @csrf
+                  @method('PUT')
+                  <label class="w-full max-w-16 grid grid-cols-1">
                     <input type="number" name="quantity" value="{{ $details->quantity }}" min="1" max="99"
                       class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 outline-gray-300 focus:outline-indigo-600 focus:outline-offset-2 focus:outline-2 sm:text-sm">
                   </label>
-                  <p class="ml-4 text-lg font-medium text-gray-900" data-value="{{ $details->price }}">
+                  <input type="hidden" name="id" value="{{ $details->id }}">
+                  <p class="ml-4 text-lg font-medium text-gray-900">
                     ${{ number_format($details->price, 2, ',', '.') }}
                   </p>
-                </div>
+                </form>
               </div>
-              <div class="flex justify-center items-start">
-                <button type="button" class="p-2 text-gray-400 hover:text-gray-500 remove-item" data-delete="ok">
+              <form class="flex justify-center items-start"
+                action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $details->id]) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <input type="hidden" name="id" value="{{ $details->id }}">
+                <button type="submit" class="p-2 text-gray-400 hover:text-gray-500 remove-item">
                   <x-icons.x class="size-6" />
                 </button>
-              </div>
+              </form>
             </li>
           @empty
             <li class="py-10 text-center text-2xl font-medium">Sin productos en el carrito</li>
