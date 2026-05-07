@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OfferStateController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentStateController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShipmentStateController;
 use App\Http\Controllers\UserController;
@@ -21,9 +23,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   Route::prefix('dashboard')->group(function () {
     Route::group(['middleware' => ['permission:list my_section']], function () {
-      Route::get('/addresses/my', [AddressController::class, 'myIndex'])->name('addresses.myIndex');
-      Route::get('/orders/my', [OrderController::class, 'myIndex'])->name('orders.myIndex');
-      Route::get('/payments/my', [PaymentController::class, 'myIndex'])->name('payments.myIndex');
+      Route::get('my/addresses', [AddressController::class, 'myIndex'])->name('my.addresses.index');
+      Route::get('my/orders', [OrderController::class, 'myIndex'])->name('my.orders.index');
+      Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show');
+      Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index');
+      Route::get('my/cart', function () {
+        return redirect()->route('carts.show', auth()->user()->cart->id);
+      })->name('my.cart.index');
     });
 
     // User routes
@@ -73,8 +79,25 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       });
     });
 
+    // Role routes
     Route::middleware(['permission:manage roles'])->group(function () {
       Route::resource('/roles', RoleController::class)->except(['show', 'create', 'edit']);
+    });
+
+    // Provider routes
+    Route::middleware(['permission:manage providers'])->group(function () {
+      Route::resource('/providers', ProviderController::class)->except(['show', 'create', 'edit']);
+      Route::post('/providers/{id}/restore', [ProviderController::class, 'restore'])->name('providers.restore');
+    });
+
+    // Cart routes
+    Route::group(['middleware' => ['permission:list carts']], function () {
+      Route::prefix('carts')->name('carts.')->group(function () {
+        Route::get('/', [CartController::class, 'dashboardIndex'])->name('index');
+        Route::get('/{cart}', [CartController::class, 'show'])->name('show');
+        Route::delete('/{id}/clear', [CartController::class, 'clearCart'])->name('clearCart');
+        Route::delete('/{id}/products/{id_product}', [CartController::class, 'remove'])->name('remove');
+      });
     });
   });
 });
