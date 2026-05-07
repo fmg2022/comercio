@@ -8,6 +8,41 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Cart extends Model
 {
+    // Functions
+    public function attachProduct(string $productId, int $quantity): void
+    {
+        $this->products()->attach($productId, ['quantity' => $quantity]);
+        $this->touch();
+    }
+
+    public function detachProduct(string | array $productId): void
+    {
+        if (empty($productId)) {
+            $this->products()->detach();
+        } else {
+            $this->products()->detach($productId);
+        }
+        $this->touch();
+    }
+
+    public function updateProduct(string $productId, int $quantity): void
+    {
+        $this->products()->updateExistingPivot($productId, ['quantity' => $quantity]);
+        $this->touch();
+    }
+
+    public function totalFormated(): string
+    {
+        $total = 0;
+        $products = $this->products()->get();
+        foreach ($products as $product) {
+            $total += $product->price * $product->pivot->quantity;
+        }
+
+        return number_format($total, 2, ',', '.');
+    }
+
+    // Relations
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -16,7 +51,6 @@ class Cart extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot(['quantity'])
-            ->withTimestamps();
+            ->withPivot(['quantity']);
     }
 }

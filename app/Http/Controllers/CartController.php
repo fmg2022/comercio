@@ -3,97 +3,150 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CartRequest;
+use App\Models\Cart as ModelsCart;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Joelwmale\Cart\Facades\CartFacade as Cart;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CartController extends Controller
 {
 	public function index(): View
 	{
 		return view('pages.home.cart.index', [
-			'cart' => Cart::getContent(),
+			'cartItems' => Cart::getContent(),
+			'cart_id' => auth()->user()->cart->id,
 			'shipping' => 532,
 			'tax' => 0.06 // rand(0, 15) / 100 Impuesto establecido por el comercio
 		]);
 	}
 
-	public function addToCart(Request $request): RedirectResponse
+	public function addToCart(CartRequest $request): RedirectResponse
 	{
-		$validated = $request->validate([
-			'id' => 'required|exists:products,id',
-			'quantity' => 'required|integer|min:1',
-		]);
+		$validated = $request->validated();
+		DB::beginTransaction();
 
-		$product = Product::find($validated['id']);
+		try {
+			$cart = auth()->user()->cart;
+			$item = $cart->products()
+				->where('product_id', $validated['id'])
+				->lockForUpdate()
+				->first();
 
-		Cart::add([
-			'id' => $validated['id'],
-			'name' => $product->name,
-			'price' => $product->price,
-			'quantity' => $validated['quantity'],
-			'attributes' => [
-				'brand' => $product->brand->name,
-				'image' => $product->image,
-				'description' => $product->description,
-				'category' => $product->category,
-			]
-		]);
+			if ($item && $item->exists()) {
+				$cart->updateProduct($validated['id'], $item->pivot->quantity + $validated['quantity']);
 
-		$cart = auth()->user()->cart;
-		$product = Product::find($validated['id']);
-		$exitProduct = $cart->products()->where('product_id', $validated['id'])->exists();
+				Cart::update(
+					$validated['id'],
+					[
+						'quantity' => [
+							'relative' => false,
+							'value' => $validated['quantity']
+						]
+					]
+				);
+			} else {
+				$cart->attachProduct($validated['id'], $validated['quantity']);
 
-		if ($exitProduct) {
-			$cart->products()->updateExistingPivot(
-				$validated['id'],
-				['quantity' => DB::raw('quantity + ' . $validated['quantity'])]
-			);
-		} else {
-			$cart->products()->attach(
-				$validated['id'],
-				['quantity' => $validated['quantity']]
-			);
+				$product = Product::findOrFail($validated['id']);
+				Cart::add([
+					'id' => $validated['id'],
+					'name' => $product->name,
+					'price' => $product->price,
+					'quantity' => $validated['quantity'],
+					'attributes' => [
+						'brand' => $product->brand->name,
+						'image' => $product->image,
+						'description' => $product->description,
+						'category' => $product->category,
+					]
+				]);
+			}
+
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollBack();
+
+			return redirect()->back()->with('error', 'Error al agregar al carrito')->with('errorTh', $th);
 		}
 
 		return redirect()->back()->with('success', 'Producto agregado al carrito');
 	}
 
-	public function update(Request $request): JsonResponse
+	public function update(CartRequest $request): RedirectResponse
 	{
-		$validated = $request->validate([
-			'id' => 'required|exists:products,id',
-			'quantity' => 'required|integer|min:1',
-		]);
+		$validated = $request->validated();
 
-		Cart::update(
-			$validated['id'],
-			[
-				'quantity' => [
-					'relative' => false,
-					'value' => $validated['quantity']
+		DB::beginTransaction();
+		try {
+			Cart::update(
+				$validated['id'],
+				[
+					'quantity' => [
+						'relative' => false,
+						'value' => $validated['quantity']
+					]
 				]
-			]
-		);
+			);
 
-		auth()->user()->cart->products()
-			->updateExistingPivot($validated['id'], ['quantity' => $validated['quantity']]);
+			auth()->user()->cart->updateProduct($validated['id'], $validated['quantity']);
+			DB::commit();
+		} catch (\Throwable $th) {
+			DB::rollBack();
 
-		return response()->json([
-			'success' => 'Producto actualizado en el carrito',
-			'new_subtotal' => Cart::getSubTotalWithoutConditions(),
+			return redirect()->back()->with('error', 'Error al actualizar el carrito')->with('errorTh', $th);
+		}
+
+		return redirect()->back()->with('success', 'Producto actualizado en el carrito');
+	}
+
+	public function remove(string $id, string $id_product): RedirectResponse
+	{
+		Cart::remove($id_product);
+		ModelsCart::findOrFail($id)->detachProduct($id_product);
+
+		return redirect()->back()->with('success', 'Producto eliminado del carrito');
+	}
+
+	public function clearCart(): RedirectResponse
+	{
+		Cart::clear();
+		auth()->user()->cart->detachProduct([]);
+
+		return redirect()->back()->with('success', 'Carrito vaciado');
+	}
+
+	// Dashboard
+	public function dashboardIndex(): View
+	{
+		$carts = ModelsCart::select(['id', 'user_id', 'updated_at'])
+			->with('user:id,name,surname')
+			->withCount('products')->paginate(10);
+		$carts->map(fn($cart) => $cart->fullName = $cart->user->fullName());
+
+		return view('pages.dashboard.cart.index', [
+			'carts' => $carts,
 		]);
 	}
 
-	public function remove(string $id): RedirectResponse
+	public function show(ModelsCart $cart): View
 	{
-		Cart::remove($id);
-		auth()->user()->cart->products()->detach($id);
+		return view('pages.dashboard.cart.show', [
+			'cart' => $cart,
+		]);
+	}
 
-		return redirect()->back()->with('success', 'Producto eliminado del carrito');
+	public function fetch(string $id_cart, string $id_product): JsonResponse
+	{
+		$cart = ModelsCart::findOrFail($id_cart);
+		$product = Product::findOrFail($id_product);
+
+		return response()->json([
+			'id' => $id_product,
+			'quantity' => $cart->products()->where('product_id', $product->id)->first()->pivot->quantity,
+		]);
 	}
 }
