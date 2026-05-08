@@ -59,8 +59,11 @@
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                 @can('show orders')
+                  @php
+                    $route = request()->routeIs('my.orders.index') ? 'my.orders.show' : 'orders.show';
+                  @endphp
                   <li>
-                    <a href="{{ route('orders.show', $order->id) }}"
+                    <a href="{{ route($route, $order->id) }}"
                       class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
                       <span>
                         <x-icons.show class="size-5" />
