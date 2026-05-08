@@ -54,7 +54,7 @@
               </x-slot:label>
 
               <ul
-                class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 [&>li]:bg-gray-800 text-gray-300' : 'bg-slate-800 [&>li]:bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md text-xsfont-semibold [&>li]:transition-colors">
+                class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
                 <li>
                   <button type="button" data-type="show" data-uid="{{ $category->id }}" data-path="{{ $category->id }}"
                     data-modalID="categoryCSE"
