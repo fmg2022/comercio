@@ -1,7 +1,10 @@
 <input type="checkbox" id="toggle-category" class="hidden peer/category" />
 <input type="checkbox" id="toggle-cart" class="hidden peer/cart" />
 
-@php $cart = Cart::getContent(); @endphp
+@php
+  $cartItems = Cart::getContent();
+  $cart_id = auth()->user()?->cart->id;
+@endphp
 
 <header
   class="sticky top-0 left-0 z-20 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 md:px-6 lg:px-10 xl:gap-5">
@@ -69,15 +72,10 @@
         <li class="w-full rounded-lg hover:bg-white/10 sm:w-max">
           <button onclick="openModal('aside-cart')"
             class="w-full p-3 flex items-center justify-center gap-3 sm:py-2 sm:gap-1 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path fill="currentColor"
-                d="M21 4H2v2h2.3l3.28 9a3 3 0 0 0 2.82 2H19v-2h-8.6a1 1 0 0 1-.94-.66L9 13h9.28a2 2 0 0 0 1.92-1.45L22 5.27A1 1 0 0 0 21.27 4A.8.8 0 0 0 21 4m-2.75 7h-10L6.43 6h13.24z" />
-              <circle cx="10.5" cy="19.5" r="1.5" fill="currentColor" />
-              <circle cx="16.5" cy="19.5" r="1.5" fill="currentColor" />
-            </svg>
+            <x-icons.cart class="size-6" />
             <span class="sm:hidden">Mi carrito</span>
-            @if (!empty($cart))
-              ({{ count($cart) }})
+            @if (!empty($cartItems))
+              ({{ count($cartItems) }})
             @endif
           </button>
         </li>
@@ -103,7 +101,7 @@
           class="absolute -top-16 left-1/2 -translate-x-1/2 invisible w-1/2 h-max px-3 py-4 flex flex-col opacity-0 rounded-lg text-center bg-cyan-800 divide-y divide-cyan-700 peer-checked/perfil:visible peer-checked/perfil:opacity-100 peer-checked/perfil:top-16 sm:left-full sm:-translate-x-full sm:w-max transition-all duration-300">
           @if (Route::has('login'))
             @auth
-              <a href="{{ route('dashboard') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Panel de
+              <a href="{{ route('dashboard.index') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Panel de
                 usuario</a>
               <form action="{{ route('logout') }}" method="post">
                 @csrf
@@ -112,8 +110,7 @@
               </form>
             @else
               <a href="{{ route('login') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
-              <a href="{{ route('register') }}"
-                class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
+              <a href="{{ route('register') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
             @endauth
           @endif
         </div>
@@ -180,7 +177,7 @@
         <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
           <div class="flex items-start justify-between">
             <h2 id="drawer-title" class="text-lg font-medium text-gray-900">
-              Mi carrito ({{ count($cart) }})
+              Mi carrito ({{ count($cartItems) }})
             </h2>
             <form method="dialog" class="ml-3 flex h-7 items-center">
               <button type="submit" class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
@@ -190,10 +187,10 @@
           </div>
 
           @php $total = 0; @endphp
-          @if (!empty($cart))
+          @if (!empty($cartItems))
             <div class="mt-8 flow-root">
               <ul role="list" class="-my-6 divide-y divide-gray-200">
-                @foreach ($cart as $item)
+                @foreach ($cartItems as $item)
                   @php $total += $item->price * $item->quantity; @endphp
 
                   <li class="flex py-6">
@@ -213,7 +210,8 @@
                       </div>
                       <div class="flex flex-1 items-end justify-between text-sm">
                         <p class="text-gray-500">Cantidad: {{ $item->quantity }}</p>
-                        <form action="{{ route('cart.remove', $item->id) }}" method="POST">
+                        <form action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $item->id]) }}"
+                          method="POST">
                           @csrf
                           @method('DELETE')
                           <button type="submit"
