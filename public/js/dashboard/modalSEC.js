@@ -50,13 +50,14 @@ document.addEventListener('DOMContentLoaded', function () {
       const type = button.dataset.type
 
       $form.classList.toggle('editable', type !== 'show')
-
-      if (type === 'show') {
-        $form.action = ''
-      } else {
-        $form.action = `${getBaseURL()}/${button.dataset.path ?? ''}`
-        $form.querySelector('input[name="_method"]').value = type === 'edit' ? 'PUT' : 'POST'
-        $submit.textContent = type === 'edit' ? 'Actualizar' : 'Crear'
+      if ($form.dataset.persist !== 'true') {
+        if (type === 'show') {
+          $form.action = ''
+        } else {
+          $form.action = `${getBaseURL()}/${button.dataset.path ?? ''}`
+          $form.querySelector('input[name="_method"]').value = type === 'edit' ? 'PUT' : 'POST'
+          $submit.textContent = type === 'edit' ? 'Actualizar' : 'Crear'
+        }
       }
 
       if (type !== 'create') {
