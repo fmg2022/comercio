@@ -5,7 +5,7 @@ return [
     [
       'name' => 'Dashboard',
       'icon' => 'dashboard',
-      'route' => 'dashboard',
+      'route' => 'dashboard.index',
       'permission' => null,
     ],
     [
@@ -16,19 +16,25 @@ return [
     [
       'name' => 'Mis Direcciones',
       'icon' => 'address',
-      'route' => 'addresses.myIndex',
+      'route' => 'my.addresses.index',
       'permission' => 'list my_section',
     ],
     [
       'name' => 'Mis Ordenes',
       'icon' => 'order',
-      'route' => 'orders.myIndex',
+      'route' => 'my.orders.index',
       'permission' => 'list my_section',
     ],
     [
       'name' => 'Mis Pagos',
       'icon' => 'payment',
-      'route' => 'payments.myIndex',
+      'route' => 'my.payments.index',
+      'permission' => 'list my_section',
+    ],
+    [
+      'name' => 'Mi Carrito',
+      'icon' => 'cart',
+      'route' => 'my.cart.index',
       'permission' => 'list my_section',
     ],
     [
@@ -73,22 +79,34 @@ return [
       'permission' => 'list state-type-tables',
     ],
     [
+      'name' => 'Carritos',
+      'icon' => 'cart',
+      'route' => 'carts.index',
+      'permission' => 'manage carts-details',
+    ],
+    [
+      'name' => 'Proveedores',
+      'icon' => 'provider',
+      'route' => 'providers.index',
+      'permission' => 'manage providers',
+    ],
+    [
       'name' => 'Usuarios',
       'icon' => 'users',
       'route' => 'users.index',
       'permission' => 'list users',
     ],
     [
-      'name' => 'Roles y Permisos',
-      'icon' => 'role',
-      'route' => 'roles.index',
-      'permission' => 'list roles',
-    ],
-    [
       'name' => 'Direcciones',
       'icon' => 'address',
       'route' => 'addresses.index',
       'permission' => 'list addresses',
+    ],
+    [
+      'name' => 'Roles y Permisos',
+      'icon' => 'role',
+      'route' => 'roles.index',
+      'permission' => 'list roles',
     ],
     [
       'name' => 'Sección de Soporte',

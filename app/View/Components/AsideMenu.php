@@ -35,7 +35,10 @@ class AsideMenu extends Component
     private function isActive(string $route): bool
     {
         if ($route === '#' or $route === '') return false;
-        return str_starts_with($this->currentRoute, $route);
+
+        $i = 0;
+        if (str_starts_with($this->currentRoute, 'my.')) $i = 1;
+        return explode('.', $this->currentRoute)[$i] === explode('.', $route)[$i];
     }
 
     /**
