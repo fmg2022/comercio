@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('provider_id')->constrained('providers')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
             $table->decimal('price', 10, 2);
-            $table->unsignedInteger('stock');
-            $table->dateTime('delivery_date')->nullable();
             $table->timestamps();
         });
     }

@@ -73,8 +73,7 @@ class Product extends Model
     public function carts(): BelongsToMany
     {
         return $this->belongsToMany(Cart::class)
-            ->withPivot(['quantity'])
-            ->withTimestamps();
+            ->withPivot(['quantity']);
     }
 
     public function orders(): BelongsToMany
@@ -100,7 +99,7 @@ class Product extends Model
     public function providers(): BelongsToMany
     {
         return $this->belongsToMany(Provider::class)
-            ->withPivot(['price', 'stock', 'delivery_date'])
+            ->withPivot('price')
             ->withTimestamps();
     }
 
