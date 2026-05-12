@@ -11,6 +11,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderStateController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentStateController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderController;
@@ -20,6 +21,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
+  Route::prefix('pdf')->name('pdf.')->group(function () {
+    Route::get('/orders/{order}', [PDFController::class, 'generatePDFOrders'])->name('order');
+  });
 
   Route::prefix('dashboard')->group(function () {
     Route::group(['middleware' => ['permission:list my_section']], function () {

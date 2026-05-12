@@ -11,7 +11,7 @@
       <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
         Volver
       </x-buttons.linkFill>
-      <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
+      <x-buttons.linkFill href="{{ route('pdf.order', $order->id) }}" class="bg-red-700 active:bg-red-800" target="_blank">
         Generar PDF
       </x-buttons.linkFill>
     </div>
