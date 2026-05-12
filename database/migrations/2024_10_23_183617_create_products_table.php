@@ -18,6 +18,8 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->string('sku', 50)->unique();
             $table->unsignedInteger('stock');
+            $table->string('weight', 12);
+            $table->string('container', 50);
             $table->text('description')->nullable();
             $table->foreignId('category_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('brand_id')->constrained()->onUpdate('cascade')->onDelete('cascade');

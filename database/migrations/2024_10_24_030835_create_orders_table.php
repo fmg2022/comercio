@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('date');
+            $table->dateTime('date')->default(now());
             $table->decimal('total', 12, 2)->default(0);
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');
             $table->foreignId('order_state_id')->constrained()->onUpdate('cascade');

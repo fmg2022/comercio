@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('provider_id')->constrained('providers')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
-            $table->decimal('price', 10, 2);
+            $table->unsignedSmallInteger('min_quantity')->default(1);
+            $table->boolean('is_preferred')->default(false); // Proveedor preferido
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
