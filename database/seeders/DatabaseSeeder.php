@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
             PaymentProviderSeeder::class,
             PaymentStateSeeder::class,
             PaymentSeeder::class,
+            OrderPurchaseStateSeeder::class,
+            OrderPurchaseSeeder::class,
         ]);
     }
 }
