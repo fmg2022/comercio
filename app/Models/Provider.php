@@ -12,16 +12,19 @@ class Provider extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'trade_name',
         'email',
         'phone',
+        'contact_name',
+        'contact_email',
+        'contact_phone',
+        'address_full',
         'active',
     ];
 
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
-            ->withPivot('price')
-            ->withTimestamps();
+            ->withPivot(['min_quantity', 'is_preferred', 'is_active']);
     }
 }

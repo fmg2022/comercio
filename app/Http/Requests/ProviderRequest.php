@@ -30,9 +30,13 @@ class ProviderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'trade_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:255',
+            'contact_name' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'required|string|max:255',
+            'address_full' => 'required|string|max:255',
             'active' => 'required|boolean',
             'products_ids' => 'required|array',
             Rule::exists('products', 'id')->whereNull('provider_id'),

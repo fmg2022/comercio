@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Provider;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,18 +14,16 @@ class ProviderSeeder extends Seeder
      */
     public function run(): void
     {
-        Provider::factory(8)->create()->each(function ($provider) {
-            $products = DB::table('products')->inRandomOrder()->take(rand(4, 10))->get(['id', 'price']);
-            $provider->products()->attach($products->mapWithKeys(function ($product) {
-                $randDays = rand(0, 5);
-                return [
-                    $product->id => [
-                        'price' => $product->price / (1 + rand(10, 30) / 100),
-                        'stock' => rand(20, 60),
-                        'delivery_date' => $randDays > 0 ? now()->addDays($randDays) : null,
-                    ]
+        Provider::factory(11)->create()->each(function (Provider $provider) {
+            $products = DB::table('products')->inRandomOrder()->take(rand(4, 10))->get(['id']);
+            $pivotData = [];
+            foreach ($products as $product) {
+                $pivotData[$product->id] = [
+                    'min_quantity' => rand(1, 15),
+                    'is_preferred' => rand(0, 1) > 0,
                 ];
-            }));
+            }
+            $provider->products()->attach($pivotData);
         });
     }
 }

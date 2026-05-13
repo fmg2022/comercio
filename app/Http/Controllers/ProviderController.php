@@ -13,7 +13,7 @@ class ProviderController extends Controller
     public function index()
     {
         return view('pages.dashboard.provider.index', [
-            'providers' => Provider::withTrashed()->orderByDesc('active')->orderBy('name', 'asc')->paginate(10),
+            'providers' => Provider::withTrashed()->orderByDesc('active')->orderBy('contact_name')->paginate(10),
             'products' => Product::get(['name', 'id']),
         ]);
     }
@@ -50,7 +50,7 @@ class ProviderController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $provider = Provider::withTrashed()->with('products:id')->findOrFail($id, ['id', 'name', 'email', 'phone', 'active']);
+        $provider = Provider::withTrashed()->with('products:id')->findOrFail($id);
         $provider->products_ids = $provider->products()->pluck('products.id');
         $provider->unsetRelation('products');
 
