@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Cart;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,17 +64,12 @@ class AuthenticatedSessionController extends Controller
     /**
      * Cargar carrito desde base de datos
      */
-    protected function loadCartFromDatabase($user): void
+    protected function loadCartFromDatabase(User $user): void
     {
-        Log::info('Cargando carrito desde BD para usuario', ['user_id' => $user->id]);
-
         $cart = $user->cart;
         $cartItems = $cart->products()->get();
 
-        Log::info('Items encontrados en BD', ['count' => $cartItems->count()]);
-
         if ($cartItems->count() === 0) {
-            Log::info('No hay items en el carrito, saliendo');
             return;
         }
 
@@ -84,22 +81,15 @@ class AuthenticatedSessionController extends Controller
     /**
      * Agregar item desde BD al carrito de sesión
      */
-    protected function addCartItemToSession($product, $cart): void
+    protected function addCartItemToSession(Product $product, Cart $cart): void
     {
         try {
             if (!$product || $product->stock <= 0) {
-                Log::warning('Producto no disponible, eliminando pivot de carrito', [
-                    'cart_id' => $cart->id,
-                    'product_id' => $product->id
-                ]);
-
                 $cart->products()->detach($product->id);
 
                 return;
             }
 
-            // CartFacade::setSessionKey('user_' . auth()->id());
-            // Ajustar cantidad si excede el stock disponible
             $quantity = min($product->stock, $product->pivot->quantity);
             CartFacade::add([
                 'id' => $product->id,
@@ -114,20 +104,9 @@ class AuthenticatedSessionController extends Controller
                 ]
             ]);
 
-            Log::debug('Item agregado al carrito de sesión', [
-                'product_id' => $product->pivot->product_id,
-                'quantity' => $quantity,
-            ]);
-
             // Si la cantidad fue ajustada, actualizar en BD
             if ($quantity != $product->pivot->quantity) {
                 $cart->products()->updateExistingPivot($product->id, ['quantity' => $quantity]);
-
-                Log::debug('Cantidad ajustada en BD', [
-                    'cart_item_id' => $product->pivot->id,
-                    'old_quantity' => $product->pivot->quantity,
-                    'new_quantity' => $quantity
-                ]);
             }
         } catch (\Exception $e) {
             Log::error('Error al agregar item al carrito de sesión', [

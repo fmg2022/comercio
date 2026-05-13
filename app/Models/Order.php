@@ -41,7 +41,7 @@ class Order extends Model
 	protected function dateFormated(): Attribute
 	{
 		return Attribute::make(
-			get: fn() => date('d/m/Y', strtotime($this->paid_at))
+			get: fn() => date('d/m/Y', strtotime($this->date))
 		);
 	}
 
