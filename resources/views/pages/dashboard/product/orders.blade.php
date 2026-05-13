@@ -73,9 +73,9 @@
 </script>
 @endPushIf
 
-@push('scripts-dashboard')
-  <script src="{{ asset('js/modal.js') }}" defer></script>
-@endpush
+@pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
+<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@endpushIf
 
 @section('content')
   <article class="py-4 flex flex-col justify-center items-center gap-4 md:mb-7 md:flex-row">
@@ -105,93 +105,82 @@
         Generar PDF
       </x-buttons.linkFill>
       @if ($product->trashed())
-        <button type="button" onclick="openModal('restDialog')"
-          class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">
+        <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
+          data-modalID="restDialog" data-path="{{ $product->id . '/restore' }}" data-delete="false"
+          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+          <span>
+            <x-icons.restore class="size-5" />
+          </span>
           Restaurar Producto
         </button>
-        <x-modals.simple id="restDialog" title="{{ 'Restaurar el producto ' . $product->name }}">
-          <div class="flex flex-col items-center justify-center">
-            <span class="text-slate-500">
-              <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
-                <path fill="currentColor"
-                  d="M12 20a8 8 0 1 0 0-16a8 8 0 0 0 0 16m0 2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1-6h2v2h-2zm0-10h2v8h-2z" />
-              </svg>
-            </span>
-            <p class="px-2 py-4 mb-3">¿Está seguro de que desea restaurar el producto?</p>
-          </div>
-          <div class="flex justify-end gap-3 text-white">
-            <form action="{{ route('products.restore', $product->id) }}" method="POST">
-              @csrf
-              <button type="submit"
-                class="px-3 py-2 bg-green-900 rounded-md hover:bg-green-800 cursor-pointer">Restaurar</button>
-            </form>
-            <form method="dialog">
-              <button class="px-3 py-2 bg-slate-700 rounded-md hover:bg-slate-600 cursor-pointer">Cancelar</button>
-            </form>
-          </div>
-        </x-modals.simple>
       @endif
     </div>
   </article>
 
-  @if ($orders->count() > 0)
-    <x-tables.table>
-      <x-slot:thead>
-        <tr class="text-left">
-          <th>#</th>
-          <th>Usuario</th>
-          <th>Orden</th>
-          <th>Fecha</th>
-          <th class="hidden md:table-cell">Estado</th>
-          <th>Cantidad</th>
-          <th class="hidden sm:table-cell">Precio</th>
-        </tr>
-      </x-slot:thead>
+  <x-tables.table>
+    <x-slot:thead>
+      <tr class="text-left">
+        <th>#</th>
+        <th>Usuario</th>
+        <th>Orden</th>
+        <th>Fecha</th>
+        <th class="hidden md:table-cell">Estado</th>
+        <th>Cantidad</th>
+        <th class="hidden sm:table-cell">Precio</th>
+      </tr>
+    </x-slot:thead>
 
-      @foreach ($orders as $index => $order)
-        <tr>
-          @php
-            $orderDate = Str::substr($order->date, 0, 10);
-          @endphp
-          <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-          <td class="relative">
-            <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
-              {{ $order->user->fullName() }}
-            </x-buttons.link>
-            <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-              Ver Perfil
-            </x-popups.text>
-          </td>
-          <td class="relative">
-            <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
-              #{{ $order->id }}
-            </x-buttons.link>
-            <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-              Ver Orden
-            </x-popups.text>
-          </td>
-          <td>{{ $orderDate }}</td>
-          <td class="hidden md:table-cell">
-            <span @class([
-                "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $order->orderState->code === 'CREADO',
-                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-                'text-cyan-400' => $order->orderState->code === 'PAGADO',
-                'text-green-400' => $order->orderState->code === 'COMPLETO',
-                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-                'text-red-400' => $order->orderState->code === 'CANCELADO',
-            ])>
-              {{ $order->orderState->code }}
-            </span>
-          </td>
-          <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
-          <td class="hidden sm:table-cell">{{ $order->pivot->price }}</td>
-        </tr>
-      @endforeach
-      </x-tables-table>
+    @forelse ($orders as $index => $order)
+      <tr>
+        <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
+        <td class="relative">
+          <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
+            {{ $order->user->fullName() }}
+          </x-buttons.link>
+          <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+            Ver Perfil
+          </x-popups.text>
+        </td>
+        <td class="relative">
+          <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+            #{{ $order->id }}
+          </x-buttons.link>
+          <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+            Ver Orden
+          </x-popups.text>
+        </td>
+        <td>{{ Carbon\Carbon::parse($order->date)->format('d/m/Y') }}</td>
+        <td class="hidden md:table-cell">
+          <span @class([
+              "font-semibold before:content-['●'] before:me-px",
+              'text-amber-400' => $order->orderState->code === 'CREADO',
+              'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+              'text-cyan-400' => $order->orderState->code === 'PAGADO',
+              'text-green-400' => $order->orderState->code === 'COMPLETO',
+              'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+              'text-red-400' => $order->orderState->code === 'CANCELADO',
+          ])>
+            {{ $order->orderState->code }}
+          </span>
+        </td>
+        <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
+        <td class="hidden sm:table-cell">{{ $order->pivot->price }}</td>
+      </tr>
 
-      <div id="chart-product-orders" class="w-full py-3 mb-2 mt-10 mx-auto text-slate-900 md:max-w-xl"></div>
-    @else
-      <h3 class="text-2xl font-semibold text-center">No hay ordenes encotradas</h3>
+    @empty
+      <tr>
+        <td colspan="8" class="text-center font-semibold text-slate-300">Sin ordenes registradas</td>
+      </tr>
+    @endforelse
+  </x-tables.table>
+
+  @if (!empty($orders))
+    <div id="chart-product-orders" class="w-full py-3 mb-2 mt-10 mx-auto text-slate-900 md:max-w-xl"></div>
   @endif
+
+  {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
+
+  @can('manage products-and-attributes')
+    <x-modals.delete id="restDialog" />
+  @endcan
 @endsection
