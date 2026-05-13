@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +32,7 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
-    public function scopeTree($query): void
+    public function scopeTree(Builder $query): void
     {
         $query->select('id', 'name', 'nivel', 'parent_id')->whereNull('parent_id')->with('childrenTree')->orderBy('name');
     }
