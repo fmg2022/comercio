@@ -25,6 +25,8 @@ return new class extends Migration
             $table->foreignId('brand_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
+
+            $table->fullText(['name', 'weight', 'container']);
         });
     }
 

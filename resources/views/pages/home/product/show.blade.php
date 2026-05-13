@@ -32,7 +32,7 @@
       </section>
       <section class="w-full px-4 py-8 md:w-4/7 md:py-4">
         <div>
-          <h3 class="text-2xl font-semibold">{{ $product->name }} x (Lt. KG. ...)</h3>
+          <h3 class="text-2xl font-semibold">{{ $product->name }} x {{ $product->weight }}</h3>
           <p class="text-sm">
             <span class="me-3 font-bold uppercase">{{ $product->category->name }}</span> |
             <span class="ms-3 font-semibold">SKU: {{ $product->sku }}</span>

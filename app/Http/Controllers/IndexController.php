@@ -38,11 +38,21 @@ class IndexController extends Controller
         ]);
 
         $products = Product::query()
-            ->with(['brand:id,name', 'category'])
+            ->with(['brand:id,name', 'category:id,name,parent_id'])
             ->when($validated['query'], function ($query, $search) {
-                $query->whereLike('name', "%{$search}%")
-                    ->orWhereHas('brand', fn($query) => $query->whereLike('name', "%{$search}%"))
-                    ->orWhereHas('category', fn($query) => $query->whereLike('name', "%{$search}%"));
+                $query->where(function ($q) use ($search) {
+                    $q->whereFullText(['name', 'weight', 'container'], $search . '*', ['mode' => 'boolean'])
+                        ->orWhereHas('brand', fn($query) => $query->whereLike('name', "%{$search}%"))
+                        ->orWhereHas('category', fn($query) => $query->whereLike('name', "%{$search}%"));
+                })
+                    ->orderByRaw("
+                CASE
+                    WHEN name = ? THEN 1
+                    WHEN name LIKE ? THEN 2
+                    WHEN name LIKE ? THEN 3
+                    ELSE 4
+                END
+            ", [$search, "{$search}%", "%{$search}%"]);
             })
             ->paginate(12);
         $categoriesNav[] = $validated['query'];
