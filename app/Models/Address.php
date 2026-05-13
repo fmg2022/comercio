@@ -36,4 +36,9 @@ class Address extends Model
     {
         return "{$this->street}, {$this->city}, {$this->province}, {$this->postal_code}";
     }
+
+    public function shortAddress(): string
+    {
+        return "{$this->street}, {$this->city}";
+    }
 }
