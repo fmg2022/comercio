@@ -5,11 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const $select = modal.querySelector('select')
 
   const arrayStatusDenied = ["COMPLETO", "REEMBOLSADO", "CANCELADO", "APROBADO"]
-  let url = window.location.href
-  // Si la URL contiene parámetros de búsqueda, los eliminamos
-  if ((/\?\w+/).test(url)) {
-    url = url.replace(window.location.search, '')
-  }
 
   modalButtons.forEach(button => {
     if (!arrayStatusDenied.includes(button.dataset.status)) {
@@ -24,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         $select.querySelectorAll('option').forEach(option => option.value === button.dataset.status ? option.setAttribute('selected', '') : option.removeAttribute('selected'))
 
-        $form.action = `${url}/${button.dataset.uid}/states`
+        let formUrl = $form.action
+        $form.action = formUrl.replace(/\/\d+\/states/, `/${button.dataset.uid}/states`)
 
         modal.showModal()
       })

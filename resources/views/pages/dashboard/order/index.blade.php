@@ -103,7 +103,7 @@
   @can('manage state-type-tables')
     <x-modals.simple id="modal-change-status" class="max-w-xl w-full" title="Cambiar el estado de la orden">
       <div class="relative mt-4 flex flex-col items-center justify-center text-white">
-        <form method="POST" class="w-full" id="form-modalSimple">
+        <form method="POST" class="w-full" id="form-modalSimple" action="{{ route('orders.updateStates', 0) }}">
           @csrf
           @method('PUT')
           <div class="mb-16 grid place-items-center text-slate-900">

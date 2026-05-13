@@ -37,7 +37,7 @@
         </td>
         <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
         <td class="text-slate-300">{{ $payment->date_formated }}</td>
-        <td class="hidden sm:table-cell">{{ $payment->nr_fee }}</td>
+        <td class="hidden sm:table-cell">{{ $payment->nro_fee }}</td>
         <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
         <td class="hidden md:table-cell">
           <span @class([
@@ -96,7 +96,7 @@
   @can('manage state-type-tables')
     <x-modals.simple id="{{ $type2 }}" class="max-w-xl w-full" title="Cambiar el estado del pago">
       <div class="relative mt-4 flex flex-col items-center justify-center text-white">
-        <form method="POST" class="w-full" id="form-modalSimple">
+        <form method="POST" class="w-full" id="form-modalSimple" action="{{ route('payments.updateStates', 0) }}">
           @csrf
           @method('PUT')
           <div class="mb-16 grid place-items-center text-slate-900">
