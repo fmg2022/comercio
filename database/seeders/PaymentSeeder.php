@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,13 +15,32 @@ class PaymentSeeder extends Seeder
     public function run(): void
     {
         $orders = DB::table('orders')->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
-            ->get(['orders.id', 'orders.total', 'order_states.code']);
+            ->get(['orders.id', 'orders.total', 'orders.date', 'order_states.code']);
+        $method = fake()->randomElement(['credit_card', 'debit_card', 'bank_transfer', 'account_money']);
 
         foreach ($orders as $order) {
+            $daysDelay = match ($method) {
+                'credit_card' => rand(0, 2),
+                'debit_card' => rand(0, 1),
+                'bank_transfer' => rand(1, 5),
+                'account_money' => rand(0, 1),
+                default => rand(0, 30),
+            };
+            $paidAt = null;
+            if ($order->code !== 'CANCELADO') {
+                $newPaitAt = Carbon::parse($order->date)->addDays($daysDelay);
+                $paidAt = $newPaitAt->isFuture() ? now() : $newPaitAt;
+            }
+
             Payment::factory()->create([
+                'method' => $method,
+                'nro_fee' =>  !in_array($method, ['account_money', 'bank_transfer']) ? rand(1, 12) : 1,
                 'amount' => $order->total,
                 'order_id' => $order->id,
-                'payment_state_id' => $order->code === 'CANCELADO' ? DB::table('payment_states')->where('code', 'CANCELADO')->value('id') : DB::table('payment_states')->where('code', '!=', 'CANCELADO')->inRandomOrder()->value('id'),
+                'paid_at' => $paidAt,
+                'payment_state_id' => $order->code === 'CANCELADO'
+                    ? DB::table('payment_states')->where('code', 'CANCELADO')->value('id')
+                    : DB::table('payment_states')->where('code', '!=', 'CANCELADO')->inRandomOrder()->value('id'),
                 'payment_provider_id' => DB::table('payment_providers')->where('active', true)->inRandomOrder()->value('id'),
             ]);
         }

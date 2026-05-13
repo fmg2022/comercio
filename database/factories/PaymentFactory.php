@@ -18,13 +18,10 @@ class PaymentFactory extends Factory
     {
         $provTransactionId = $this->faker->uuid;
         $externalStates = ['pending', 'completed', 'failed', 'refunded'];
-        $methods = ['credit_card', 'paypal', 'bank_transfer', 'cash'];
         return [
             'provider_transaction_id' => $provTransactionId,
             'provider_state' => $this->faker->randomElement($externalStates),
-            'method' => $this->faker->randomElement($methods),
             'checkout_url' => "https://paymentprovider.com/checkout/{$provTransactionId}",
-            'paid_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
         ];
     }
 }
