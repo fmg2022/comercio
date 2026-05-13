@@ -244,6 +244,18 @@
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+          <label class="block ps-4 mb-2 font-semibold" for="weight">Peso</label>
+          <input id="weight" name="weight" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+          <label class="block ps-4 mb-2 font-semibold" for="container">Envase</label>
+          <input id="container" name="container" autocomplete="off"
+            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
+        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
           <label class="block ps-4 mb-2 font-semibold" for="sku">SKU</label>
           <input type="text" id="sku" name="sku"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"

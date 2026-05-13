@@ -33,6 +33,8 @@ class ProductRequest extends FormRequest
                 Rule::unique('products', 'sku')->ignore($this->product),
             ],
             'stock' => 'required|numeric|min:0',
+            'weight' => 'required|string|max:12',
+            'container' => 'required|string|max:50',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',

@@ -79,7 +79,7 @@ class ProductController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $product = Product::withTrashed()->findOrFail($id, ['id', 'name', 'brand_id', 'category_id', 'image', 'sku', 'price', 'stock', 'description']);
+        $product = Product::withTrashed()->findOrFail($id, ['id', 'name', 'brand_id', 'category_id', 'image', 'sku', 'price', 'stock', 'weight', 'container', 'description']);
 
         return response()->json($product);
     }

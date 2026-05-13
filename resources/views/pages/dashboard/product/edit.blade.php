@@ -20,7 +20,10 @@
     <x-inputs.withLabel forLabel="name" title="Nombre" id="name" name="name" value="{{ $product->name }}" />
     <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" value="{{ $product->price }}" />
     <x-inputs.withLabel forLabel="stock" title="Stock" id="stock" name="stock" type="number"
-      value="{{ $product->stock }}" min="0" max="9999" />
+      value="{{ $product->stock }}" min="0" max="999" />
+    <x-inputs.withLabel forLabel="weight" title="Peso" id="weight" name="weight" value="{{ $product->weight }}" />
+    <x-inputs.withLabel forLabel="container" title="Envase" id="container" name="container"
+      value="{{ $product->container }}" />
     <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" value="{{ $product->sku }}" />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" value="{{ $product->image }}" />
 

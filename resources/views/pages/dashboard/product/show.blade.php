@@ -25,13 +25,15 @@
   <article class="px-3 my-4 flex flex-col items-center gap-5 md:items-start md:flex-row">
     <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
       class="max-h-96 object-cover rounded-md">
-    <div class="w-full px-6 py-3 flex flex-col gap-3">
-      <h3 class="text-xl">Marca: {{ $product->brand->name }}</h3>
-      <h3 class="text-xl">SKU: {{ $product->sku }}</h3>
-      <h3 class="text-xl">Precio: {{ $product->price }}</h3>
-      <h3 class="text-xl">Stock: {{ $product->stock }}</h3>
-      <h3 class="text-xl">Categoría: {{ $product->category->name }}</h3>
-      <p class="text-xl">Descripción: {{ $product->description }}</p>
+    <div class="w-full px-6 py-3 flex flex-col gap-3 text-xl">
+      <h3>Marca: {{ $product->brand->name }}</h3>
+      <h3>SKU: {{ $product->sku }}</h3>
+      <h3>Precio: {{ $product->price }}</h3>
+      <h3>Stock: {{ $product->stock }}</h3>
+      <h3>Peso: {{ $product->weight }}</h3>
+      <h3>Envase: {{ $product->container }}</h3>
+      <h3>Categoría: {{ $product->category->name }}</h3>
+      <p>Descripción: {{ $product->description }}</p>
     </div>
   </article>
 @endsection

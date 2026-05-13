@@ -41,8 +41,8 @@
         <h4 class="my-8 text-xl font-bold sm:text-2xl">${{ number_format($product->price, 2, ',', '.') }}</h4>
         <ul class="ms-6 mb-12 list-disc text-sm">
           <li>Tipo de producto: {{ $product->name }}</li>
-          <li>Contenido: Contenido</li>
-          <li>Envase: Botella de vidrio, Páquete, Frasco</li>
+          <li>Contenido: {{ $product->weight }}</li>
+          <li>Envase: {{ $product->container }}</li>
         </ul>
         <div class="flex justify-center">
           <button
@@ -70,9 +70,9 @@
       <article class="px-3 flex flex-col gap-5">
         <h2 class="text-xl">Información</h2>
         <ul class="ms-4 [&>li]:before:content-['\2022'] [&>li]:before:me-[.5rem]">
-          <li>Tipo de producto: Producto</li>
-          <li>Contenido: 2Lt</li>
-          <li>Envase: Botella de vidrio</li>
+          <li>Tipo de producto: {{ $product->name }}</li>
+          <li>Contenido: {{ $product->weight }}</li>
+          <li>Envase: {{ $product->container }}</li>
         </ul>
       </article>
     </div>

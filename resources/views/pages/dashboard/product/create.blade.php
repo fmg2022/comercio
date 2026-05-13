@@ -9,7 +9,7 @@
 
     <x-buttons.linkFill href="{{ route('products.index') }}"
       class="bg-slate-700 active:bg-slate-600 sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2">
-      Volver a la lista
+      Volver al listado
     </x-buttons.linkFill>
   </x-sections.headerTitle>
 
@@ -19,7 +19,9 @@
     <x-inputs.withLabel forLabel="price" title="Precio" id="price" name="price" />
     <x-inputs.withLabel forLabel="sku" title="SKU" id="sku" name="sku" required />
     <x-inputs.withLabel forLabel="stock" title="Stock" id="stock" name="stock" type="number" value="0"
-      min="0" max="9999" />
+      min="0" max="999" />
+    <x-inputs.withLabel forLabel="weight" title="Peso" id="weight" name="weight" />
+    <x-inputs.withLabel forLabel="container" title="Envase" id="container" name="container" />
     <x-inputs.withLabel forLabel="image" title="Imagen" id="image" name="image" />
 
     <select name="brand_id" class="px-3 py-2 mb-5 text-black bg-white/75 rounded-md outline-none">

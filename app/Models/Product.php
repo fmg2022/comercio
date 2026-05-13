@@ -19,6 +19,8 @@ class Product extends Model
         'sku',
         'price',
         'stock',
+        'weight',
+        'container',
         'description',
     ];
 
@@ -99,8 +101,13 @@ class Product extends Model
     public function providers(): BelongsToMany
     {
         return $this->belongsToMany(Provider::class)
-            ->withPivot('price')
-            ->withTimestamps();
+            ->withPivot(['min_quantity', 'is_preferred', 'is_active']);
+    }
+
+    public function orderPurchases(): BelongsToMany
+    {
+        return $this->belongsToMany(OrderPurchase::class)
+            ->withPivot(['quantity', 'purchase_price', 'suggested_sale_price']);
     }
 
     // Functions
