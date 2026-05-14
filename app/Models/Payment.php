@@ -20,6 +20,7 @@ class Payment extends Model
         'method',
         'amount',
         'paid_at',
+        'nro_fee',
     ];
 
     // Accessors

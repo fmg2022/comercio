@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OrdersExport;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Models\Order;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Joelwmale\Cart\Facades\CartFacade;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
@@ -116,5 +118,10 @@ class OrderController extends Controller
             'orders' => $user->orders()->orderByDesc('date')->paginate(10),
             'orderStates' => OrderState::all(['code', 'id']),
         ]);
+    }
+
+    public function export()
+    {
+        return Excel::download(new OrdersExport, 'orders.xlsx');
     }
 }

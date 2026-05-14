@@ -9,8 +9,13 @@
     - El mensaje de éxito al crear un producto --}}
 
 @section('content')
-  <x-sections.headerTitle>
+  <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Ordenes</x-slot:textTitle>
+    @can('manage state-type-tables')
+      <x-buttons.linkFill href="{{ route('orders.export') }}" class="bg-green-700 active:bg-green-600">
+        Exportar a Excel
+      </x-buttons.linkFill>
+    @endcan
   </x-sections.headerTitle>
 
   <x-tables.table>

@@ -15,6 +15,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/commonmark": "2.8.2",
+        "maatwebsite/excel": "3.1.x-dev",
         "spatie/laravel-permission": "^6.25"
     },
     "require-dev": {
