@@ -42,21 +42,16 @@ class Product extends Model
             ?->offerTemplate;
     }
 
-    public function getDiscountTotal(int $quantity, int $offerId): float
+    public function getDiscountTotal(int $quantity, int $buyQuantity, int $payQuantity, string $offerType): float
     {
-        $offerT = OfferTemplate::find($offerId);
-        $offerType = $offerT->offerType->code;
-
-        if ($offerT) {
-            if ($offerType === 'PERCENTAGE') {
-                return $this->price * $offerT->pay_qty * $quantity;
-            }
-            if ($offerType === 'X_FOR_Y') {
-                return $this->price * (intdiv($quantity, $offerT->buy_qty) * $offerT->pay_qty);
-            }
-            if ($offerType === 'FIXED') {
-                return $offerT->pay_qty * $quantity;
-            }
+        if ($offerType === 'PERCENTAGE') {
+            return $this->price * $payQuantity * $quantity;
+        }
+        if ($offerType === 'X_FOR_Y') {
+            return $this->price * ((intdiv($quantity, $buyQuantity) * ($buyQuantity - $payQuantity)));
+        }
+        if ($offerType === 'FIXED') {
+            return $payQuantity * $quantity;
         }
         return 0;
     }
@@ -82,7 +77,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class)
             ->using(OrderProduct::class)
-            ->withPivot(['quantity', 'price', 'discount'])
+            ->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_code'])
             ->withTimestamps();
     }
 
