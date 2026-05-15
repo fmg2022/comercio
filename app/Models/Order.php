@@ -45,6 +45,13 @@ class Order extends Model
 		);
 	}
 
+	protected function totalProducts(): Attribute
+	{
+		return Attribute::make(
+			get: fn() => $this->products->sum('pivot.quantity')
+		);
+	}
+
 	// Scopes
 	/**
 	 * Scope para órdenes no canceladas
@@ -96,7 +103,7 @@ class Order extends Model
 	{
 		return $this->belongsToMany(Product::class)
 			->using(OrderProduct::class)
-			->withPivot(['quantity', 'price', 'discount'])
+			->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_code'])
 			->withTimestamps();
 	}
 }
