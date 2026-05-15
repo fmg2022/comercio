@@ -40,7 +40,8 @@
         <td class="font-bold">{{ $fullName }}</td>
         <td class="text-slate-300">{{ $order->date_formated }}</td>
         <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
-        <td class="hidden text-slate-300 capitalize md:table-cell">{{ $order->payment->paymentProvider->name }}</td>
+        <td class="hidden text-slate-300 capitalize md:table-cell">
+          {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>
         <td class="hidden md:table-cell">
           <span @class([
               "font-semibold before:content-['●'] before:me-px",
