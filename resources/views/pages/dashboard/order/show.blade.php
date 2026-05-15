@@ -29,7 +29,6 @@
         <th class="text-end">Opciones</th>
       </tr>
     </x-slot>
-
     @foreach ($order->products as $index => $orderLine)
       <tr class="[&>td]:text-slate-200">
         <td class="text-center">{{ $index + 1 }}</td>
@@ -43,7 +42,14 @@
         </td>
         <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
         <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price_formated }}</td>
-        <td class="text-center hidden md:table-cell">${{ $orderLine->pivot->discount_formated }}
+        <td class="relative text-center hidden md:table-cell">
+          <span class="peer/popup">
+            ${{ $orderLine->pivot->discount_formated }}
+          </span>
+          <x-popups.text
+            class="top-2/3 left-1/2 -translate-x-1/2 w-max hidden bg-slate-900/80 peer-hover/popup:inline-block">
+            {{ $orderLine->pivot->offer_template_id ? $orderLine->pivot->offerName() : 'Sin descuento' }}
+          </x-popups.text>
         </td>
         <td class="text-center hidden md:table-cell">
           <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
