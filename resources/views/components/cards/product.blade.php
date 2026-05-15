@@ -41,9 +41,9 @@
                   ? '-$' . $offers[$offerID]['offer_template']['pay_qty']
                   : ($offerType === 'PERCENTAGE'
                       ? '-' . (1 - $offers[$offerID]['offer_template']['pay_qty']) * 100 . '%'
-                      : $offers[$offerID]['offer_template']['pay_qty'] * 1 .
+                      : $offers[$offerID]['offer_template']['buy_qty'] * 1 .
                           'x' .
-                          $offers[$offerID]['offer_template']['buy_qty'] * 1) }}
+                          $offers[$offerID]['offer_template']['pay_qty'] * 1) }}
             </span>
           </p>
         @endif
