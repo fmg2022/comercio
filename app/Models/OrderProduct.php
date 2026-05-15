@@ -36,6 +36,13 @@ class OrderProduct extends Pivot
         );
     }
 
+    protected function getSubtotal(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->price * $this->quantity - $this->discount,
+        );
+    }
+
     // Relationships
     public function order(): BelongsTo
     {
@@ -51,5 +58,10 @@ class OrderProduct extends Pivot
     public function subtotal(): string
     {
         return number_format(($this->price * $this->quantity) - $this->discount, 2, ',', '.');
+    }
+
+    public function offerName(): string
+    {
+        return OfferTemplate::where('id', $this->offer_template_id)->first()?->name ?? 'Sin descuento';
     }
 }
