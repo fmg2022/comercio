@@ -7,7 +7,9 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -15,7 +17,8 @@ class UserController extends Controller
     {
         return view('pages.dashboard.user.index', [
             'users' => User::paginate(10),
-            'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted')
+            'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
+            'roles' => Role::all(['name', 'id']),
         ]);
     }
 
@@ -68,5 +71,23 @@ class UserController extends Controller
         $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image']);
 
         return response()->json($user);
+    }
+
+    public function updateRole(Request $request, User $user): RedirectResponse
+    {
+        $request->validate([
+            'roles' => 'array',
+            'roles.*' => 'required|integer|exists:roles,name',
+        ]);
+        $user->syncRoles($request->roles);
+
+        return redirect()->back();
+    }
+
+    public function fetchRoles(String $id): JsonResponse
+    {
+        $user = User::withTrashed()->findOrFail($id);
+
+        return response()->json(['roles' => $user->roles()->pluck('name')]);
     }
 }

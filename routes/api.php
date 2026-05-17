@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/products/{id}', [ProductController::class, 'fetch']);
 Route::get('/users/{id}', [UserController::class, 'fetch']);
+Route::get('/users/{id}/roles', [UserController::class, 'fetchRoles']);
 Route::get('/addresses/{id}', [AddressController::class, 'fetch']);
 Route::get('/categories/{id}', [CategoryController::class, 'fetch']);
 Route::get('/categories', [CategoryController::class, 'getCategories']);
