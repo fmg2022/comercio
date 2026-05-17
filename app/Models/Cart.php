@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Cart extends Model
 {
+    protected $fillable = [
+        'user_id',
+    ];
+
     // Functions
     public function attachProduct(string $productId, int $quantity): void
     {
