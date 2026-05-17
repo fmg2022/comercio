@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StateTypeRequest;
 use App\Models\ShipmentState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
