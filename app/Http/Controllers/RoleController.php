@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleRequest;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -15,8 +15,9 @@ class RoleController extends Controller
     public function index(): View
     {
         return view('pages.dashboard.rolePermission.index', [
-            'roles' => Role::orderBy('name', 'asc')->get(['id', 'name']),
+            'roles' => Role::whereNotIn('name', ['Super Admin'])->orderBy('name', 'asc')->get(['id', 'name']),
             'permissions' => Permission::orderBy('name', 'asc')->get(['id', 'name']),
+            'users' => User::withoutRole('Super Admin')->orderBy('name', 'asc')->get(['id', 'name', 'surname']),
         ]);
     }
 

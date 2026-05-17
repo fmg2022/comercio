@@ -122,7 +122,7 @@ class OrderController extends Controller
             'order_state_id' => $validated['states']
         ]);
 
-        return redirect()->route('orders.index');
+        return redirect()->back();
     }
 
     public function myIndex(): View
