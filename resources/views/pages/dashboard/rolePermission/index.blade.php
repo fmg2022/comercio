@@ -69,6 +69,16 @@
                           </button>
                         </li>
                         <li>
+                          <button type="button" data-type="edit" data-uid="{{ $role->id }}"
+                            data-path="{{ $role->id }}/assign" data-modalID="roleuserCES"
+                            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                            <span>
+                              <x-icons.users class="size-5" />
+                            </span>
+                            Aignar Rol
+                          </button>
+                        </li>
+                        <li>
                           <button type="button" data-text="Rol: '{{ $role->name }}'" data-uid="{{ $role->id }}"
                             data-modalID="rolDelete" data-path="{{ $role->id }}" data-delete="true"
                             class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
@@ -147,6 +157,36 @@
       </form>
     </x-modals.simple>
 
+    <x-modals.simple id="roleuserCES"
+      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      <form enctype="multipart/form-data" method="POST"
+        class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+        @csrf
+        @method('PUT')
+        <fieldset class="py-3 grid grid-cols-1 gap-6 text-gray-700 md:px-3">
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label for="user_id" class="block ps-4 mb-2 font-semibold">Usuarios a asignar</label>
+            <select name="user_id" id="user_id"
+              class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+              <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona un usuario
+              </option>
+              @foreach ($users as $user)
+                <option value="{{ $user->id }}" @class(['text-slate-800', 'bg-gray-100' => $user->trashed()])>
+                  {{ $user->surname . ', ' . $user->name }}
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <button type="submit"
+            class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
+        </fieldset>
+      </form>
+      <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
+        <button
+          class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+      </form>
+    </x-modals.simple>
     {{-- MODAL DELETE, RESTORE --}}
     <x-modals.delete id="rolDelete" />
   @endcan

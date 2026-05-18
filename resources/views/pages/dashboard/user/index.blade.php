@@ -61,51 +61,61 @@
             {{ $user->getRoleNames()->first() }}
           </h4>
         </td>
-        <td class="relative flex justify-end">
-          <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
-            <x-slot:label>
-              <x-icons.threeDotsX class="size-6" />
-            </x-slot:label>
+        <td>
+          <div class="relative flex justify-end items-center">
+            <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
+              <x-slot:label>
+                <x-icons.threeDotsX class="size-6" />
+              </x-slot:label>
 
-            <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-              @can('show users')
-                <li>
-                  <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                    data-modalID="userCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Usuario
-                  </button>
-                </li>
-              @endcan
-              @can('edit users')
-                <li>
-                  <button type="button" data-type="edit" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                    data-modalID="userCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.edit class="size-5" />
-                    </span>
-                    Editar Usuario
-                  </button>
-                </li>
-              @endcan
-              @can('delete users')
-                <li>
-                  <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
-                    data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      <x-icons.trash class="size-5" />
-                    </span>
-                    Eliminar Usuario
-                  </button>
-                </li>
-              @endcan
-            </ul>
-          </x-popups.contentWcheck>
+              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                @can('manage roles')
+                  <li>
+                    <button type="button" data-type="edit" data-uid="{{ $user->id }}"
+                      data-path="{{ $user->id }}/roles" data-modalID="roleCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.role class="size-5" />
+                      </span>
+                      {{ $user->roles->isNotEmpty() ? 'Editar Rol' : 'Asignar Rol' }}
+                    </button>
+                  </li>
+                @endcan
+                @can('manage users')
+                  <li>
+                    <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+                      data-modalID="userCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.show class="size-5" />
+                      </span>
+                      Ver Usuario
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" data-type="edit" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+                      data-modalID="userCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.edit class="size-5" />
+                      </span>
+                      Editar Usuario
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                      data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.trash class="size-5" />
+                      </span>
+                      Eliminar Usuario
+                    </button>
+                  </li>
+                @endcan
+              </ul>
+            </x-popups.contentWcheck>
+          </div>
         </td>
       </tr>
     @empty
@@ -198,8 +208,7 @@
       class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
-      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp"
-        alt="Foto de usuario {{ $user->name }}" />
+      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp" alt="Foto de usuario" />
 
       <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
@@ -229,8 +238,38 @@
         <section class="col-span-full group-[.editable]:hidden">
           <h4 class="mb-2 font-semibold">Dirección</h4>
           <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
-            {{ $user->getCurrentAddress()->fullAddress() }}</p>
+            {{ $user->getCurrentAddress()?->fullAddress() ?? 'Sin dirección' }}
+          </p>
         </section>
+        <button type="submit"
+          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
+      </fieldset>
+    </form>
+    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
+      <button
+        class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+    </form>
+  </x-modals.simple>
+
+  <x-modals.simple id="roleCSE"
+    class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    <form enctype="multipart/form-data" method="POST"
+      class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+      @csrf
+      @method('PUT')
+      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
+        <div class="col-span-full">
+          <h4 class="mb-2 text-xl font-semibold">Roles disponibles</h4>
+          <div class="max-h-60 flex flex-col overflow-x-auto">
+            @foreach ($roles as $role)
+              <label
+                class="px-3 py-1 mx-4 flex items-center gap-2 group-[&:not(.editable)]:has-[input:not(:checked)]:hidden pointer-events-none group-[.editable]:pointer-events-auto">
+                <input type="checkbox" name="roles[]" class="size-4 accent-purple-600" value="{{ $role->name }}">
+                <span class="ms-1">{{ $role->name }}</span>
+              </label>
+            @endforeach
+          </div>
+        </div>
         <button type="submit"
           class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
       </fieldset>
