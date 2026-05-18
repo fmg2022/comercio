@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
   const buttons = document.querySelectorAll('.button-create-edit-show')
-  const $modal = document.getElementById(buttons[0].dataset.modalid)
-  const $form = $modal.querySelector('form.group')
-  const $submit = $form.querySelector('button[type="submit"]')
 
   function getBaseURL() {
     let newUrl = window.location.origin
-    const currentPath = window.location.pathname
+    const currentPath = window.location.pathname.replace(/\/my(\/|$)/, '$1')
     const pathParts = currentPath.split('/')
 
     if (pathParts.length > 3 && pathParts[1] === 'dashboard') {
@@ -17,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return newUrl
   }
 
-  function setFormValues(data) {
+  function setFormValues(data, $form) {
     Object.entries(data).forEach(([key, value]) => {
       const isArray = Array.isArray(value)
       const selector = Array.isArray(value) ? `[name="${key}[]"]` : `[name="${key}"]`;
@@ -29,13 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const type = field.type
 
         if (type === 'radio') {
-          field.checked = field.value === value
+          field.checked = field.value == value
         } else if (field.type === 'checkbox') {
-
           if (isArray) {
-            field.checked = value.includes(+field.value)
+            field.checked = value.some(v => v != null && String(v) === String(field.value))
           } else {
-            field.checked = Boolean(value)
+            field.checked = !!value
           }
         } else {
           field.value = value?.toString() ?? ''
@@ -47,6 +43,9 @@ document.addEventListener('DOMContentLoaded', function () {
   buttons.forEach(button => {
     button.addEventListener('click', (ev) => {
       ev.preventDefault()
+      const $modal = document.getElementById(button.dataset.modalid)
+      const $form = $modal.querySelector('form.group')
+      const $submit = $form.querySelector('button[type="submit"]')
       const type = button.dataset.type
 
       $form.classList.toggle('editable', type !== 'show')
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let pathName = getBaseURL().replace('dashboard', 'api') + `/${button.dataset.path}`
 
         axios.get(pathName)
-          .then(response => setFormValues(response.data))
+          .then(response => setFormValues(response.data, $form))
           .catch(error => {
             console.error('Error:', error)
           })
