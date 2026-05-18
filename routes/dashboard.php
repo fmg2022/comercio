@@ -32,7 +32,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show');
       Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index');
       Route::get('my/cart', function () {
-        return redirect()->route('carts.show', auth()->user()->cart->id);
+        $cart = auth()->user()->cart;
+        abort_unless($cart, 404, 'Carrito no encontrado');
+
+        $controller = resolve(CartController::class);
+        return $controller->show($cart);
       })->name('my.cart.index');
     });
 
@@ -40,6 +44,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/users', UserController::class);
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::put('/users/{user}/roles', [UserController::class, 'updateRole'])->name('users.updateRole');
 
     // Address routes
     Route::resource('/addresses', AddressController::class)->except(['show', 'create']);
