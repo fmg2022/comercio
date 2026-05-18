@@ -1,6 +1,7 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && auth()->user()?->can('manage carts-details'), 'scripts-dashboard')
+@pushIf(auth()->check() && $cart->products->count() > 0 && auth()->user()?->can('manage carts-details'),
+'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
 @endpushIf
@@ -99,30 +100,33 @@
     <span>${{ $cart->totalFormated() }}</span>
   </div>
 
-  {{-- MODAL SHOW, EDIT --}}
-  <x-modals.simple id="cartDetailsCES"
-    class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
-    <form enctype="multipart/form-data" method="POST" action="{{ route('cart.update') }}" data-persist="true"
-      class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @csrf
-      @method('PUT')
-      <fieldset class="py-3 grid grid-cols-1 gap-6 text-gray-700 md:px-3">
-        <input type="hidden" name="id">
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="quantity">Cantidad</label>
-          <input type="number" id="quantity" name="quantity" min="1"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <button type="submit"
-          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
-      </fieldset>
-    </form>
-    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
-      <button class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
-    </form>
-  </x-modals.simple>
+  @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))
+    {{-- MODAL SHOW, EDIT --}}
+    <x-modals.simple id="cartDetailsCES"
+      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      <form enctype="multipart/form-data" method="POST" action="{{ route('cart.update') }}" data-persist="true"
+        class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+        @csrf
+        @method('PUT')
+        <fieldset class="py-3 grid grid-cols-1 gap-6 text-gray-700 md:px-3">
+          <input type="hidden" name="id">
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="quantity">Cantidad</label>
+            <input type="number" id="quantity" name="quantity" min="1"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
+          <button type="submit"
+            class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
+        </fieldset>
+      </form>
+      <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
+        <button
+          class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+      </form>
+    </x-modals.simple>
 
-  {{-- MODAL DELETE, RESTORE --}}
-  <x-modals.delete id="cartDeatailDelete" />
+    {{-- MODAL DELETE, RESTORE --}}
+    <x-modals.delete id="cartDeatailDelete" />
+  @endif
 @endsection
