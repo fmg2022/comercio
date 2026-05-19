@@ -58,7 +58,7 @@
           @endforelse
         </ul>
       </div>
-      <form action="{{ route('orders.store') }}" method="POST"
+      <form action="{{ route('checkout.process') }}" method="POST"
         class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
         @csrf
         @php $total = Cart::getSubTotalWithoutConditions(); @endphp
@@ -71,12 +71,12 @@
               ${{ number_format($total, 2, ',', '.') }}
             </p>
           </div>
-          <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
+          {{-- <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
             <p class="text-gray-600">Costo de envio estimado</p>
             <p class="font-medium text-gray-900" id="cart-shipping" data-value="{{ $shipping }}">
               ${{ number_format($shipping, 2, ',', '.') }}
             </p>
-          </div>
+          </div> --}}
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
             @php $finalTax = $total * $tax; @endphp
             <p class="text-gray-600">Impuestos estimados</p>
@@ -86,13 +86,13 @@
           </div>
           <div class="pt-4 flex items-center justify-between text-lg font-medium text-gray-900 border-t border-gray-200">
             <p>Total del pedido</p>
-            <p id="cart-total">${{ number_format($total + $shipping + $finalTax, 2, ',', '.') }}
+            <p id="cart-total">${{ number_format($total + $finalTax, 2, ',', '.') }}
             </p>
           </div>
         </div>
         <button type="submit"
-          class="w-full rounded-md bg-indigo-600 px-6 py-3 text-center text-base font-medium text-white shadow-xs hover:bg-indigo-700">
-          Pagar</button>
+          class="w-full rounded-md bg-indigo-600 px-6 py-3 text-center text-base font-medium text-white shadow-xs hover:bg-indigo-700 cursor-pointer">
+          Proceder al pago</button>
         <div class="flex justify-center gap-2 text-sm text-gray-500">
           <span>o</span>
           <x-buttons.link href="{{ route('home') }}" class="font-medium text-indigo-600 hover:text-indigo-500">

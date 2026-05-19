@@ -21,6 +21,9 @@ class Payment extends Model
         'amount',
         'paid_at',
         'nro_fee',
+        'order_id',
+        'payment_state_id',
+        'payment_provider_id',
     ];
 
     // Accessors
