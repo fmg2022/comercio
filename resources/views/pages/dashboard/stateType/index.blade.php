@@ -223,56 +223,6 @@
           <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de pagos registradas</td>
         </tr>
       @endforelse
-
-      <tr>
-        <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Envios: ESTADOS</td>
-      </tr>
-      @forelse ($shipmentStates as $index => $state)
-        <tr>
-          <td>{{ $index + 1 }}</td>
-          <td class="font-bold">{{ $state->code }}</td>
-          <td class="text-slate-300">{{ $state->description }}</td>
-          <td>
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chshipmentState-{{ $state->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
-
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $state->id }}"
-                      data-path="shipment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Estado
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
-                      data-modalID="stateTypeDelete" data-path="shipment-states/{{ $state->id }}"
-                      data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Estado
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          </td>
-        </tr>
-      @empty
-        <tr>
-          <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de envios registradas</td>
-        </tr>
-      @endforelse
     </x-tables.table>
   </div>
 
@@ -288,7 +238,6 @@
         <option value="offer-states">Estados de Ofertas</option>
         <option value="offer-types">Tipos de Ofertas</option>
         <option value="payment-states">Estados de Pagos</option>
-        <option value="shipment-states">Estados de Envío</option>
       </select>
     </div>
     <form enctype="multipart/form-data" method="POST"
