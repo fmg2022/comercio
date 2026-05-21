@@ -30,6 +30,8 @@ class CheckoutController extends Controller
 
         $validated = $request->validate([
             'cart_id' => 'required|exists:carts,id',
+            'notes' => 'nullable|string',
+            'payment_method' => 'required|string|in:mercadopago,store,cash',
         ]);
 
         $cart = Cart::where('id', $validated['cart_id'])
@@ -42,10 +44,12 @@ class CheckoutController extends Controller
 
         CartFacade::setSessionKey('cart_' . auth()->user()->id);
 
-        $order = DB::transaction(function () use ($cart) {
+        $order = DB::transaction(function () use ($cart, $validated) {
             $order = Order::create([
                 'date' => now(),
                 'total' => 0,
+                'iva' => 0,
+                'notes' => $validated['notes'],
                 'order_state_id' => OrderState::where('code', 'CREADO')->value('id'),
                 'user_id' => auth()->user()->id,
                 'address_id' => auth()->user()->getCurrentAddress()->id,
@@ -64,8 +68,9 @@ class CheckoutController extends Controller
 
                 $total += $product->pivot->getSubtotal;
             }
+            $iva = $total * ((float) config('commerce.tax_rate') / 100);
 
-            $order->update(['total' => $total]);
+            $order->update(['total' => $total, 'iva' => $iva]);
             return $order;
         });
 
@@ -78,7 +83,7 @@ class CheckoutController extends Controller
             'provider_transaction_id' => '0',
             'provider_state' => 'pending',
             'checkout_url' => '#',
-            'method' => 'mercadopago',
+            'method' => $validated['payment_method'],
             'amount' => $order->total,
             'paid_at' => null,
             'order_id' => $order->id,
@@ -108,7 +113,7 @@ class CheckoutController extends Controller
                 'email' => $order->user->email,
             ],
             'back_urls' => [
-                'success' => url('/payment/exito'),
+                'success' => route('payment.success'),
                 'pending' => route('payment.pending'),
                 'failure' => route('payment.failure'),
             ],
