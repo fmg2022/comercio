@@ -19,8 +19,7 @@ class CartController extends Controller
 		return view('pages.home.cart.index', [
 			'cartItems' => Cart::getContent(),
 			'cart_id' => auth()->user()->cart->id,
-			'shipping' => 532,
-			'tax' => 0.06 // rand(0, 15) / 100 Impuesto establecido por el comercio
+			'tax' => Cart::getSubTotalWithoutConditions() * floatval(config('commerce.tax_rate')) / 100,
 		]);
 	}
 
@@ -42,10 +41,7 @@ class CartController extends Controller
 				Cart::update(
 					$validated['id'],
 					[
-						'quantity' => [
-							'relative' => false,
-							'value' => $validated['quantity']
-						]
+						'quantity' => $validated['quantity'],
 					]
 				);
 			} else {
