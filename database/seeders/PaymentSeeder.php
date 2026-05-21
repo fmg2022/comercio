@@ -16,14 +16,14 @@ class PaymentSeeder extends Seeder
     {
         $orders = DB::table('orders')->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
             ->get(['orders.id', 'orders.total', 'orders.date', 'order_states.code']);
-        $method = fake()->randomElement(['credit_card', 'debit_card', 'bank_transfer', 'account_money']);
+        $method = fake()->randomElement(['Tarjeta crédito', 'Tarjeta débito', 'Transferencia bancaria', 'Cuenta corriente']);
 
         foreach ($orders as $order) {
             $daysDelay = match ($method) {
-                'credit_card' => rand(0, 2),
-                'debit_card' => rand(0, 1),
-                'bank_transfer' => rand(1, 5),
-                'account_money' => rand(0, 1),
+                'Tarjeta crédito' => rand(0, 2),
+                'Tarjeta débito' => rand(0, 1),
+                'Transferencia bancaria' => rand(1, 5),
+                'Cuenta corriente' => rand(0, 1),
                 default => rand(0, 30),
             };
             $paidAt = null;
@@ -34,7 +34,7 @@ class PaymentSeeder extends Seeder
 
             Payment::factory()->create([
                 'method' => $method,
-                'nro_fee' =>  !in_array($method, ['account_money', 'bank_transfer']) ? rand(1, 12) : 1,
+                'nro_fee' =>  !in_array($method, ['Cuenta corriente', 'Transferencia bancaria']) ? rand(1, 12) : 1,
                 'amount' => $order->total,
                 'order_id' => $order->id,
                 'paid_at' => $paidAt,
