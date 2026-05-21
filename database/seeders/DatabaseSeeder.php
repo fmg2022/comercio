@@ -27,8 +27,6 @@ class DatabaseSeeder extends Seeder
             OfferStateSeeder::class,
             OfferTemplatesSeeder::class,
             OfferSeeder::class,
-            ShipmentStateSeeder::class,
-            ShipmentSeeder::class,
             OrderStateSeeder::class,
             OrderSeeder::class,
             PaymentProviderSeeder::class,
@@ -36,6 +34,7 @@ class DatabaseSeeder extends Seeder
             PaymentSeeder::class,
             OrderPurchaseStateSeeder::class,
             OrderPurchaseSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }

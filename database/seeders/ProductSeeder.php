@@ -24,6 +24,7 @@ class ProductSeeder extends Seeder
                 'price' => $product['price'],
                 'sku' => $product['SKU'],
                 'stock' => $product['stock'],
+                'min_stock' => rand(10, 20),
                 'weight' => $product['weight'],
                 'container' => $product['container'],
                 'description' => $product['description'],

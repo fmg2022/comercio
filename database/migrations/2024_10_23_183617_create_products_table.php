@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('image', 100);
             $table->decimal('price', 10, 2);
             $table->string('sku', 50)->unique();
-            $table->unsignedInteger('stock');
+            $table->unsignedInteger('stock')->default(0);
+            $table->unsignedInteger('min_stock')->default(0);
             $table->string('weight', 12);
             $table->string('container', 50);
             $table->text('description')->nullable();

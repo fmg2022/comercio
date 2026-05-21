@@ -19,9 +19,12 @@ class Product extends Model
         'sku',
         'price',
         'stock',
+        'min_stock',
         'weight',
         'container',
         'description',
+        'category_id',
+        'brand_id',
     ];
 
     // Accessors & Mutators
