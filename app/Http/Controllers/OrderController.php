@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderState;
 use App\Models\Payment;
-use App\Models\Shipment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -37,16 +36,20 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'cart_id' => 'required|exists:carts,id',
+            'notes' => 'nullable|string',
+            'payment_method' => 'required|string|in:mercadopago,store,cash',
         ]);
 
         $cart = Cart::find($validated['cart_id']);
         $products = $cart->products()->get();
         CartFacade::setSessionKey('cart_' . auth()->user()->id);
 
-        $order = DB::transaction(function () use ($products) {
+        $order = DB::transaction(function () use ($products, $validated) {
             $order = Order::create([
-                'date' => now()->format('Y-m-d H:i:s'),
+                'date' => now(),
                 'total' => 0,
+                'iva' => 0,
+                'notes' => $validated['notes'],
                 'order_state_id' => OrderState::where('code', 'CREADO')->value('id'),
                 'user_id' => auth()->user()->id,
                 'address_id' => auth()->user()->getCurrentAddress()->id,
@@ -63,25 +66,28 @@ class OrderController extends Controller
                 ]);
             }
 
+            $iva = (float) config('commerce.tax_rate');
+
             $order->update([
                 'total' => $order->products->sum(fn($product) => $product->pivot->getSubtotal),
+                'iva' => $order->total * ($iva / 100),
             ]);
             return $order;
         });
-        // dd($order);
+
         CartFacade::clear();
         $cart->products()->detach();
 
         // Tiene que ir a Payment Model (store) y una ruta que lo llame (create) desde un controller
         // Solo para comprobar la creación de la orden, págos y envíos (TABLAS)
-        DB::transaction(function () use ($order) {
+        DB::transaction(function () use ($order, $validated) {
             $payment = Payment::factory()->create([
                 'checkout_url' => null,
-                'method' => 'bank_transfer',
+                'method' => $validated['payment_method'],
                 'amount' => $order->total,
                 'paid_at' => null,
                 'order_id' => $order->id,
-                'payment_state_id' => DB::table('payment_states')->where('code', 'PENDIENTE')->value('id'),
+                'payment_state_id' => DB::table('payment_states')->where('code', 'EN_PROCESO')->value('id'),
                 'payment_provider_id' => DB::table('payment_providers')->where('code', 'MERCADO_PAGO')->value('id'),
             ]);
             // Tiene que ser redirecionado a una página de pagos (Paypal, MercadoPago,...), de ahí que accedan a la ruta payments y cree uno nuevo.
@@ -90,20 +96,11 @@ class OrderController extends Controller
                 'payment_id' => $payment->id,
             ]);
 
-            $payment->update([
-                'payment_state_id' => DB::table('payment_states')->where('code', 'EN_PROCESO')->value('id'),
-            ]);
-
             // Cuando el pago ha sido confirmado (APROBADO) se procede a crear el envío
             $payment->update([
                 'payment_state_id' => DB::table('payment_states')->where('code', 'APROBADO')->value('id'),
                 'checkout_url' => 'https://www.mercadopago.com.ar/checkout/payments/result/?payment_id=123456789',
                 'paid_at' => now(),
-            ]);
-
-            Shipment::factory()->create([
-                'order_id' => $order->id,
-                'shipment_state_id' => DB::table('shipment_states')->where('code', 'PENDIENTE')->value('id'),
             ]);
         });
         // $order->user->email

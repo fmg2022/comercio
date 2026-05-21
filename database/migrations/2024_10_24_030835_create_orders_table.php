@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->dateTime('date')->default(now());
             $table->decimal('total', 12, 2)->default(0);
+            $table->decimal('iva', 10, 2)->default(0);
+            $table->text('notes')->nullable();
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');
             $table->foreignId('order_state_id')->constrained()->onUpdate('cascade');
             $table->foreignId('address_id')->constrained()->onUpdate('cascade');

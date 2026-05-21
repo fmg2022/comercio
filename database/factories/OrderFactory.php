@@ -24,6 +24,7 @@ class OrderFactory extends Factory
         return [
             'date' => $this->faker->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
             'total' => 0,
+            'iva' => 0,
             'user_id' => $user_id,
             'order_state_id' => $state_id,
             'address_id' => $address_id,

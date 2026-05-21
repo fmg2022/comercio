@@ -257,7 +257,7 @@
 
 @session('success')
   <div
-    class="fixed top-20 right-5 z-10 flex items-center w-full max-w-xs p-4 space-x-4 text-sm rounded-lg shadow-sm text-green-300 bg-green-600/90 animate-[700ms_ease-in-out_3s_fadeOut]"
+    class="fixed top-20 right-5 z-10 flex items-center w-full max-w-xs p-4 space-x-4 text-sm rounded-lg shadow-sm text-green-300 bg-green-600/90 animate-[800ms_ease-in-out_5s_fadeOut]"
     role="alert">
     <span class="text-green-300">
       <x-icons.success class="size-6" />

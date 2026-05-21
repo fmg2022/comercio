@@ -18,6 +18,8 @@ class Order extends Model
 	protected $fillable = [
 		'date',
 		'total',
+		'iva',
+		'notes',
 		'order_state_id',
 		'user_id',
 		'address_id',
@@ -49,6 +51,20 @@ class Order extends Model
 	{
 		return Attribute::make(
 			get: fn() => $this->products->sum('pivot.quantity')
+		);
+	}
+
+	protected function subTotal(): Attribute
+	{
+		return Attribute::make(
+			get: fn() => $this->products->sum(fn($product) => $product->pivot->price * $product->pivot->quantity)
+		);
+	}
+
+	protected function discount(): Attribute
+	{
+		return Attribute::make(
+			get: fn() => $this->products->sum('pivot.discount')
 		);
 	}
 
@@ -87,11 +103,6 @@ class Order extends Model
 	public function orderState(): BelongsTo
 	{
 		return $this->belongsTo(OrderState::class);
-	}
-
-	public function shipment(): HasOne
-	{
-		return $this->hasOne(Shipment::class);
 	}
 
 	public function payment(): HasOne

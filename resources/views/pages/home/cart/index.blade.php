@@ -65,6 +65,14 @@
         <input type="hidden" name="cart_id" value="{{ auth()->user()->cart->id }}">
         <h2 class="text-lg font-medium text-gray-900">Resumen del pedido</h2>
         <div class="space-y-4">
+          <div>
+            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
+              Notas adicionales (Opcional)
+            </label>
+            <textarea name="notes" id="notes" rows="3"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Ej: Prefiero retirar después de las 17hs..."></textarea>
+          </div>
           <div class="pt-4 flex items-center justify-between text-base">
             <p class="text-gray-600">Subtotal</p>
             <p class="font-medium text-gray-900" id="cart-subtotal">
@@ -72,22 +80,40 @@
             </p>
           </div>
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
-            <p class="text-gray-600">Costo de envio estimado</p>
-            <p class="font-medium text-gray-900" id="cart-shipping" data-value="{{ $shipping }}">
-              ${{ number_format($shipping, 2, ',', '.') }}
-            </p>
-          </div>
-          <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
-            @php $finalTax = $total * $tax; @endphp
             <p class="text-gray-600">Impuestos estimados</p>
-            <p class="font-medium text-gray-900" id="cart-tax" data-value="{{ $tax }}">
-              ${{ number_format($finalTax, 2, ',', '.') }}
+            <p class="font-medium text-gray-900">
+              ${{ number_format($tax, 2, ',', '.') }}
             </p>
           </div>
           <div class="pt-4 flex items-center justify-between text-lg font-medium text-gray-900 border-t border-gray-200">
             <p>Total del pedido</p>
-            <p id="cart-total">${{ number_format($total + $shipping + $finalTax, 2, ',', '.') }}
+            <p id="cart-total">${{ number_format($total + $tax, 2, ',', '.') }}
             </p>
+          </div>
+          <div class="pt-4 border-t border-gray-200">
+            <div class="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800">
+              <p class="font-medium">📦 Retiro en local</p>
+              <p class="mt-1">Dirección: {{ config('app_settings.address') ?? 'Dirección no configurada' }}</p>
+              <p class="mt-1">Horario: {{ config('app_settings.pickup_hours') ?? 'Consultar' }}</p>
+              <p class="mt-1 text-xs">⚠️ Presentá tu DNI y el número de pedido al retirar.</p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-gray-200">
+            <fieldset>
+              <legend class="text-sm font-medium text-gray-900 mb-3">Método de pago</legend>
+              <div class="space-y-3">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="radio" name="payment_method" value="mercadopago"
+                    class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
+                  <span class="text-sm text-gray-700">💳 Mercado Pago (Tarjeta / QR / Dinero en cuenta)</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="radio" name="payment_method" value="store"
+                    class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                  <span class="text-sm text-gray-700">🏪 Pago en tienda (Efectivo / Transferencia)</span>
+                </label>
+              </div>
+            </fieldset>
           </div>
         </div>
         <button type="submit"

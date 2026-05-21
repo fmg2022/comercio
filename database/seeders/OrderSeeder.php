@@ -21,55 +21,87 @@ class OrderSeeder extends Seeder
 			->get()
 			->groupBy('product_id');
 
-		Order::factory(80)->create()->each(function ($order) use ($validOffers) {
+		Order::factory(200)->create()->each(function ($order) use ($validOffers) {
 			$currentOffers = $validOffers->filter(function ($offers) use ($order) {
 				return $offers->contains(function ($offer) use ($order) {
-					return $offer->start_date <= $order->date &&
-						$offer->end_date >= $order->date;
+					return $offer->start_date <= $order->date && $offer->end_date >= $order->date;
 				});
 			});
-			$products = DB::table('products')->inRandomOrder()
-				->limit(rand(1, 8))
-				->get()
-				->mapWithKeys(function ($product) use ($currentOffers) {
-					$offerData = $currentOffers->get($product->id)?->random();
-					$qty = rand(1, 6);
 
-					$discount = 0;
-					$templateId = '';
-					$typeCode = '';
+			$subtotal = 0;
+			$discountTotal = 0;
+			$products = [];
 
-					if ($offerData) {
-						$discount = round($this->calculateDiscountAmount($offerData->code, $qty, $product->price, $offerData->pay_qty, $offerData->buy_qty ?? 0), 2);
-						$templateId = $offerData->template_id;
-						$typeCode = $offerData->code;
-					}
+			$randomProducts = DB::table('products')->inRandomOrder()
+				->limit(rand(1, 15))
+				->get();
 
-					return [
-						$product->id => [
-							'quantity' => $qty,
-							'price' => $product->price,
-							'discount' => $discount,
-							'offer_template_id' => $templateId,
-							'offer_type_code' => $typeCode,
-						]
-					];
-				});
+			foreach ($randomProducts as $product) {
+				$qty = rand(1, 6);
+				$lineSubtotal = $qty * $product->price;
+				$subtotal += $lineSubtotal;
 
-			$order->products()->attach($products->toArray());
+				$offerData = $currentOffers->get($product->id)?->random();
+				$discount = 0;
+				$templateId = '';
+				$typeCode = '';
+
+				if ($offerData) {
+					$discount = round(
+						$this->calculateDiscountAmount(
+							$offerData->code,
+							$qty,
+							$product->price,
+							$offerData->pay_qty,
+							$offerData->buy_qty ?? 0
+						),
+						2
+					);
+					$templateId = $offerData->template_id;
+					$typeCode = $offerData->code;
+					$discountTotal += $discount;
+				}
+
+				$products[$product->id] = [
+					'quantity' => $qty,
+					'price' => $product->price,
+					'discount' => $discount,
+					'offer_template_id' => $templateId,
+					'offer_type_code' => $typeCode,
+				];
+			}
+
+			// Cálculo de total e IVA
+			$base = $subtotal - $discountTotal;
+			$taxRate = floatval(config('commerce.tax_rate', 21)) / 100;
+			$iva = round($base * $taxRate, 2);
+			$total = $base + $iva;
+
+			// Adjuntar productos y actualizar la orden
+			$order->products()->attach($products);
+			$order->update([
+				'total' => $total,
+				'iva' => $iva,
+			]);
 		});
 	}
 
 	private function calculateDiscountAmount(string $offerType, int $quantity, float $unitPrice, float $discountValue, int $buyQuantity): float
 	{
 		if ($offerType === 'PERCENTAGE') {
-			return round($unitPrice * $quantity * (1 - $discountValue), 2);
+			$percentage = $discountValue;
+			if ($percentage > 1) {
+				$percentage /= 100;
+			}
+			return $unitPrice * $quantity * $percentage;
 		}
 		if ($offerType === 'X_FOR_Y') {
-			return round($unitPrice * ((intdiv($quantity, $buyQuantity) * ($buyQuantity - $discountValue))), 2);
+			$sets = intdiv($quantity, $buyQuantity);
+			$freeItemsPerSet = $buyQuantity - $discountValue;
+			return $unitPrice * ($sets * $freeItemsPerSet);
 		}
 		if ($offerType === 'FIXED') {
-			return round($discountValue * $quantity, 2);
+			return $discountValue * $quantity;
 		}
 		return 0;
 	}

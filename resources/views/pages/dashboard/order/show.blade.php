@@ -86,4 +86,14 @@
     <span>Total</span>
     <span><span class="me-px">$</span>{{ $order->total_formated }}</span>
   </div>
+
+  @if (isset($order->notes))
+    <div class="px-4 py-5 mt-6 flex flex-col gap-4 bg-slate-800 rounded-xl lg:max-w-1/2">
+      <h3 class="text-xl text-slate-300 font-semibold underline underline-offset-4">Notas adicionales</h3>
+      <p>"{{ $order->notes }}"</p>
+      <p>De: <i
+          class="text-sm font-medium">{{ request()->routeIs('my.orders.show') ? 'Yo' : $order->user->fullName() }}</i>
+      </p>
+    </div>
+  @endif
 @endsection
