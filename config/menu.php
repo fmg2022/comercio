@@ -119,5 +119,11 @@ return [
       'route' => '#',
       'permission' => null,
     ],
+    [
+      'name' => 'Configuración',
+      'icon' => 'config',
+      'route' => 'admin.settings',
+      'permission' => 'manage settings',
+    ],
   ],
 ];
