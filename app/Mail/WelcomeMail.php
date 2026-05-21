@@ -41,6 +41,7 @@ class WelcomeMail extends Mailable
     {
         return new Content(
             view: 'email.welcome',
+            with: ['user' => $this->user, 'customMessage' => $this->customMessage],
         );
     }
 

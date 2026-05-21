@@ -1,104 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bienvenido a {{ config('app.name') }}</title>
   <style>
+    /* Respaldo para clientes que no soportan estilos inline */
+    .ExternalClass,
+    .ReadMsgBody {
+      width: 100%;
+      background-color: #f4f7fb;
+    }
+
+    body,
+    table,
+    td,
+    p,
+    a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table,
+    td {
+      border-collapse: collapse;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    img {
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #f4f4f7;
       margin: 0;
       padding: 0;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #ffffff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .header {
-      background-color: #0b3662;
-      color: white;
-      text-align: center;
-      padding: 30px 20px;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .content {
-      padding: 30px 25px;
-      color: #333333;
-      line-height: 1.6;
-    }
-
-    .button {
-      display: inline-block;
-      border: 1px solid #0b3662;
-      text-decoration: none;
-      padding: 12px 25px;
-      border-radius: 6px;
-      margin: 20px 0;
-      font-weight: bold;
-    }
-
-    .footer {
-      background-color: #f4f4f7;
-      text-align: center;
-      padding: 20px;
-      font-size: 12px;
-      color: #777777;
-    }
-
-    @media only screen and (max-width: 600px) {
-      .container {
-        width: 100% !important;
-      }
-
-      .content {
-        padding: 20px !important;
-      }
+      background-color: #f4f7fb;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
   </style>
 </head>
 
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>¡Bienvenido, {{ $user->fullName() }}!</h1>
-    </div>
-    <div class="content">
-      <p>Hola <strong>{{ $user->fullName() }}</strong>,</p>
-      <p>Tu correo electrónico ha sido verificado con éxito. ¡Tu cuenta ya está activa!</p>
-      <p>{{ $customMessage }}</p>
+<body
+  style="margin:0; padding:0; background-color:#f4f7fb; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <center style="width:100%; table-layout:fixed;">
+    <div style="max-width:600px; margin:0 auto;">
+      <table align="center" cellpadding="0" cellspacing="0" width="100%"
+        style="max-width:600px; background-color:#ffffff; border-radius:24px; overflow:hidden; box-shadow:0 10px 25px -5px rgba(0,0,0,0.05); margin:20px auto;">
 
-      <p>Ahora puedes disfrutar de todos los beneficios de nuestra plataforma:</p>
-      <ul>
-        <li>Acceso a contenido exclusivo</li>
-        <li>Soporte prioritario</li>
-        <li>Ofertas especiales para nuevos miembros</li>
-      </ul>
+        <!-- HEADER con logo y nombre -->
+        <tr>
+          <td
+            style="background: linear-gradient(135deg, #0b3662 0%, #1a4d7a 100%); padding: 30px 30px 25px; text-align: center;">
+            <!-- Logo: si tienes variable, reemplazar -->
+            <img src="{{ $logo_url ?? asset('images/logo-blanco.png') }}" alt="{{ config('app.name') }}"
+              style="max-width: 160px; height: auto; margin-bottom: 15px;">
+            <h1 style="margin:10px 0 0; color:#ffffff; font-size: 28px; font-weight: 600;">¡Bienvenido,
+              {{ $user->fullName() }}!</h1>
+            <p style="margin:10px 0 0; color:#d1e3ff; font-size: 16px;">Tu cuenta ha sido activada exitosamente</p>
+          </td>
+        </tr>
 
-      <center>
-        <a href="{{ route('dashboard.index') }}" class="button">Ir a mi panel</a>
-      </center>
+        <!-- CUERPO PRINCIPAL -->
+        <tr>
+          <td style="padding: 35px 30px 25px;">
+            <p style="margin:0 0 18px; font-size: 16px; color:#2d3748;">Hola <strong>{{ $user->fullName() }}</strong>,
+            </p>
+            <p style="margin:0 0 18px; font-size: 16px; color:#4a5568;">Gracias por verificar tu correo electrónico. Tu
+              cuenta ya está activa y lista para que aproveches todos los beneficios de {{ config('app.name') }}.</p>
 
-      <p>¿Necesitas ayuda? Contáctanos en <a href="mailto:soporte@tudominio.com">soporte@tudominio.com</a>.</p>
-      <p>¡Gracias por formar parte de {{ config('app.name') }}!</p>
+            @if (!empty($customMessage))
+              <div
+                style="background-color:#f0f9ff; border-left: 4px solid #0b3662; padding: 15px; margin-bottom: 25px; border-radius: 8px;">
+                <p style="margin:0; color:#1a4d7a; font-size: 15px;">{{ $customMessage }}</p>
+              </div>
+            @endif
+
+            <h3 style="margin:0 0 12px; font-size: 18px; color:#1e2a3a;">✨ ¿Qué puedes hacer ahora?</h3>
+            <table cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 25px;">
+              <tr>
+                <td
+                  style="padding: 8px 0 8px 25px; background: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'%230b3662\'%3E%3Cpath d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z\'/%3E%3C/svg%3E') left center no-repeat; background-size: 16px;">
+                  Acceso a contenido exclusivo y ofertas personalizadas</td>
+              </tr>
+              <tr>
+                <td
+                  style="padding: 8px 0 8px 25px; background: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'%230b3662\'%3E%3Cpath d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z\'/%3E%3C/svg%3E') left center no-repeat; background-size: 16px;">
+                  Soporte prioritario las 24 horas</td>
+              </tr>
+              {{-- <tr>
+                <td style="padding: 8px 0 8px 25px; background: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' viewBox=\'0 0 24 24\' fill=\'%230b3662\'%3E%3Cpath d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z\'/%3E%3C/svg%3E') left center no-repeat; background-size: 16px;">Descuento exclusivo del 10% en tu primera compra</td>
+              </tr> --}}
+            </table>
+
+            <div style="text-align: center; margin: 30px 0 20px;">
+              <a href="{{ route('dashboard.index') }}"
+                style="background-color:#0b3662; color:#ffffff; padding: 14px 32px; text-decoration:none; border-radius: 40px; font-weight:600; display:inline-block; font-size:16px;">🎉
+                Ir a mi panel</a>
+            </div>
+
+            <p style="margin:25px 0 0; font-size:14px; color:#718096;">¿Necesitas ayuda? Escríbenos a <a
+                href="mailto:soporte@tudominio.com" style="color:#0b3662;">soporte@tudominio.com</a> o responde este
+              correo.</p>
+            <p style="margin:15px 0 0; font-size:14px; color:#4a5568;">¡Gracias por formar parte de
+              {{ config('app.name') }}!</p>
+          </td>
+        </tr>
+
+        <!-- FOOTER con logo pequeño, redes sociales y datos legales -->
+        <tr>
+          <td style="background-color:#f8fafc; padding: 25px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+            <img src="{{ $logo_small_url ?? asset('images/logo-oscuro.png') }}" alt="{{ config('app.name') }}"
+              style="max-width: 80px; height: auto; margin-bottom: 15px;">
+            <p style="margin:0 0 15px; font-size:13px; color:#475569;">Síguenos en redes</p>
+            <div style="margin:10px 0 20px;">
+              <a href="#a" style="display:inline-block; margin:0 8px;"><img
+                  src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="28" height="28"
+                  alt="Facebook" style="max-width:28px;"></a>
+              <a href="#a" style="display:inline-block; margin:0 8px;"><img
+                  src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="28" height="28"
+                  alt="Instagram" style="max-width:28px;"></a>
+              <a href="#a style="display:inline-block; margin:0 8px;"><img
+                  src="https://cdn-icons-png.flaticon.com/512/733/733579.png" width="28" height="28"
+                  alt="Twitter" style="max-width:28px;"></a>
+            </div>
+            <p style="margin:0 0 8px; font-size:12px; color:#64748b;">© {{ date('Y') }} {{ config('app.name') }}.
+              Todos los derechos reservados.</p>
+            <p style="margin:0; font-size:11px; color:#94a3b8;">Si no solicitaste esta verificación, puedes ignorar este
+              mensaje.</p>
+            <p style="margin:10px 0 0; font-size:11px;"><a href="#" style="color:#94a3b8;">Cancelar
+                suscripción</a></p>
+          </td>
+        </tr>
+      </table>
     </div>
-    <div class="footer">
-      © {{ date('Y') }} {{ config('app.name') }}. Todos los derechos reservados.<br>
-      Si no solicitaste esta verificación, ignora este mensaje.
-    </div>
-  </div>
+  </center>
 </body>
 
 </html>

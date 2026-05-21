@@ -42,9 +42,14 @@ class InvoiceMail extends Mailable
      */
     public function content(): Content
     {
+        $store = [
+            'address' => config('app_settings.address'),
+            'phone' => config('app_settings.phone'),
+            'pickup_hours' => config('app_settings.pickup_hours'),
+        ];
         return new Content(
             view: 'email.order',
-            with: ['order' => $this->order],
+            with: ['order' => $this->order, 'store' => $store],
         );
     }
 
