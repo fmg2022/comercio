@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\OfferState;
-use App\Models\OfferType;
 use App\Models\Order;
-use App\Models\OrderState;
 use App\Models\Payment;
-use App\Models\PaymentState;
 use App\Models\Product;
-use App\Models\ShipmentState;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\JsonResponse;
@@ -51,7 +45,7 @@ class DashboardController extends Controller
 				'icon' => 'category',
 				'color' => 'orange',
 				'name' => 'Categorias',
-				'total' => Category::count()
+				'total' => \App\Models\Category::count()
 			]
 		];
 
@@ -148,11 +142,10 @@ class DashboardController extends Controller
 	public function indexStatesTypes(): View
 	{
 		return view('pages.dashboard.statetype.index', [
-			'orderStates' => OrderState::get(['id', 'code', 'description']),
-			'offerStates' => OfferState::get(['id', 'code', 'description']),
-			'offerTypes' => OfferType::get(['id', 'code', 'description']),
-			'paymentStates' => PaymentState::get(['id', 'code', 'description']),
-			'shipmentStates' => ShipmentState::get(['id', 'code', 'description']),
+			'orderStates' => \App\Models\OrderState::get(['id', 'code', 'description']),
+			'offerStates' => \App\Models\OfferState::get(['id', 'code', 'description']),
+			'offerTypes' => \App\Models\OfferType::get(['id', 'code', 'description']),
+			'paymentStates' => \App\Models\PaymentState::get(['id', 'code', 'description']),
 		]);
 	}
 }
