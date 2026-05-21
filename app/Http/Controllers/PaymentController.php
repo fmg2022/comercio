@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PaymentsExport;
 use App\Http\Requests\PaymentRequest;
+use App\Models\OrderState;
 use App\Models\Payment;
 use App\Models\PaymentState;
 use Illuminate\Contracts\View\View;
@@ -25,7 +26,7 @@ class PaymentController extends Controller
 	public function update(PaymentRequest $request, Payment $payment): RedirectResponse
 	{
 		$payment->update($request->validated());
-		return redirect()->back();
+		return back();
 	}
 
 	public function fetch(string $id): JsonResponse
@@ -61,5 +62,63 @@ class PaymentController extends Controller
 	public function export()
 	{
 		return Excel::download(new PaymentsExport, 'payments.xlsx');
+	}
+
+	// Rutas para redirecciones de Mercado Pago
+	public function success(Request $request): RedirectResponse
+	{
+		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+		// Busca por el external_reference
+		if ($paymentId) {
+			$payment = Payment::where('provider_transaction_id', $paymentId)
+				->orWhere('id', $paymentId)
+				->first();
+
+			if ($payment && $payment->provider_state !== 'approved') {
+				$payment->update([
+					'provider_transaction_id' => $paymentId,
+					'provider_state' => 'approved',
+					'paid_at' => now(),
+				]);
+
+				if ($payment->order) {
+					$payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+				}
+			}
+		}
+
+		return redirect('/')->with('success', 'El pago fue aprobado.');
+	}
+
+	public function failure(Request $request): RedirectResponse
+	{
+		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+
+		if ($paymentId) {
+			$pago = Payment::where('provider_transaction_id', $paymentId)
+				->orWhere('id', $paymentId)
+				->first();
+			if ($pago && $pago->provider_state !== 'rejected') {
+				$pago->update(['provider_state' => 'rejected']);
+			}
+		}
+
+		return redirect('/')->with('error', 'El pago fue rechazado.');
+	}
+
+	public function pending(Request $request): RedirectResponse
+	{
+		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+
+		if ($paymentId) {
+			$pago = Payment::where('provider_transaction_id', $paymentId)
+				->orWhere('id', $paymentId)
+				->first();
+			if ($pago && $pago->provider_state !== 'pending') {
+				$pago->update(['provider_state' => 'pending']);
+			}
+		}
+
+		return redirect('/')->with('warning', 'El pago está pendiente de acreditación.');
 	}
 }

@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/{id}/clear', [CartController::class, 'clearCart'])->name('clearCart');
     });
 
-    // Ruta para la orden
-    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    // Ruta para la compra
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
+    // Rutas para las redirecciones de Mercado Pago (back_urls)
+    Route::get('/payment/exito', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('/payment/fallo', [PaymentController::class, 'failure'])->name('payment.failure');
+    Route::get('/payment/pendiente', [PaymentController::class, 'pending'])->name('payment.pending');
+
+    // Ruta para notificaciones (webhook) - SIN protección CSRF
+    Route::post('/webhook/mercadopago', [PaymentController::class, 'handleWebhook'])->name('webhook.mercadopago');
 
     // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

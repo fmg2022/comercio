@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.9",
         "league/commonmark": "2.8.2",
         "maatwebsite/excel": "3.1.x-dev",
+        "mercadopago/dx-php": "^3.9",
         "spatie/laravel-permission": "^6.25"
     },
     "require-dev": {

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'mercadopago' => [
+        'access_token' => env('MERCADO_PAGO_ACCESS_TOKEN'),
+        'public_key' => env('MERCADO_PAGO_PUBLIC_KEY'),
+        'currency_id' => env('MERCADO_PAGO_CURRENCY_ID'),
+    ],
+
 ];

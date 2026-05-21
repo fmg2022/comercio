@@ -58,7 +58,7 @@
           @endforelse
         </ul>
       </div>
-      <form action="{{ route('orders.store') }}" method="POST"
+      <form action="{{ route('checkout.process') }}" method="POST"
         class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
         @csrf
         @php $total = Cart::getSubTotalWithoutConditions(); @endphp
@@ -117,8 +117,8 @@
           </div>
         </div>
         <button type="submit"
-          class="w-full rounded-md bg-indigo-600 px-6 py-3 text-center text-base font-medium text-white shadow-xs hover:bg-indigo-700">
-          Pagar</button>
+          class="w-full rounded-md bg-indigo-600 px-6 py-3 text-center text-base font-medium text-white shadow-xs hover:bg-indigo-700 cursor-pointer">
+          Proceder al pago</button>
         <div class="flex justify-center gap-2 text-sm text-gray-500">
           <span>o</span>
           <x-buttons.link href="{{ route('home') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
