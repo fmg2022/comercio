@@ -27,7 +27,6 @@ class RoleSeeder extends Seeder
 
         $vendor = Role::create(['name' => 'Vendedor']);
         $vendorPermission = [
-            ...$customerPermission,
             'list users',
             'list addresses',
             'list orders',
@@ -47,8 +46,6 @@ class RoleSeeder extends Seeder
             'list payments',
             'manage offers',
             'list carts',
-            'list shipments',
-            'manage shipments',
             'manage providers',
         ];
         $admin->givePermissionTo($adminPermission);
