@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="UTF-8">
   <title>Factura B {{ $factura->numero }}</title>
   <style>
-    /* RESET Y CONFIGURACIÓN GLOBAL */
+    /* ========== ESTILOS COMPATIBLES CON DOMPDF ========== */
     * {
       margin: 0;
       padding: 0;
@@ -13,354 +13,368 @@
     }
 
     body {
-      font-family: 'DejaVu Sans', 'Arial', sans-serif;
-      font-size: 10px;
+      background: #e2e8f0;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      padding: 20px;
+      font-size: 10pt;
       line-height: 1.4;
       color: #1a1a1a;
-      padding: 15px;
     }
 
-    /* CONTENEDOR PRINCIPAL */
     .invoice-container {
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    /* ENCABEZADO - TABLA IZQUIERDA-CENTRO-DERECHA */
-    .header-table {
+      max-width: 1100px;
       width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .header-table td {
-      vertical-align: top;
-      padding: 5px;
+    /* Header ARCA - sin gradient, color sólido */
+    .arca-header {
+      background-color: #1f2b3d;
+      /* sólido, compatible */
+      padding: 20px 30px;
+      color: white;
+      border-bottom: 3px solid #facc15;
+      overflow: hidden;
     }
 
-    /* LOGO */
-    .logo-placeholder {
-      width: 80px;
-      height: 80px;
-      border: 1px solid #ddd;
-      line-height: 80px;
-      font-size: 11px;
-      color: #999;
-      background-color: #f9f9f9;
+    .arca-logo {
+      float: left;
+      width: 60%;
     }
 
-    /* DATOS DEL COMERCIO */
-    .comercio-nombre {
-      font-size: 16px;
-      font-weight: bold;
-      color: #1a5f7a;
-      margin-bottom: 5px;
-    }
-
-    .comercio-datos {
-      font-size: 8px;
-      color: #555;
-    }
-
-    /* TÍTULO FACTURA */
-    .factura-titulo {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1a5f7a;
+    .comprobante-tipo {
+      float: right;
+      width: 35%;
+      background: rgba(255, 255, 240, 0.15);
+      padding: 8px 15px;
+      border-radius: 40px;
       text-align: center;
     }
 
-    .factura-letra {
-      font-size: 28px;
-      font-weight: bold;
-      color: #d9534f;
+    .arca-logo h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
     }
 
-    .factura-numero {
-      font-size: 14px;
-      margin-top: 5px;
+    .arca-logo p {
+      font-size: 10px;
+      opacity: 0.8;
+      margin: 4px 0 0;
     }
 
-    /* CAJAS DE INFORMACIÓN */
-    .info-box {
-      border: 1px solid #ddd;
-      padding: 8px;
-      background-color: #fafafa;
-      margin-bottom: 15px;
-    }
-
-    .info-box-title {
-      font-weight: bold;
+    .comprobante-tipo .label {
       font-size: 9px;
-      margin-bottom: 5px;
-      color: #1a5f7a;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    /* TABLA DE PRODUCTOS */
+    .comprobante-tipo .tipo {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: #facc15;
+    }
+
+    .clearfix::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    .invoice-body {
+      padding: 25px 30px;
+    }
+
+    /* Tabla para emisor/receptor (misma fila, dos columnas) */
+    .datos-tabla {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .datos-tabla td {
+      width: 50%;
+      vertical-align: top;
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .datos-item {
+      margin: 5px 0;
+      font-size: 9pt;
+    }
+
+    .datos-item strong {
+      font-weight: 600;
+      display: inline-block;
+      min-width: 120px;
+    }
+
+    /* Info fiscal (tabla) */
+    .info-fiscal {
+      background: #f1f5f9;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      width: 100%;
+    }
+
+    .info-fiscal table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .info-fiscal td {
+      padding: 4px 8px;
+      font-size: 9pt;
+    }
+
+    /* Tabla de productos */
     .items-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .items-table th,
     .items-table td {
       border: 1px solid #ccc;
-      padding: 6px;
+      padding: 8px;
+      font-size: 9pt;
       vertical-align: top;
     }
 
     .items-table th {
-      background-color: #e8ecef;
-      font-weight: bold;
-      text-align: center;
-      font-size: 9px;
-    }
-
-    .items-table td {
-      font-size: 9px;
-    }
-
-    /* ALINEACIÓN DE COLUMNAS */
-    .items-table td:nth-child(1),
-    .items-table td:nth-child(2),
-    .items-table th:nth-child(1),
-    .items-table th:nth-child(2) {
+      background: #eef2ff;
       text-align: left;
+      font-weight: bold;
     }
 
-    .items-table td:nth-child(3),
-    .items-table th:nth-child(3),
-    .items-table th:nth-child(4),
-    .items-table th:nth-child(5) {
-      text-align: center;
-    }
-
-    .items-table td:nth-child(4),
-    .items-table td:nth-child(5) {
+    .text-right {
       text-align: right;
     }
 
-    /* TOTALES */
-    .totales-table {
-      width: 250px;
-      float: right;
-      border-collapse: collapse;
+    /* Totales e IVA */
+    .totales-iva {
+      text-align: right;
       margin-bottom: 20px;
     }
 
-    .totales-table td {
-      padding: 5px;
-      font-size: 10px;
-    }
-
-    .totales-table td:first-child {
-      text-align: right;
-      font-weight: normal;
-    }
-
-    .totales-table td:last-child {
-      text-align: right;
-      font-weight: bold;
-    }
-
-    .total-final {
-      font-size: 14px;
-      font-weight: bold;
-      color: #d9534f;
-      border-top: 2px solid #333;
-    }
-
-    /* CONDICIONES LEGALES */
-    .condiciones-legales {
-      clear: both;
-      margin-top: 30px;
-      padding-top: 10px;
-      border-top: 1px solid #ddd;
-      font-size: 7px;
-      text-align: center;
-      color: #777;
-    }
-
-    .comprobante-original {
-      background-color: #1a5f7a;
-      color: white;
-      padding: 3px 8px;
-      font-size: 7px;
+    .totales-card {
       display: inline-block;
-      margin-bottom: 10px;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 12px 20px;
+      min-width: 260px;
+      text-align: left;
     }
 
-    /* FOOTER */
-    .footer {
+    .totales-card p {
+      margin: 5px 0;
+      font-size: 9pt;
+    }
+
+    .totales-card hr {
+      margin: 6px 0;
+      border: 0;
+      border-top: 1px solid #ccc;
+    }
+
+    /* Footer legal - garantizado visible */
+    .footer-legal {
       margin-top: 20px;
-      font-size: 7px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 15px;
+      font-size: 8pt;
       text-align: center;
-      color: #999;
+      color: #475569;
+      clear: both;
     }
 
-    /* CLEAR FIX */
-    .clearfix::after {
-      content: "";
-      clear: both;
-      display: table;
+    .footer-row {
+      margin-bottom: 20px;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 7px;
+    }
+
+    .footer-col {
+      float: left;
+      width: 33%;
+      text-align: center;
+    }
+
+    .qr-fake {
+      background: #f1f5f9;
+      width: 60px;
+      height: 60px;
+      display: inline-block;
+      line-height: 60px;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 8px;
+      color: #334155;
+      font-family: monospace;
     }
   </style>
 </head>
 
 <body>
   <div class="invoice-container">
-
-    <!-- ENCABEZADO: Logo | Título Factura | Datos Fecha -->
-    <table class="header-table">
-      <tr>
-        <!-- IZQUIERDA: LOGO O NOMBRE CORTO -->
-        <td style="width: 25%; text-align: left;">
-          <div class="logo-placeholder">
-            <img src="{{ public_path('images/logo/logo.jpg') }}" alt="Logo {{ $comercio->nombre }}"
-              style="width: 100%; height: 100%; object-fit: contain;">
-          </div>
-        </td>
-
-        <!-- CENTRO: TÍTULO FACTURA B -->
-        <td style="width: 50%; text-align: center;">
-          <div class="factura-titulo">
-            FACTURA
-          </div>
-          <div class="factura-letra">B</div>
-          <div class="factura-numero">
-            N° {{ $factura->punto_venta ?? '0001' }}-{{ $factura->numero }}
-          </div>
-        </td>
-
-        <!-- DERECHA: FECHA Y CONDICIÓN -->
-        <td style="width: 25%; text-align: right;">
-          <div class="comercio-datos" style="text-align: right;">
-            <strong>Fecha Emisión:</strong><br>
-            {{ $factura->fecha_emision }}<br><br>
-            <strong>Condición IVA:</strong><br>
-            Consumidor Final<br>
-            <span class="comprobante-original">COMPROBANTE ORIGINAL</span>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <!-- DATOS DEL COMERCIO -->
-    <div class="info-box">
-      <div class="comercio-nombre">{{ $comercio->nombre }}</div>
-      <div class="comercio-datos">
-        <strong>Domicilio Comercial:</strong> {{ $comercio->domicilio }}<br>
-        <strong>Condición frente al IVA:</strong> {{ $comercio->condicion_iva }}<br>
-        <strong>Ingresos Brutos:</strong> {{ $comercio->ingresos_brutos }}<br>
-        <strong>Fecha de Inicio de Actividades:</strong> {{ $comercio->fecha_inicio }}
+    <!-- Header con color sólido -->
+    <div class="arca-header clearfix">
+      <div class="arca-logo">
+        <h2>ARCA</h2>
+        <p>Agencia de Recaudación y Control Aduanero</p>
+      </div>
+      <div class="comprobante-tipo">
+        <div class="label">COMPROBANTE AUTORIZADO</div>
+        <div class="tipo">FACTURA B</div>
+        <div style="font-size:8px;">Consumidor Final / Exento</div>
       </div>
     </div>
 
-    <!-- DATOS DEL CLIENTE (OPCIONAL EN FACTURA B) -->
-    <div class="info-box">
-      <div class="info-box-title">DATOS DEL CLIENTE</div>
-      <table style="width: 100%; border-collapse: collapse;">
+    <div class="invoice-body">
+      <!-- Emisor y receptor en tabla de dos columnas (misma fila) -->
+      <table class="datos-tabla">
         <tr>
-          <td style="width: 50%;"><strong>Nombre/Razón Social:</strong>
-            {{ $factura->cliente_nombre ?? 'Consumidor Final' }}</td>
-          <td style="width: 50%;"><strong>Documento:</strong> {{ $factura->cliente_documento ?? 'Sin documento' }}</td>
-        </tr>
-        <tr>
-          <td><strong>Domicilio:</strong> {{ $factura->cliente_domicilio ?? 'Sin domicilio' }}</td>
-          <td><strong>Condición IVA:</strong> Consumidor Final</td>
+          <td>
+            <div class="datos-item"><strong>Razón Social:</strong> {{ $comercio->razon_social ?? $comercio->nombre }}
+            </div>
+            <div class="datos-item"><strong>CUIT:</strong> {{ $comercio->cuit }}</div>
+            <div class="datos-item"><strong>Domicilio Comercial:</strong> {{ $comercio->domicilio }}</div>
+            <div class="datos-item"><strong>Condición IVA:</strong> {{ $comercio->condicion_iva }}</div>
+            <div class="datos-item"><strong>Ingresos Brutos:</strong> {{ $comercio->ingresos_brutos }}</div>
+            <div class="datos-item"><strong>Inicio Actividades:</strong> {{ $comercio->fecha_inicio }}</div>
+          </td>
+          <td>
+            <div class="datos-item"><strong>Cliente:</strong> {{ $factura->cliente_nombre ?? 'Consumidor Final' }}</div>
+            <div class="datos-item"><strong>Documento:</strong> {{ $factura->cliente_tipo_doc ?? 'DNI' }}
+              {{ $factura->cliente_documento ?? 'Sin documento' }}</div>
+            <div class="datos-item"><strong>Condición IVA:</strong> Consumidor Final</div>
+            <div class="datos-item"><strong>Domicilio:</strong> {{ $factura->cliente_domicilio ?? 'Sin domicilio' }}
+            </div>
+            @if ($factura->cliente_telefono ?? false)
+              <div class="datos-item"><strong>Teléfono:</strong> {{ $factura->cliente_telefono }}</div>
+            @endif
+          </td>
         </tr>
       </table>
-    </div>
 
-    <!-- TABLA DE PRODUCTOS -->
-    <table class="items-table">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Descripción</th>
-          <th>Cantidad</th>
-          <th>Precio Unit.</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        @forelse($factura->items as $item)
+      <!-- Datos del comprobante -->
+      <div class="info-fiscal">
+        <table>
           <tr>
-            <td>{{ $item->sku ?? '---' }}</td>
-            <td>{{ $item->name }}<span style="text-transform: uppercase"> {{ $item->brand->name }}</span>
-              {{ $item->weight ? ' - ' . $item->weight : '' }}
+            <td><strong>Punto de Venta:</strong> {{ sprintf('%04d', $factura->punto_venta ?? 1) }}</td>
+            <td><strong>Número Factura:</strong>
+              {{ sprintf('%04d', $factura->punto_venta ?? 1) }}-{{ sprintf('%08d', $factura->numero) }}</td>
+            <td><strong>Fecha Emisión:</strong> {{ $factura->fecha_emision }}</td>
+          </tr>
+          <tr>
+            <td><strong>CAE:</strong> <span
+                style="background:white; padding:2px 8px; border:1px solid #ccc; border-radius:20px;">{{ $factura->cae ?? 'Pendiente' }}</span>
             </td>
-            <td style="text-align: center;">{{ $item->pivot->quantity }}</td>
-            <td style="text-align: right;">$ {{ number_format($item->pivot->price, 2, ',', '.') }}</td>
-            <td style="text-align: right;">$ {{ $item->pivot->subtotal() }}</td>
+            <td><strong>Vto. CAE:</strong> {{ $factura->cae_vencimiento ?? '---' }}</td>
+            <td><strong>Moneda:</strong> Peso Argentino ($)</td>
           </tr>
-        @empty
-          <tr>
-            <td colspan="5" style="text-align: center;">No hay productos cargados</td>
-          </tr>
-        @endforelse
-      </tbody>
-    </table>
-
-    <!-- TOTALES (SIN DISCRIMINAR IVA) -->
-    <div class="clearfix">
-      <table class="totales-table">
-        <tr>
-          <td><strong>SUBTOTAL:</strong></td>
-          <td>$ {{ number_format($factura->subtotal, 2, ',', '.') }}</td>
-        </tr>
-        <tr style="color: #777;">
-          <td>IVA (21% incluido):</td>
-          <td>$ {{ number_format($factura->iva, 2, ',', '.') }}</td>
-        </tr>
-        <tr class="total-final">
-          <td><strong>TOTAL:</strong></td>
-          <td><strong>$ {{ number_format($factura->total, 2, ',', '.') }}</strong></td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- FORMA DE PAGO -->
-    <div class="info-box" style="clear: both; margin-top: 20px;">
-      <div class="info-box-title">FORMA DE PAGO</div>
-      <table style="width: 100%;">
-        <tr>
-          <td style="width: 33%;"><strong>Medio de pago:</strong> {{ $factura->medio_pago ?? 'Efectivo' }}</td>
-          <td style="width: 33%;"><strong>Cuotas/Cuenta:</strong> {{ $factura->cuotas ?? 'Contado' }}</td>
-          <td style="width: 34%;"><strong>N° Operación:</strong> {{ $factura->operacion_numero ?? '---' }}</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- CONDICIONES LEGALES ARGENTINAS -->
-    <div class="condiciones-legales">
-      <p>
-        <strong>Factura B - Crédito Fiscal No Computable</strong><br>
-        Comprobante Original. No válido como factura de crédito fiscal.<br>
-        Conforme Resolución General AFIP N° 1415 y modificatorias.<br>
-        El comprobante contiene todos los requisitos exigidos por la Ley N° 11.683 y normas complementarias.<br>
-        El consumidor podrá realizar reclamos en defensa del consumidor según Ley 24.240.
-      </p>
-    </div>
-
-    <!-- QR AFIP / CAE (si corresponde) -->
-    @if (isset($factura->cae))
-      <div style="text-align: center; margin-top: 15px; font-size: 8px;">
-        <strong>CAE N°:</strong> {{ $factura->cae }}<br>
-        <strong>Vto. CAE:</strong> {{ $factura->cae_vencimiento }}
+        </table>
       </div>
-    @endif
 
-    <!-- FOOTER -->
-    <div class="footer">
-      Gracias por su compra | {{ $comercio->nombre }} | Horario de atención:
-      {{ $comercio->horario_atencion ?? 'Lunes a Domingo 8:00 a 21:00' }}
+      <!-- Tabla de items -->
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th class="text-right">Cantidad</th>
+            <th class="text-right">Precio Unitario</th>
+            <th class="text-right">Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($factura->items as $item)
+            <tr>
+              <td>{{ $item->sku ?? '---' }}</td>
+              <td>{{ $item->descripcion }}</td>
+              <td class="text-right">{{ $item->pivot->quantity }}</td>
+              <td class="text-right">$ {{ number_format($item->pivot->price, 2, ',', '.') }}</td>
+              <td class="text-right">$ {{ number_format($item->pivot->quantity * $item->pivot->price, 2, ',', '.') }}
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="5" class="text-right">No hay productos cargados</td>
+            </tr>
+          @endforelse
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="text-right"><strong>Subtotal Neto</strong></td>
+            <td class="text-right"><strong>$ {{ number_format($factura->subtotal, 2, ',', '.') }}</strong></td>
+          </tr>
+          <tr style="background:#fef9e3;">
+            <td colspan="4" class="text-right"><strong>+ IVA 21% (incluido)</strong></td>
+            <td class="text-right"><strong>$ {{ number_format($factura->iva, 2, ',', '.') }}</strong></td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="4" class="text-right"><strong>TOTAL A PAGAR</strong></td>
+            <td class="text-right"><strong>$ {{ number_format($factura->total, 2, ',', '.') }}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Desglose transparencia fiscal -->
+      <div class="totales-iva">
+        <div class="totales-card">
+          <p><strong>Transparencia Fiscal - Detalle del IVA Incluido</strong></p>
+          <p><span>Subtotal gravado:</span> <span>$ {{ number_format($factura->subtotal, 2, ',', '.') }}</span></p>
+          <p><span>Alícuota IVA:</span> <span>21%</span></p>
+          <p><span>Importe IVA incluido:</span> <span>$ {{ number_format($factura->iva, 2, ',', '.') }}</span></p>
+          <hr>
+          <p><span>Monto de otros impuestos:</span> <span>Incluido en precio final</span></p>
+          <p><span>Percepciones:</span> <span>{{ $factura->percepciones ?? 'No aplica' }}</span></p>
+          <hr>
+          <p><strong><span>Total con impuestos incluidos:</span> <span>$
+                {{ number_format($factura->total, 2, ',', '.') }}</span></strong></p>
+        </div>
+      </div>
+
+      <!-- Footer legal (visible) -->
+      <div class="footer-legal">
+        <div class="footer-row">
+          <p class="footer-col" style="text-align: left;">CAE Nº: {{ $factura->cae ?? '---' }} - Vto.:
+            {{ $factura->cae_vencimiento ?? '---' }}</p>
+          <div class="footer-col">
+            @if (isset($factura->qr_base64))
+              <img src="data:image/png;base64,{{ $factura->qr_base64 }}" width="60" height="60" alt="QR ARCA">
+            @else
+              <div class="qr-fake">[ CÓDIGO QR ]<br>validación</div>
+            @endif
+          </div>
+          <p class="footer-col" style="text-align: right;">Factura autorizada por ARCA - RG 1415<br>IVA incluido -
+            Comprobante original</p>
+        </div>
+        <p style="clear: both; font-size: 8px; padding-top: 20px;">
+          La presente factura responde a la normativa vigente de ARCA. Verifique en la web oficial.
+        </p>
+        <!-- FOOTER -->
+        <p class="footer">
+          Gracias por su compra | {{ $comercio->nombre }} | Horario de atención:
+          {{ $comercio->horario_atencion ?? 'Lunes a Domingo 8:00 a 21:00' }}
+        </p>
+      </div>
+
     </div>
-
-  </div>
 </body>
 
 </html>

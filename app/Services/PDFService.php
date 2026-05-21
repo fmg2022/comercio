@@ -18,29 +18,36 @@ class PDFService
     private function prepareData(Order $order)
     {
         $comercio = (object) [
-            'nombre' => config('app.name') . ' S.R.L.',
-            'domicilio' => 'Av. Corrientes 1234, CABA',
-            'condicion_iva' => 'Responsable Inscripto',
-            'ingresos_brutos' => '123-456789-0',
-            'fecha_inicio' => '15/03/1998',
-            'horario_atencion' => 'Lunes a Sábado 8:00 a 22:00'
+            'nombre' => config('app.name'),
+            'cuit' => config('app_settings.cuit'),
+            'domicilio' => config('app_settings.address'),
+            'condicion_iva' => config('app_settings.iva_condition'),
+            'ingresos_brutos' => config('app_settings.gross_income'),
+            'fecha_inicio' => date('d/m/Y', strtotime(config('commerce.start_date'))),
+            'horario_atencion' => config('app_settings.pickup_hours'),
         ];
 
+        $branches = json_decode(config('app_settings.branches'), true) ?? [];
+        $iva = (float) config('commerce.tax_rate');
+
         $factura = (object) [
-            'punto_venta' => '0001',
+            'punto_venta' => $branches[0]['nro'] ?? '0001',
             'numero' => str_pad($order->id, 8, '0', STR_PAD_LEFT),
             'fecha_emision' => date('d/m/Y', strtotime($order->date)),
             'cliente_nombre' => $order->user->fullName(),
-            'cliente_documento' => 'DNI 30.123.456',
+            'cliente_tipo_doc' => 'DNI',
+            'cliente_documento' => $order->user->dni,
             'cliente_domicilio' => $order->user->getCurrentAddress()->shortAddress(),
-            'subtotal' => $order->total,
-            'iva' => $order->total * (21 / 100), // 21% del subtotal
-            'total' => $order->total * (100 + 21) / 100, // 100% del subtotal + 21% IVA
+            'cliente_telefono' => $order->user->phone,
+            'subtotal' => $order->subtotal,
+            'iva' => $order->total * ($iva / 100),
+            'total' => $order->total * (100 + $iva) / 100,
             'medio_pago' => $order->payment->payment_method,
             'cuotas' => $order->payment->nro_fee,
             'operacion_numero' => 'TRX-12345',
-            'cae' => '12345678901234',
-            'cae_vencimiento' => Carbon::parse($order->date)->addDays(10)->format('d/m/Y'),
+            'cae' => '12345678901234', // Obtener valor de la SDK de ARCA
+            'cae_vencimiento' => Carbon::parse($order->date)->addDays(10)->format('d/m/Y'), // Obtener valor de la SDK de ARCA
+            'qr_base64' => null, // Obtener valor de la SDK de ARCA
             'items' => $order->products
         ];
 
