@@ -4,28 +4,26 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OfferStateController;
-use App\Http\Controllers\OfferTypeController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\OrderStateController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PaymentStateController;
-use App\Http\Controllers\PDFController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProviderController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\ShipmentStateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
   Route::prefix('pdf')->name('pdf.')->group(function () {
-    Route::get('/orders/{order}', [PDFController::class, 'generatePDFOrders'])->name('order');
+    Route::get('/orders/{order}', [App\Http\Controllers\PDFController::class, 'generatePDFOrders'])->name('order');
   });
 
   Route::prefix('dashboard')->group(function () {
+    // Settings routes
+    Route::middleware(['permission:manage settings'])->prefix('admin')->group(function () {
+      Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings');
+      Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+    });
+
+    // My routes
     Route::group(['middleware' => ['permission:list my_section']], function () {
       Route::get('my/addresses', [AddressController::class, 'myIndex'])->name('my.addresses.index');
       Route::get('my/orders', [OrderController::class, 'myIndex'])->name('my.orders.index');
@@ -41,7 +39,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     });
 
     // User routes
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/users', UserController::class);
     Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::put('/users/{user}/roles', [UserController::class, 'updateRole'])->name('users.updateRole');
@@ -81,20 +79,19 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Model states & types routes
     Route::prefix('states-types')->group(function () {
-      Route::get('/', [DashboardController::class, 'indexStatesTypes'])->name('states-types.index')->middleware('permission:list state-type-tables');
+      Route::get('/', [App\Http\Controllers\DashboardController::class, 'indexStatesTypes'])->name('states-types.index')->middleware('permission:list state-type-tables');
 
       Route::group(['middleware' => ['permission:manage state-type-tables']], function () {
-        Route::resource('/order-states', OrderStateController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('/offer-states', OfferStateController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('/offer-types', OfferTypeController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('/payment-states', PaymentStateController::class)->only(['store', 'update', 'destroy']);
-        Route::resource('/shipment-states', ShipmentStateController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('/order-states', App\Http\Controllers\OrderStateController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('/offer-states', App\Http\Controllers\OfferStateController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('/offer-types', App\Http\Controllers\OfferTypeController::class)->only(['store', 'update', 'destroy']);
+        Route::resource('/payment-states', App\Http\Controllers\PaymentStateController::class)->only(['store', 'update', 'destroy']);
       });
     });
 
     // Role routes
     Route::middleware(['permission:manage roles'])->group(function () {
-      Route::resource('/roles', RoleController::class)->except(['show', 'create', 'edit']);
+      Route::resource('/roles', App\Http\Controllers\RoleController::class)->except(['show', 'create', 'edit']);
     });
 
     // Provider routes
