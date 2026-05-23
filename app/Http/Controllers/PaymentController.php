@@ -87,7 +87,7 @@ class PaymentController extends Controller
 			}
 		}
 
-		return redirect('/')->with('success', 'El pago fue aprobado.');
+		return redirect('/')->with('success', 'La compra se realizó con éxito.');
 	}
 
 	public function failure(Request $request): RedirectResponse

@@ -74,8 +74,8 @@ class CheckoutController extends Controller
             return $order;
         });
 
-        // CartFacade::clear();
-        // $cart->products()->detach();
+        CartFacade::clear();
+        $cart->products()->detach();
 
         MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
 

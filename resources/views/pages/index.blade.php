@@ -1,9 +1,5 @@
 @extends('layouts.app')
 
-@push('scripts-app')
-  {{-- <script type="module" src="{{ asset('js/index.js') }}" defer></script> --}}
-@endpush
-
 @section('content')
   <x-sections.carousel :length="count($offers)" :is_image="true">
     @foreach ($offers as $offerItem)
