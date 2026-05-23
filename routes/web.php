@@ -37,7 +37,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/payment/pendiente', [PaymentController::class, 'pending'])->name('payment.pending');
 
     // Ruta para notificaciones (webhook) - SIN protección CSRF
-    Route::post('/webhook/mercadopago', [PaymentController::class, 'handleWebhook'])->name('webhook.mercadopago');
+    Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
+        ->middleware('verify.mp.webhook')
+        ->name('webhook.mercadopago');
 
     // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
