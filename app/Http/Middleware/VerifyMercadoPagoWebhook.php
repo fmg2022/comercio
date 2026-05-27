@@ -41,20 +41,16 @@ class VerifyMercadoPagoWebhook
             return response()->json(['error' => 'Timestamp expirado.'], 401);
         }
 
-        $secret = config('services.mercadopago.webhook_secret');
+        $secret = config('commerce.mercadopago.webhook_secret');
         if (!$secret) {
             Log::error('Webhook: Secreto no configurado en config/services.php');
             return response()->json(['error' => 'Error de configuración del servidor.'], 500);
         }
 
-        $uri = $request->url();
-        $rawBody = $request->getContent();
-
-        $payload = json_decode($rawBody, true);
-        $eventId = $payload['data']['id'] ?? null;
+        $eventId = $request['data_id'] ?? null;
 
         if (!$eventId) {
-            Log::warning('Webhook: No se pudo extraer el ID del evento del payload');
+            Log::warning('Webhook: No se pudo extraer el ID del evento', ['event id' => $eventId]);
             return response()->json(['error' => 'ID de evento no encontrado'], 400);
         }
 

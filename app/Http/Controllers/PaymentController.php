@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\PaymentsExport;
 use App\Http\Requests\PaymentRequest;
+use App\Mail\InvoiceMail;
 use App\Models\OrderState;
 use App\Models\Payment;
 use App\Models\PaymentState;
@@ -11,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PaymentController extends Controller
@@ -68,15 +70,17 @@ class PaymentController extends Controller
 	public function success(Request $request): RedirectResponse
 	{
 		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
-		// Busca por el external_reference
-		if ($paymentId) {
-			$payment = Payment::where('provider_transaction_id', $paymentId)
-				->orWhere('id', $paymentId)
+		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
+
+		if ($paymentId && $payment_id) {
+			$payment = Payment::where('paymentId', $paymentId)
+				->orWhere('id', $payment_id)
+				->orWhere('transaction_id', $payment_id)
 				->first();
 
 			if ($payment && $payment->provider_state !== 'approved') {
 				$payment->update([
-					'provider_transaction_id' => $paymentId,
+					'paymentId' => $paymentId,
 					'provider_state' => 'approved',
 					'paid_at' => now(),
 				]);
@@ -85,21 +89,29 @@ class PaymentController extends Controller
 					$payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
 				}
 			}
-		}
 
-		return redirect('/')->with('success', 'La compra se realizó con éxito.');
+			Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
+
+			return redirect('/')->with('success', 'La compra se realizó con éxito.');
+		}
+		return redirect('/')->with('error', 'No se encontró el pago.');
 	}
 
 	public function failure(Request $request): RedirectResponse
 	{
 		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
 
 		if ($paymentId) {
-			$pago = Payment::where('provider_transaction_id', $paymentId)
-				->orWhere('id', $paymentId)
+			$pago = Payment::where('paymentId', $paymentId)
+				->orWhere('id', $payment_id)
+				->orWhere('transaction_id', $payment_id)
 				->first();
 			if ($pago && $pago->provider_state !== 'rejected') {
-				$pago->update(['provider_state' => 'rejected']);
+				$pago->update([
+					'paymentId' => $paymentId,
+					'provider_state' => 'rejected'
+				]);
 			}
 		}
 
@@ -109,13 +121,18 @@ class PaymentController extends Controller
 	public function pending(Request $request): RedirectResponse
 	{
 		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
 
 		if ($paymentId) {
-			$pago = Payment::where('provider_transaction_id', $paymentId)
-				->orWhere('id', $paymentId)
+			$pago = Payment::where('paymentId', $paymentId)
+				->orWhere('id', $payment_id)
+				->orWhere('transaction_id', $payment_id)
 				->first();
 			if ($pago && $pago->provider_state !== 'pending') {
-				$pago->update(['provider_state' => 'pending']);
+				$pago->update([
+					'paymentId' => $paymentId,
+					'provider_state' => 'pending'
+				]);
 			}
 		}
 

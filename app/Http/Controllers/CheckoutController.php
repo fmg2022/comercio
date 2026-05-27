@@ -54,6 +54,7 @@ class CheckoutController extends Controller
                 'user_id' => auth()->user()->id,
                 'address_id' => auth()->user()->getCurrentAddress()->id,
             ]);
+
             $total = 0;
 
             foreach ($cart->products as $product) {
@@ -66,32 +67,33 @@ class CheckoutController extends Controller
                     'offer_type_code' => $offerTemplate ? $offerTemplate->offerType->code : '',
                 ]);
 
-                $total += $product->pivot->getSubtotal;
+                $total += (($product->price * $product->pivot->quantity) - $product->pivot->discount);
             }
-            $iva = $total * ((float) config('commerce.tax_rate') / 100);
+            $iva = $total * floatval(config('commerce.tax_rate', 21)) / 100;
 
-            $order->update(['total' => $total, 'iva' => $iva]);
+            $order->update(['total' => $total, 'iva' => round($iva, 2)]);
+
             return $order;
         });
 
         CartFacade::clear();
         $cart->products()->detach();
 
-        MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
+        $accessToken = config('commerce.mercadopago.access_token');
+        MercadoPagoConfig::setAccessToken($accessToken);
 
         $payment = Payment::create([
-            'provider_transaction_id' => '0',
+            'transaction_id' => 'pending_' . uniqid('', true),
+            'paymentId' => 'pay_' . uniqid('', true),
             'provider_state' => 'pending',
             'checkout_url' => '#',
             'method' => $validated['payment_method'],
-            'amount' => $order->total,
+            'amount' => $order->total + $order->iva,
             'paid_at' => null,
             'order_id' => $order->id,
             'payment_state_id' => PaymentState::where('code', 'EN_PROCESO')->value('id'),
             'payment_provider_id' => PaymentProvider::where('code', 'MERCADO_PAGO')->value('id'),
         ]);
-
-        $order->update(['payment_id' => $payment->id]);
 
         $items = $order->products->map(function ($product) {
             $finalUnitPrice = $product->pivot->price - ($product->pivot->discount / $product->pivot->quantity);
@@ -99,11 +101,13 @@ class CheckoutController extends Controller
                 'id' => $product->id,
                 'title' => $product->name . ' ' . strtoupper($product->brand->name) . ', ' . $product->weight,
                 'quantity' => $product->pivot->quantity,
-                'unit_price' => (float) $finalUnitPrice,
+                'unit_price' => (float)$finalUnitPrice,
                 'description' => $product->description,
-                'currency_id' => config('services.mercadopago.currency_id'),
+                'currency_id' => config('commerce.mercadopago.currency_id'),
             ];
         });
+
+        $baseUrl = route('webhook.mercadopago');
 
         $preferenceData = [
             'items' => $items,
@@ -111,6 +115,10 @@ class CheckoutController extends Controller
                 'name' => $order->user->name,
                 'surname' => $order->user->surname,
                 'email' => $order->user->email,
+                'identification' => [
+                    'type' => 'DNI',
+                    'number' => $order->user->dni,
+                ],
             ],
             'back_urls' => [
                 'success' => route('payment.success'),
@@ -119,7 +127,7 @@ class CheckoutController extends Controller
             ],
             'auto_return' => 'approved',
             'external_reference' => (string) $payment->id,
-            'notification_url' => route('webhook.mercadopago', [], true),
+            'notification_url' => $baseUrl . '?source_news=webhooks',
         ];
 
         try {
@@ -127,7 +135,7 @@ class CheckoutController extends Controller
             $preference = $client->create($preferenceData);
 
             $payment->update([
-                'provider_transaction_id' => $preference->id,
+                'transaction_id' => $preference->id,
                 'checkout_url' => $preference->init_point,
             ]);
 
@@ -141,7 +149,7 @@ class CheckoutController extends Controller
                 'response' => $responseBody,
             ]);
             $payment->update([
-                'provider_state' => 'failed',
+                'provider_state' => 'rejected',
                 'payment_state_id' => DB::table('payment_states')->where('code', 'CANCELADO')->value('id'),
             ]);
 
@@ -151,41 +159,61 @@ class CheckoutController extends Controller
 
     public function handleWebhook(Request $request)
     {
-        if ($request->input('type') === 'payment' && $request->input('data.status') === 'approved') {
-            MercadoPagoConfig::setAccessToken(config('services.mercadopago.access_token'));
+        $type = $request->query('type');
+        $paymentId = $request->query('data_id');
 
-            try {
-                $client = new PaymentClient();
-                $paymentInfo = $client->get($request->input('data.id'));
-                $payment = Payment::where('provider_transaction_id', $paymentInfo->external_reference)
-                    ->orWhere('id', $paymentInfo->external_reference)
-                    ->first();
+        if ($type !== 'payment') {
+            Log::info('Webhook ignorado: tipo no es payment', ['type' => $type]);
+            return response()->json(['status' => 'ignored'], 200);
+        }
 
-                if (!$payment) {
-                    Log::warning('Webhook: pago no encontrado', ['external_reference' => $paymentInfo->external_reference]);
-                    return response()->json(['error' => 'Payment not found'], 404);
-                }
+        if (!$paymentId) {
+            Log::warning('Webhook: no se encontró data.id en la URL', ['full_url' => $request->fullUrl()]);
+            return response()->json(['error' => 'Missing data.id parameter'], 400);
+        }
 
-                DB::transaction(function () use ($payment, $paymentInfo) {
-                    $payment->update([
-                        'provider_transaction_id' => $paymentInfo->id,
-                        'provider_state' => $paymentInfo->status,
-                        'paid_at' => $paymentInfo->status === 'approved' ? now() : null,
-                        'nro_fee' => $paymentInfo->installments ?? $payment->nro_fee,
-                    ]);
-                    if ($paymentInfo->status === 'approved') {
-                        $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
-                    }
-                });
+        $accessToken = config('commerce.mercadopago.access_token');
+        MercadoPagoConfig::setAccessToken($accessToken);
 
-                // $payment->order->user->email
-                Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
-            } catch (\Exception $e) {
-                Log::error('Error al procesar webhook de MercadoPago: ', [
-                    'payment_id' => $payment->id,
-                    'error' => $e->getMessage(),
-                ]);
+        try {
+            $paymentClient = new PaymentClient();
+            $mpPayment = $paymentClient->get('160220617939');
+
+            if (!$mpPayment) {
+                Log::warning("No se encontró información del pago para el ID: {$paymentId}");
+                return response()->json(['error' => 'Payment not found'], 404);
             }
+
+            $payment = Payment::where('id', $mpPayment->external_reference)->first();
+
+            if (!$payment) {
+                Log::warning("No se encontró orden local para external_reference: {$mpPayment->external_reference}");
+                return response()->json(['error' => 'Order not found'], 404);
+            }
+
+            $payment->update([
+                'paymentId'               => $mpPayment->collector_id,
+                'provider_state'          => $mpPayment->status,
+                'paid_at'                 => $mpPayment->status === 'approved' ? $mpPayment->date_approved : null,
+                'nro_fee'                 => 1,
+            ]);
+
+            if ($mpPayment->status === 'approved') {
+                $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+            }
+
+            Log::info("Pago {$paymentId} procesado correctamente. Orden {$payment->order->id} actualizada.");
+
+            return response()->json(['status' => 'ok'], 200);
+        } catch (\MercadoPago\Exceptions\MPApiException $e) {
+            $statusCode = $e->getApiResponse()->getStatusCode();
+            $errorContent = $e->getApiResponse()->getContent();
+
+            Log::error("Error de API de Mercado Pago al consultar el pago {$paymentId}.", [
+                'status_code' => $statusCode,
+                'error_details' => $errorContent,
+            ]);
+            return response()->json(['error' => 'Error fetching payment'], 500);
         }
     }
 }
