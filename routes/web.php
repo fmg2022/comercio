@@ -12,6 +12,11 @@ Route::get('/', [IndexController::class, 'index'])->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard.index');
 
+// Ruta para notificaciones (webhook) - SIN protección CSRF
+Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
+    ->middleware('verify.mp.webhook')
+    ->name('webhook.mercadopago');
+
 // Rutas para los productos
 Route::get('/products/search', [IndexController::class, 'search'])->name('product.search');
 Route::get('/products/{product}', [IndexController::class, 'showProduct'])->name('product.show');
@@ -35,11 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/payment/exito', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/fallo', [PaymentController::class, 'failure'])->name('payment.failure');
     Route::get('/payment/pendiente', [PaymentController::class, 'pending'])->name('payment.pending');
-
-    // Ruta para notificaciones (webhook) - SIN protección CSRF
-    Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
-        ->middleware('verify.mp.webhook')
-        ->name('webhook.mercadopago');
 
     // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

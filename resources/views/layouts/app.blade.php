@@ -36,6 +36,8 @@
   </main>
   <!-- Page Footer -->
   @include('layouts.partials.footer')
+  <!-- Scripts -->
+  @stack('scripts-page')
 </body>
 
 </html>

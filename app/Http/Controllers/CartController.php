@@ -16,6 +16,8 @@ class CartController extends Controller
 {
 	public function index(): View
 	{
+		Cart::setSessionKey('cart_' . auth()->user()->id);
+
 		return view('pages.home.cart.index', [
 			'cartItems' => Cart::getContent(),
 			'cart_id' => auth()->user()->cart->id,
