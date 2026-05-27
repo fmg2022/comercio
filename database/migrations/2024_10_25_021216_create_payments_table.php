@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('provider_transaction_id', 50)->unique(); // Datos externos
+            $table->string('transaction_id', 50)->unique(); // Datos externos
+            $table->string('paymentId', 50)->unique(); // Datos externos - collector_id
             $table->string('provider_state', 50); // Datos externos
             $table->text('checkout_url'); // Datos externos
             $table->string('method', 50); // Método de pago: tarjeta, transferencia, etc

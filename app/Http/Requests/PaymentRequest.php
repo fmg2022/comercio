@@ -29,7 +29,8 @@ class PaymentRequest extends FormRequest
             'paid_at' => 'nullable|date',
             'method' => 'required|string|max:255',
             'checkout_url' => 'nullable|url',
-            'provider_transaction_id' => 'nullable|string|max:255',
+            'transaction_id' => 'nullable|string|max:255',
+            'paymentId' => 'nullable|string|max:255',
             'provider_state' => 'nullable|string|max:255',
         ];
     }

@@ -14,35 +14,65 @@ class PaymentSeeder extends Seeder
      */
     public function run(): void
     {
-        $orders = DB::table('orders')->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
-            ->get(['orders.id', 'orders.total', 'orders.date', 'order_states.code']);
-        $method = fake()->randomElement(['Tarjeta crédito', 'Tarjeta débito', 'Transferencia bancaria', 'Cuenta corriente']);
+        $orders = DB::table('orders')
+            ->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
+            ->select('orders.id', 'orders.total', 'orders.date', 'order_states.code')
+            ->get();
+
+        $paymentStates = DB::table('payment_states')->pluck('id', 'code');
+        $nonCanceledStateIds = $paymentStates->except('CANCELADO')->values()->all();
+
+        $activeProviderIds = DB::table('payment_providers')
+            ->where('active', true)
+            ->pluck('id')
+            ->all();
+
+        if (empty($activeProviderIds)) {
+            $this->command->warn('No active payment providers found. Skipping.');
+            return;
+        }
 
         foreach ($orders as $order) {
+            $method = fake()->randomElement([
+                'Tarjeta crédito',
+                'Tarjeta débito',
+                'Transferencia bancaria',
+                'Mercado Pago'
+            ]);
             $daysDelay = match ($method) {
                 'Tarjeta crédito' => rand(0, 2),
                 'Tarjeta débito' => rand(0, 1),
                 'Transferencia bancaria' => rand(1, 5),
-                'Cuenta corriente' => rand(0, 1),
-                default => rand(0, 30),
+                'Mercado Pago' => rand(0, 1),
             };
+
             $paidAt = null;
             if ($order->code !== 'CANCELADO') {
-                $newPaitAt = Carbon::parse($order->date)->addDays($daysDelay);
-                $paidAt = $newPaitAt->isFuture() ? now() : $newPaitAt;
+                $calculatedPaidAt = Carbon::parse($order->date)->addDays($daysDelay);
+                $paidAt = $calculatedPaidAt->isFuture() ? now() : $calculatedPaidAt;
             }
 
-            Payment::factory()->create([
-                'method' => $method,
-                'nro_fee' =>  !in_array($method, ['Cuenta corriente', 'Transferencia bancaria']) ? rand(1, 12) : 1,
-                'amount' => $order->total,
-                'order_id' => $order->id,
-                'paid_at' => $paidAt,
-                'payment_state_id' => $order->code === 'CANCELADO'
-                    ? DB::table('payment_states')->where('code', 'CANCELADO')->value('id')
-                    : DB::table('payment_states')->where('code', '!=', 'CANCELADO')->inRandomOrder()->value('id'),
-                'payment_provider_id' => DB::table('payment_providers')->where('active', true)->inRandomOrder()->value('id'),
-            ]);
+            $nroFee = in_array($method, ['Cuenta corriente', 'Transferencia bancaria'])
+                ? 1
+                : rand(1, 12);
+
+            $paymentFactory = Payment::factory()
+                ->state([
+                    'method' => $method,
+                    'nro_fee' => $nroFee,
+                    'amount' => $order->total,
+                    'paid_at' => $paidAt,
+                    'payment_provider_id' => fake()->randomElement($activeProviderIds),
+                    'order_id' => $order->id,
+                ]);
+
+            if ($order->code === 'CANCELADO') {
+                $paymentFactory->forCanceledOrder();
+            } else {
+                $paymentFactory->state(['payment_state_id' => fake()->randomElement($nonCanceledStateIds)]);
+            }
+
+            $paymentFactory->create();
         }
     }
 }

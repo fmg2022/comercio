@@ -18,7 +18,7 @@ class PaymentsExport implements FromCollection, WithHeadings, WithProperties
             ->map(function ($payment) {
                 return [
                     'id' => $payment->id,
-                    'provider_transaction_id' => $payment->provider_transaction_id,
+                    'transaction_id' => $payment->transaction_id,
                     'provider_state' => $payment->provider_state,
                     'method' => $payment->method,
                     'provider' => $payment->paymentProvider->name,

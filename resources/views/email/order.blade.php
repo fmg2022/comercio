@@ -155,9 +155,9 @@
                   <div style="background-color:#f9fafb; border-radius:12px; padding:15px;">
                     <p style="margin:0 0 6px; font-weight:bold;">💳 Medio de pago</p>
                     <p style="margin:0; color:#4a5568;">{{ $order->payment->method ?? 'Cuenta corriente' }}</p>
-                    @if ($order->payment->provider_transaction_id)
+                    @if ($order->payment->transaction_id)
                       <p style="margin:6px 0 0; font-size:12px; color:#718096;">ID Transacción:
-                        {{ $order->payment->provider_transaction_id }}</p>
+                        {{ $order->payment->transaction_id }}</p>
                     @endif
                   </div>
                 </td>
