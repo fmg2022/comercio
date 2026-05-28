@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Exports\OrdersExport;
+use App\Http\Requests\OrderExportRequest;
 use App\Mail\InvoiceMail;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderState;
 use App\Models\Payment;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +27,7 @@ class OrderController extends Controller
         return view('pages.dashboard.order.index', [
             'orders' => Order::orderByDesc('date')->paginate(10),
             'orderStates' => OrderState::all(['code', 'id']),
+            'users' => User::has('orders')->select('id', 'name', 'surname')->get(),
         ]);
     }
 
@@ -131,8 +136,63 @@ class OrderController extends Controller
         ]);
     }
 
-    public function export()
+    private function applyFilters(Builder $query, array $filters): Builder
     {
-        return Excel::download(new OrdersExport, 'orders.xlsx');
+        if (isset($filters['users']) && is_array($filters['users'])) {
+            $users = array_filter($filters['users'], fn($user) => !is_null($user) && $user !== '');
+            if (!empty($users)) {
+                $query->whereIn('user_id', $users);
+            }
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->where('date', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->where('date', '<=', $filters['date_to']);
+        }
+
+        if (isset($filters['states']) && is_array($filters['states'])) {
+            $states = array_filter($filters['states'], fn($state) => !is_null($state) && $state !== '');
+            if (!empty($states)) {
+                $query->whereIn('order_state_id', $states);
+            }
+        }
+
+        if (!empty($filters['total_from'])) {
+            $query->where('total', '>=', $filters['total_from']);
+        }
+
+        if (!empty($filters['total_to'])) {
+            $query->where('total', '<=', $filters['total_to']);
+        }
+
+        return $query;
+    }
+
+    public function count(OrderExportRequest $request): JsonResponse
+    {
+        $filters = $request->validated();
+
+        $query = Order::query();
+        $this->applyFilters($query, $filters);
+
+        return response()->json(['count' => $query->count()]);
+    }
+
+    public function export(OrderExportRequest $request)
+    {
+        $filters = $request->validated();
+        $query = Order::query()
+            ->with(['user:id,name,surname', 'address:id,street,city', 'orderState:id,code', 'products']);
+
+        $this->applyFilters($query, $filters);
+
+        if ($query->count() === 0) {
+            return redirect()->back()->with('error', 'No se encontraron resultados.');
+        }
+
+        return Excel::download(new OrdersExport($query->orderBy('date', 'desc')->get()), 'orders.xlsx');
     }
 }

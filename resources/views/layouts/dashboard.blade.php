@@ -26,6 +26,8 @@
       background-color: oklch(20.8% 0.042 265.755);
     }
   </style>
+  @stack('styles-dashboard')
+
   <script src="{{ asset('js/indexDash.js') }}" type="module"></script>
   @stack('scripts-dashboard')
 </head>

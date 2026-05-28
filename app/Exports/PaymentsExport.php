@@ -3,41 +3,33 @@
 namespace App\Exports;
 
 use App\Models\Payment;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithProperties;
 
-class PaymentsExport implements FromCollection, WithHeadings, WithProperties
+class PaymentsExport implements FromCollection, WithHeadings, WithProperties, WithMapping
 {
+    protected Collection $payments;
+
+    public function __construct(Collection $payments)
+    {
+        $this->payments = $payments;
+    }
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return Payment::with(['order:id,date', 'paymentState:id,code', 'paymentProvider:id,name'])->get()
-            ->map(function ($payment) {
-                return [
-                    'id' => $payment->id,
-                    'transaction_id' => $payment->transaction_id,
-                    'provider_state' => $payment->provider_state,
-                    'method' => $payment->method,
-                    'provider' => $payment->paymentProvider->name,
-                    'order_date' => $payment->order->date_formated,
-                    'amount' => $payment->amount_formated,
-                    'nro_fee' => $payment->nro_fee,
-                    'payment_state_code' => $payment->paymentState->code,
-                    'date' => $payment->date_formated,
-                    'checkout_url' => $payment->checkout_url,
-                ];
-            });
+        return $this->payments;
     }
 
     public function headings(): array
     {
         return [
+            'Cliente',
             'ID Pago',
-            'ID Transacción',
-            'Estado Proveedor',
             'Método de pago',
             'Proveedor',
             'Fecha de orden',
@@ -45,7 +37,21 @@ class PaymentsExport implements FromCollection, WithHeadings, WithProperties
             'N° Cuota',
             'Estado',
             'Fecha de pago',
-            'URL de pago',
+        ];
+    }
+
+    public function map($payment): array
+    {
+        return [
+            $payment->order->user->fullName() ?? 'Sin nombre',
+            $payment->id,
+            $payment->method,
+            $payment->paymentProvider->name,
+            $payment->order->date_formated,
+            $payment->amount_formated,
+            $payment->nro_fee,
+            $payment->paymentState->code,
+            $payment->date_formated,
         ];
     }
 

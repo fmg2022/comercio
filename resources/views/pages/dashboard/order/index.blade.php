@@ -1,20 +1,111 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && auth()->user()?->can('manage state-type-tables'), 'scripts-dashboard')
-<script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
-@endPushIf
+@can('manage state-type-tables')
+  @push('scripts-dashboard')
+    <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
+    <script src="{{ asset('js/modal.js') }}" defer></script>
 
+    <script type="module">
+      document.getElementById('exportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const formData = new FormData(form);
+        const exportBtn = form.querySelector('#exportBtn');
+        const originalText = exportBtn.innerText;
+
+        exportBtn.disabled = true;
+        exportBtn.innerText = 'Verificando...';
+
+        fetch("{{ route('orders.count') }}", {
+            method: 'POST',
+            headers: {
+              'X-CSRF-TOKEN': formData.get('_token'),
+              'Accept': 'application/json',
+            },
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.count === 0) {
+              alert('⚠️ Sin ordenes para exportar a Excel.');
+            } else {
+              form.submit();
+              form.reset();
+              document.getElementById('exportModal').close();
+            }
+            exportBtn.disabled = false;
+            exportBtn.innerText = originalText;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Ocurrió un error al verificar las órdenes. Inténtalo de nuevo.');
+            exportBtn.disabled = false;
+            exportBtn.innerText = originalText;
+          });
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const userSelect = new Choices('#users', {
+          searchEnabled: true,
+          searchPlaceholderValue: 'Buscar usuario...',
+          removeItemButton: true,
+          placeholder: true,
+          placeholderValue: 'Selecciona uno o más usuarios',
+          shouldSort: false,
+        });
+
+        const stateSelect = new Choices('#states', {
+          removeItemButton: true,
+          placeholder: true,
+          placeholderValue: 'Selecciona uno o más estados',
+          shouldSort: false,
+        });
+      })
+    </script>
+  @endPush
+
+  @push('styles-dashboard')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+    <style>
+      .choices__inner {
+        background-color: #fff !important;
+        border-color: #e2e8f0 !important;
+        border-radius: 0.375rem !important;
+        min-height: 42px !important;
+      }
+
+      .choices__list--dropdown {
+        z-index: 10 !important;
+      }
+    </style>
+  @endpush
+@endcan
+
+{{-- https://github.com/Choices-js/Choices --}}
 {{-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
     - El mensaje de éxito al crear un producto --}}
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
-    <x-slot:textTitle>Ordenes</x-slot:textTitle>
+    <x-slot:textTitle>
+      Ordenes
+      @if (request()->routeIs('my.orders.index'))
+        de
+        <span class="text-slate-300">{{ auth()->user()->fullName() }}</span>
+      @endif
+    </x-slot:textTitle>
     @can('manage state-type-tables')
-      <x-buttons.linkFill href="{{ route('orders.export') }}" class="bg-green-700 active:bg-green-600">
-        Exportar a Excel
-      </x-buttons.linkFill>
+      @if (!request()->routeIs('my.orders.index'))
+        <button onclick="openModal('exportModal')"
+          class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
+          Exportar a Excel
+        </button>
+      @endif
     @endcan
   </x-sections.headerTitle>
 
@@ -22,10 +113,12 @@
     <x-slot:thead>
       <tr class="text-left">
         <th>#</th>
-        <th>Usuario</th>
+        @if (!request()->routeIs('my.orders.index'))
+          <th>Usuario</th>
+        @endif
         <th>Fecha</th>
         <th>Total</th>
-        <th class="hidden md:table-cell">M. Pago</th>
+        <th class="hidden lg:table-cell">M. Pago</th>
         <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
@@ -37,10 +130,12 @@
       @endphp
       <tr>
         <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-        <td class="font-bold">{{ $fullName }}</td>
+        @if (!request()->routeIs('my.orders.index'))
+          <td class="font-bold">{{ $fullName }}</td>
+        @endif
         <td class="text-slate-300">{{ $order->date_formated }}</td>
         <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
-        <td class="hidden text-slate-300 capitalize md:table-cell">
+        <td class="hidden text-slate-300 capitalize lg:table-cell">
           {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>
         <td class="hidden md:table-cell">
           <span @class([
@@ -114,18 +209,21 @@
           @method('PUT')
           <div class="mb-16 grid place-items-center text-slate-900">
             <div class="px-5 pb-4 flex gap-5 text-2xl">
-              <div class="flex flex-col gap-5">
-                <span class="text-lg text-slate-600">De:</span>
-                <span class="text-lg text-slate-600">Monto:</span>
-                <label class="text-lg text-slate-600" for="select_states">
+              <div class="flex flex-col gap-3 justify-between text-lg text-slate-600">
+                <span>De:</span>
+                <span>Monto:</span>
+                <label for="select_states">
                   Estado de la orden:
                 </label>
               </div>
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-5 text-base">
                 <h3 class="font-bold"></h3>
-                <p>$0</p>
+                <div class="font-semibold">
+                  <span>$</span>
+                  <p class="inline-block">0</p>
+                </div>
                 <select id="select_states" name="states"
-                  class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+                  class="outline-none px-2 py-1 rounded-md bg-slate-100 text-slate-900">
                   @foreach ($orderStates as $states)
                     <option value="{{ $states->id }}">
                       {{ $states->code }}
@@ -143,5 +241,80 @@
         </form>
       </div>
     </x-modals.simple>
+
+    @if (!request()->routeIs('my.orders.index'))
+      <x-modals.simple id="exportModal" title="Filtros para la Orden"
+        class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+        <form id="exportForm" method="GET" action="{{ route('orders.export') }}" class="w-full">
+          @csrf
+
+          <div class="px-4 py-2 space-y-6">
+            <div>
+              <label for="users" class="block text-sm font-medium text-gray-700">Usuarios (múltiple)</label>
+              <div class="mt-2">
+                <select name="users[]" id="users" multiple required>
+                  <option value="" selected>Todos</option>
+                  @foreach ($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->fullName() }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="states" class="block text-sm font-medium text-gray-700">Estados (múltiple)</label>
+              <select name="states[]" id="states" multiple required>
+                <option value="" selected>Todos</option>
+                @foreach ($orderStates as $state)
+                  <option value="{{ $state->id }}">{{ $state->code }}</option>
+                @endforeach
+              </select>
+            </div>
+
+            <div class="flex flex-wrap justify-around items-center">
+              <div>
+                <label for="date_from" class="block text-sm font-medium text-gray-700">Desde fecha</label>
+                <input type="date" name="date_from" id="date_from"
+                  class="w-44 px-2 py-1 border border-slate-200 rounded-md outline-none">
+              </div>
+
+              <div>
+                <label for="date_to" class="block text-sm font-medium text-gray-700">Hasta fecha</label>
+                <input type="date" name="date_to" id="date_to" value="{{ now()->format('Y-m-d') }}"
+                  class="w-44 px-2 py-1 border border-slate-200 rounded-md outline-none">
+              </div>
+            </div>
+
+            <div class="flex flex-wrap justify-around items-center">
+              <div>
+                <label for="total_from" class="block text-sm font-medium text-gray-700">Monto desde</label>
+                <p>
+                  $
+                  <input type="number" name="total_from" id="total_from" placeholder="0" min="0"
+                    class="w-40 px-2 py-1 border-b-2 border-b-slate-300 rounded-md bg-slate-50 outline-none">
+                </p>
+              </div>
+
+              <div>
+                <label for="total_to" class="block text-sm font-medium text-gray-700">Monto hasta</label>
+                <p>
+                  $
+                  <input type="number" name="total_to" id="total_to" placeholder="1.000.000" min="0"
+                    class="w-40 px-2 py-1 border-b-2 border-b-slate-300 rounded-md bg-slate-50 outline-none">
+                </p>
+              </div>
+            </div>
+            <div class="pt-3 flex justify-end gap-6 text-white">
+              <button type="reset"
+                class="px-3 py-2 bg-slate-600 font-semibold rounded-md hover:bg-slate-500 cursor-pointer">Limpiar</button>
+              <button type="submit" id="exportBtn"
+                class="px-3 py-2 bg-green-700 font-semibold rounded-md hover:bg-green-600 cursor-pointer">
+                Exportar
+              </button>
+            </div>
+          </div>
+        </form>
+      </x-modals.simple>
+    @endif
   @endcan
 @endsection

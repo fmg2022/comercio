@@ -1,7 +1,7 @@
 @props(['title' => '', 'titleClass' => ''])
 
 <dialog
-  {{ $attributes->merge(['class' => 'backdrop:bg-purple-900/35 backdrop:backdrop-blur-sm rounded-md overflow-hidden top-1/2 left-1/2 -translate-1/2']) }}
+  {{ $attributes->merge(['class' => 'backdrop:bg-purple-900/35 backdrop:backdrop-blur-sm rounded-lg overflow-hidden top-1/2 left-1/2 -translate-1/2']) }}
   closedby="any">
   <div class="relative flex flex-col items-center gap-4 p-4">
     @if ($title)

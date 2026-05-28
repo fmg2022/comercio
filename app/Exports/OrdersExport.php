@@ -2,44 +2,54 @@
 
 namespace App\Exports;
 
-use App\Models\Order;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithProperties;
 
-class OrdersExport implements FromCollection, WithHeadings, WithProperties
+class OrdersExport implements FromCollection, WithHeadings, WithProperties, WithMapping
 {
+    protected Collection $orders;
+
+    public function __construct(Collection $orders)
+    {
+        $this->orders = $orders;
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */
     public function collection()
     {
-        return Order::with(['user', 'address', 'orderState:id,code', 'products'])->get()
-            ->map(function ($order) {
-                $totalItems = $order->products->sum('pivot.quantity');
-
-                return [
-                    'id' => $order->id,
-                    'customer' => $order->user->fullName(),
-                    'date' => $order->date_formated,
-                    'total' => $order->total_formated,
-                    'total_items' => $totalItems,
-                    'state' => $order->orderState->code,
-                    'address' => $order->address->shortAddress(),
-                ];
-            });
+        return $this->orders;
     }
 
     public function headings(): array
     {
         return [
-            'ID Pedido',
-            'Cliente',
+            'ID',
             'Fecha',
             'Total',
-            'Cantidad Productos',
             'Estado',
+            'Cantidad Productos',
+            'Productos',
+            'Cliente',
             'Dirección',
+        ];
+    }
+
+    public function map($order): array
+    {
+        return [
+            $order->id,
+            $order->date_formated,
+            $order->total_formated,
+            $order->orderState->code ?? 'N/A',
+            $order->total_products,
+            $order->products->pluck('name')->implode(', ') ?? 'N/A',
+            $order->user->fullName() ?? 'N/A',
+            $order->address->shortAddress() ?? 'N/A',
         ];
     }
 

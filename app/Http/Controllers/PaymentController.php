@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PaymentsExport;
+use App\Http\Requests\PaymentExportRequest;
 use App\Http\Requests\PaymentRequest;
 use App\Mail\InvoiceMail;
 use App\Models\OrderState;
 use App\Models\Payment;
 use App\Models\PaymentState;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +25,7 @@ class PaymentController extends Controller
 		return view('pages.dashboard.payment.index', [
 			'payments' => Payment::orderByDesc('paid_at')->paginate(10),
 			'statuses' => PaymentState::all(['id', 'code']),
+			'users' => User::whereHas('orders.payment')->select('id', 'name', 'surname')->get(),
 		]);
 	}
 
@@ -61,9 +65,64 @@ class PaymentController extends Controller
 		]);
 	}
 
-	public function export()
+	private function applyFilters(Builder $query, array $filters): Builder
 	{
-		return Excel::download(new PaymentsExport, 'payments.xlsx');
+		if (isset($filters['users']) && is_array($filters['users'])) {
+			$users = array_filter($filters['users'], fn($user) => !is_null($user) && $user !== '');
+			if (!empty($users)) {
+				$query->whereIn('user_id', $users);
+			}
+		}
+
+		if (!empty($filters['date_from'])) {
+			$query->where('paid_at', '>=', $filters['date_from']);
+		}
+
+		if (!empty($filters['date_to'])) {
+			$query->where('paid_at', '<=', $filters['date_to']);
+		}
+
+		if (isset($filters['states']) && is_array($filters['states'])) {
+			$states = array_filter($filters['states'], fn($state) => !is_null($state) && $state !== '');
+			if (!empty($states)) {
+				$query->whereIn('payment_state_id', $states);
+			}
+		}
+
+		if (!empty($filters['total_from'])) {
+			$query->where('amount', '>=', $filters['total_from']);
+		}
+
+		if (!empty($filters['total_to'])) {
+			$query->where('amount', '<=', $filters['total_to']);
+		}
+
+		return $query;
+	}
+
+	public function count(PaymentExportRequest $request): JsonResponse
+	{
+		$filters = $request->validated();
+
+		$query = Payment::query();
+		$this->applyFilters($query, $filters);
+
+		return response()->json(['count' => $query->count()]);
+	}
+
+	public function export(PaymentExportRequest $request)
+	{
+		$filters = $request->validated();
+		$query = Payment::query()
+			->with(['order:id,user_id,address_id,date', 'order.user:id,name,surname', 'paymentState:id,code']);
+
+		$this->applyFilters($query, $filters);
+
+		if ($query->count() === 0) {
+			return redirect()->back()->with('error', 'No se encontraron resultados.');
+		}
+
+		return Excel::download(new PaymentsExport($query->orderBy('paid_at', 'desc')->get()), 'payments.xlsx');
 	}
 
 	// Rutas para redirecciones de Mercado Pago

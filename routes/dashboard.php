@@ -70,12 +70,16 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::get('/{id}/show', [OrderController::class, 'show'])->name('show')->middleware('permission:show orders');
       Route::put('/{order}/states', [OrderController::class, 'updateStates'])->name('updateStates');
       Route::get('/export', [OrderController::class, 'export'])->name('export');
+      Route::post('/count', [OrderController::class, 'count'])->name('count');
     });
 
     // State & Payment routes
-    Route::resource('/payments', PaymentController::class)->only(['index', 'update']);
-    Route::put('/payments/{payment}/states', [PaymentController::class, 'updateStates'])->name('payments.updateStates');
-    Route::get('/payments/export', [PaymentController::class, 'export'])->name('payments.export');
+    Route::prefix('payments')->name('payments.')->group(function () {
+      Route::resource('/', PaymentController::class)->only(['index', 'update']);
+      Route::put('/{payment}/states', [PaymentController::class, 'updateStates'])->name('updateStates');
+      Route::get('/export', [PaymentController::class, 'export'])->name('export');
+      Route::post('/count', [PaymentController::class, 'count'])->name('count');
+    });
 
     // Model states & types routes
     Route::prefix('states-types')->group(function () {
