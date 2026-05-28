@@ -255,16 +255,32 @@
   </dialog>
 @endif
 
-@session('success')
-  <div
-    class="fixed top-20 right-5 z-10 flex items-center w-full max-w-xs p-4 space-x-4 text-sm rounded-lg shadow-sm text-green-300 bg-green-600/90 animate-[800ms_ease-in-out_5s_fadeOut]"
-    role="alert">
-    <span class="text-green-300">
-      <x-icons.success class="size-6" />
-    </span>
-    <p class="grow font-medium text-white">{{ $value }}</p>
-    <button class="p-1 rounded-md text-green-300 hover:bg-green-300/20 cursor-pointer" type="button">
-      <x-icons.x class="size-6" />
-    </button>
-  </div>
-@endsession
+<div class="absolute top-20 right-5 z-10 w-max">
+  @session('success')
+    <div
+      class="relative flex items-center w-xs p-4 space-x-4 text-sm rounded-lg shadow-sm text-green-300 bg-green-600/90 animate-[800ms_ease-in-out_5s_fadeOut]"
+      role="alert">
+      <span class="text-green-300">
+        <x-icons.success class="size-6" />
+      </span>
+      <p class="grow font-medium text-white">{{ $value }}</p>
+      <button class="p-1 rounded-md text-green-300 hover:bg-green-300/20 cursor-pointer" type="button">
+        <x-icons.x class="size-6" />
+      </button>
+    </div>
+  @endsession
+
+  @session('error')
+    <div
+      class="relative flex items-center w-xs p-4 space-x-4 text-sm rounded-lg shadow-sm text-red-300 bg-red-600/90 animate-[800ms_ease-in-out_5s_fadeOut]"
+      role="alert">
+      <span class="text-red-300">
+        <x-icons.success class="size-6" />
+      </span>
+      <p class="grow font-medium text-white">{{ $value }}</p>
+      <button class="p-1 rounded-md text-red-300 hover:bg-red-300/20 cursor-pointer" type="button">
+        <x-icons.x class="size-6" />
+      </button>
+    </div>
+  @endsession
+</div>
