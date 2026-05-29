@@ -73,7 +73,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::post('/count', [OrderController::class, 'count'])->name('count');
     });
 
-    // State & Payment routes
+    // Payment routes
     Route::prefix('payments')->name('payments.')->group(function () {
       Route::resource('/', PaymentController::class)->only(['index', 'update']);
       Route::put('/{payment}/states', [PaymentController::class, 'updateStates'])->name('updateStates');

@@ -43,7 +43,7 @@ class AddressController extends Controller
     {
         Address::create($request->validated());
 
-        return redirect()->route('addresses.index');
+        return back()->with('success', 'Dirección creada correctamente.');
     }
 
     public function destroy(Address $address): RedirectResponse
@@ -56,7 +56,7 @@ class AddressController extends Controller
     {
         $order = Address::onlyTrashed()->findOrFail($id);
         $order->restore();
-        return redirect()->route('addresses.index');
+        return redirect()->back();
     }
 
     public function fetch(String $id): JsonResponse

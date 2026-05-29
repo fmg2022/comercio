@@ -49,18 +49,18 @@ class PaymentController extends Controller
 			'states' => 'required|exists:payment_states,id',
 		]);
 
-		$payment->update([
+		$v = $payment->update([
 			'payment_state_id' => $validated['states']
 		]);
 
-		return redirect()->route('payments.index');
+		return redirect()->back();
 	}
 
 	public function myIndex(): View
 	{
 		$user = auth()->user();
 		return view('pages.dashboard.payment.index', [
-			'payments' => $user->paymentsBuilder()->paginate(10),
+			'payments' => $user->payments()->orderByDesc('paid_at')->paginate(10),
 			'statuses' => PaymentState::all(['id', 'code']),
 		]);
 	}
