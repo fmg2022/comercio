@@ -200,7 +200,7 @@
 
   {{ $addressesDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
-  {{-- MODAL SHOW, EDIT --}}
+  {{-- MODAL SHOW, EDIT, CREATE --}}
   <x-modals.simple id="addressCSE"
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form enctype="multipart/form-data" method="POST"
@@ -217,7 +217,8 @@
           <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
             <label for="user" class="block ps-4 mb-2 font-semibold">Usuario</label>
             <select id="user" name="user_id"
-              class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+              class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
               <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona un usuario
               </option>
               @foreach ($users as $user)
@@ -240,7 +241,7 @@
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
           <label class="block mb-2 font-semibold" for="province">Provincia</label>
-          <input type="text" id="province" name="province"
+          <input type="text" id="province" name="province" autocomplete="country-name"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
