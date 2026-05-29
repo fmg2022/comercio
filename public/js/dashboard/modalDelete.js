@@ -4,10 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const $form = modal.querySelector('#form-modalSimple')
   const submitButton = $form.querySelector('button[type="submit"]')
 
-  let url = window.location.href
-  // Si la URL contiene parámetros de búsqueda, los eliminamos
-  if ((/\?\w+/).test(url)) {
-    url = url.replace(window.location.search, '')
+  function getBaseURL() {
+    let newUrl = window.location.origin
+    const currentPath = window.location.pathname.replace(/\/my(\/|$)/, '$1')
+    const pathParts = currentPath.split('/')
+
+    if (pathParts.length > 3 && pathParts[1] === 'dashboard') {
+      newUrl += pathParts.slice(0, 3).join('/')
+    } else {
+      newUrl += currentPath
+    }
+    return newUrl
   }
 
   modalButtons.forEach(button => {
@@ -18,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.querySelector('#form-type').textContent = isDelete ? 'eliminar' : 'restaurar'
       submitButton.textContent = isDelete ? 'Eliminar' : 'Restaurar'
 
-      $form.action = `${url}/${button.dataset.path}`
+      $form.action = `${getBaseURL()}/${button.dataset.path}`
       $form.querySelector('input[name="_method"]').value = isDelete ? 'DELETE' : 'POST'
 
       if (isDelete) {
