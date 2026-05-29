@@ -4,94 +4,92 @@
   @push('scripts-dashboard')
     <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
 
-    <script src="{{ asset('js/modal.js') }}" defer></script>
-    <script type="module">
-      document.getElementById('exportForm').addEventListener('submit', function(e) {
-        e.preventDefault();
+    @if (!request()->routeIs('my.payments.index'))
+      <script src="{{ asset('js/modal.js') }}" defer></script>
+      <script type="module">
+        document.getElementById('exportForm').addEventListener('submit', function(e) {
+          e.preventDefault();
 
-        const form = this;
-        const formData = new FormData(form);
-        const exportBtn = form.querySelector('#exportBtn');
-        const originalText = exportBtn.innerText;
+          const form = this;
+          const formData = new FormData(form);
+          const exportBtn = form.querySelector('#exportBtn');
+          const originalText = exportBtn.innerText;
 
-        exportBtn.disabled = true;
-        exportBtn.innerText = 'Verificando...';
+          exportBtn.disabled = true;
+          exportBtn.innerText = 'Verificando...';
 
-        fetch("{{ route('orders.count') }}", {
-            method: 'POST',
-            headers: {
-              'X-CSRF-TOKEN': formData.get('_token'),
-              'Accept': 'application/json',
-            },
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.count === 0) {
-              alert('⚠️ Sin ordenes para exportar a Excel.');
-            } else {
-              form.submit();
-              form.reset();
-              document.getElementById('exportModal').close();
-            }
-            exportBtn.disabled = false;
-            exportBtn.innerText = originalText;
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('Ocurrió un error al verificar las órdenes. Inténtalo de nuevo.');
-            exportBtn.disabled = false;
-            exportBtn.innerText = originalText;
+          fetch("{{ route('orders.count') }}", {
+              method: 'POST',
+              headers: {
+                'X-CSRF-TOKEN': formData.get('_token'),
+                'Accept': 'application/json',
+              },
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.count === 0) {
+                alert('⚠️ Sin ordenes para exportar a Excel.');
+              } else {
+                form.submit();
+                form.reset();
+                document.getElementById('exportModal').close();
+              }
+              exportBtn.disabled = false;
+              exportBtn.innerText = originalText;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Ocurrió un error al verificar las órdenes. Inténtalo de nuevo.');
+              exportBtn.disabled = false;
+              exportBtn.innerText = originalText;
+            });
+        });
+      </script>
+
+      <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const userSelect = new Choices('#users', {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Buscar usuario...',
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Selecciona uno o más usuarios',
+            shouldSort: false,
           });
-      });
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const userSelect = new Choices('#users', {
-          searchEnabled: true,
-          searchPlaceholderValue: 'Buscar usuario...',
-          removeItemButton: true,
-          placeholder: true,
-          placeholderValue: 'Selecciona uno o más usuarios',
-          shouldSort: false,
-        });
-
-        const stateSelect = new Choices('#states', {
-          removeItemButton: true,
-          placeholder: true,
-          placeholderValue: 'Selecciona uno o más estados',
-          shouldSort: false,
-        });
-      })
-    </script>
+          const stateSelect = new Choices('#states', {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Selecciona uno o más estados',
+            shouldSort: false,
+          });
+        })
+      </script>
+    @endif
   @endpush
 
-  @push('styles-dashboard')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
-    <style>
-      .choices__inner {
-        background-color: #fff !important;
-        border-color: #e2e8f0 !important;
-        border-radius: 0.375rem !important;
-        min-height: 42px !important;
-      }
+  @pushIf(!request()->routeIs('my.payments.index'), 'styles-dashboard')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+  <style>
+    .choices__inner {
+      background-color: #fff !important;
+      border-color: #e2e8f0 !important;
+      border-radius: 0.375rem !important;
+      min-height: 42px !important;
+    }
 
-      .choices__list--dropdown {
-        z-index: 10 !important;
-      }
-    </style>
-  @endpush
+    .choices__list--dropdown {
+      z-index: 10 !important;
+    }
+  </style>
+  @endpushIf
 @endcan
-
-@php
-  $type2 = 'modal-change-status';
-@endphp
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
-    <x-slot:textTitle>Pagos</x-slot:textTitle>
+    <x-slot:textTitle>{{ request()->routeIs('my.payments.index') ? 'Mis' : '' }} Pagos</x-slot:textTitle>
     @can('manage state-type-tables')
       @can('manage state-type-tables')
         @if (!request()->routeIs('my.payments.index'))
@@ -156,7 +154,7 @@
 
                 <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   <li>
-                    <button type="button" data-modal="{{ $type2 }}" data-uid="{{ $payment->id }}"
+                    <button type="button" data-modal="modal-change-status" data-uid="{{ $payment->id }}"
                       data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
                       data-status="{{ $payment->paymentState->code }}"
                       class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
@@ -185,27 +183,25 @@
 
   {{-- Modal CHANGE STATUS --}}
   @can('manage state-type-tables')
-    <x-modals.simple id="{{ $type2 }}" class="max-w-xl w-full" title="Cambiar el estado del pago">
+    <x-modals.simple id="modal-change-status" class="max-w-md w-full" title="Cambiar el estado del pago">
       <div class="relative mt-4 flex flex-col items-center justify-center text-white">
         <form method="POST" class="w-full" id="form-modalSimple" action="{{ route('payments.updateStates', 0) }}">
           @csrf
           @method('PUT')
           <div class="mb-16 grid place-items-center text-slate-900">
-            <div class="px-5 pb-4 flex gap-5 text-2xl">
-              <div class="flex flex-col gap-5">
-                <span class="text-lg text-slate-600">De:</span>
-                <span class="text-lg text-slate-600">Monto:</span>
-                <label class="text-lg text-slate-600" for="select_states">
-                  Estado del pago:
-                </label>
+            <div class="px-5 pb-4 flex gap-5">
+              <div class="flex flex-col gap-3 justify-between text-lg text-slate-700">
+                <span>De:</span>
+                <span>Monto:</span>
+                <span class="py-2">Estado del pago:</span>
               </div>
-              <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-3 justify-between text-lg">
                 <h3 class="font-bold"></h3>
-                <p>$0</p>
+                <p class="font-medium">$0</p>
                 <select id="select_states" name="states"
-                  class="outline-none px-2 py-1 rounded-md bg-slate-200 text-lg text-slate-900">
+                  class="outline-none px-3 py-2 rounded-md border border-slate-300 text-base text-slate-900">
                   @foreach ($statuses as $states)
-                    <option value="{{ $states->code }}">
+                    <option value="{{ $states->id }}">
                       {{ $states->code }}
                     </option>
                   @endforeach
@@ -214,7 +210,7 @@
             </div>
           </div>
           <button type="submit"
-            class="absolute bottom-0 left-1/2 px-3 py-2 bg-purple-900 text-lg rounded-md hover:bg-purple-800 cursor-pointer">Actualizar</button>
+            class="absolute bottom-0 left-1/2 px-3 py-2 bg-green-800 text-lg rounded-md hover:bg-green-700 cursor-pointer">Actualizar</button>
         </form>
         <form method="dialog" class="absolute bottom-0 right-1/2 -translate-x-3">
           <button class="px-3 py-2 bg-red-700 text-lg rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>

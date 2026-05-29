@@ -26,7 +26,9 @@
     <x-slot:thead>
       <tr class="text-left">
         <th>#</th>
-        <th>Usuario</th>
+        @if (!request()->routeIs('my.addresses.index'))
+          <th>Usuario</th>
+        @endif
         <th>Dirección</th>
         <th>Ciudad</th>
         <th class="hidden sm:table-cell">Provincia</th>
@@ -39,15 +41,17 @@
     @forelse ($addresses as $index => $address)
       <tr>
         <td>{{ ($addresses->currentPage() - 1) * $addresses->perPage() + $index + 1 }}</td>
-        <td class="relative">
-          <x-buttons.link href="{{ route('users.show', $address->user) }}"
-            class="text-slate-100 hover:text-purple-500 peer/popup">
-            {{ $address->user->fullName() }}
-          </x-buttons.link>
-          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-            Ver Usuario
-          </x-popups.text>
-        </td>
+        @if (!request()->routeIs('my.addresses.index'))
+          <td class="relative">
+            <x-buttons.link href="{{ route('users.show', $address->user) }}"
+              class="text-slate-100 hover:text-purple-500 peer/popup">
+              {{ $address->user->fullName() }}
+            </x-buttons.link>
+            <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+              Ver Usuario
+            </x-popups.text>
+          </td>
+        @endif
         <td>{{ $address->street }}</td>
         <td>{{ $address->city }}</td>
         <td class="hidden sm:table-cell">{{ $address->province }}</td>
@@ -116,7 +120,9 @@
     <x-slot:thead>
       <tr class="text-left">
         <th>#</th>
-        <th>Usuario</th>
+        @if (!request()->routeIs('my.addresses.index'))
+          <th>Usuario</th>
+        @endif
         <th>Dirección</th>
         <th>Ciudad</th>
         <th class="hidden sm:table-cell">Provincia</th>
@@ -129,15 +135,17 @@
     @forelse ($addressesDeleted as $index => $address)
       <tr>
         <td>{{ ($addressesDeleted->currentPage() - 1) * $addressesDeleted->perPage() + $index + 1 }}</td>
-        <td class="relative">
-          <x-buttons.link href="{{ route('users.show', $address->user) }}"
-            class="text-slate-100 hover:text-purple-500 peer/popup">
-            {{ $address->user->fullName() }}
-          </x-buttons.link>
-          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-            Ver Usuario
-          </x-popups.text>
-        </td>
+        @if (!request()->routeIs('my.addresses.index'))
+          <td class="relative">
+            <x-buttons.link href="{{ route('users.show', $address->user) }}"
+              class="text-slate-100 hover:text-purple-500 peer/popup">
+              {{ $address->user->fullName() }}
+            </x-buttons.link>
+            <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+              Ver Usuario
+            </x-popups.text>
+          </td>
+        @endif
         <td>{{ $address->street }}</td>
         <td>{{ $address->city }}</td>
         <td class="hidden sm:table-cell">{{ $address->province }}</td>
