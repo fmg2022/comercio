@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -89,10 +90,8 @@ class User extends Authenticatable implements MustVerifyEmail
             ->withTimestamps();
     }
 
-    public function paymentsBuilder()
+    public function payments(): HasManyThrough
     {
-        return Payment::join('orders', 'payments.order_id', '=', 'orders.id')
-            ->where('orders.user_id', $this->id)
-            ->orderBy('paid_at', 'desc');
+        return $this->hasManyThrough(Payment::class, Order::class);
     }
 }
