@@ -14,10 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
       button.addEventListener('click', () => {
         modal.querySelector('h3').textContent = button.dataset.from
         modal.querySelector('p').textContent = button.dataset.amount
-        modal.querySelector('label').for = 'state-' + button.dataset.uid
         $select.id = 'state-' + button.dataset.uid
 
-        $select.querySelectorAll('option').forEach(option => option.value === button.dataset.status ? option.setAttribute('selected', '') : option.removeAttribute('selected'))
+        $select.querySelectorAll('option').forEach(option => option.innerText.trim() === button.dataset.status ? option.setAttribute('selected', '') : option.removeAttribute('selected'))
 
         let formUrl = $form.action
         $form.action = formUrl.replace(/\/\d+\/states/, `/${button.dataset.uid}/states`)
