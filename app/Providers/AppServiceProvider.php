@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\Address;
 use App\Models\Category;
 use App\Models\OrderProduct;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,5 +34,14 @@ class AppServiceProvider extends ServiceProvider
         OrderProduct::observe(\App\Observers\OrderProductObserver::class);
         Category::observe(\App\Observers\CategoryObserver::class);
         Address::observe(\App\Observers\AddressObserver::class);
+
+        VerifyEmail::toMailUsing(function (object $notificable, string $url) {
+            return (new MailMessage)
+                ->subject('Verifica tu correo electrónico')
+                ->greeting('Hola, ' . $notificable->name . '!')
+                ->line('Por favor, haz click en el siguiente enlace para verificar tu correo electrónico:')
+                ->action('Verificar mi correo', $url)
+                ->line('Si no creaste esta cuenta, ignora este correo. No es necesario que realices ninguna otra acción.');
+        });
     }
 }
