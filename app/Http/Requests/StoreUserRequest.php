@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -11,7 +12,14 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->can('manage users');
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'active' => $this->boolean('active'),
+        ]);
     }
 
     /**
@@ -25,8 +33,16 @@ class StoreUserRequest extends FormRequest
             'name' => 'required|string|max:150',
             'surname' => 'required|string|max:150',
             'image' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'phone' => 'nullable|string|max:20',
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                // Rule::unique('users', 'email')->whereNull('deleted_at')->ignore($this->user()->id)
+            ],
+            'phone' => 'required|string|max:20',
+            'dni' => 'required|string|max:20',
+            'active' => 'required|boolean',
         ];
     }
 }
