@@ -2,7 +2,7 @@
 
 @push('scripts-app')
   <script src="{{ asset('js/itemCart.js') }}" defer></script>
-@endpush
+@endPush
 
 @section('content')
   <article class="px-4 py-16 max-w-2xl mx-auto md:px-6 lg:px-8 lg:max-w-7xl">

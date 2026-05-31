@@ -3,7 +3,7 @@
 @push('scripts-dashboard')
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="{{ asset('js/dashboard/useCharts.js') }}" defer></script>
-@endpush
+@endPush
 
 @section('content')
   <section class="max-w-7xl px-2 mx-auto mt-4 mb-9 grid grid-cols-1 gap-x-4 gap-y-8 justify-items-center md:grid-cols-2">

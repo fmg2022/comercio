@@ -1,6 +1,6 @@
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/labelInput.js') }}" defer></script>
-@endpush
+@endPush
 
 @props(['title', 'forLabel'])
 

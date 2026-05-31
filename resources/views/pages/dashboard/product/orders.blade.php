@@ -75,7 +75,7 @@
 
 @pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-@endpushIf
+@endPushIf
 
 @section('content')
   <article class="py-4 flex flex-col justify-center items-center gap-4 md:mb-7 md:flex-row">

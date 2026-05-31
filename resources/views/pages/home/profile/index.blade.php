@@ -3,7 +3,7 @@
 @push('scripts-dashboard')
   <script src="{{ asset('js/modal.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/navDesplace.js') }}" defer></script>
-@endpush
+@endPush
 
 @section('content')
   <div class="relative flex divide-x divide-slate-700">

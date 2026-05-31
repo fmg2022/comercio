@@ -3,7 +3,7 @@
 @pushIf(auth()->check() && auth()->user()?->can('manage roles'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpushIf
+@endPushIf
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
@@ -68,7 +68,7 @@
                             Editar Rol
                           </button>
                         </li>
-                        <li>
+                        {{-- <li>
                           <button type="button" data-type="edit" data-uid="{{ $role->id }}"
                             data-path="{{ $role->id }}/assign" data-modalID="roleuserCES"
                             class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
@@ -77,7 +77,7 @@
                             </span>
                             Aignar Rol
                           </button>
-                        </li>
+                        </li> --}}
                         <li>
                           <button type="button" data-text="Rol: '{{ $role->name }}'" data-uid="{{ $role->id }}"
                             data-modalID="rolDelete" data-path="{{ $role->id }}" data-delete="true"
@@ -183,8 +183,7 @@
         </fieldset>
       </form>
       <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
-        <button
-          class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+        <button class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
       </form>
     </x-modals.simple>
     {{-- MODAL DELETE, RESTORE --}}

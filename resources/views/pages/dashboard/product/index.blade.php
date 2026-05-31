@@ -2,10 +2,10 @@
 
 @pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-@endpushIf
+@endPushIf
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpush
+@endPush
 
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página

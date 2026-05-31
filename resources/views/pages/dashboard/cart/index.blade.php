@@ -2,7 +2,7 @@
 
 @pushIf(auth()->check() && auth()->user()?->can('manage carts-details'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-@endpushIf
+@endPushIf
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">

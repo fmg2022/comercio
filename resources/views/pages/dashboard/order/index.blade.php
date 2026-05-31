@@ -84,7 +84,7 @@
       z-index: 10 !important;
     }
   </style>
-  @endpushIf
+  @endPushIf
 @endcan
 
 {{-- https://github.com/Choices-js/Choices --}}

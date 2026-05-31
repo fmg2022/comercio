@@ -68,7 +68,7 @@
         })
       </script>
     @endif
-  @endpush
+  @endPush
 
   @pushIf(!request()->routeIs('my.payments.index'), 'styles-dashboard')
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
@@ -84,7 +84,7 @@
       z-index: 10 !important;
     }
   </style>
-  @endpushIf
+  @endPushIf
 @endcan
 
 @section('content')

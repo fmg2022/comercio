@@ -14,7 +14,7 @@
       })
     })
   </script>
-@endpush
+@endPush
 
 @section('content')
   <x-breadcrumbs.categories :categoriesNav="$categoriesNav" />

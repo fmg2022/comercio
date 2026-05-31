@@ -3,7 +3,7 @@
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
   <script src="{{ asset('js/dashboard/modalStateType.js') }}" defer></script>
-@endpush
+@endPush
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">

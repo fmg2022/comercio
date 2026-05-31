@@ -4,7 +4,7 @@
 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpushIf
+@endPushIf
 
 @section('content')
   <x-sections.headerTitle classTitle="flex flex-wrap items-center gap-3"
