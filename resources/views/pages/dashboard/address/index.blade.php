@@ -1,9 +1,42 @@
 @extends('layouts.dashboard')
+@can('manage addresses')
+  @push('scripts-dashboard')
+    <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+    <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
 
-@pushIf(auth()->check() && auth()->user()?->can('manage addresses'), 'scripts-dashboard')
-<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-<script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpushIf
+    @if (!request()->routeIs('my.orders.index'))
+      <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const userSelect = new Choices('#user', {
+            searchEnabled: true,
+            searchPlaceholderValue: 'Buscar usuario...',
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Selecciona un usuario',
+            shouldSort: false,
+          });
+        })
+      </script>
+    @endif
+  @endPush
+@endcan
+
+@pushIf(!request()->routeIs('my.payments.index'), 'styles-dashboard')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+<style>
+  .choices__inner {
+    background-color: #fff !important;
+    border-color: #e2e8f0 !important;
+    border-radius: 0.375rem !important;
+    min-height: 42px !important;
+  }
+
+  .choices__list--dropdown {
+    z-index: 10 !important;
+  }
+</style>
+@endPushIf
 
 @php
   $type1 = 'addressDeleteRestore';
@@ -201,21 +234,21 @@
   {{ $addressesDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   {{-- MODAL SHOW, EDIT, CREATE --}}
-  <x-modals.simple id="addressCSE"
+  <x-modals.simple id="addressCSE" title="Crear Nueva Dirección"
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @csrf
       @method('PUT')
 
-      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-6 text-gray-700 md:px-3">
+      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-5 text-gray-700 md:px-3">
         @if (request()->routeIs('my.addresses.index'))
           <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
           <h3 class="my-3 font-semibold text-xl text-slate-900 text-center col-span-full">
             {{ auth()->user()->fullName() }}</h3>
         @else
           <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
-            <label for="user" class="block ps-4 mb-2 font-semibold">Usuario</label>
+            <label for="user" class="block mb-1 font-semibold">Usuario</label>
             <select id="user" name="user_id"
               class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required>
@@ -228,31 +261,31 @@
           </div>
         @endif
         <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="street">Dirección</label>
+          <label class="block mb-1 font-semibold" for="street">Dirección</label>
           <input type="text" id="street" name="street" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="city">Ciudad</label>
+          <label class="block mb-1 font-semibold" for="city">Ciudad</label>
           <input type="text" id="city" name="city" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="province">Provincia</label>
+          <label class="block mb-1 font-semibold" for="province">Provincia</label>
           <input type="text" id="province" name="province" autocomplete="country-name"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="postal_code">Código Postal</label>
+          <label class="block mb-1 font-semibold" for="postal_code">Código Postal</label>
           <input type="text" id="postal_code" name="postal_code" autocomplete="postal-code"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="name">Nombre</label>
+          <label class="block mb-1 font-semibold" for="name">Nombre</label>
           <input type="text" id="name" name="name" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
