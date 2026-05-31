@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Mail\WelcomeWithPasswordMail;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Role;
 
@@ -18,7 +22,7 @@ class UserController extends Controller
         return view('pages.dashboard.user.index', [
             'users' => User::paginate(10),
             'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
-            'roles' => Role::all(['name', 'id']),
+            'roles' => Role::where('name', '!=', 'Super Admin')->get(['name', 'id']),
         ]);
     }
 
@@ -29,8 +33,16 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        User::create($request->validated());
-        return redirect()->route('users.index');
+        $password = bin2hex(random_bytes(16));
+        $validated = $request->validated();
+        $validated['password'] = Hash::make($password);
+        $validated['active'] = true;
+        $user = User::create($validated)->assignRole('Cliente');
+
+        // Mail::to($user)->send(new WelcomeWithPasswordMail($user, $password));
+        Mail::to('maximo4735@gmail.com')->send(new WelcomeWithPasswordMail($user, $password));
+
+        return redirect()->back()->with('success', 'Usuario creado correctamente. Verifique su correo para activar su cuenta.');
     }
 
     public function show(User $user): View
@@ -51,7 +63,7 @@ class UserController extends Controller
     {
         User::findOrFail($id)->update($request->validated());
 
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 
     public function destroy(User $user): RedirectResponse
@@ -68,7 +80,7 @@ class UserController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image']);
+        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image', 'dni']);
 
         return response()->json($user);
     }
@@ -77,9 +89,11 @@ class UserController extends Controller
     {
         $request->validate([
             'roles' => 'array',
-            'roles.*' => 'required|integer|exists:roles,name',
+            'roles.*' => 'required|string|exists:roles,id',
         ]);
-        $user->syncRoles($request->roles);
+
+        $roles = Role::whereIn('id', $request->roles)->get();
+        $user->syncRoles($roles);
 
         return redirect()->back();
     }
@@ -88,6 +102,6 @@ class UserController extends Controller
     {
         $user = User::withTrashed()->findOrFail($id);
 
-        return response()->json(['roles' => $user->roles()->pluck('name')]);
+        return response()->json(['roles' => $user->roles()->pluck('id')]);
     }
 }
