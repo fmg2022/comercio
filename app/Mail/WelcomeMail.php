@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -22,7 +21,7 @@ class WelcomeMail extends Mailable
     public function __construct(User $user, string $customMessage = '')
     {
         $this->user = $user;
-        $this->customMessage = $customMessage ?? "Gracias por formar parte de " . config('app.name') . ".";
+        $this->customMessage = $customMessage ?? "No se olvide de registrar su dirección para poder realizar pagos. Recuerde cambiar la contraseña de su cuenta para mayor seguridad.";
     }
     /**
      * Get the message envelope.
