@@ -41,8 +41,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     // User routes
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
     Route::resource('/users', UserController::class);
-    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
-    Route::put('/users/{user}/roles', [UserController::class, 'updateRole'])->name('users.updateRole');
+    Route::middleware(['permission:manage users'])->group(function () {
+      Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+      Route::put('/users/{user}/roles', [UserController::class, 'updateRole'])->name('users.updateRole');
+    });
 
     // Address routes
     Route::resource('/addresses', AddressController::class)->except(['show', 'create']);

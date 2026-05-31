@@ -1,10 +1,13 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endpush
-
+  @can('list users')
+    <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+  @endcan
+  @can('manage users')
+    <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+  @endcan
+@endPush
 @php
   $type1 = 'modal-delete-restore';
 @endphp
@@ -13,11 +16,13 @@
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Lista de Usuarios</x-slot:textTitle>
 
-    <button type="button" data-type="create" data-modalID="userCSE"
-      class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
-      <x-icons.plus class="size-6" />
-      Nuevo Usuario
-    </button>
+    @can('manage users')
+      <button type="button" data-type="create" data-modalID="userCSE"
+        class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
+        <x-icons.plus class="size-6" />
+        Nuevo Usuario
+      </button>
+    @endcan
   </x-sections.headerTitle>
 
   <x-tables.table>
@@ -57,9 +62,13 @@
           {{ $user->active ? 'Activo' : 'Inactivo' }}
         </td>
         <td class="hidden xl:table-cell">
-          <h4 class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
-            {{ $user->getRoleNames()->first() }}
-          </h4>
+          <p class="flex flex-wrap gap-1">
+            @foreach ($user->getRoleNames() as $role)
+              <span class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
+                {{ $role }}
+              </span>
+            @endforeach
+          </p>
         </td>
         <td>
           <div class="relative flex justify-end items-center">
@@ -81,17 +90,17 @@
                     </button>
                   </li>
                 @endcan
+                <li>
+                  <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+                    data-modalID="userCSE"
+                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                    <span>
+                      <x-icons.show class="size-5" />
+                    </span>
+                    Ver Usuario
+                  </button>
+                </li>
                 @can('manage users')
-                  <li>
-                    <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                      data-modalID="userCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Usuario
-                    </button>
-                  </li>
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
                       data-modalID="userCSE"
@@ -177,16 +186,18 @@
                   Ver Usuario
                 </button>
               </li>
-              <li>
-                <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
-                  data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
-                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                  <span>
-                    <x-icons.restore class="size-5" />
-                  </span>
-                  Restaurar Usuario
-                </button>
-              </li>
+              @can('manage users')
+                <li>
+                  <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                    data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
+                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                    <span>
+                      <x-icons.restore class="size-5" />
+                    </span>
+                    Restaurar Usuario
+                  </button>
+                </li>
+              @endcan
             </ul>
           </x-popups.contentWcheck>
         </td>
@@ -201,85 +212,102 @@
 
   {{ $usersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
-  {{-- MODAL SHOW, EDIT --}}
-  <x-modals.simple id="userCSE"
-    class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
-    <form enctype="multipart/form-data" method="POST"
-      class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @csrf
-      @method('PUT')
-      <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp" alt="Foto de usuario" />
+  @can('list users')
+    {{-- MODAL SHOW, EDIT --}}
+    <x-modals.simple id="userCSE"
+      class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      <form enctype="multipart/form-data" method="POST"
+        class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+        @csrf
+        @method('PUT')
+        <x-images.borderFill src="{{ asset('images/users') }}/sin_foto.webp" alt="Foto de usuario" />
 
-      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="name">Nombre</label>
-          <input type="text" id="name" name="name" autocomplete="off"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="surname">Apellido</label>
-          <input type="text" id="surname" name="surname" autocomplete="off"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="email">Email</label>
-          <input type="email" id="email" name="email" autocomplete="off"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="phone">Teléfono</label>
-          <input type="text" id="phone" name="phone" autocomplete="off"
-            class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <section class="col-span-full group-[.editable]:hidden">
-          <h4 class="mb-2 font-semibold">Dirección</h4>
-          <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
-            {{ $user->getCurrentAddress()?->fullAddress() ?? 'Sin dirección' }}
-          </p>
-        </section>
-        <button type="submit"
-          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
-      </fieldset>
-    </form>
-    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
-      <button
-        class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
-    </form>
-  </x-modals.simple>
-
-  <x-modals.simple id="roleCSE"
-    class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
-    <form enctype="multipart/form-data" method="POST"
-      class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @csrf
-      @method('PUT')
-      <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
-        <div class="col-span-full">
-          <h4 class="mb-2 text-xl font-semibold">Roles disponibles</h4>
-          <div class="max-h-60 flex flex-col overflow-x-auto">
-            @foreach ($roles as $role)
-              <label
-                class="px-3 py-1 mx-4 flex items-center gap-2 group-[&:not(.editable)]:has-[input:not(:checked)]:hidden pointer-events-none group-[.editable]:pointer-events-auto">
-                <input type="checkbox" name="roles[]" class="size-4 accent-purple-600" value="{{ $role->name }}">
-                <span class="ms-1">{{ $role->name }}</span>
-              </label>
-            @endforeach
+        <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="name">Nombre</label>
+            <input type="text" id="name" name="name" autocomplete="name"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
           </div>
-        </div>
-        <button type="submit"
-          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
-      </fieldset>
-    </form>
-    <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
-      <button
-        class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
-    </form>
-  </x-modals.simple>
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="surname">Apellido</label>
+            <input type="text" id="surname" name="surname" autocomplete="name"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
+          <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="phone">Teléfono</label>
+            <input type="text" id="phone" name="phone" autocomplete="tel"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="dni">DNI</label>
+            <input type="text" id="dni" name="dni" autocomplete="off"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
+          <section
+            class="col-span-full py-3 hidden flex-wrap gap-x-10 gap-y-5 items-center justify-center pointer-events-none group-[.editable]:pointer-events-auto group-[.editable]:flex">
+            <p class="w-max">¿Activar usuario?</p>
+            <x-inputs.checkSwitch name="active"
+              class="bg-slate-200 checked:bg-green-700 group-[.editable]:cursor-pointer"
+              classLabel="z-10 bg-white border-slate-300 peer-checked/switch:border-green-700 group-[.editable]:cursor-pointer" />
+          </section>
+          <section class="col-span-full group-[.editable]:hidden">
+            <h4 class="mb-2 font-semibold">Dirección Actual</h4>
+            <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
+              {{ $user->getCurrentAddress()?->fullAddress() ?? 'Sin dirección' }}
+            </p>
+          </section>
+          <button type="submit"
+            class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-green-800 text-lg text-white rounded-md hover:bg-green-700 cursor-pointer sm:right-3/5">Actualizar</button>
+        </fieldset>
+      </form>
+      <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
+        <button
+          class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+      </form>
+    </x-modals.simple>
+  @endcan
 
-  {{-- MODAL DELETE, RESTORE --}}
-  <x-modals.delete id="{{ $type1 }}" />
+  @can('manage roles')
+    <x-modals.simple id="roleCSE"
+      class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      <form enctype="multipart/form-data" method="POST"
+        class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
+        @csrf
+        @method('PUT')
+        <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-6 text-gray-700 md:px-3">
+          <div class="col-span-full">
+            <h4 class="mb-2 text-xl font-semibold">Roles disponibles</h4>
+            <div class="max-h-60 flex flex-col overflow-x-auto">
+              @foreach ($roles as $role)
+                <label
+                  class="px-3 py-1 mx-4 flex items-center gap-2 group-[&:not(.editable)]:has-[input:not(:checked)]:hidden pointer-events-none group-[.editable]:pointer-events-auto">
+                  <input type="checkbox" name="roles[]" class="size-4 accent-purple-600" value="{{ $role->id }}">
+                  <span class="ms-1">{{ $role->name }}</span>
+                </label>
+              @endforeach
+            </div>
+          </div>
+          <button type="submit"
+            class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
+        </fieldset>
+      </form>
+      <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">
+        <button
+          class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
+      </form>
+    </x-modals.simple>
+
+    {{-- MODAL DELETE, RESTORE --}}
+    <x-modals.delete id="{{ $type1 }}" />
+  @endcan
 @endsection
