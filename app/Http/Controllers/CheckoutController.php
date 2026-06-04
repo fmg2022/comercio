@@ -174,7 +174,6 @@ class CheckoutController extends Controller
             Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
 
             // Limpiar el carrito
-            CartFacade::setSessionKey('cart_' . auth()->id());
             CartFacade::clear();
             $cart = Cart::where('user_id', auth()->id())
                 ->firstOrFail();

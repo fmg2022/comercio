@@ -32,14 +32,11 @@ class CartController extends Controller
 		return view('pages.home.cart.index', [
 			'cartItems' => CartFacade::getContent(),
 			'cart_id' => $user->cart->id,
-			'tax' => CartFacade::getSubTotalWithoutConditions() * floatval(config('commerce.tax_rate')) / 100,
 		]);
 	}
 
 	public function addToCart(CartRequest $request): RedirectResponse
 	{
-		// dd(session()->all());
-		CartFacade::setSessionKey('cart_' . auth()->id());
 		$validated = $request->validated();
 		DB::beginTransaction();
 		try {
@@ -50,28 +47,34 @@ class CartController extends Controller
 				->lockForUpdate()
 				->first();
 
-			if ($item && $item->exists()) {
+			$existItem = $item && $item->exists();
+
+			$product = $existItem ? $item : Product::findOrFail($validated['id']);
+			$offerTemplate = $product->getCurrentOffer();
+			$qty = $existItem ? $item->pivot->quantity + $validated['quantity'] : $validated['quantity'];
+			$discount = $offerTemplate ?
+				$product->getDiscountTotal(
+					$qty,
+					$offerTemplate->buy_qty,
+					$offerTemplate->pay_qty,
+					$offerTemplate->offerType->code
+				)
+				: 0;
+
+			if ($existItem) {
 				$cart->updateProduct($validated['id'], $item->pivot->quantity + $validated['quantity']);
 
 				CartFacade::update(
 					$validated['id'],
 					[
 						'quantity' => $validated['quantity'],
+						'attributes' => [
+							'discount' => $discount,
+						]
 					]
 				);
 			} else {
 				$cart->attachProduct($validated['id'], $validated['quantity']);
-
-				$product = Product::findOrFail($validated['id']);
-				$offerTemplate = $product->getCurrentOffer();
-				$discount = $offerTemplate ?
-					$product->getDiscountTotal(
-						$validated['quantity'],
-						$offerTemplate->buy_qty,
-						$offerTemplate->pay_qty,
-						$offerTemplate->offerType->code
-					)
-					: 0;
 
 				CartFacade::add([
 					'id' => $validated['id'],

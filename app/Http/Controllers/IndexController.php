@@ -24,7 +24,6 @@ class IndexController extends Controller
 
     public function index()
     {
-        CartFacade::setSessionKey('cart_' . auth()->id());
         $selectedCategories = Category::where('parent_id', '!=', null)->limit(5)->get()->values('name', 'id');
         $products = Product::with('brand:id,name')
             ->where('stock', '>', 'min_stock')

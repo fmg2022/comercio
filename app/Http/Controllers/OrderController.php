@@ -59,8 +59,6 @@ class OrderController extends Controller
 			return back()->with('error', 'El carrito está vacío.');
 		}
 
-		CartFacade::setSessionKey('cart_' . $user->id);
-
 		$order = DB::transaction(function () use ($cart, $validated, $user) {
 			$cartProducts = $cart->products;
 			$productsIds = $cartProducts->pluck('id')->unique()->sort()->values();
@@ -144,8 +142,7 @@ class OrderController extends Controller
 			'payment_provider_id' => PaymentProvider::where('code', 'MERCADO_PAGO')->value('id'),
 		]);
 
-		// return redirect()->route('checkout.process', ['order' => $order->id, 'payment' => $payment->id]);
-		return redirect()->route('home')->with('success', 'La compra se realizó con éxito.');
+		return redirect()->route('checkout.process', ['order' => $order->id, 'payment' => $payment->id]);
 	}
 
 	public function updateStates(Request $request, Order $order): RedirectResponse
