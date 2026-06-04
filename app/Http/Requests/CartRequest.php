@@ -11,7 +11,7 @@ class CartRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->canAny(['add my_cart', 'manage carts-details']);
+        return auth()->user()->can('add my_cart');
     }
 
     /**

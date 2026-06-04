@@ -4,34 +4,47 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CartRequest;
-use App\Models\Cart as ModelsCart;
+use App\Models\Cart;
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Joelwmale\Cart\Facades\CartFacade as Cart;
+use Joelwmale\Cart\Facades\CartFacade;
 
 class CartController extends Controller
 {
+	protected CartService $cartService;
+
+	public function __construct(CartService $cartService)
+	{
+		$this->cartService = $cartService;
+	}
+
 	public function index(): View
 	{
-		Cart::setSessionKey('cart_' . auth()->user()->id);
+		$user = auth()->user();
+		if (CartFacade::getContent()->isEmpty()) {
+			$this->cartService->loadCartFromDatabase($user);
+		}
 
 		return view('pages.home.cart.index', [
-			'cartItems' => Cart::getContent(),
-			'cart_id' => auth()->user()->cart->id,
-			'tax' => Cart::getSubTotalWithoutConditions() * floatval(config('commerce.tax_rate')) / 100,
+			'cartItems' => CartFacade::getContent(),
+			'cart_id' => $user->cart->id,
+			'tax' => CartFacade::getSubTotalWithoutConditions() * floatval(config('commerce.tax_rate')) / 100,
 		]);
 	}
 
 	public function addToCart(CartRequest $request): RedirectResponse
 	{
+		// dd(session()->all());
+		CartFacade::setSessionKey('cart_' . auth()->id());
 		$validated = $request->validated();
 		DB::beginTransaction();
-
 		try {
 			$cart = auth()->user()->cart;
+
 			$item = $cart->products()
 				->where('product_id', $validated['id'])
 				->lockForUpdate()
@@ -40,7 +53,7 @@ class CartController extends Controller
 			if ($item && $item->exists()) {
 				$cart->updateProduct($validated['id'], $item->pivot->quantity + $validated['quantity']);
 
-				Cart::update(
+				CartFacade::update(
 					$validated['id'],
 					[
 						'quantity' => $validated['quantity'],
@@ -50,7 +63,17 @@ class CartController extends Controller
 				$cart->attachProduct($validated['id'], $validated['quantity']);
 
 				$product = Product::findOrFail($validated['id']);
-				Cart::add([
+				$offerTemplate = $product->getCurrentOffer();
+				$discount = $offerTemplate ?
+					$product->getDiscountTotal(
+						$validated['quantity'],
+						$offerTemplate->buy_qty,
+						$offerTemplate->pay_qty,
+						$offerTemplate->offerType->code
+					)
+					: 0;
+
+				CartFacade::add([
 					'id' => $validated['id'],
 					'name' => $product->name,
 					'price' => $product->price,
@@ -60,6 +83,7 @@ class CartController extends Controller
 						'image' => $product->image,
 						'description' => $product->description,
 						'category' => $product->category,
+						'discount' => $discount,
 					]
 				]);
 			}
@@ -80,7 +104,7 @@ class CartController extends Controller
 
 		DB::beginTransaction();
 		try {
-			Cart::update(
+			CartFacade::update(
 				$validated['id'],
 				[
 					'quantity' => [
@@ -103,15 +127,15 @@ class CartController extends Controller
 
 	public function remove(string $id, string $id_product): RedirectResponse
 	{
-		Cart::remove($id_product);
-		ModelsCart::findOrFail($id)->detachProduct($id_product);
+		CartFacade::remove($id_product);
+		Cart::findOrFail($id)->detachProduct($id_product);
 
 		return redirect()->back()->with('success', 'Producto eliminado del carrito');
 	}
 
 	public function clearCart(): RedirectResponse
 	{
-		Cart::clear();
+		CartFacade::clear();
 		auth()->user()->cart->detachProduct([]);
 
 		return redirect()->back()->with('success', 'Carrito vaciado');
@@ -120,7 +144,7 @@ class CartController extends Controller
 	// Dashboard
 	public function dashboardIndex(): View
 	{
-		$carts = ModelsCart::select(['id', 'user_id', 'updated_at'])
+		$carts = Cart::select(['id', 'user_id', 'updated_at'])
 			->with('user:id,name,surname')
 			->withCount('products')->paginate(10);
 		$carts->map(fn($cart) => $cart->fullName = $cart->user->fullName());
@@ -130,7 +154,7 @@ class CartController extends Controller
 		]);
 	}
 
-	public function show(ModelsCart $cart): View
+	public function show(Cart $cart): View
 	{
 		return view('pages.dashboard.cart.show', [
 			'cart' => $cart,
@@ -139,7 +163,7 @@ class CartController extends Controller
 
 	public function fetch(string $id_cart, string $id_product): JsonResponse
 	{
-		$cart = ModelsCart::findOrFail($id_cart);
+		$cart = Cart::findOrFail($id_cart);
 		$product = Product::findOrFail($id_product);
 
 		return response()->json([

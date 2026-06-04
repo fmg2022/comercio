@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Cart;
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Joelwmale\Cart\Facades\CartFacade;
@@ -40,7 +37,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $this->loadCartFromDatabase($request->user());
+        foreach (array_keys(session()->all()) as $key) {
+            if (str_starts_with($key, 'cart__cart_')) {
+                session()->forget($key);
+            }
+        }
 
         return redirect()->intended(route('home', absolute: false));
     }
@@ -59,60 +60,5 @@ class AuthenticatedSessionController extends Controller
         CartFacade::clear();
 
         return redirect('/');
-    }
-
-    /**
-     * Cargar carrito desde base de datos
-     */
-    protected function loadCartFromDatabase(User $user): void
-    {
-        $cart = $user->cart;
-        $cartItems = $cart->products()->get();
-
-        if ($cartItems->count() === 0) {
-            return;
-        }
-
-        foreach ($cartItems as $cartItem) {
-            $this->addCartItemToSession($cartItem, $cart);
-        }
-    }
-
-    /**
-     * Agregar item desde BD al carrito de sesión
-     */
-    protected function addCartItemToSession(Product $product, Cart $cart): void
-    {
-        try {
-            if (!$product || $product->stock <= 0) {
-                $cart->products()->detach($product->id);
-
-                return;
-            }
-
-            $quantity = min($product->stock, $product->pivot->quantity);
-            CartFacade::add([
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => $quantity,
-                'attributes' => [
-                    'brand' => $product->brand->name,
-                    'image' => $product->image,
-                    'description' => $product->description,
-                    'category' => $product->category->name,
-                ]
-            ]);
-
-            // Si la cantidad fue ajustada, actualizar en BD
-            if ($quantity != $product->pivot->quantity) {
-                $cart->products()->updateExistingPivot($product->id, ['quantity' => $quantity]);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error al agregar item al carrito de sesión', [
-                'product_id' => $product->id,
-                'error' => $e->getMessage()
-            ]);
-        }
     }
 }

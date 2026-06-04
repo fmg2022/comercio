@@ -7,26 +7,41 @@ use App\Models\Category;
 use App\Models\Offer;
 use App\Models\OfferTemplate;
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Joelwmale\Cart\Facades\CartFacade;
 
 class IndexController extends Controller
 {
+    protected CartService $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function index()
     {
+        CartFacade::setSessionKey('cart_' . auth()->id());
         $selectedCategories = Category::where('parent_id', '!=', null)->limit(5)->get()->values('name', 'id');
         $products = Product::with('brand:id,name')
-            ->where('stock', '>=', 20)
+            ->where('stock', '>', 'min_stock')
             ->select(['id', 'name', 'brand_id', 'image', 'price'])->inRandomOrder()->limit(6)->get();
         $offers = OfferTemplate::all(['id', 'name']);
         $brands = Brand::inRandomOrder()->limit(7)->get()->values('name', 'id');
+
+        if (Auth::check() && CartFacade::getContent()->isEmpty()) {
+            $this->cartService->loadCartFromDatabase(Auth::user());
+        }
 
         return view('pages.index', compact('products', 'offers', 'selectedCategories', 'brands'));
     }
 
     public function showProduct(Product $product): View
     {
-        $products = Product::where('category_id', $product->category_id)->where('stock', '>=', 20)->limit(5)->get();
+        $products = Product::where('category_id', $product->category_id)->where('stock', '>', 'min_stock')->limit(5)->get();
         $categoriesNav = $product->category->breadcrumbs();
 
         $categoriesNav[] = $product->name;
@@ -56,7 +71,7 @@ class IndexController extends Controller
                 END
             ", [$search, "{$search}%", "%{$search}%"]);
             })
-            ->where('stock', '>=', 20)
+            ->where('stock', '>', 'min_stock')
             ->paginate(12);
         $categoriesNav[] = $validated['query'];
         $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
@@ -81,7 +96,7 @@ class IndexController extends Controller
             ->prepend($category->name, $category->id)
             ->toArray();
 
-        $products = Product::whereIn('category_id', array_keys($categoriesProduct))->where('stock', '>=', 20)->paginate(12);
+        $products = Product::whereIn('category_id', array_keys($categoriesProduct))->where('stock', '>', 'min_stock')->paginate(12);
         $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
         $categoriesNav = $category->breadcrumbs();
         return view('pages.home.product.list', compact('products', 'brandsProducts', 'categoriesProduct', 'categoriesNav'));
@@ -91,7 +106,7 @@ class IndexController extends Controller
     {
         $products = $offer->products()
             ->with('category')
-            ->where('stock', '>=', 20)
+            ->where('stock', '>', 'min_stock')
             ->paginate(12);
         $categoriesNav[] = $offer->offerTemplate->name;
         $brandsProducts = Brand::whereIn('id', $products->pluck('brand_id'))->select('name', 'id')->get();
