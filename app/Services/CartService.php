@@ -45,12 +45,14 @@ class CartService
 
       $quantity = min($product->stock, $product->pivot->quantity);
       $offerTemplate = $product->getCurrentOffer();
-      $discount = $product->getDiscountTotal(
-        $quantity,
-        $offerTemplate->buy_qty,
-        $offerTemplate->pay_qty,
-        $offerTemplate->offerType->code
-      );
+      $discount = $offerTemplate ?
+        $product->getDiscountTotal(
+          $quantity,
+          $offerTemplate->buy_qty,
+          $offerTemplate->pay_qty,
+          $offerTemplate->offerType->code
+        )
+        : 0;
 
       CartFacade::add([
         'id' => $product->id,
