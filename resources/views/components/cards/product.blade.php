@@ -25,22 +25,30 @@
           <p class="flex justify-star items-center gap-3">
             @php
               $offerType = $offers[$offerID]['offer_template']['offer_type']['code'];
-              $newPrice =
-                  $offerType === 'FIXED'
-                      ? $product->price - $offers[$offerID]['offer_template']['pay_qty']
-                      : ($product->price * $offers[$offerID]['offer_template']['pay_qty']) /
-                          $offers[$offerID]['offer_template']['buy_qty'];
-              $newPrice = number_format($newPrice, 2, ',', '.');
+
+              if ($offerType === 'X_FOR_Y') {
+                  $buy = (float) $offers[$offerID]['offer_template']['buy_qty'];
+                  $newPrice =
+                      ($product->price * ($buy - (float) $offers[$offerID]['offer_template']['pay_qty'])) / $buy;
+              } else {
+                  $newPrice = $product->getDiscountTotal(
+                      (float) $offers[$offerID]['offer_template']['buy_qty'],
+                      (float) $offers[$offerID]['offer_template']['buy_qty'],
+                      (float) $offers[$offerID]['offer_template']['pay_qty'],
+                      $offerType,
+                  );
+              }
             @endphp
             <span class="text-lg font-bold text-slate-700">
-              {!! "\$$newPrice" .
-                  ($offers[$offerID]['offer_template']['offer_type']['code'] === 'X_FOR_Y' ? '<sup>c/u</sup>' : '') !!}
+              {!! "$" .
+                  number_format($product->price - $newPrice, 2, ',', '.') .
+                  ($offerType === 'X_FOR_Y' ? '<sup>c/u</sup>' : '') !!}
             </span>
             <span class="px-1 py-0.5 bg-amber-400 rounded-lg">
               {{ $offerType === 'FIXED'
                   ? '-$' . $offers[$offerID]['offer_template']['pay_qty']
                   : ($offerType === 'PERCENTAGE'
-                      ? '-' . (1 - $offers[$offerID]['offer_template']['pay_qty']) * 100 . '%'
+                      ? '-' . $offers[$offerID]['offer_template']['pay_qty'] * 100 . '%'
                       : $offers[$offerID]['offer_template']['buy_qty'] * 1 .
                           'x' .
                           $offers[$offerID]['offer_template']['pay_qty'] * 1) }}

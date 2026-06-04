@@ -45,7 +45,7 @@ class Product extends Model
             ?->offerTemplate;
     }
 
-    public function getDiscountTotal(int $quantity, int $buyQuantity, int $payQuantity, string $offerType): float
+    public function getDiscountTotal(int $quantity, float $buyQuantity, float $payQuantity, string $offerType): float
     {
         if ($offerType === 'PERCENTAGE') {
             return $this->price * $payQuantity * $quantity;
@@ -112,5 +112,10 @@ class Product extends Model
     public function activeOffer()
     {
         return $this->offers()->active()->first()?->id;
+    }
+
+    public function inStock(): bool
+    {
+        return $this->stock > $this->min_stock;
     }
 }

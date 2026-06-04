@@ -43,12 +43,11 @@
                   </p>
                 </form>
               </div>
-              <form class="flex justify-center items-start"
-                action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $details->id]) }}" method="POST">
+              <form action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $details->id]) }}" method="POST"
+                class="flex justify-center items-start">
                 @csrf
                 @method('DELETE')
-                <input type="hidden" name="id" value="{{ $details->id }}">
-                <button type="submit" class="p-2 text-gray-400 hover:text-gray-500 remove-item">
+                <button type="submit" class="p-2 text-gray-400 hover:text-gray-500 cursor-pointer">
                   <x-icons.x class="size-6" />
                 </button>
               </form>
@@ -58,7 +57,7 @@
           @endforelse
         </ul>
       </div>
-      <form action="{{ route('checkout.process') }}" method="POST"
+      <form action="{{ route('orders.store') }}" method="POST"
         class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
         @csrf
         @php $total = Cart::getSubTotalWithoutConditions(); @endphp

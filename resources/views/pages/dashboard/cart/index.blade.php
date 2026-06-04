@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && auth()->user()?->can('manage carts-details'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('manage carts-details'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endPushIf
 

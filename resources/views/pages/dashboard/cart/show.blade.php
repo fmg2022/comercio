@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && $cart->products->count() > 0 && auth()->user()?->can('manage carts-details'),
+@pushIf($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'),
 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
@@ -13,6 +13,15 @@
       Productos en el carrito actualmente
     </x-slot:textTitle>
     <div class="flex gap-2">
+      @if (request()->routeIs('my.cart.index'))
+        <form action="{{ route('cart.clearCart', $cart->id) }}" method="POST" class="flex justify-center items-start">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="px-3 py-2 bg-red-700 active:bg-red-600 rounded-md cursor-pointer">
+            Limpiar Carrito
+          </button>
+        </form>
+      @endif
       <x-buttons.linkFill href="{{ url()->previous() ?: route('dashboard.index') }}"
         class="bg-slate-500 active:bg-slate-600">
         Volver
@@ -78,7 +87,8 @@
                   </li>
                   <li>
                     <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
-                      data-modalID="cartDeatailDelete" data-path="products/{{ $product->id }}" data-delete="true"
+                      data-modalID="cartDeatailDelete" data-path="{{ $cart->id }}/products/{{ $product->id }}"
+                      data-delete="true"
                       class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                       <span>
                         <x-icons.trash class="size-5" />

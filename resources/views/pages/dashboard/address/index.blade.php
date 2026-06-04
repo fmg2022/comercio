@@ -1,42 +1,56 @@
 @extends('layouts.dashboard')
-@can('manage addresses')
-  @push('scripts-dashboard')
+
+@push('scripts-dashboard')
+  @can('manage addresses')
     <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-    <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
 
     @if (!request()->routeIs('my.orders.index'))
       <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
       <script>
+        const choicesInstances = {};
+
         document.addEventListener('DOMContentLoaded', function() {
-          const userSelect = new Choices('#user', {
-            searchEnabled: true,
-            searchPlaceholderValue: 'Buscar usuario...',
-            removeItemButton: true,
-            placeholder: true,
-            placeholderValue: 'Selecciona un usuario',
-            shouldSort: false,
+          const selectsConfig = [{
+            id: 'user_id',
+            placeholder: 'Selecciona un usuario',
+            searchPlaceholderValue: 'Buscar usuario...'
+          }, ]
+          selectsConfig.forEach(config => {
+            const choicesOptions = {
+              placeholderValue: config.placeholder,
+              searchPlaceholderValue: config.searchPlaceholderValue,
+              searchEnabled: true,
+              removeItemButton: true,
+              placeholder: true,
+              shouldSort: false,
+            };
+
+            choicesInstances[config.id] = new Choices(`#${config.id}`, choicesOptions);
           });
         })
       </script>
     @endif
-  @endPush
+  @endcan
+  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@endPush
+
+@can('manage addresses')
+  @pushIf(!request()->routeIs('my.payments.index'), 'styles-dashboard')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+  <style>
+    .choices__inner {
+      background-color: #fff !important;
+      border-color: #e2e8f0 !important;
+      border-radius: 0.375rem !important;
+      min-height: 42px !important;
+    }
+
+    .choices__list--dropdown {
+      z-index: 10 !important;
+    }
+  </style>
+  @endPushIf
 @endcan
-
-@pushIf(!request()->routeIs('my.payments.index'), 'styles-dashboard')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
-<style>
-  .choices__inner {
-    background-color: #fff !important;
-    border-color: #e2e8f0 !important;
-    border-radius: 0.375rem !important;
-    min-height: 42px !important;
-  }
-
-  .choices__list--dropdown {
-    z-index: 10 !important;
-  }
-</style>
-@endPushIf
 
 @php
   $type1 = 'addressDeleteRestore';
@@ -99,17 +113,17 @@
               </x-slot:label>
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                <li>
+                  <button type="button" data-type="show" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
+                    data-modalID="addressCSE"
+                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                    <span>
+                      <x-icons.show class="size-5" />
+                    </span>
+                    Ver Dirección
+                  </button>
+                </li>
                 @can('manage addresses')
-                  <li>
-                    <button type="button" data-type="show" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
-                      data-modalID="addressCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Dirección
-                    </button>
-                  </li>
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $address->id }}" data-path="{{ $address->id }}"
                       data-modalID="addressCSE"
@@ -238,8 +252,10 @@
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @csrf
-      @method('PUT')
+      @can('manage addresses')
+        @csrf
+        @method('PUT')
+      @endcan
 
       <fieldset class="w-full py-3 grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-5 text-gray-700 md:px-3">
         @if (request()->routeIs('my.addresses.index'))
@@ -248,14 +264,14 @@
             {{ auth()->user()->fullName() }}</h3>
         @else
           <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
-            <label for="user" class="block mb-1 font-semibold">Usuario</label>
-            <select id="user" name="user_id"
+            <label for="user_id" class="block mb-1 font-semibold">Usuario</label>
+            <select id="user_id" name="user_id"
               class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required>
               <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona un usuario
               </option>
               @foreach ($users as $user)
-                <option value="{{ $user->id }}">{{ $user->full_name }}</option>
+                <option value="{{ $user->id }}">{{ $user->fullName() }}</option>
               @endforeach
             </select>
           </div>
@@ -295,7 +311,7 @@
           <p class="w-max">¿Establecer dirección por defecto?</p>
           <x-inputs.checkSwitch name="is_default"
             class="bg-slate-200 checked:bg-green-700 group-[.editable]:cursor-pointer"
-            classLabel="z-10 bg-white border-slate-300 peer-checked/switch:border-green-700 group-[.editable]:cursor-pointer" />
+            classLabel="bg-white border-slate-300 peer-checked/switch:border-green-700 group-[.editable]:cursor-pointer" />
         </section>
         <button type="submit"
           class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
@@ -307,6 +323,8 @@
     </form>
   </x-modals.simple>
 
-  {{-- Modal DELETE y RESTORE --}}
-  <x-modals.delete id="{{ $type1 }}" />
+  @can('manage addresses')
+    {{-- Modal DELETE y RESTORE --}}
+    <x-modals.delete id="{{ $type1 }}" />
+  @endcan
 @endsection

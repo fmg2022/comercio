@@ -1,10 +1,56 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
-<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-@endPushIf
 @push('scripts-dashboard')
+  @can('manage products-and-attributes')
+    <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+    <script>
+      const choicesInstances = {};
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const selectsConfig = [{
+            id: 'brand_id',
+            placeholder: 'Selecciona una marca',
+            searchPlaceholderValue: 'Buscar marca...'
+          },
+          {
+            id: 'category_id',
+            placeholder: 'Selecciona una categoría',
+            searchPlaceholderValue: 'Buscar categoría...'
+          },
+        ]
+        selectsConfig.forEach(config => {
+          const choicesOptions = {
+            placeholderValue: config.placeholder,
+            searchPlaceholderValue: config.searchPlaceholderValue,
+            searchEnabled: true,
+            removeItemButton: true,
+            placeholder: true,
+            shouldSort: false,
+          };
+
+          choicesInstances[config.id] = new Choices(`#${config.id}`, choicesOptions);
+        });
+      })
+    </script>
+  @endcan
   <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@endPush
+
+@push('styles-dashboard')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+  <style>
+    .choices__inner {
+      background-color: #fff !important;
+      border-color: #e2e8f0 !important;
+      border-radius: 0.375rem !important;
+      min-height: 42px !important;
+    }
+
+    .choices__list--dropdown {
+      z-index: 10 !important;
+    }
+  </style>
 @endPush
 
 <!-- Mostrar un mensaje para:
@@ -37,6 +83,7 @@
         <th class="hidden md:table-cell">SKU</th>
         <th>Precio</th>
         <th>Stock</th>
+        <th class="hidden xl:table-cell">Min. Stock</th>
         <th class="hidden md:table-cell">Categoría</th>
         <th class="text-end">Opciones</th>
       </tr>
@@ -56,6 +103,7 @@
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->sku }}</td>
         <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
         <td class="text-slate-300">{{ $product->stock }}</td>
+        <td class="hidden text-slate-300 xl:table-cell">{{ $product->min_stock }}</td>
         <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
         <td class="relative flex justify-end">
           <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
@@ -204,7 +252,7 @@
 
   {{-- MODAL SHOW, EDIT --}}
   <x-modals.simple id="productCSE"
-    class="max-w-2xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
       @can('manage products-and-attributes')
@@ -212,64 +260,68 @@
         @method('PUT')
       @endcan
       <x-images.borderFill src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="Producto" />
-      <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6 text-gray-700 md:px-3">
+      <fieldset class="py-3 grid grid-cols-2 gap-6 text-gray-700 md:px-3">
         <input type="hidden" name="image" value="{{ $product->image }}" />
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="name">Nombre</label>
+        <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
+          <label class="block mb-2 font-semibold" for="name">Nombre</label>
           <input type="text" id="name" name="name" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
+        <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
+          <label class="block mb-2 font-semibold" for="sku">SKU</label>
+          <input type="text" id="sku" name="sku"
+            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            required>
+        </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label for="brand" class="block ps-4 mb-2 font-semibold">Marcas</label>
-          <select id="brand" name="brand_id"
+          <label class="block ps-4 mb-2 font-semibold" for="price">Precio</label>
+          <p class="flex flex-row gap-1 items-baseline justify-center">
+            $ <input type="number" id="price" name="price" step="0.01" min="0"
+              class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </p>
+        </div>
+        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+          <label for="brand_id" class="block mb-2 font-semibold">Marcas</label>
+          <select id="brand_id" name="brand_id"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-            <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una marca
-            </option>
             @foreach ($brands as $brand)
               <option value="{{ $brand->id }}">{{ $brand->name }}</option>
             @endforeach
           </select>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="price">Precio</label>
-          <input type="number" id="price" name="price" step="0.01" min="0"
+          <label class="block mb-2 font-semibold" for="stock">Stock Disponible</label>
+          <input type="number" min="1" id="stock" name="stock" value="1"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="stock">Stock</label>
-          <input type="number" min="1" id="stock" name="stock"
+          <label class="block mb-2 font-semibold" for="min_stock">Stock Mínimo</label>
+          <input type="number" min="1" id="min_stock" name="min_stock" value="1"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="weight">Peso</label>
-          <input id="weight" name="weight" autocomplete="off"
+          <label class="block mb-2 font-semibold" for="weight">Peso</label>
+          <input id="weight" name="weight" autocomplete="off" placeholder="1 lt, 1kg, 100gr, 350ml, ..."
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="container">Envase</label>
-          <input id="container" name="container" autocomplete="off"
+          <label class="block mb-2 font-semibold" for="container">Envase</label>
+          <input id="container" name="container" autocomplete="off" placeholder="Caja, Paquete, Sachet, ..."
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="sku">SKU</label>
-          <input type="text" id="sku" name="sku"
-            class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            required>
-        </div>
-        <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label for="category_id" class="block ps-4 mb-2 font-semibold">Categorías</label>
+        <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
+          <label for="category_id" class="block mb-2 font-semibold">Categorías</label>
           <select name="category_id" id="category_id"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
-            <option value="" class="bg-slate-200 disabled:text-black" disabled selected>Selecciona una categoría
-            </option>
             @foreach ($categories as $category)
-              <option value="{{ $category['id'] }}" @disabled($category['nivel'] != 2) @class([
+              <option value="{{ $category['id'] }}" @class([
                   'text-slate-800',
                   'bg-purple-100 font-bold' => $category['nivel'] === 0,
                   'bg-purple-50 font-semibold' => $category['nivel'] === 1,
@@ -281,12 +333,12 @@
           </select>
         </div>
         <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block ps-4 mb-2 font-semibold" for="description">Descripción</label>
+          <label class="block mb-2 font-semibold" for="description">Descripción</label>
           <textarea id="description" name="description" rows="4"
             class="w-full max-w-xl min-h-lh px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
         </div>
         <button type="submit"
-          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-purple-900 text-lg text-white rounded-md hover:bg-purple-800 cursor-pointer sm:right-3/5">Actualizar</button>
+          class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-green-800 text-lg text-white rounded-md hover:bg-green-700 cursor-pointer sm:right-3/5">Actualizar</button>
       </fieldset>
     </form>
     <form method="dialog" class="peer-[.editable]/form:block hidden absolute bottom-4 left-2/3 sm:left-3/5">

@@ -29,7 +29,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::get('my/orders', [OrderController::class, 'myIndex'])->name('my.orders.index');
       Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show');
       Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index');
-      Route::get('my/cart', function () {
+      Route::get('my/carts', function () {
         $cart = auth()->user()->cart;
         abort_unless($cart, 404, 'Carrito no encontrado');
 

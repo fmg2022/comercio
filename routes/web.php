@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndexController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard.index');
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.index');
 
 // Ruta para notificaciones (webhook) - SIN protección CSRF
 Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
@@ -34,12 +34,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Ruta para la compra
-    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/store', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
+    Route::get('/checkout/{order}/{payment}', [CheckoutController::class, 'process'])->name('checkout.process');
 
     // Rutas para las redirecciones de Mercado Pago (back_urls)
-    Route::get('/payment/exito', [PaymentController::class, 'success'])->name('payment.success');
-    Route::get('/payment/fallo', [PaymentController::class, 'failure'])->name('payment.failure');
-    Route::get('/payment/pendiente', [PaymentController::class, 'pending'])->name('payment.pending');
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/exito', [CheckoutController::class, 'success'])->name('success');
+        Route::get('/fallo', [CheckoutController::class, 'failure'])->name('failure');
+        Route::get('/pendiente', [CheckoutController::class, 'pending'])->name('pending');
+    });
 
     // Rutas para el perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

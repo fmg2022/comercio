@@ -23,8 +23,8 @@
     },
     colors: ['#EA1E8C'],
     series: [{
-      name: 'productos',
-      data: [25, 15, 10, 30, 45, 80, 50, 62, 65]
+      name: 'Productos',
+      data: @json($quantity)
     }],
     title: {
       text: 'Productos vendidos por mes (2025)',
@@ -60,7 +60,7 @@
       }
     },
     xaxis: {
-      categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'],
+      categories: @json($months),
       labels: {
         style: {
           colors: '#fff'
@@ -73,7 +73,7 @@
 </script>
 @endPushIf
 
-@pushIf(auth()->check() && auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endPushIf
 
@@ -100,9 +100,6 @@
     <div class="mb-4 flex flex-wrap gap-4">
       <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-700 active:bg-slate-600">
         Volver al listado
-      </x-buttons.linkFill>
-      <x-buttons.linkFill href="" class="bg-red-700 active:bg-red-800">
-        Generar PDF
       </x-buttons.linkFill>
       @if ($product->trashed())
         <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
@@ -164,7 +161,7 @@
           </span>
         </td>
         <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
-        <td class="hidden sm:table-cell">{{ $order->pivot->price }}</td>
+        <td class="hidden sm:table-cell">${{ number_format($order->pivot->price, 2, '.', ',') }}</td>
       </tr>
 
     @empty
@@ -173,6 +170,8 @@
       </tr>
     @endforelse
   </x-tables.table>
+
+  {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   @if (!empty($orders))
     <div id="chart-product-orders" class="w-full py-3 mb-2 mt-10 mx-auto text-slate-900 md:max-w-xl"></div>

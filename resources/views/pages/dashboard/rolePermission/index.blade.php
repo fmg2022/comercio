@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->check() && auth()->user()?->can('manage roles'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('manage roles'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
 @endPushIf
