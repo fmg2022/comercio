@@ -33,6 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
           } else {
             field.checked = !!value
           }
+        } else if (type.includes('select')) {
+          const instance = choicesInstances[field.id]
+
+          if (!instance) return;
+
+          if (type === 'select-multiple') {
+            instance.removeActiveItems()
+            instance.setValue(value.map(String))
+          } else {
+            if (value) {
+              instance.setChoiceByValue(value.toString())
+            } else {
+              instance.removeActiveItems();
+            }
+          }
         } else {
           field.value = value?.toString() ?? ''
         }
@@ -61,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (type !== 'create') {
         let pathName = getBaseURL().replace('dashboard', 'api') + `/${button.dataset.path}`
+        $form.reset()
 
         axios.get(pathName)
           .then(response => setFormValues(response.data, $form))
