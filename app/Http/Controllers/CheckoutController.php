@@ -7,8 +7,6 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderState;
 use App\Models\Payment;
-use App\Models\PaymentProvider;
-use App\Models\PaymentState;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,79 +20,8 @@ use MercadoPago\MercadoPagoConfig;
 
 class CheckoutController extends Controller
 {
-    public function process(Request $request): RedirectResponse
+    public function process(Order $order, Payment $payment): RedirectResponse
     {
-        if (!auth()->user()->getCurrentAddress()) {
-            return back()->with('error', 'Debes crear una dirección antes de poder realizar el pago.');
-        }
-
-        $validated = $request->validate([
-            'cart_id' => 'required|exists:carts,id',
-            'notes' => 'nullable|string',
-            'payment_method' => 'required|string|in:mercadopago,store,cash',
-        ]);
-
-        $cart = Cart::where('id', $validated['cart_id'])
-            ->where('user_id', auth()->id())
-            ->firstOrFail();
-
-        if ($cart->products->isEmpty()) {
-            return back()->with('error', 'El carrito está vacío.');
-        }
-
-        CartFacade::setSessionKey('cart_' . auth()->user()->id);
-
-        $order = DB::transaction(function () use ($cart, $validated) {
-            $order = Order::create([
-                'date' => now(),
-                'total' => 0,
-                'iva' => 0,
-                'notes' => $validated['notes'],
-                'order_state_id' => OrderState::where('code', 'CREADO')->value('id'),
-                'user_id' => auth()->user()->id,
-                'address_id' => auth()->user()->getCurrentAddress()->id,
-            ]);
-
-            $total = 0;
-
-            foreach ($cart->products as $product) {
-                $offerTemplate = $product->getCurrentOffer();
-                $order->products()->attach($product->id, [
-                    'quantity' => $product->pivot->quantity,
-                    'price' => $product->price,
-                    'discount' => $offerTemplate ? $product->getDiscountTotal($product->pivot->quantity, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->code) : 0,
-                    'offer_template_id' => $offerTemplate ? $offerTemplate->id : '',
-                    'offer_type_code' => $offerTemplate ? $offerTemplate->offerType->code : '',
-                ]);
-
-                $total += (($product->price * $product->pivot->quantity) - $product->pivot->discount);
-            }
-            $iva = $total * floatval(config('commerce.tax_rate', 21)) / 100;
-
-            $order->update(['total' => $total, 'iva' => round($iva, 2)]);
-
-            return $order;
-        });
-
-        CartFacade::clear();
-        $cart->products()->detach();
-
-        $accessToken = config('commerce.mercadopago.access_token');
-        MercadoPagoConfig::setAccessToken($accessToken);
-
-        $payment = Payment::create([
-            'transaction_id' => 'pending_' . uniqid('', true),
-            'paymentId' => 'pay_' . uniqid('', true),
-            'provider_state' => 'pending',
-            'checkout_url' => '#',
-            'method' => $validated['payment_method'],
-            'amount' => $order->total + $order->iva,
-            'paid_at' => null,
-            'order_id' => $order->id,
-            'payment_state_id' => PaymentState::where('code', 'EN_PROCESO')->value('id'),
-            'payment_provider_id' => PaymentProvider::where('code', 'MERCADO_PAGO')->value('id'),
-        ]);
-
         $items = $order->products->map(function ($product) {
             $finalUnitPrice = $product->pivot->price - ($product->pivot->discount / $product->pivot->quantity);
             return [
@@ -106,6 +33,9 @@ class CheckoutController extends Controller
                 'currency_id' => config('commerce.mercadopago.currency_id'),
             ];
         });
+
+        $accessToken = config('commerce.mercadopago.access_token');
+        MercadoPagoConfig::setAccessToken($accessToken);
 
         $baseUrl = route('webhook.mercadopago');
 
@@ -121,9 +51,9 @@ class CheckoutController extends Controller
                 ],
             ],
             'back_urls' => [
-                'success' => route('payment.success'),
-                'pending' => route('payment.pending'),
-                'failure' => route('payment.failure'),
+                'success' => route('checkout.success'),
+                'pending' => route('checkout.pending'),
+                'failure' => route('checkout.failure'),
             ],
             'auto_return' => 'approved',
             'external_reference' => (string) $payment->id,
@@ -215,5 +145,85 @@ class CheckoutController extends Controller
             ]);
             return response()->json(['error' => 'Error fetching payment'], 500);
         }
+    }
+
+    // Rutas para redirecciones de Mercado Pago
+    public function success(Request $request): RedirectResponse
+    {
+        $paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+        $payment_id = $request->query('external_reference') ?? $request->query('preference_id');
+
+        if ($paymentId && $payment_id) {
+            $payment = Payment::where('paymentId', $paymentId)
+                ->orWhere('id', $payment_id)
+                ->orWhere('transaction_id', $payment_id)
+                ->first();
+
+            if ($payment && $payment->provider_state !== 'approved') {
+                $payment->update([
+                    'paymentId' => $paymentId,
+                    'provider_state' => 'approved',
+                    'paid_at' => now(),
+                ]);
+
+                if ($payment->order) {
+                    $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+                }
+            }
+
+            Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
+
+            // Limpiar el carrito
+            CartFacade::setSessionKey('cart_' . auth()->id());
+            CartFacade::clear();
+            $cart = Cart::where('user_id', auth()->id())
+                ->firstOrFail();
+            $cart->products()->detach();
+
+            return redirect('/')->with('success', 'La compra se realizó con éxito.');
+        }
+        return redirect('/')->with('error', 'No se encontró el pago.');
+    }
+
+    public function failure(Request $request): RedirectResponse
+    {
+        $paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+        $payment_id = $request->query('external_reference') ?? $request->query('preference_id');
+
+        if ($paymentId) {
+            $pago = Payment::where('paymentId', $paymentId)
+                ->orWhere('id', $payment_id)
+                ->orWhere('transaction_id', $payment_id)
+                ->first();
+            if ($pago && $pago->provider_state !== 'rejected') {
+                $pago->update([
+                    'paymentId' => $paymentId,
+                    'provider_state' => 'rejected'
+                ]);
+            }
+        }
+
+        return redirect('/')->with('error', 'El pago fue rechazado.');
+    }
+
+    public function pending(Request $request): RedirectResponse
+    {
+        $paymentId = $request->query('payment_id') ?? $request->query('collection_id');
+        $payment_id = $request->query('external_reference') ?? $request->query('preference_id');
+
+        if ($paymentId) {
+            $pago = Payment::where('paymentId', $paymentId)
+                ->orWhere('id', $payment_id)
+                ->orWhere('transaction_id', $payment_id)
+                ->first();
+            if ($pago && $pago->provider_state !== 'pending') {
+                $pago->update([
+                    'paymentId' => $paymentId,
+                    'provider_state' => 'pending'
+                ]);
+            }
+        }
+
+        return redirect('/')->with('warning', 'El pago está pendiente de acreditación.');
     }
 }

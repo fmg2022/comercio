@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Exports\PaymentsExport;
 use App\Http\Requests\PaymentExportRequest;
 use App\Http\Requests\PaymentRequest;
-use App\Mail\InvoiceMail;
-use App\Models\OrderState;
 use App\Models\Payment;
 use App\Models\PaymentState;
 use App\Models\User;
@@ -15,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PaymentController extends Controller
@@ -123,78 +120,5 @@ class PaymentController extends Controller
 		}
 
 		return Excel::download(new PaymentsExport($query->orderBy('paid_at', 'desc')->get()), 'payments.xlsx');
-	}
-
-	// Rutas para redirecciones de Mercado Pago
-	public function success(Request $request): RedirectResponse
-	{
-		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
-		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
-
-		if ($paymentId && $payment_id) {
-			$payment = Payment::where('paymentId', $paymentId)
-				->orWhere('id', $payment_id)
-				->orWhere('transaction_id', $payment_id)
-				->first();
-
-			if ($payment && $payment->provider_state !== 'approved') {
-				$payment->update([
-					'paymentId' => $paymentId,
-					'provider_state' => 'approved',
-					'paid_at' => now(),
-				]);
-
-				if ($payment->order) {
-					$payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
-				}
-			}
-
-			Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
-
-			return redirect('/')->with('success', 'La compra se realizó con éxito.');
-		}
-		return redirect('/')->with('error', 'No se encontró el pago.');
-	}
-
-	public function failure(Request $request): RedirectResponse
-	{
-		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
-		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
-
-		if ($paymentId) {
-			$pago = Payment::where('paymentId', $paymentId)
-				->orWhere('id', $payment_id)
-				->orWhere('transaction_id', $payment_id)
-				->first();
-			if ($pago && $pago->provider_state !== 'rejected') {
-				$pago->update([
-					'paymentId' => $paymentId,
-					'provider_state' => 'rejected'
-				]);
-			}
-		}
-
-		return redirect('/')->with('error', 'El pago fue rechazado.');
-	}
-
-	public function pending(Request $request): RedirectResponse
-	{
-		$paymentId = $request->query('payment_id') ?? $request->query('collection_id');
-		$payment_id = $request->query('external_reference') ?? $request->query('preference_id');
-
-		if ($paymentId) {
-			$pago = Payment::where('paymentId', $paymentId)
-				->orWhere('id', $payment_id)
-				->orWhere('transaction_id', $payment_id)
-				->first();
-			if ($pago && $pago->provider_state !== 'pending') {
-				$pago->update([
-					'paymentId' => $paymentId,
-					'provider_state' => 'pending'
-				]);
-			}
-		}
-
-		return redirect('/')->with('warning', 'El pago está pendiente de acreditación.');
 	}
 }
