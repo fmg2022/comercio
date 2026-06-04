@@ -10,14 +10,14 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
-        "joelwmale/laravel-cart": "^1.2",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/commonmark": "2.8.2",
         "maatwebsite/excel": "3.1.x-dev",
         "mercadopago/dx-php": "^3.9",
-        "spatie/laravel-permission": "^6.25"
+        "spatie/laravel-permission": "^6.25",
+        "wearepixel/laravel-cart": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
