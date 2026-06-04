@@ -11,7 +11,10 @@
     <section class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <div class="lg:col-span-7">
         <ul role="list" class="border-y divide-y divide-gray-200 border-gray-200">
+          @php $total = 0; @endphp
           @forelse ($cartItems as $details)
+            @php $total += $details->price * $details->quantity - $details->attributes->discount; @endphp
+
             <li class="py-6 flex gap-4 sm:py-10" data-id="{{ $details->id }}">
               <div class="shrink-0">
                 <img src="{{ asset('images/products/' . $details->attributes->image) }}"
@@ -38,9 +41,22 @@
                       class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 outline-gray-300 focus:outline-indigo-600 focus:outline-offset-2 focus:outline-2 sm:text-sm">
                   </label>
                   <input type="hidden" name="id" value="{{ $details->id }}">
-                  <p class="ml-4 text-lg font-medium text-gray-900">
-                    ${{ number_format($details->price, 2, ',', '.') }}
-                  </p>
+                  <div @class([
+                      'ml-4 text-slate-900 font-medium text-lg',
+                      'flex flex-col items-start justify-center' =>
+                          $details->attributes->discount !== 0,
+                  ])>
+                    <p @class([
+                        'text-base font-normal text-slate-500 line-through' =>
+                            $details->attributes->discount !== 0,
+                    ])>
+                      ${{ number_format($details->price * $details->quantity, 2, ',', '.') }}</p>
+                    @if ($details->attributes->discount !== 0)
+                      <span>
+                        ${{ number_format($details->price * $details->quantity - $details->attributes->discount, 2, ',', '.') }}
+                      </span>
+                    @endif
+                  </div>
                 </form>
               </div>
               <form action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $details->id]) }}" method="POST"
@@ -60,7 +76,6 @@
       <form action="{{ route('orders.store') }}" method="POST"
         class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
         @csrf
-        @php $total = Cart::getSubTotalWithoutConditions(); @endphp
         <input type="hidden" name="cart_id" value="{{ auth()->user()->cart->id }}">
         <h2 class="text-lg font-medium text-gray-900">Resumen del pedido</h2>
         <div class="space-y-4">
@@ -78,6 +93,9 @@
               ${{ number_format($total, 2, ',', '.') }}
             </p>
           </div>
+          @php
+            $tax = ($total * floatval(config('commerce.tax_rate'))) / 100;
+          @endphp
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
             <p class="text-gray-600">Impuestos estimados</p>
             <p class="font-medium text-gray-900">

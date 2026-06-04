@@ -191,7 +191,7 @@
             <div class="mt-8 flow-root">
               <ul role="list" class="-my-6 divide-y divide-gray-200">
                 @foreach ($cartItems as $item)
-                  @php $total += $item->price * $item->quantity; @endphp
+                  @php $total += $item->price * $item->quantity - $item->attributes->discount; @endphp
 
                   <li class="flex py-6">
                     <div class="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -200,13 +200,30 @@
                     </div>
                     <div class="ml-4 flex flex-1 flex-col">
                       <div>
-                        <div class="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
-                            <a href="{{ route('product.show', $item->id) }}">{{ $item->name }}</a>
-                          </h3>
-                          <p class="ml-4">${{ number_format($item->price, 2, ',', '.') }}</p>
+                        <div class="flex justify-between gap-4 text-base font-medium text-gray-900">
+                          <div>
+                            <h3>
+                              <a href="{{ route('product.show', $item->id) }}">{{ $item->name }}</a>
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ $item->attributes->brand }}</p>
+                          </div>
+                          <div @class([
+                              'text-slate-800',
+                              'flex flex-col items-start justify-center' =>
+                                  $item->attributes->discount !== 0,
+                          ])>
+                            <p @class([
+                                'text-sm font-normal text-slate-500 line-through' =>
+                                    $item->attributes->discount !== 0,
+                            ])>
+                              ${{ number_format($item->price * $item->quantity, 2, ',', '.') }}</p>
+                            @if ($item->attributes->discount !== 0)
+                              <span>
+                                ${{ number_format($item->price * $item->quantity - $item->attributes->discount, 2, ',', '.') }}
+                              </span>
+                            @endif
+                          </div>
                         </div>
-                        <p class="mt-1 text-sm text-gray-500">{{ $item->attributes->brand }}</p>
                       </div>
                       <div class="flex flex-1 items-end justify-between text-sm">
                         <p class="text-gray-500">Cantidad: {{ $item->quantity }}</p>
