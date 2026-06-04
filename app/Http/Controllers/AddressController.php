@@ -16,7 +16,7 @@ class AddressController extends Controller
         return view('pages.dashboard.address.index', [
             'addresses' => Address::orderBy('is_default', 'desc')->orderBy('id', 'desc')->paginate(10),
             'addressesDeleted' => Address::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
-            'users' => User::where('active', true)->selectRaw("id, CONCAT(surname, ', ', name) AS full_name")->get(),
+            'users' => User::get(['id', 'name', 'surname']),
         ]);
     }
 
