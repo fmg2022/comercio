@@ -31,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('Super Admin') ? true : null;
         });
 
-        OrderProduct::observe(\App\Observers\OrderProductObserver::class);
         Category::observe(\App\Observers\CategoryObserver::class);
         Address::observe(\App\Observers\AddressObserver::class);
 
