@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 098 765-4321',
                 'email' => 'admin@gmail.com',
                 'dni' => '12345678',
+                'address' => 'Barrio Celeste, Calle G N° 456 Cielo, Sub 123',
                 'password' => bcrypt('123456'),
                 'email_verified_at' => now(),
                 'active' => true,
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 098 765-4321',
                 'email' => 'vendedor@gmail.com',
                 'dni' => '82343678',
+                'address' => 'Barrio Tierra, Calle Ground N° 456 Cielo',
                 'password' => bcrypt('123456'),
                 'email_verified_at' => now(),
                 'active' => true,
@@ -39,6 +41,7 @@ class UserSeeder extends Seeder
                 'phone' => '+54 098 765-4321',
                 'email' => 'cliente@gmail.com',
                 'dni' => '92345678',
+                'address' => 'Barrio Escuela, Calle 1562 N° 456 Poso',
                 'password' => bcrypt('123456'),
                 'email_verified_at' => now(),
                 'active' => true,
@@ -49,15 +52,15 @@ class UserSeeder extends Seeder
         User::create($users[1])->assignRole(['Cliente', 'Vendedor']);
         User::create($users[2])->assignRole('Cliente');
 
-        User::factory(6)->create(['active' => fake()->boolean(80)])->each(function (User $user) {
+        User::factory(6)->create()->each(function (User $user) {
             $user->assignRole(['Cliente', 'Vendedor']);
         });
 
-        User::factory(50)->create(['active' => fake()->boolean(40)])->each(function (User $user) {
+        User::factory(50)->create()->each(function (User $user) {
             $user->assignRole('Cliente');
         });
 
-        User::factory(3)->create(['active' => fake()->boolean(20)])->each(function (User $user) {
+        User::factory(3)->create()->each(function (User $user) {
             $user->assignRole(['Cliente', 'Admin']);
         });
     }

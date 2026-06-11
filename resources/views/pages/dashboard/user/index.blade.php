@@ -263,7 +263,7 @@
           <section class="col-span-full group-[.editable]:hidden">
             <h4 class="mb-2 font-semibold">Dirección Actual</h4>
             <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
-              {{ $user->getCurrentAddress()?->fullAddress() ?? 'Sin dirección' }}
+              {{ $user->address ?? 'Sin dirección' }}
             </p>
           </section>
           <button type="submit"

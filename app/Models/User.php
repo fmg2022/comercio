@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'dni',
         'image',
+        'address',
         'password',
         'active',
     ];
@@ -63,16 +64,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->surname . ', ' . $this->name;
     }
 
-    public function getCurrentAddress(): ?Address
-    {
-        return $this->addresses()->where('is_default', true)->first();
-    }
-
     // Relationships
-    public function addresses(): HasMany
-    {
-        return $this->hasMany(Address::class);
-    }
 
     public function cart(): HasOne
     {
@@ -93,5 +85,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payments(): HasManyThrough
     {
         return $this->hasManyThrough(Payment::class, Order::class);
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(UserSessionHistory::class);
     }
 }

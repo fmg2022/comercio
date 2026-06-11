@@ -163,7 +163,7 @@
           <li class="flex justify-between text-slate-400">
             <div class="flex flex-col items-center md:flex-row md:w-full">
               <p class="md:w-1/2">Dirección</p>
-              <p class="text-wrap">{{ $address?->fullAddress() }}</p>
+              <p class="text-wrap">{{ $user->address }}</p>
             </div>
             <div class="flex items-center md:w-[200px] md:justify-end">
               <button type="button" onclick="openModal('dialog-perf')" class="p-1 cursor-pointer hover:text-white">
@@ -185,6 +185,7 @@
               <button data-pos="0" class="active pb-3 px-2 hover:text-white">Personal</button>
               <button data-pos="1.1" class="pb-3 px-2 hover:text-white">Dirección</button>
             </nav>
+            {{-- modificar estilos (quitar la parte de la seccion de direcciones) JS de navdesplace --}}
             <form class="overflow-x-hidden">
               <div class="relative top-0 w-[210%] mb-10 grid grid-cols-2 gap-x-[5%] transition-[left] duration-500"
                 data-navcontent="true" style="left: 0%">
@@ -209,21 +210,9 @@
                     <input value="{{ $user->email }}" id="pf-email" type="email"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
-                </fieldset>
-                <fieldset class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
                   <div class="flex flex-col gap-y-2">
                     <label for="pf-dir" class="text-sm font-semibold">Dirección</label>
-                    <input value="{{ $address?->street }}" id="pf-dir"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-city" class="text-sm font-semibold">Ciudad</label>
-                    <input value="{{ $address?->city }}" id="pf-city"
-                      class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
-                  </div>
-                  <div class="flex flex-col gap-y-2">
-                    <label for="pf-prov" class="text-sm font-semibold">Provincia</label>
-                    <input value="{{ $address?->province }}" id="pf-prov"
+                    <input value="{{ $user->address ?? 'Sin dirección' }}" id="pf-dir"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
                 </fieldset>

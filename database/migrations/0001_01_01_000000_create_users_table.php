@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('image')->default('sin_foto.webp');
             $table->string('phone', 20)->nullable();
+            $table->string('address', 255)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('active')->default(false);

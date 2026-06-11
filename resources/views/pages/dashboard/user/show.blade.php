@@ -22,26 +22,18 @@
       <div class="px-6 py-3 mb-4 flex gap-3 border border-slate-500 rounded-md divide-x-2 divide-dashed divide-slate-500">
         <ul class="w-1/3 pr-3 text-lg space-y-3">
           <li>Nombre completo</li>
+          <li>DNI</li>
           <li>Correo</li>
           <li>Teléfono</li>
+          <li>Dirección</li>
         </ul>
         <div class="w-2/3 text-xl text-center space-y-3 md:ps-5 md:text-start">
           <h3>{{ $user->fullName() }}</h3>
+          <h3>{{ $user->dni }}</h3>
           <h3>{{ $user->email }}</h3>
           <h3>{{ $user->phone }}</h3>
+          <h3>{{ $user->address ?? 'Sin dirección' }}</h3>
         </div>
-      </div>
-      <div class="py-3">
-        <h2 class="mb-4 text-xl text-center">Mis direcciones</h2>
-        <ul class="px-6 py-1 border border-slate-500 divide-y rounded-md">
-          @foreach ($user->addresses as $address)
-            <li class="py-3 flex gap-4 items-center">
-              <h3 class="text-lg font-semibold">{{ $address->name }}</h3>
-              <p class="grow">{{ $address->fullAddress() }}</p>
-              <span>{{ $address->is_default ? 'Establecida como dirección por defecto' : '--' }}</span>
-            </li>
-          @endforeach
-        </ul>
       </div>
     </div>
   </article>
