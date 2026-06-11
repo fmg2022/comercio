@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
             * LIST: show, list, filter
         */
         $permissions = [
-            'list my_section', // Address, Order [ver y crear], Payment, Cart (ver los items)
+            'list my_section', //  Order [ver y crear], Payment, Cart (ver los items)
             'add my_cart', // Solo para home
             'list roles',
             'manage roles',
@@ -27,8 +27,6 @@ class PermissionSeeder extends Seeder
             'list products',
             'list product-attributes',
             'manage products-and-attributes', // + Category + Brand + Product
-            'list addresses',
-            'manage addresses',
             'list state-type-tables', // States & Types
             'manage state-type-tables', // States & Types
             'list orders',

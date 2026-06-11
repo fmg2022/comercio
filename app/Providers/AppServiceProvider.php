@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Address;
 use App\Models\Category;
-use App\Models\OrderProduct;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
@@ -32,7 +30,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Category::observe(\App\Observers\CategoryObserver::class);
-        Address::observe(\App\Observers\AddressObserver::class);
 
         VerifyEmail::toMailUsing(function (object $notificable, string $url) {
             return (new MailMessage)

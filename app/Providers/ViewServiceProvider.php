@@ -5,8 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
-use function Symfony\Component\Clock\now;
-
 class ViewServiceProvider extends ServiceProvider
 {
     /**

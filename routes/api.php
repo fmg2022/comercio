@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/products/{id}', [App\Http\Controllers\ProductController::class, 'fetch']);
 Route::get('/users/{id}', [App\Http\Controllers\UserController::class, 'fetch']);
 Route::get('/users/{id}/roles', [App\Http\Controllers\UserController::class, 'fetchRoles']);
-Route::get('/addresses/{id}', [App\Http\Controllers\AddressController::class, 'fetch']);
 Route::get('/categories/{id}', [App\Http\Controllers\CategoryController::class, 'fetch']);
 Route::get('/categories', [App\Http\Controllers\CategoryController::class, 'getCategories']);
 Route::get('/dashboard/sellers/cant', [App\Http\Controllers\DashboardController::class, 'cantSellers']);

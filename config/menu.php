@@ -14,12 +14,6 @@ return [
       'permission' => null,
     ],
     [
-      'name' => 'Mis Direcciones',
-      'icon' => 'address',
-      'route' => 'my.addresses.index',
-      'permission' => 'list my_section',
-    ],
-    [
       'name' => 'Mis Ordenes',
       'icon' => 'order',
       'route' => 'my.orders.index',
@@ -95,12 +89,6 @@ return [
       'icon' => 'users',
       'route' => 'users.index',
       'permission' => 'list users',
-    ],
-    [
-      'name' => 'Direcciones',
-      'icon' => 'address',
-      'route' => 'addresses.index',
-      'permission' => 'list addresses',
     ],
     [
       'name' => 'Roles y Permisos',

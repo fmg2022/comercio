@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -25,7 +24,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // My routes
     Route::group(['middleware' => ['permission:list my_section']], function () {
-      Route::get('my/addresses', [AddressController::class, 'myIndex'])->name('my.addresses.index');
       Route::get('my/orders', [OrderController::class, 'myIndex'])->name('my.orders.index');
       Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show');
       Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index');
@@ -45,10 +43,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
       Route::put('/users/{user}/roles', [UserController::class, 'updateRole'])->name('users.updateRole');
     });
-
-    // Address routes
-    Route::resource('/addresses', AddressController::class)->except(['show', 'create']);
-    Route::post('/addresses/{id}/restore', [AddressController::class, 'restore'])->name('addresses.restore');
 
     // Product, category, brand routes
     Route::group(['middleware' => ['permission:manage products-and-attributes']], function () {

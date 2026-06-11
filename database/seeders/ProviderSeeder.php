@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Address;
 use App\Models\Provider;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
