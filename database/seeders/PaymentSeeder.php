@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Order;
 use App\Models\Payment;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +14,7 @@ class PaymentSeeder extends Seeder
      */
     public function run(): void
     {
-        $orders = DB::table('orders')
+        $orders = Order::doesntHave('payment')
             ->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
             ->select('orders.id', 'orders.total', 'orders.date', 'order_states.code')
             ->get();
@@ -48,7 +48,7 @@ class PaymentSeeder extends Seeder
 
             $paidAt = null;
             if ($order->code !== 'CANCELADO') {
-                $calculatedPaidAt = Carbon::parse($order->date)->addDays($daysDelay);
+                $calculatedPaidAt = $order->date->addDays($daysDelay);
                 $paidAt = $calculatedPaidAt->isFuture() ? now() : $calculatedPaidAt;
             }
 

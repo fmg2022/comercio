@@ -111,7 +111,7 @@ class PaymentController extends Controller
 	{
 		$filters = $request->validated();
 		$query = Payment::query()
-			->with(['order:id,user_id,address_id,date', 'order.user:id,name,surname', 'paymentState:id,code']);
+			->with(['order:id,user_id,address,date', 'order.user:id,name,surname', 'paymentState:id,code']);
 
 		$this->applyFilters($query, $filters);
 

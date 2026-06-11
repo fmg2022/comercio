@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 
 class PDFService
 {
@@ -33,11 +32,11 @@ class PDFService
         $factura = (object) [
             'punto_venta' => $branches[0]['nro'] ?? '0001',
             'numero' => str_pad($order->id, 8, '0', STR_PAD_LEFT),
-            'fecha_emision' => date('d/m/Y', strtotime($order->date)),
+            'fecha_emision' => $order->date->format('Y-m-d'),
             'cliente_nombre' => $order->user->fullName(),
             'cliente_tipo_doc' => 'DNI',
             'cliente_documento' => $order->user->dni,
-            'cliente_domicilio' => $order->user->getCurrentAddress()->shortAddress(),
+            'cliente_domicilio' => $order->address,
             'cliente_telefono' => $order->user->phone,
             'subtotal' => $order->subtotal,
             'iva' => $order->total * ($iva / 100),
@@ -46,7 +45,7 @@ class PDFService
             'cuotas' => $order->payment->nro_fee,
             'operacion_numero' => 'TRX-12345',
             'cae' => '12345678901234', // Obtener valor de la SDK de ARCA
-            'cae_vencimiento' => Carbon::parse($order->date)->addDays(10)->format('d/m/Y'), // Obtener valor de la SDK de ARCA
+            'cae_vencimiento' => $order->date->addDays(10)->format('d/m/Y'), // Obtener valor de la SDK de ARCA
             'qr_base64' => null, // Obtener valor de la SDK de ARCA
             'items' => $order->products
         ];

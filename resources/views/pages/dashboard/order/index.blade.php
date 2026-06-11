@@ -97,10 +97,19 @@
     <x-slot:textTitle>{{ request()->routeIs('my.orders.index') ? 'Mis' : '' }} Ordenes</x-slot:textTitle>
     @can('manage state-type-tables')
       @if (!request()->routeIs('my.orders.index'))
-        <button onclick="openModal('exportModal')"
-          class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
-          Exportar a Excel
-        </button>
+        <div>
+          @if (request()->routeIs('orders.filter'))
+            <x-buttons.linkFill href="{{ route('orders.index') }}"
+              class="py-2.5 me-4 font-semibold bg-slate-700 hover:bg-slate-600">
+              Volver a la lista
+            </x-buttons.linkFill>
+          @endif
+
+          <button onclick="openModal('exportModal')"
+            class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
+            Exportar a Excel
+          </button>
+        </div>
       @endif
     @endcan
   </x-sections.headerTitle>
@@ -129,7 +138,7 @@
         @if (!request()->routeIs('my.orders.index'))
           <td class="font-bold">{{ $fullName }}</td>
         @endif
-        <td class="text-slate-300">{{ $order->date_formated }}</td>
+        <td class="text-slate-300">{{ $order->date->format('d/m/Y H:i') }}</td>
         <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
         <td class="hidden text-slate-300 capitalize lg:table-cell">
           {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>

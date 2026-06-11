@@ -47,7 +47,7 @@ class PaymentsExport implements FromCollection, WithHeadings, WithProperties, Wi
             $payment->id,
             $payment->method,
             $payment->paymentProvider->name,
-            $payment->order->date_formated,
+            $payment->order->date->format('d/m/Y H:i'),
             $payment->amount_formated,
             $payment->nro_fee,
             $payment->paymentState->code,

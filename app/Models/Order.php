@@ -20,9 +20,13 @@ class Order extends Model
 		'total',
 		'iva',
 		'notes',
+		'address',
 		'order_state_id',
 		'user_id',
-		'address_id',
+	];
+
+	protected $casts = [
+		'date' => 'datetime',
 	];
 
 	// Accesores
@@ -37,13 +41,6 @@ class Order extends Model
 	{
 		return Attribute::make(
 			get: fn() => $this->payments->first() ?? 'Sin pago',
-		);
-	}
-
-	protected function dateFormated(): Attribute
-	{
-		return Attribute::make(
-			get: fn() => date('d/m/Y', strtotime($this->date))
 		);
 	}
 
@@ -93,11 +90,6 @@ class Order extends Model
 	public function user(): BelongsTo
 	{
 		return $this->belongsTo(User::class);
-	}
-
-	public function address(): BelongsTo
-	{
-		return $this->belongsTo(Address::class);
 	}
 
 	public function orderState(): BelongsTo

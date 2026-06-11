@@ -18,7 +18,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use Joelwmale\Cart\Facades\CartFacade;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
@@ -32,6 +31,19 @@ class OrderController extends Controller
 		]);
 	}
 
+	public function filter(OrderExportRequest $request): View
+	{
+		$orders = Order::query();
+		$this->applyFilters($orders, $request->validated());
+		$users = User::whereIn('id', $orders->pluck('user_id')->unique()->values())->get();
+
+		return view('pages.dashboard.order.index', [
+			'orders' => $orders->orderByDesc('date')->paginate(10),
+			'orderStates' => OrderState::all(['code', 'id']),
+			'users' => $users,
+		]);
+	}
+
 	public function show(String $id): View
 	{
 		$order = Order::findOrFail($id);
@@ -41,7 +53,7 @@ class OrderController extends Controller
 	public function store(Request $request): RedirectResponse
 	{
 		$user = auth()->user();
-		if (!$user->getCurrentAddress()) {
+		if (!$user->address) {
 			return back()->with('error', 'Debes crear una dirección antes de poder realizar el pago.');
 		}
 
@@ -89,9 +101,9 @@ class OrderController extends Controller
 				'total' => 0,
 				'iva' => 0,
 				'notes' => $validated['notes'],
-				'order_state_id' => OrderState::where('code', 'CREADO')->value('id'),
+				'order_state_id' => OrderState::where('code', 'PENDIENTE')->value('id'),
 				'user_id' => $user->id,
-				'address_id' => $user->getCurrentAddress()->id,
+				'address' => $user->address,
 			]);
 
 			$total = 0;
@@ -216,7 +228,7 @@ class OrderController extends Controller
 	{
 		$filters = $request->validated();
 		$query = Order::query()
-			->with(['user:id,name,surname', 'address:id,street,city', 'orderState:id,code', 'products']);
+			->with(['user:id,name,surname', 'orderState:id,code', 'products']);
 
 		$this->applyFilters($query, $filters);
 

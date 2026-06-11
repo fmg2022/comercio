@@ -67,6 +67,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::put('/{order}/states', [OrderController::class, 'updateStates'])->name('updateStates');
       Route::get('/export', [OrderController::class, 'export'])->name('export');
       Route::post('/count', [OrderController::class, 'count'])->name('count');
+      Route::get('/filter', [OrderController::class, 'filter'])->name('filter');
     });
 
     // Payment routes

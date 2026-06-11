@@ -5,7 +5,7 @@
     class="flex justify-between items-center flex-wrap">
     <x-slot:textTitle>
       {{ 'Detalles de la Orden #' . $order->id }}
-      <span class="text-base">({{ Str::substr($order->date, 0, 10) }})</span>
+      <span class="text-base">({{ $order->date->format('d/m/Y') }})</span>
     </x-slot:textTitle>
     <div class="flex gap-2">
       <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">

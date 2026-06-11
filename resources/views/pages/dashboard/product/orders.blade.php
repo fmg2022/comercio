@@ -146,7 +146,7 @@
             Ver Orden
           </x-popups.text>
         </td>
-        <td>{{ Carbon\Carbon::parse($order->date)->format('d/m/Y') }}</td>
+        <td>{{ $order->date->format('d/m/Y') }}</td>
         <td class="hidden md:table-cell">
           <span @class([
               "font-semibold before:content-['●'] before:me-px",
