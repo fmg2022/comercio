@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
 		$middleware->validateCsrfTokens(except: [
 			'/webhook/mercadopago',
 		]);
+
+		$middleware->appendToGroup('web', \App\Http\Middleware\UpdateUserSessionActivity::class);
 	})
 	->withExceptions(function (Exceptions $exceptions) {
 		$exceptions->render(function (NotFoundHttpException $e, Request $request) {

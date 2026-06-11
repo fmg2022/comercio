@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Order;
+use App\Models\UserSessionHistory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,15 @@ class OrderSeeder extends Seeder
 			->get()
 			->groupBy('product_id');
 
-		Order::factory(200)->create()->each(function ($order) use ($validOffers) {
+		Order::factory(300)->create()->each(function ($order) use ($validOffers) {
+			UserSessionHistory::factory()->create([
+				'user_id' => $order->user_id,
+				'login_at' => $order->date->subSeconds(rand(360, 900)),
+				'logout_at' => $order->date->addSeconds(rand(180, 900)),
+				'last_activity' => $order->date->subSeconds(rand(60, 180)),
+				'is_active' => false,
+			]);
+
 			$currentOffers = $validOffers->filter(function ($offers) use ($order) {
 				return $offers->contains(function ($offer) use ($order) {
 					return $offer->start_date <= $order->date && $offer->end_date >= $order->date;

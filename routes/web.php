@@ -12,6 +12,10 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
     ->middleware(['auth', 'verified'])
     ->name('dashboard.index');
 
+Route::get('/dashboard/admin', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard.admin');
+
 // Ruta para notificaciones (webhook) - SIN protección CSRF
 Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
     ->middleware('verify.mp.webhook')
