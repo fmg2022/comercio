@@ -41,7 +41,7 @@
       <li
         class="flex items-center justify-center rounded-lg lg:grow hover:bg-white/10 has-checked:bg-white/10 lg:hover:bg-transparent lg:has-checked:bg-transparent">
         <input type="checkbox" id="search-toggle" class="hidden peer/search">
-        <label for="search-toggle" class="hidden p-3 cursor-pointer sm:inline-block lg:hidden">
+        <label for="search-toggle" class="hidden p-3 cursor-pointer sm:inline-block md:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
             <g fill="currentColor">
               <path
@@ -50,7 +50,7 @@
           </svg>
         </label>
         <div
-          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg lg:static lg:max-w-sm lg:p-0 peer-checked/search:sm:top-14 transition-all duration-300">
+          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:max-w-2xs md:p-0 lg:max-w-sm peer-checked/search:sm:top-14 transition-all duration-300">
           <form method="GET" action="{{ route('product.search') }}"
             class="p-3 flex items-center justify-center sm:p-0">
             <label class="sm:w-sm lg:w-full">
