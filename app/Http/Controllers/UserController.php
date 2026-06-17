@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Mail\WelcomeWithPasswordMail;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -68,6 +67,10 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        if (auth()->user()->id === $user->id) {
+            return redirect()->back()->with('error', 'No puede eliminar su cuenta.');
+        }
+
         $user->delete();
         return Redirect::back();
     }
