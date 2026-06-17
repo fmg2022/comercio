@@ -1,7 +1,7 @@
 @props(['class' => ''])
 
-<svg {{ $attributes->merge(['class' => $class]) }} xmlns = 'http://www.w3.org/2000/svg' width = '32' height = '32'
-  viewBox = '0 0 24 24'>
+<svg xmlns = 'http://www.w3.org/2000/svg' width = '32' height = '32' viewBox = '0 0 24 24'
+  {{ $attributes->merge(['class' => $class]) }}>
   <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
     <path
       d="M2 4.5h6.757a3 3 0 0 1 2.122.879L14 8.5m-9 5H2m6.5-6l2 2a1.414 1.414 0 1 1-2 2L7 10c-.86.86-2.223.957-3.197.227L3.5 10" />
