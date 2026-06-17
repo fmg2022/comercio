@@ -81,10 +81,21 @@
       </tr>
     @endforeach
   </x-tables.table>
-  <div
-    class="w-full max-w-2xs px-10 py-3 ms-auto flex justify-between items-center text-xl font-bold bg-slate-700 rounded-b-md">
-    <span>Total</span>
-    <span><span class="me-px">$</span>{{ $order->total_formated }}</span>
+  <div class="flex justify-end items-center gap-5 text-lg font-semibold">
+    @if (request()->routeIs('my.orders.show'))
+      <form action="{{ route('carts.addFromOrder') }}" method="POST">
+        @csrf
+        <input type="hidden" name="order_id" value="{{ $order->id }}">
+        <button type="submit" class="px-3 py-2 flex items-center gap-2 rounded-md bg-green-800 hover:bg-green-700">
+          Agregar todo
+          <x-icons.cart class="size-6" />
+        </button>
+      </form>
+    @endif
+    <p class="w-fit px-8 py-3 flex justify-between items-center gap-3 bg-slate-700 rounded-b-md">
+      <span>Total</span>
+      <span>${{ $order->total_formated }}</span>
+    </p>
   </div>
 
   @if (isset($order->notes))

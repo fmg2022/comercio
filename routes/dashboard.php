@@ -17,9 +17,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   Route::prefix('dashboard')->group(function () {
     // Settings routes
-    Route::middleware(['permission:manage settings'])->prefix('admin')->group(function () {
-      Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings');
-      Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::middleware(['permission:manage settings'])->prefix('site')->name('site.')->group(function () {
+      Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
+      Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
     });
 
     // My routes
@@ -108,6 +108,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('/{cart}', [CartController::class, 'show'])->name('show');
         Route::delete('/{id}/clear', [CartController::class, 'clearCart'])->name('clearCart');
         Route::delete('/{id}/products/{id_product}', [CartController::class, 'remove'])->name('remove');
+        Route::post('/to_order', [CartController::class, 'addFromOrder'])->name('addFromOrder');
       });
     });
   });

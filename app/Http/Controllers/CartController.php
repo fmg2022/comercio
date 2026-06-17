@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CartRequest;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Product;
 use App\Services\CartService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Joelwmale\Cart\Facades\CartFacade;
 
@@ -64,15 +66,13 @@ class CartController extends Controller
 			if ($existItem) {
 				$cart->updateProduct($validated['id'], $item->pivot->quantity + $validated['quantity']);
 
-				CartFacade::update(
-					$validated['id'],
-					[
-						'quantity' => $validated['quantity'],
-						'attributes' => [
-							'discount' => $discount,
-						]
-					]
-				);
+				$cartItem = CartFacade::get($validated['id']);
+				$currentAttributes = $cartItem->attributes ?? [];
+				$updatedAttributes = array_merge($currentAttributes, [
+					'discount' => $discount,
+				]);
+
+				CartFacade::update($validated['id'], ['attributes' => $updatedAttributes]);
 			} else {
 				$cart->attachProduct($validated['id'], $validated['quantity']);
 
@@ -162,6 +162,29 @@ class CartController extends Controller
 		return view('pages.dashboard.cart.show', [
 			'cart' => $cart,
 		]);
+	}
+
+	public function addFromOrder(Request $request): RedirectResponse
+	{
+		$validated = $request->validate([
+			'order_id' => 'required|integer|exists:orders,id',
+		]);
+
+		$order = Order::findOrFail($validated['order_id']);
+		$cart = $order->user->cart;
+
+		foreach ($order->products as $product) {
+			$orderQty = $product->pivot->quantity;
+			$existProduct = $cart->products()->where('product_id', $product->id)->first();
+
+			if ($existProduct) {
+				$cart->products()->updateExistingPivot($product->id, ['quantity' => $existProduct->pivot->quantity + $orderQty]);
+			} else {
+				$cart->products()->attach($product->id, ['quantity' => $orderQty]);
+			}
+		}
+
+		return redirect()->back()->with('success', 'Productos agregados al carrito');
 	}
 
 	public function fetch(string $id_cart, string $id_product): JsonResponse
