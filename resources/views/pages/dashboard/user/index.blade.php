@@ -275,8 +275,10 @@
           class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
       </form>
     </x-modals.simple>
-  @endcan
 
+    {{-- MODAL DELETE, RESTORE --}}
+    <x-modals.delete id="{{ $type1 }}" />
+  @endcan
   @can('manage roles')
     <x-modals.simple id="roleCSE"
       class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
@@ -306,8 +308,5 @@
           class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
       </form>
     </x-modals.simple>
-
-    {{-- MODAL DELETE, RESTORE --}}
-    <x-modals.delete id="{{ $type1 }}" />
   @endcan
 @endsection

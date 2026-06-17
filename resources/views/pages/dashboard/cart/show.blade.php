@@ -104,10 +104,22 @@
       </tr>
     @endforeach
   </x-tables.table>
-  <div
-    class="w-fit px-10 py-3 ms-auto flex justify-between items-center gap-3 text-xl font-bold bg-slate-700 rounded-b-md">
-    <span>Total</span>
-    <span>${{ $cart->totalFormated() }}</span>
+  <div class="flex justify-end items-center gap-5 text-lg font-semibold">
+    @if (request()->routeIs('my.cart.index'))
+      <x-buttons.linkFill href="{{ route('cart.index') }}"
+        class="flex items-center gap-2 bg-green-800 hover:bg-green-700">
+        Proceder a la compra
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5 12h14m-6 6l6-6m-6-6l6 6" />
+        </svg>
+      </x-buttons.linkFill>
+    @endif
+    <p class="w-fit px-8 py-3 flex justify-between items-center gap-3 bg-slate-700 rounded-b-md">
+      <span>Total</span>
+      <span>${{ $cart->totalFormated() }}</span>
+    </p>
   </div>
 
   @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))

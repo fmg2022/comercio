@@ -9,7 +9,7 @@
     <div class="max-w-2xl w-full bg-slate-800 rounded-xl shadow-lg p-8">
       <h2 class="text-2xl font-bold text-white mb-6 text-center">Configuración de la tienda</h2>
 
-      <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-5">
+      <form method="POST" action="{{ route('site.settings.update') }}" class="space-y-5">
         @csrf
         @method('PUT')
 

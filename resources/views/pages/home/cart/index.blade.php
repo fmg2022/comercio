@@ -6,7 +6,17 @@
 
 @section('content')
   <article class="px-4 py-16 max-w-2xl mx-auto md:px-6 lg:px-8 lg:max-w-7xl">
-    <h1 class="text-3xl text-gray-900 font-bold tracking-tight sm:text-4xl">Mi carrito</h1>
+    <div class="flex items-center justify-between gap-4 sm:gap-8">
+      <h1 class="text-3xl text-gray-900 font-bold tracking-tight sm:text-4xl">Mi carrito</h1>
+      <form action="{{ route('cart.clearCart') }}" method="POST" class="flex justify-center items-start">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="px-3 py-2 bg-red-700 active:bg-red-600 rounded-md cursor-pointer"
+          @disabled(isset($cartItems))>
+          Limpiar Carrito
+        </button>
+      </form>
+    </div>
 
     <section class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <div class="lg:col-span-7">
@@ -97,7 +107,7 @@
             $tax = ($total * floatval(config('commerce.tax_rate'))) / 100;
           @endphp
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
-            <p class="text-gray-600">Impuestos estimados</p>
+            <p class="text-gray-600">IVA ({{ floatval(config('commerce.tax_rate')) }}%)</p>
             <p class="font-medium text-gray-900">
               ${{ number_format($tax, 2, ',', '.') }}
             </p>
@@ -122,7 +132,7 @@
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input type="radio" name="payment_method" value="mercadopago"
                     class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
-                  <span class="text-sm text-gray-700">💳 Mercado Pago (Tarjeta / QR / Dinero en cuenta)</span>
+                  <span class="text-sm text-gray-700">💳 Mercado Pago (Tarjeta / Dinero en cuenta)</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input type="radio" name="payment_method" value="store"
