@@ -5,8 +5,14 @@ return [
     [
       'name' => 'Dashboard',
       'icon' => 'dashboard',
-      'route' => 'dashboard.index',
+      'route' => 'client.dashboard',
       'permission' => null,
+    ],
+    [
+      'name' => 'Dashboard Admin',
+      'icon' => 'dashboard2',
+      'route' => 'admin.dashboard',
+      'permission' => 'list roles',
     ],
     [
       'name' => 'Sección de Usuario',
@@ -76,7 +82,7 @@ return [
       'name' => 'Carritos',
       'icon' => 'cart',
       'route' => 'carts.index',
-      'permission' => 'manage carts-details',
+      'permission' => 'list carts',
     ],
     [
       'name' => 'Proveedores',
@@ -110,7 +116,7 @@ return [
     [
       'name' => 'Configuración',
       'icon' => 'config',
-      'route' => 'admin.settings',
+      'route' => 'site.settings',
       'permission' => 'manage settings',
     ],
   ],

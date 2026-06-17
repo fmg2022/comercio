@@ -32,7 +32,7 @@
   @stack('scripts-dashboard')
 </head>
 
-<body class="antialiased relative font-sans bg-teal-50 text-slate-900 dark:bg-slate-900 dark:text-teal-50 xl:flex">
+<body class="antialiased relative font-sans bg-slate-900 text-teal-50 xl:flex">
   <x-asideMenu />
 
   <main class="min-h-screen flex flex-col grow">

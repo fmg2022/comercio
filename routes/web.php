@@ -8,14 +8,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
-Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard.index');
-
-Route::get('/dashboard/admin', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard.admin');
-
 // Ruta para notificaciones (webhook) - SIN protección CSRF
 Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
     ->middleware('verify.mp.webhook')
@@ -28,6 +20,17 @@ Route::get('/products/category/{category}', [IndexController::class, 'getProduct
 Route::get('/products/offers/{offer}', [IndexController::class, 'getProductsOffer'])->name('product.findForOffer');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Rutas del dashboard
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [\App\Http\Controllers\DashboardController::class, 'redirectToDashboard'])
+            ->name('dashboard.index');
+        Route::get('/clients', [\App\Http\Controllers\DashboardController::class, 'index'])
+            ->name('client.dashboard');
+        Route::get('/admins', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
+            ->middleware('permission:list roles')
+            ->name('admin.dashboard');
+    });
+
     // Rutas para el carrito
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
