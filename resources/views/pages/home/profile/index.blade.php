@@ -2,24 +2,20 @@
 
 @push('scripts-dashboard')
   <script src="{{ asset('js/modal.js') }}" defer></script>
-  <script src="{{ asset('js/dashboard/navDesplace.js') }}" defer></script>
 @endPush
 
 @section('content')
   <div class="relative flex divide-x divide-slate-700">
-    <input type="checkbox" id="info-toggle" class="hidden peer/aside">
-    <div
-      class="overlay fixed -left-full top-[73px] z-15 w-full h-full bg-slate-950/60 opacity-0 peer-checked/aside:opacity-100 peer-checked/aside:left-0 lg:hidden">
-    </div>
+    <input type="checkbox" id="info-toggle" name="toggle-btns" class="hidden peer/aside">
     <aside
-      class="fixed -left-full top-[73px] z-40 w-full h-full max-w-[300px] dark:bg-slate-800 divide-y divide-slate-700 transition-all duration-500 ease-in-out [&>section]:px-5 [&>section]:p-6 lg:static lg:left-0 lg:h-auto lg:z-0 peer-checked/aside:left-0">
+      class="fixed -left-full top-[73px] z-40 w-full h-full max-w-[360px] bg-slate-800 divide-y divide-slate-700 transition-all duration-500 ease-in-out [&>section]:px-5 [&>section]:py-6 lg:static lg:left-0 lg:h-auto lg:z-0 peer-checked/aside:left-0">
       <section class="relative flex gap-3 items-center">
-        <div class="p-2 size-11 flex items-center justify-center bg-purple-600 rounded-full">
-          <span class="font-bold">AL</span>
+        <div class="p-1 size-11 flex items-center justify-center bg-purple-600 rounded-full">
+          AL
         </div>
         <div class="flex flex-col gap-1 w-max">
-          <h5 class="">Nombre completo</h5>
-          <span class="text-xs">correo@mail.com</span>
+          <h5>{{ $user->fullName() }}</h5>
+          <span class="text-xs">{{ $user->email }}</span>
         </div>
         <div class="relative ms-auto w-max">
           <a href="#!" class="peer inline-block p-3 rounded-full cursor-pointer bg-black/20">
@@ -29,14 +25,14 @@
             </svg>
           </a>
           <span
-            class="absolute -top-8 -left-7 -z-30 w-max px-3 py-1 bg-slate-300 dark:bg-slate-700 text-xs text-slate-700 dark:text-slate-400 rounded-lg opacity-0 peer-hover:z-20 peer-hover:opacity-100 transition-all duration-500">
+            class="absolute -top-8 -left-7 -z-30 w-max px-3 py-1 bg-slate-700 text-xs text-slate-400 rounded-lg opacity-0 peer-hover:z-20 peer-hover:opacity-100 transition-all duration-500">
             Cambiar Foto
           </span>
         </div>
       </section>
       <section>
         <h4 class="mb-2 font-semibold tracking-widest text-xs">ÚLTIMO INICIO</h4>
-        <p class="text-slate-400 text-sm">2023-01-01 03:14am</p>
+        <p class="text-slate-400 text-sm">{{ $user->getLastLogin() }}</p>
       </section>
       <section class="text-sm text-slate-300 [&>div]:py-5 [&>div.active]:text-purple-500">
         <div class="flex justify-between active">
@@ -105,7 +101,7 @@
           <h2 class="text-2xl font-bold text-white">Información Personal</h2>
           <p class="text-sm text-slate-400">Información básica, como nombre y dirección</p>
         </div>
-        <label for="info-toggle" class="text-slate-400 cursor-pointer hover:text-slate-300 lg:hidden">
+        <label for="info-toggle" class="text-slate-400 hover:text-slate-300 lg:hidden cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"
               d="M7.75 5.25h13.5M2.75 12h18.5m-10 6.75h10" />
@@ -116,15 +112,15 @@
         <h3 class="px-6 py-2 mb-1 text-sm font-semibold uppercase bg-slate-700/75 rounded">Datos
         </h3>
         <ul
-          class="divide-y divide-slate-700 [&>li]:px-6 [&>li]:py-4 [&>li:hover_p:nth-child(1)]:text-slate-300 [&>li:hover>span]:text-white"
-          data-listDialog="true">
-          <li class="flex justify-between text-slate-400 cursor-pointer">
+          class="divide-y divide-slate-700 [&>li]:px-6 [&>li]:py-4 [&>li:hover_p:nth-child(1)]:text-slate-300 [&>li:hover>span]:text-white">
+          <li class="flex justify-between text-slate-400">
             <div class="flex flex-col md:flex-row md:w-full">
               <p class="md:w-1/2">Nombre completo</p>
               <p class="text-wrap">{{ $user->fullName() }}</p>
             </div>
             <div class="flex items-center md:w-[200px] md:justify-end">
-              <button type="button" onclick="openModal('dialog-perf')" class="p-1 cursor-pointer hover:text-white">
+              <button type="button" onclick="openModal('dialog-perf')"
+                class="px-3 py-1 cursor-pointer hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                   <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                     stroke-width="1.5" d="m9 5l6 7l-6 7" />
@@ -138,7 +134,8 @@
               <p>{{ $user->email }}</p>
             </div>
             <div class="flex items-center md:w-[200px] md:justify-end">
-              <button type="button" onclick="openModal('dialog-perf')" class="p-1 cursor-pointer hover:text-white">
+              <button type="button" onclick="openModal('dialog-perf')"
+                class="px-3 py-1 cursor-pointer hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                   <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                     stroke-width="1.5" d="m9 5l6 7l-6 7" />
@@ -146,13 +143,14 @@
               </button>
             </div>
           </li>
-          <li class="flex justify-between text-slate-400 cursor-pointer">
+          <li class="flex justify-between text-slate-400">
             <div class="flex flex-col md:flex-row md:w-full">
               <p class="md:w-1/2">Teléfono</p>
               <p>{{ $user->phone }}</p>
             </div>
             <div class="flex items-center md:w-[200px] md:justify-end">
-              <button type="button" onclick="openModal('dialog-perf')" class="p-1 cursor-pointer hover:text-white">
+              <button type="button" onclick="openModal('dialog-perf')"
+                class="px-3 py-1 cursor-pointer hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                   <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                     stroke-width="1.5" d="m9 5l6 7l-6 7" />
@@ -166,7 +164,8 @@
               <p class="text-wrap">{{ $user->address }}</p>
             </div>
             <div class="flex items-center md:w-[200px] md:justify-end">
-              <button type="button" onclick="openModal('dialog-perf')" class="p-1 cursor-pointer hover:text-white">
+              <button type="button" onclick="openModal('dialog-perf')"
+                class="px-3 py-1 cursor-pointer hover:text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                   <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                     stroke-width="1.5" d="m9 5l6 7l-6 7" />
@@ -179,16 +178,8 @@
         <x-modals.simple title="Actualizar Perfil" titleClass="text-white" id="dialog-perf"
           class="max-w-2xl w-full bg-slate-800">
           <div class="w-full px-9 pb-8 pt-6 text-white">
-            <nav
-              class="mb-5 flex gap-3 border-b border-slate-600/75 text-slate-400 [&>button.active]:border-b-4 [&>button.active]:border-purple-700 [&>button.active]:text-purple-700"
-              data-navbar="true">
-              <button data-pos="0" class="active pb-3 px-2 hover:text-white">Personal</button>
-              <button data-pos="1.1" class="pb-3 px-2 hover:text-white">Dirección</button>
-            </nav>
-            {{-- modificar estilos (quitar la parte de la seccion de direcciones) JS de navdesplace --}}
             <form class="overflow-x-hidden">
-              <div class="relative top-0 w-[210%] mb-10 grid grid-cols-2 gap-x-[5%] transition-[left] duration-500"
-                data-navcontent="true" style="left: 0%">
+              <div class="relative top-0 w-[210%] mb-10 grid grid-cols-2 gap-x-[5%] transition-[left] duration-500">
                 <fieldset class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6">
                   <div class="flex flex-col gap-y-2">
                     <label for="pf-name" class="text-sm font-semibold">Nombre</label>
@@ -210,7 +201,7 @@
                     <input value="{{ $user->email }}" id="pf-email" type="email"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
                   </div>
-                  <div class="flex flex-col gap-y-2">
+                  <div class="col-span-2 flex flex-col gap-y-2">
                     <label for="pf-dir" class="text-sm font-semibold">Dirección</label>
                     <input value="{{ $user->address ?? 'Sin dirección' }}" id="pf-dir"
                       class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-700 dark:focus:shadow-slate-400/50">
@@ -219,11 +210,11 @@
               </div>
               <div class="me-24 flex justify-end">
                 <button type="submit"
-                  class="px-3 py-2 bg-purple-700 rounded-md text-lg hover:bg-purple-800 cursor-pointer">Guardar</button>
+                  class="px-3 py-2 bg-green-800 rounded-md text-lg hover:bg-green-700 cursor-pointer">Guardar</button>
               </div>
             </form>
             <form method="dialog" class="absolute bottom-12 right-[3.25rem]">
-              <button class="px-3 py-2 bg-red-700 rounded-md text-lg hover:bg-red-800 cursor-pointer">Cancelar</button>
+              <button class="px-3 py-2 bg-red-800 rounded-md text-lg hover:bg-red-700 cursor-pointer">Cancelar</button>
             </form>
           </div>
         </x-modals.simple>
