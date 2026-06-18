@@ -106,7 +106,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::prefix('carts')->name('carts.')->group(function () {
         Route::get('/', [CartController::class, 'dashboardIndex'])->name('index');
         Route::get('/{cart}', [CartController::class, 'show'])->name('show');
-        Route::delete('/{id}/clear', [CartController::class, 'clearCart'])->name('clearCart');
+        Route::delete('/{cart}/clear', [CartController::class, 'clearCart'])->name('clearCart');
         Route::delete('/{id}/products/{id_product}', [CartController::class, 'remove'])->name('remove');
         Route::post('/to_order', [CartController::class, 'addFromOrder'])->name('addFromOrder');
       });

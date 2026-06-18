@@ -136,10 +136,10 @@ class CartController extends Controller
 		return redirect()->back()->with('success', 'Producto eliminado del carrito');
 	}
 
-	public function clearCart(): RedirectResponse
+	public function clearCart(Cart $cart): RedirectResponse
 	{
 		CartFacade::clear();
-		auth()->user()->cart->detachProduct([]);
+		$cart->detachProduct([]);
 
 		return redirect()->back()->with('success', 'Carrito vaciado');
 	}

@@ -36,8 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add', [CartController::class, 'addToCart'])->name('addToCart');
         Route::put('/update', [CartController::class, 'update'])->name('update');
+        Route::delete('/{cart}/clear', [CartController::class, 'clearCart'])->name('clearCart');
         Route::delete('/{id}/products/{id_product}', [CartController::class, 'remove'])->name('remove');
-        Route::delete('/{id}/clear', [CartController::class, 'clearCart'])->name('clearCart');
     });
 
     // Ruta para la compra
