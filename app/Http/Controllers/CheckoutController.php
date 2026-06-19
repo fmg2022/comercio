@@ -171,6 +171,7 @@ class CheckoutController extends Controller
                 }
             }
 
+            // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
             Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
 
             // Limpiar el carrito

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Mail\NoActiveMail;
 use App\Mail\WelcomeWithPasswordMail;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
@@ -19,7 +21,9 @@ class UserController extends Controller
     public function index(): View
     {
         return view('pages.dashboard.user.index', [
-            'users' => User::paginate(10),
+            'users' => User::whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Super Admin');
+            })->paginate(10),
             'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
             'roles' => Role::where('name', '!=', 'Super Admin')->get(['name', 'id']),
         ]);
@@ -58,9 +62,23 @@ class UserController extends Controller
         ]);
     }
 
-    public function update(StoreUserRequest $request, String $id): RedirectResponse
+    public function update(StoreUserRequest $request, User $user): RedirectResponse
     {
-        User::findOrFail($id)->update($request->validated());
+        $validated = $request->validated();
+        if (!$validated['active']) {
+            if ($user->id === auth()->user()->id) {
+                return redirect()->back()->with('error', 'No puede modificar su estado de activación.');
+            }
+
+            // Mail::to($user)->send(new NoActiveMail($user));
+            Mail::to('maximo4735@gmail.com')->send(new NoActiveMail($user));
+
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+            $user->remember_token = null;
+            $user->save();
+        }
+
+        $user->update($validated);
 
         return redirect()->back();
     }
@@ -83,7 +101,7 @@ class UserController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image', 'dni']);
+        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image', 'dni', 'address', 'active']);
 
         return response()->json($user);
     }
