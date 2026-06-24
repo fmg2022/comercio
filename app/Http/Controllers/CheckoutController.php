@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderState;
 use App\Models\Payment;
+use App\Models\PaymentState;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -120,12 +121,14 @@ class CheckoutController extends Controller
                 Log::warning("No se encontró orden local para external_reference: {$mpPayment->external_reference}");
                 return response()->json(['error' => 'Order not found'], 404);
             }
+            $stateName = $mpPayment->status === 'approved' ? 'PAGADO' : ($mpPayment->status === 'rejected' ? 'RECHAZADO' : 'PENDIENTE');
 
             $payment->update([
                 'paymentId'               => $mpPayment->collector_id,
                 'provider_state'          => $mpPayment->status,
                 'paid_at'                 => $mpPayment->status === 'approved' ? $mpPayment->date_approved : null,
                 'nro_fee'                 => 1,
+                'payment_state_id' => PaymentState::where('code', $stateName)->value('id'),
             ]);
 
             if ($mpPayment->status === 'approved') {
@@ -164,6 +167,7 @@ class CheckoutController extends Controller
                     'paymentId' => $paymentId,
                     'provider_state' => 'approved',
                     'paid_at' => now(),
+                    'payment_state_id' => PaymentState::where('code', 'APROBADO')->value('id'),
                 ]);
 
                 if ($payment->order) {
