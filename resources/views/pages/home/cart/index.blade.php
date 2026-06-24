@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @push('scripts-app')
-  <script src="{{ asset('js/itemCart.js') }}" defer></script>
+  <script src="{{ asset('js/index.js') }}" defer></script>
 @endPush
 
 @section('content')
@@ -54,7 +54,7 @@
                   <p class="mt-1 text-gray-500 text-sm sm:text-base">
                     {{ $details->attributes->brand }}
                     <span class="ms-2 ps-2 border-s border-gray-300">
-                      {{ $details->attributes->category->name }}
+                      {{-- {{ $details->attributes->category }} --}}
                     </span>
                   </p>
                 </div>

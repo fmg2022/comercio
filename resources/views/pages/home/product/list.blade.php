@@ -1,16 +1,21 @@
 @extends('layouts.app')
 
+@push('scripts-app')
+  <script src="{{ asset('js/index.js') }}" defer></script>
+@endpush
+
 @section('content')
   <x-breadcrumbs.categories :categoriesNav="$categoriesNav" />
   <div
     class="w-full px-3 py-2 mb-10 grid grid-cols-3 gap-3 items-center divide-x-2 divide-slate-300 border-b border-slate-300 bg-slate-200/65 rounded-xl">
     <div>
       <div class="hidden py-2 ms-5 text-base lg:flex lg:justify-start lg:items-baseline lg:gap-4">
-        <h3 class="font-semibold">{{ end($categoriesNav) }}</h3>
-        <span class="text-gray-500">{{ $products->count() }} productos</span>
+        <h3 class="font-semibold">{{ $query ?? end($categoriesNav) }}</h3>
+        @php $count = $products->count(); @endphp
+        <span class="text-gray-500">{{ $count }} productos</span>
       </div>
       <label for="toggle-filter"
-        class="py-3 flex items-center justify-center gap-3 cursor-pointer rounded-lg dark:hover:bg-white/10 lg:hidden">
+        class="py-3 flex items-center justify-center gap-3 cursor-pointer rounded-lg hover:bg-white/10 lg:hidden">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path fill="currentColor"
             d="M13.75 2.25a.75.75 0 0 1 .75.75v4A.75.75 0 0 1 13 7V5.75H3a.75.75 0 0 1 0-1.5h10V3a.75.75 0 0 1 .75-.75M17.25 5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75m-6.5 4.25a.75.75 0 0 1 .75.75v1.25H21a.75.75 0 0 1 0 1.5h-9.5V14a.75.75 0 0 1-1.5 0v-4a.75.75 0 0 1 .75-.75M2.25 12a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75m11.5 4.25a.75.75 0 0 1 .75.75v4a.75.75 0 0 1-1.5 0v-1.25H3a.75.75 0 0 1 0-1.5h10V17a.75.75 0 0 1 .75-.75m3.5 2.75a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75" />
@@ -53,10 +58,10 @@
   <section class="relative px-3 pb-6 mb-8 lg:flex lg:gap-10">
     <input type="checkbox" id="toggle-filter" class="hidden peer/filter" />
     <aside
-      class="absolute top-0 left-[5%] hidden w-[90%] px-4 pt-4 pb-8 bg-sky-800 text-white rounded-xl peer-checked/filter:block lg:static lg:w-72 lg:block lg:h-max lg:shadow-xl/20">
+      class="absolute top-0 left-[5%] hidden w-[90%] px-4 pt-4 pb-8 bg-sky-800 text-white rounded-xl md:z-10 lg:static lg:w-72 lg:block lg:h-max lg:shadow-xl/20 peer-checked/filter:block">
       <div class="relative">
         <label for="toggle-filter"
-          class="absolute top-0 right-0 p-2 hover:text-slate-900 dark:hover:text-blue-200 hover:bg-black/10 dark:hover:bg-white/10 rounded-lg cursor-pointer lg:hidden">
+          class="absolute top-0 right-0 p-2 hover:text-blue-200 hover:bg-white/10 rounded-lg cursor-pointer lg:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512">
             <path
               d="M437.5 386.6L306.9 256l130.6-130.6c14.1-14.1 14.1-36.8 0-50.9-14.1-14.1-36.8-14.1-50.9 0L256 205.1 125.4 74.5c-14.1-14.1-36.8-14.1-50.9 0-14.1 14.1-14.1 36.8 0 50.9L205.1 256 74.5 386.6c-14.1 14.1-14.1 36.8 0 50.9 14.1 14.1 36.8 14.1 50.9 0L256 306.9l130.6 130.6c14.1 14.1 36.8 14.1 50.9 0 14-14.1 14-36.9 0-50.9z"
@@ -64,14 +69,16 @@
           </svg>
         </label>
       </div>
-      <form class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:m-0">
+      <form action="{{ route('product.search') }}" method="GET" data-submit="off"
+        class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:m-0">
+        <input type="hidden" name="query" value="{{ $query ?? '' }}">
         <x-forms.fieldset>
           <x-slot:legend>Categorias</x-slot:legend>
 
-          @foreach ($categoriesProduct as $key => $name)
+          @foreach ($categoriesProduct as $category)
             <label>
-              <input type="checkbox" name="categorias" value="{{ $key }}">
-              {{ $name }}
+              <input type="checkbox" name="categories[]" value="{{ $category->id }}" @checked(in_array($category->id, $filters['categories'] ?? []))>
+              {{ $category->name }}
             </label>
           @endforeach
         </x-forms.fieldset>
@@ -79,7 +86,7 @@
           <x-slot:legend>Marcas</x-slot:legend>
           @foreach ($brandsProducts as $brand)
             <label>
-              <input type="checkbox" name="marcas" value="{{ $brand->id }}">
+              <input type="checkbox" name="brands[]" value="{{ $brand->id }}" @checked(in_array($brand->id, $filters['brands'] ?? []))>
               {{ $brand->name }}
             </label>
           @endforeach
@@ -92,6 +99,5 @@
         <x-cards.product :product="$product" :offers="$offers" />
       @endforeach
     </section>
-    {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
   </section>
 @endsection
