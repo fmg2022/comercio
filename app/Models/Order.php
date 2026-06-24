@@ -65,6 +65,13 @@ class Order extends Model
 		);
 	}
 
+	protected function totalWithIva(): Attribute
+	{
+		return Attribute::make(
+			get: fn() => $this->total + $this->iva
+		);
+	}
+
 	// Scopes
 	/**
 	 * Scope para órdenes no canceladas
