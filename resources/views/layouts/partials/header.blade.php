@@ -55,6 +55,7 @@
             class="p-3 flex items-center justify-center sm:p-0">
             <label class="sm:w-sm lg:w-full">
               <input type="search" name="query" placeholder="Buscar producto..."
+                value="{{ old('query', $query ?? '') }}"
                 class="p-[9px] w-full bg-black/10 rounded-l-lg outline-none placeholder:text-slate-400 placeholder:italic">
             </label>
             <button type="submit" class="p-3 rounded-r-lg bg-emerald-700/25 hover:bg-emerald-600/50 cursor-pointer">
