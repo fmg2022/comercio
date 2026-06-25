@@ -47,8 +47,7 @@
         </td>
         <td class="relative max-w-44">
           <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-            data-modalID="userCSE"
-            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer transition-colors button-create-edit-show peer/popup">
+            data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
             {{ $user->fullName() }}
           </button>
           <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
@@ -151,31 +150,30 @@
     </x-slot>
 
     @forelse ($usersDeleted as $index => $user)
-      <tr>
+      <tr class="text-slate-400">
         <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
         <td>
           <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
         </td>
         <td class="relative">
           <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-            data-modalID="userCSE"
-            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+            data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
             {{ $user->fullName() }}
           </button>
-          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 text-white peer-hover/popup:inline-block">
             Ver Usuario
           </x-popups.text>
         </td>
-        <td class="text-slate-600">{{ $user->email }}</td>
-        <td class="text-slate-600">{{ $user->phone }}</td>
-        <td class="hidden text-slate-600 md:table-cell font-semibold before:content-['●'] before:me-px">
+        <td>{{ $user->email }}</td>
+        <td>{{ $user->phone }}</td>
+        <td class="hidden md:table-cell font-semibold before:content-['●'] before:me-px">
           {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
-        <td class="relative flex justify-end">
+        <td class="relative flex justify-end text-slate-300">
           <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
             <x-slot:label>
               <x-icons.threeDotsX class="size-6" />
             </x-slot:label>
-            <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+            <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs font-semibold">
               <li>
                 <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
                   data-modalID="userCSE"
@@ -253,18 +251,18 @@
               class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required>
           </div>
+          <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
+            <label class="block mb-2 font-semibold" for="address">Dirección</label>
+            <input type="address" id="address" name="address" autocomplete="street-address"
+              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              required>
+          </div>
           <section
             class="col-span-full py-3 hidden flex-wrap gap-x-10 gap-y-5 items-center justify-center pointer-events-none group-[.editable]:pointer-events-auto group-[.editable]:flex">
             <p class="w-max">¿Activar usuario?</p>
             <x-inputs.checkSwitch name="active"
               class="bg-slate-200 checked:bg-green-700 group-[.editable]:cursor-pointer"
               classLabel="z-10 bg-white border-slate-300 peer-checked/switch:border-green-700 group-[.editable]:cursor-pointer" />
-          </section>
-          <section class="col-span-full group-[.editable]:hidden">
-            <h4 class="mb-2 font-semibold">Dirección Actual</h4>
-            <p class="px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md">
-              {{ $user->address ?? 'Sin dirección' }}
-            </p>
           </section>
           <button type="submit"
             class="absolute bottom-4 right-2/3 px-3 py-2 hidden group-[.editable]:block bg-green-800 text-lg text-white rounded-md hover:bg-green-700 cursor-pointer sm:right-3/5">Actualizar</button>
