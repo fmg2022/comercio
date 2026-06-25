@@ -7,11 +7,22 @@
       {{ 'Detalles de la Orden #' . $order->id }}
       <span class="text-base">({{ $order->date->format('d/m/Y') }})</span>
     </x-slot:textTitle>
-    <div class="flex gap-2">
+    <div class="flex gap-4">
       <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
         Volver
       </x-buttons.linkFill>
-      <x-buttons.linkFill href="{{ route('pdf.order', $order->id) }}" class="bg-red-700 active:bg-red-800" target="_blank">
+      @if (request()->routeIs('my.orders.show'))
+        <form action="{{ route('carts.addFromOrder') }}" method="POST">
+          @csrf
+          <input type="hidden" name="order_id" value="{{ $order->id }}">
+          <button type="submit" class="px-3 py-2 flex items-center gap-2 rounded-md bg-green-800 hover:bg-green-700">
+            Agregarlo a
+            <x-icons.cart class="size-6" />
+          </button>
+        </form>
+      @endif
+      <x-buttons.linkFill href="{{ route('pdf.order', $order->id) }}" class="bg-red-700 active:bg-red-800"
+        target="_blank">
         Generar PDF
       </x-buttons.linkFill>
     </div>
@@ -33,7 +44,7 @@
       <tr class="[&>td]:text-slate-200">
         <td class="text-center">{{ $index + 1 }}</td>
         <td>
-          <div class="ps-5 flex items-center flex-wrap gap-2 text-base">
+          <div class="flex items-center flex-wrap gap-2 text-base">
             <img src="{{ asset('images/products/' . $orderLine->image) }}" alt="{{ $orderLine->name }}"
               class="w-16 h-16 object-cover hidden lg:block">
             <span class="text-slate-400 font-semibold">{{ $orderLine->name }}</span>
@@ -81,30 +92,29 @@
       </tr>
     @endforeach
   </x-tables.table>
-  <div class="flex justify-end items-center gap-5 text-lg font-semibold">
-    @if (request()->routeIs('my.orders.show'))
-      <form action="{{ route('carts.addFromOrder') }}" method="POST">
-        @csrf
-        <input type="hidden" name="order_id" value="{{ $order->id }}">
-        <button type="submit" class="px-3 py-2 flex items-center gap-2 rounded-md bg-green-800 hover:bg-green-700">
-          Agregar todo
-          <x-icons.cart class="size-6" />
-        </button>
-      </form>
+  <section class="grid grid-cols-[repeat(auto-fit,minmax(500px,1fr))] gap-4 place-content-center">
+    @if (isset($order->notes))
+      <div class="px-4 py-5 flex flex-col gap-3 bg-slate-800 rounded-b-xl">
+        <h3 class="text-xl text-slate-300 font-semibold underline underline-offset-4">Notas adicionales</h3>
+        <p>"{{ $order->notes }}"</p>
+        <p>De: <i
+            class="text-sm font-medium">{{ request()->routeIs('my.orders.show') ? 'Yo' : $order->user->fullName() }}</i>
+        </p>
+      </div>
     @endif
-    <p class="w-fit px-8 py-3 flex justify-between items-center gap-3 bg-slate-700 rounded-b-md">
-      <span>Total</span>
-      <span>${{ $order->total_formated }}</span>
-    </p>
-  </div>
-
-  @if (isset($order->notes))
-    <div class="px-4 py-5 mt-6 flex flex-col gap-4 bg-slate-800 rounded-xl lg:max-w-1/2">
-      <h3 class="text-xl text-slate-300 font-semibold underline underline-offset-4">Notas adicionales</h3>
-      <p>"{{ $order->notes }}"</p>
-      <p>De: <i
-          class="text-sm font-medium">{{ request()->routeIs('my.orders.show') ? 'Yo' : $order->user->fullName() }}</i>
-      </p>
+    <div class="max-w-xs px-4 py-5 grid grid-cols-2 self-start justify-self-end rounded-b-xl font-medium bg-slate-800">
+      <div class="[&>p]:ps-4">
+        <p>Total (sin IVA)</p>
+        <p>IVA (21%)</p>
+        <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">Total</p>
+      </div>
+      <div class="text-end [&>p]:ps-6 [&>p]:pe-4">
+        <p>$ {{ $order->totalFormated }}</p>
+        <p>$ {{ number_format($order->iva, 2, ',', '.') }}</p>
+        <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">$
+          {{ number_format($order->totalWithIva, 2, ',', '.') }}
+        </p>
+      </div>
     </div>
-  @endif
+  </section>
 @endsection

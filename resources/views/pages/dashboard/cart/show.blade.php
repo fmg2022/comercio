@@ -12,7 +12,11 @@
     <x-slot:textTitle>
       Productos en el carrito actualmente
     </x-slot:textTitle>
-    <div class="flex gap-2">
+    <div class="flex gap-4">
+      <x-buttons.linkFill href="{{ url()->previous() ?: route('dashboard.index') }}"
+        class="bg-slate-500 active:bg-slate-600">
+        Volver
+      </x-buttons.linkFill>
       @if (request()->routeIs('my.cart.index'))
         <form action="{{ route('cart.clearCart', $cart->id) }}" method="POST" class="flex justify-center items-start">
           @csrf
@@ -21,11 +25,16 @@
             Limpiar Carrito
           </button>
         </form>
+        <x-buttons.linkFill href="{{ route('cart.index') }}"
+          class="flex items-center gap-2 bg-green-800 hover:bg-green-700">
+          Proceder a la compra
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 12h14m-6 6l6-6m-6-6l6 6" />
+          </svg>
+        </x-buttons.linkFill>
       @endif
-      <x-buttons.linkFill href="{{ url()->previous() ?: route('dashboard.index') }}"
-        class="bg-slate-500 active:bg-slate-600">
-        Volver
-      </x-buttons.linkFill>
     </div>
   </x-sections.headerTitle>
 
@@ -45,7 +54,7 @@
       <tr class="[&>td]:text-slate-200">
         <td class="text-center">{{ $index + 1 }}</td>
         <td>
-          <div class="ps-5 flex items-center flex-wrap gap-2 text-base">
+          <div class="flex items-center flex-wrap gap-2 text-base">
             <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
               class="w-16 h-16 object-cover hidden lg:block">
             <span class="text-slate-400 font-semibold">{{ $product->name }}</span>
@@ -104,23 +113,11 @@
       </tr>
     @endforeach
   </x-tables.table>
-  <div class="flex justify-end items-center gap-5 text-lg font-semibold">
-    @if (request()->routeIs('my.cart.index'))
-      <x-buttons.linkFill href="{{ route('cart.index') }}"
-        class="flex items-center gap-2 bg-green-800 hover:bg-green-700">
-        Proceder a la compra
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5 12h14m-6 6l6-6m-6-6l6 6" />
-        </svg>
-      </x-buttons.linkFill>
-    @endif
-    <p class="w-fit px-8 py-3 flex justify-between items-center gap-3 bg-slate-700 rounded-b-md">
-      <span>Total</span>
-      <span>${{ $cart->totalFormated() }}</span>
-    </p>
-  </div>
+  <p
+    class="w-fit px-8 py-3 ms-auto flex justify-between items-center gap-4 bg-slate-800 rounded-b-lg text-lg font-semibold">
+    <span>Total sin impuestos</span>
+    <span>${{ $cart->totalFormated() }}</span>
+  </p>
 
   @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))
     {{-- MODAL SHOW, EDIT --}}
