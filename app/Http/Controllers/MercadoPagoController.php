@@ -3,23 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Mail\InvoiceMail;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Models\OrderState;
-use App\Models\Payment;
-use App\Models\PaymentState;
+use App\Models\{Cart, Order, OrderState, Payment, PaymentState};
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\{DB, Log, Mail};
 use Joelwmale\Cart\Facades\CartFacade;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
 
-class CheckoutController extends Controller
+class MercadoPagoController extends Controller
 {
     public function process(Order $order, Payment $payment): RedirectResponse
     {
@@ -170,9 +164,7 @@ class CheckoutController extends Controller
                     'payment_state_id' => PaymentState::where('code', 'APROBADO')->value('id'),
                 ]);
 
-                if ($payment->order) {
-                    $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
-                }
+                $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
             }
 
             // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
@@ -180,7 +172,7 @@ class CheckoutController extends Controller
 
             // Limpiar el carrito
             CartFacade::clear();
-            $cart = Cart::where('user_id', auth()->id())
+            $cart = Cart::where('user_id', $payment->order->user->id)
                 ->firstOrFail();
             $cart->products()->detach();
 
@@ -204,6 +196,7 @@ class CheckoutController extends Controller
                     'paymentId' => $paymentId,
                     'provider_state' => 'rejected'
                 ]);
+                $pago->order->update(['order_state_id' => OrderState::where('code', 'CANCELADO')->value('id')]);
             }
         }
 
