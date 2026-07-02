@@ -4,8 +4,8 @@
   <x-sections.carousel :length="count($offers)" :is_image="true">
     @foreach ($offers as $offerItem)
       <li>
-        <img src="https://picsum.photos/seed/{{ $offerItem['id'] }}offer/1024/360.webp"
-          alt="{{ $offerItem['offer_template']['name'] }}" class="w-full" draggable="false" />
+        <img src="{{ asset('images/hero/' . ($loop->index + 1) . '.webp') }}"
+          alt="{{ $offerItem['offer_template']['name'] }}" class="w-full max-h-[420px]" draggable="false" />
       </li>
     @endforeach
   </x-sections.carousel>
