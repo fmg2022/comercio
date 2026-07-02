@@ -4,18 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\OrdersExport;
 use App\Http\Requests\OrderExportRequest;
-use App\Models\Cart;
-use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\OrderState;
-use App\Models\Payment;
-use App\Models\PaymentProvider;
-use App\Models\PaymentState;
-use App\Models\Product;
-use App\Models\User;
+use App\Models\{Cart, Order, OrderState, Payment, PaymentProvider, PaymentState, Product, User};
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\{Request, JsonResponse, RedirectResponse};
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -60,7 +51,7 @@ class OrderController extends Controller
 		$validated = $request->validate([
 			'cart_id' => 'required|exists:carts,id',
 			'notes' => 'nullable|string',
-			'payment_method' => 'required|string|in:mercadopago,store,cash',
+			'payment_method' => 'required|string|in:mercadopago,paypal',
 		]);
 
 		$cart = Cart::where('id', $validated['cart_id'])
@@ -141,6 +132,7 @@ class OrderController extends Controller
 			return $order;
 		});
 
+		$code = $validated['payment_method'] === 'mercadopago' ? 'MERCADO_PAGO' : 'PAYPAL';
 		$payment = Payment::create([
 			'transaction_id' => 'pending_' . uniqid('', true),
 			'paymentId' => 'pay_' . uniqid('', true),
@@ -151,10 +143,13 @@ class OrderController extends Controller
 			'paid_at' => null,
 			'order_id' => $order->id,
 			'payment_state_id' => PaymentState::where('code', 'EN_PROCESO')->value('id'),
-			'payment_provider_id' => PaymentProvider::where('code', 'MERCADO_PAGO')->value('id'),
+			'payment_provider_id' => PaymentProvider::where('code', $code)->value('id'),
 		]);
 
-		return redirect()->route('checkout.process', ['order' => $order->id, 'payment' => $payment->id]);
+		if ($validated['payment_method'] === 'mercadopago')
+			return redirect()->route('checkout.process', ['order' => $order->id, 'payment' => $payment->id]);
+		else
+			return redirect()->route('paypal.checkout', ['order' => $order->id, 'payment' => $payment->id]);
 	}
 
 	public function updateStates(Request $request, Order $order): RedirectResponse

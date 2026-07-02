@@ -1,15 +1,16 @@
 <?php
 
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
 
 // Ruta para notificaciones (webhook) - SIN protección CSRF
-Route::post('/webhook/mercadopago', [CheckoutController::class, 'handleWebhook'])
+Route::post('/webhook/mercadopago', [MercadoPagoController::class, 'handleWebhook'])
     ->middleware('verify.mp.webhook')
     ->name('webhook.mercadopago');
 
@@ -42,13 +43,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Ruta para la compra
     Route::post('/store', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
-    Route::get('/checkout/{order}/{payment}', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/{order}/{payment}', [MercadoPagoController::class, 'process'])->name('checkout.process');
 
     // Rutas para las redirecciones de Mercado Pago (back_urls)
     Route::prefix('checkout')->name('checkout.')->group(function () {
-        Route::get('/exito', [CheckoutController::class, 'success'])->name('success');
-        Route::get('/fallo', [CheckoutController::class, 'failure'])->name('failure');
-        Route::get('/pendiente', [CheckoutController::class, 'pending'])->name('pending');
+        Route::get('/exito', [MercadoPagoController::class, 'success'])->name('success');
+        Route::get('/fallo', [MercadoPagoController::class, 'failure'])->name('failure');
+        Route::get('/pendiente', [MercadoPagoController::class, 'pending'])->name('pending');
+    });
+
+    // Rutas para el pago con PayPal
+    Route::prefix('paypal')->name('paypal.')->group(function () {
+        Route::get('/checkout/{order}/{payment}', [PayPalController::class, 'payCheckout'])->name('checkout');
+        Route::get('/success', [PayPalController::class, 'paySuccess'])->name('success');
+        Route::get('/cancel', [PayPalController::class, 'payCancel'])->name('cancel');
     });
 
     // Rutas para el perfil

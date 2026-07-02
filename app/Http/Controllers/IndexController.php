@@ -28,8 +28,8 @@ class IndexController extends Controller
         $products = Product::with('brand:id,name')
             ->whereColumn('stock', '>', 'min_stock')
             ->select(['id', 'name', 'brand_id', 'image', 'price'])->inRandomOrder()->limit(6)->get();
-        $offers = OfferTemplate::all(['id', 'name']);
-        $brands = Brand::inRandomOrder()->limit(7)->get()->values('name', 'id');
+        $offers = OfferTemplate::limit(5)->get(['id', 'name']);
+        $brands = Brand::inRandomOrder()->limit(7)->get(['name', 'id']);
 
         if (Auth::check() && CartFacade::getContent()->isEmpty()) {
             $this->cartService->loadCartFromDatabase(Auth::user());

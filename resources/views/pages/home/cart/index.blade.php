@@ -54,7 +54,7 @@
                   <p class="mt-1 text-gray-500 text-sm sm:text-base">
                     {{ $details->attributes->brand }}
                     <span class="ms-2 ps-2 border-s border-gray-300">
-                      {{-- {{ $details->attributes->category }} --}}
+                      {{ $details->attributes->category }}
                     </span>
                   </p>
                 </div>
@@ -140,12 +140,12 @@
                 <label class="flex items-center gap-3 cursor-pointer">
                   <input type="radio" name="payment_method" value="mercadopago"
                     class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
-                  <span class="text-sm text-gray-700">💳 Mercado Pago (Tarjeta / Dinero en cuenta)</span>
+                  <span class="text-sm text-gray-700">💳 <b>Mercado Pago</b> (Tarjeta / Transferencia)</span>
                 </label>
                 <label class="flex items-center gap-3 cursor-pointer">
-                  <input type="radio" name="payment_method" value="store"
+                  <input type="radio" name="payment_method" value="paypal"
                     class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                  <span class="text-sm text-gray-700">🏪 Pago en tienda (Efectivo / Transferencia)</span>
+                  <span class="text-sm text-gray-700">💳 <b>PayPal</b> (Tarjeta / Transferencia) solo en Dolares</span>
                 </label>
               </div>
             </fieldset>
