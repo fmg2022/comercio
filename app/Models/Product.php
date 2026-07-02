@@ -35,6 +35,24 @@ class Product extends Model
         );
     }
 
+    protected function shortDescription(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->name . ', ' . $this->brand->name . ' - ' . $this->weight,
+        );
+    }
+
+    // Functions
+    public function activeOffer(): string | null
+    {
+        return $this->offers()->active()->first()?->id;
+    }
+
+    public function inStock(): bool
+    {
+        return $this->stock > $this->min_stock;
+    }
+
     public function getCurrentOffer(): ?object
     {
         return $this->belongsToMany(Offer::class)
@@ -106,16 +124,5 @@ class Product extends Model
     {
         return $this->belongsToMany(OrderPurchase::class)
             ->withPivot(['quantity', 'purchase_price', 'suggested_sale_price']);
-    }
-
-    // Functions
-    public function activeOffer()
-    {
-        return $this->offers()->active()->first()?->id;
-    }
-
-    public function inStock(): bool
-    {
-        return $this->stock > $this->min_stock;
     }
 }
