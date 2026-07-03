@@ -14,10 +14,10 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "league/commonmark": "2.8.2",
+        "livewire/livewire": "^4.3",
         "maatwebsite/excel": "3.1.x-dev",
         "mercadopago/dx-php": "^3.9",
-        "spatie/laravel-permission": "^6.25",
-        "wearepixel/laravel-cart": "^1.2"
+        "spatie/laravel-permission": "^6.25"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
