@@ -34,7 +34,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas para el carrito
     Route::prefix('cart')->name('cart.')->group(function () {
-        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::get('/', function () {
+            return view('pages.home.cart.index');
+        })->name('index');
         Route::post('/add', [CartController::class, 'addToCart'])->name('addToCart');
         Route::put('/update', [CartController::class, 'update'])->name('update');
         Route::delete('/{cart}/clear', [CartController::class, 'clearCart'])->name('clearCart');

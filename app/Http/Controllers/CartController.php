@@ -4,39 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CartRequest;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Models\Product;
-use App\Services\CartService;
+use App\Models\{Cart, Order, Product};
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\{JsonResponse, RedirectResponse, Request};
 use Illuminate\Support\Facades\DB;
-use Joelwmale\Cart\Facades\CartFacade;
 
 class CartController extends Controller
 {
-	protected CartService $cartService;
-
-	public function __construct(CartService $cartService)
-	{
-		$this->cartService = $cartService;
-	}
-
-	public function index(): View
-	{
-		$user = auth()->user();
-		if (CartFacade::getContent()->isEmpty()) {
-			$this->cartService->loadCartFromDatabase($user);
-		}
-
-		return view('pages.home.cart.index', [
-			'cartItems' => CartFacade::getContent(),
-			'cart_id' => $user->cart->id,
-		]);
-	}
-
 	public function addToCart(CartRequest $request): RedirectResponse
 	{
 		$validated = $request->validated();
@@ -64,31 +38,9 @@ class CartController extends Controller
 				: 0;
 
 			if ($existItem) {
-				$cart->updateProduct($validated['id'], $item->pivot->quantity + $validated['quantity']);
-
-				$cartItem = CartFacade::get($validated['id']);
-				$currentAttributes = $cartItem->attributes ?? [];
-				$updatedAttributes = array_merge($currentAttributes, [
-					'discount' => $discount,
-				]);
-
-				CartFacade::update($validated['id'], ['attributes' => $updatedAttributes]);
+				$cart->updateProduct($validated['id'], $qty, $discount);
 			} else {
-				$cart->attachProduct($validated['id'], $validated['quantity']);
-
-				CartFacade::add([
-					'id' => $validated['id'],
-					'name' => $product->name,
-					'price' => $product->price,
-					'quantity' => $validated['quantity'],
-					'attributes' => [
-						'brand' => $product->brand->name,
-						'image' => $product->image,
-						'description' => $product->description,
-						'category' => $product->category,
-						'discount' => $discount,
-					]
-				]);
+				$cart->attachProduct($validated['id'], $qty, $discount);
 			}
 
 			DB::commit();
@@ -105,32 +57,24 @@ class CartController extends Controller
 	{
 		$validated = $request->validated();
 
-		DB::beginTransaction();
-		try {
-			CartFacade::update(
-				$validated['id'],
-				[
-					'quantity' => [
-						'relative' => false,
-						'value' => $validated['quantity']
-					]
-				]
-			);
+		$product = Product::findOrFail($validated['id']);
+		$offerTemplate = $product->getCurrentOffer();
+		$discount = $offerTemplate ?
+			$product->getDiscountTotal(
+				$validated['quantity'],
+				$offerTemplate->buy_qty,
+				$offerTemplate->pay_qty,
+				$offerTemplate->offerType->code
+			)
+			: 0;
 
-			auth()->user()->cart->updateProduct($validated['id'], $validated['quantity']);
-			DB::commit();
-		} catch (\Throwable $th) {
-			DB::rollBack();
-
-			return redirect()->back()->with('error', 'Error al actualizar el carrito')->with('errorTh', $th);
-		}
+		auth()->user()->cart->updateProduct($validated['id'], $validated['quantity'], $discount);
 
 		return redirect()->back()->with('success', 'Producto actualizado en el carrito');
 	}
 
 	public function remove(string $id, string $id_product): RedirectResponse
 	{
-		CartFacade::remove($id_product);
 		Cart::findOrFail($id)->detachProduct($id_product);
 
 		return redirect()->back()->with('success', 'Producto eliminado del carrito');
@@ -138,7 +82,6 @@ class CartController extends Controller
 
 	public function clearCart(Cart $cart): RedirectResponse
 	{
-		CartFacade::clear();
 		$cart->detachProduct([]);
 
 		return redirect()->back()->with('success', 'Carrito vaciado');

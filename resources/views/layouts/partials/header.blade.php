@@ -1,11 +1,6 @@
 <input type="checkbox" id="toggle-category" class="hidden peer/category" />
 <input type="checkbox" id="toggle-cart" class="hidden peer/cart" />
 
-@php
-  $cartItems = Cart::getContent();
-  $cart_id = auth()->user()?->cart->id;
-@endphp
-
 <header
   class="sticky top-0 left-0 z-20 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 md:px-6 lg:px-10 xl:gap-5">
   <div class="flex items-center flex-wrap gap-3 py-3 px-2">
@@ -50,7 +45,7 @@
           </svg>
         </label>
         <div
-          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:max-w-2xs md:p-0 lg:max-w-sm peer-checked/search:sm:top-14 transition-all duration-300">
+          class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:max-w-60 md:p-0 lg:max-w-sm peer-checked/search:sm:top-14 transition-all duration-300">
           <form method="GET" action="{{ route('product.search') }}"
             class="p-3 flex items-center justify-center sm:p-0">
             <label class="sm:w-sm lg:w-full">
@@ -75,9 +70,7 @@
             class="w-full p-3 flex items-center justify-center gap-3 sm:py-2 sm:gap-1 cursor-pointer">
             <x-icons.cart class="size-6" />
             <span class="sm:hidden">Mi carrito</span>
-            @if (!empty($cartItems))
-              ({{ count($cartItems) }})
-            @endif
+            {{ empty($cart->products) || $cart->products->count() === 0 ? '' : '(' . $cart->products->count() . ')' }}
           </button>
         </li>
       @endif
@@ -176,28 +169,27 @@
     <div tabindex="0" class="absolute right-0 size-full max-w-md focus:outline-none">
       <div class="flex h-full flex-col overflow-y-auto bg-white shadow-xl">
         <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-          <div class="flex items-start justify-between">
-            <h2 id="drawer-title" class="text-lg font-medium text-gray-900">
-              Mi carrito ({{ count($cartItems) }})
-            </h2>
-            <form method="dialog" class="ml-3 flex h-7 items-center">
-              <button type="submit" class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
+          <div class="relative flex items-start justify-between">
+            @if (!empty($cart->products))
+              <h2 id="drawer-title" class="text-lg font-medium text-gray-900">
+                Mi carrito ({{ $cart->products->count() }} producto/s)
+              </h2>
+            @endif
+            <form method="dialog" class="absolute right-0 h-7 flex items-center">
+              <button type="submit" class="p-2 text-gray-400 hover:text-gray-500">
                 <x-icons.x />
               </button>
             </form>
           </div>
 
-          @php $total = 0; @endphp
-          @if (!empty($cartItems))
+          @if (!empty($cart->products))
             <div class="mt-8 flow-root">
               <ul role="list" class="-my-6 divide-y divide-gray-200">
-                @foreach ($cartItems as $item)
-                  @php $total += $item->price * $item->quantity - $item->attributes->discount; @endphp
-
+                @foreach ($cart->products as $item)
                   <li class="flex py-6">
                     <div class="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <img src="{{ asset('images/products/' . $item->attributes->image) }}"
-                        alt="{{ $item->attributes->description }}" class="size-full object-cover" />
+                      <img src="{{ asset('images/products/' . $item->image) }}" alt="{{ $item->description }}"
+                        class="size-full object-cover" />
                     </div>
                     <div class="ml-4 flex flex-1 flex-col">
                       <div>
@@ -206,29 +198,29 @@
                             <h3>
                               <a href="{{ route('product.show', $item->id) }}">{{ $item->name }}</a>
                             </h3>
-                            <p class="mt-1 text-sm text-gray-500">{{ $item->attributes->brand }}</p>
+                            <p class="mt-1 text-sm text-gray-500">{{ $item->brand->name }}</p>
                           </div>
                           <div @class([
                               'text-slate-800',
                               'flex flex-col items-start justify-center' =>
-                                  $item->attributes->discount !== 0,
+                                  floatval($item->pivot->discount) != 0,
                           ])>
                             <p @class([
                                 'text-sm font-normal text-slate-500 line-through' =>
-                                    $item->attributes->discount !== 0,
+                                    floatval($item->pivot->discount) != 0,
                             ])>
-                              ${{ number_format($item->price * $item->quantity, 2, ',', '.') }}</p>
-                            @if ($item->attributes->discount !== 0)
+                              ${{ number_format($item->price * $item->pivot->quantity, 2, ',', '.') }}</p>
+                            @if (floatval($item->pivot->discount) != 0)
                               <span>
-                                ${{ number_format($item->price * $item->quantity - $item->attributes->discount, 2, ',', '.') }}
+                                ${{ number_format($item->price * $item->pivot->quantity - $item->pivot->discount, 2, ',', '.') }}
                               </span>
                             @endif
                           </div>
                         </div>
                       </div>
                       <div class="flex flex-1 items-end justify-between text-sm">
-                        <p class="text-gray-500">Cantidad: {{ $item->quantity }}</p>
-                        <form action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $item->id]) }}"
+                        <p class="text-gray-500">Cantidad: {{ $item->pivot->quantity }}</p>
+                        <form action="{{ route('cart.remove', ['id' => $cart->id, 'id_product' => $item->id]) }}"
                           method="POST">
                           @csrf
                           @method('DELETE')
@@ -250,7 +242,7 @@
         <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
           <div class="flex justify-between text-base font-medium text-gray-900">
             <p>Subtotal</p>
-            <p>${{ number_format($total, 2, ',', '.') }}</p>
+            <p>${{ !empty($cart) ? number_format($cart->total, 2, ',', '.') : 0 }}</p>
           </div>
           <div class="mt-6">
             <a href="{{ route('cart.index') }}"

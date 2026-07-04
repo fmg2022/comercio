@@ -7,7 +7,6 @@ use App\Models\{Cart, Order, OrderState, Payment, PaymentState};
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Http, Log, Mail};
-use Joelwmale\Cart\Facades\CartFacade;
 
 class PayPalController extends Controller
 {
@@ -78,7 +77,6 @@ class PayPalController extends Controller
             }
 
             // Limpiar el carrito
-            CartFacade::clear();
             $cart = Cart::where('user_id', $payment->order->user->id)
                 ->firstOrFail();
             $cart->products()->detach();

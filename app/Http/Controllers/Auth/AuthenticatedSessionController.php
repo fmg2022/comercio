@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Joelwmale\Cart\Facades\CartFacade;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -56,8 +55,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
-
-        CartFacade::clear();
 
         return redirect('/');
     }

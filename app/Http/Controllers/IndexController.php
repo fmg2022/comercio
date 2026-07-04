@@ -2,40 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Offer;
-use App\Models\OfferTemplate;
-use App\Models\Product;
-use App\Services\CartService;
+use App\Models\{Brand, Category, Offer, Product};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Joelwmale\Cart\Facades\CartFacade;
 
 class IndexController extends Controller
 {
-    protected CartService $cartService;
-
-    public function __construct(CartService $cartService)
-    {
-        $this->cartService = $cartService;
-    }
-
     public function index()
     {
         $selectedCategories = Category::where('parent_id', '!=', null)->limit(5)->get()->values('name', 'id');
         $products = Product::with('brand:id,name')
             ->whereColumn('stock', '>', 'min_stock')
             ->select(['id', 'name', 'brand_id', 'image', 'price'])->inRandomOrder()->limit(6)->get();
-        $offers = OfferTemplate::limit(5)->get(['id', 'name']);
         $brands = Brand::inRandomOrder()->limit(7)->get(['name', 'id']);
 
-        if (Auth::check() && CartFacade::getContent()->isEmpty()) {
-            $this->cartService->loadCartFromDatabase(Auth::user());
-        }
-
-        return view('pages.index', compact('products', 'offers', 'selectedCategories', 'brands'));
+        return view('pages.index', compact('products', 'selectedCategories', 'brands'));
     }
 
     public function showProduct(Product $product): View

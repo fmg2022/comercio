@@ -2,29 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\OrderProduct;
-use App\Models\OrderState;
-use App\Models\Payment;
-use App\Services\CartService;
+use App\Models\{Order, OrderProduct, OrderState, Payment};
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use Joelwmale\Cart\Facades\CartFacade;
 
 class DashboardController extends Controller
 {
-	public function __construct(protected CartService $cartService) {}
-
 	public function redirectToDashboard(): RedirectResponse
 	{
-		$user = auth()->user();
-		if (CartFacade::getContent()->isEmpty()) {
-			$this->cartService->loadCartFromDatabase($user);
-		}
-		if ($user->hasRole(['Admin', 'Super Admin'])) {
+		if (auth()->user()->hasRole(['Admin', 'Super Admin'])) {
 			return redirect()->route('admin.dashboard');
 		}
 		return redirect()->route('client.dashboard');

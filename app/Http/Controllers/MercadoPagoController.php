@@ -7,7 +7,6 @@ use App\Models\{Cart, Order, OrderState, Payment, PaymentState};
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Log, Mail};
-use Joelwmale\Cart\Facades\CartFacade;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\Exceptions\MPApiException;
@@ -171,7 +170,6 @@ class MercadoPagoController extends Controller
             Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
 
             // Limpiar el carrito
-            CartFacade::clear();
             $cart = Cart::where('user_id', $payment->order->user->id)
                 ->firstOrFail();
             $cart->products()->detach();

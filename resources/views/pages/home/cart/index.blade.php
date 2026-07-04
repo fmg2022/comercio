@@ -8,16 +8,16 @@
   <article class="px-4 py-10 max-w-2xl mx-auto md:py-14 md:px-6 lg:px-8 lg:max-w-7xl">
     <div class="flex items-center justify-between gap-4 sm:gap-8">
       <h1 class="text-3xl text-gray-900 font-bold tracking-tight sm:text-4xl">Mi carrito</h1>
-      <form action="{{ route('cart.clearCart', $cart_id) }}" method="POST" class="flex justify-center items-start">
+      <form action="{{ route('cart.clearCart', $cart->id) }}" method="POST" class="flex justify-center items-start">
         @csrf
         @method('DELETE')
         <button type="submit" @class([
             'px-3 py-2 font-semibold rounded-md',
             'bg-slate-400 text-gray-100 cursor-not-allowed' =>
-                $cartItems->count() === 0,
+                $cart->products->count() === 0,
             'text-white bg-red-700 active:bg-red-600 cursor-pointer' =>
-                $cartItems->count() !== 0,
-        ]) @disabled($cartItems->count() === 0)>
+                $cart->products->count() !== 0,
+        ]) @disabled($cart->products->count() === 0)>
           Limpiar Carrito
         </button>
       </form>
@@ -26,10 +26,7 @@
     <section class="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
       <div class="max-h-screen overflow-y-auto lg:col-span-7" style="scrollbar-color: #62748e transparent">
         <ul role="list" class="border-y divide-y divide-gray-200 border-gray-200 sm:pe-3">
-          @php $total = 0; @endphp
-          @forelse ($cartItems as $details)
-            @php $total += $details->price * $details->quantity - $details->attributes->discount; @endphp
-
+          @forelse ($cart->products as $details)
             <li class="py-6 flex gap-4 sm:py-10" data-id="{{ $details->id }}">
               <div class="shrink-0">
                 <img src="{{ asset('images/products/' . $details->attributes->image) }}"
@@ -42,7 +39,7 @@
                       class="text-lg font-medium text-gray-900 hover:text-gray-700">
                       {{ $details->name }}
                     </x-buttons.link>
-                    <form action="{{ route('cart.remove', ['id' => $cart_id, 'id_product' => $details->id]) }}"
+                    <form action="{{ route('cart.remove', ['id' => $cart->id, 'id_product' => $details->id]) }}"
                       method="POST" class="flex justify-center items-start">
                       @csrf
                       @method('DELETE')
@@ -52,9 +49,9 @@
                     </form>
                   </div>
                   <p class="mt-1 text-gray-500 text-sm sm:text-base">
-                    {{ $details->attributes->brand }}
+                    {{ $details->brand->name }}
                     <span class="ms-2 ps-2 border-s border-gray-300">
-                      {{ $details->attributes->category }}
+                      {{ $details->category->name }}
                     </span>
                   </p>
                 </div>
@@ -63,23 +60,24 @@
                   @csrf
                   @method('PUT')
                   <label class="w-full max-w-16 grid grid-cols-1">
-                    <input type="number" name="quantity" value="{{ $details->quantity }}" min="1" max="99"
+                    <input type="number" name="quantity" value="{{ $details->pivot->quantity }}" min="1"
+                      max="{{ $details->stock }}"
                       class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 outline-gray-300 focus:outline-indigo-600 focus:outline-offset-2 focus:outline-2 sm:text-sm">
                   </label>
                   <input type="hidden" name="id" value="{{ $details->id }}">
                   <div @class([
                       'ml-4 text-slate-900 font-medium text-lg',
                       'flex flex-col items-start justify-center' =>
-                          $details->attributes->discount !== 0,
+                          $details->pivot->discount !== 0,
                   ])>
                     <p @class([
                         'text-base font-normal text-slate-500 line-through' =>
-                            $details->attributes->discount !== 0,
+                            $details->pivot->discount !== 0,
                     ])>
-                      ${{ number_format($details->price * $details->quantity, 2, ',', '.') }}</p>
-                    @if ($details->attributes->discount !== 0)
+                      ${{ number_format($details->pivot->price * $details->pivot->quantity, 2, ',', '.') }}</p>
+                    @if ($details->pivot->discount !== 0)
                       <span>
-                        ${{ number_format($details->price * $details->quantity - $details->attributes->discount, 2, ',', '.') }}
+                        ${{ number_format($details->pivot->price * $details->pivot->quantity - $details->pivot->discount, 2, ',', '.') }}
                       </span>
                     @endif
                   </div>
@@ -108,11 +106,11 @@
           <div class="pt-4 flex items-center justify-between text-base">
             <p class="text-gray-600">Subtotal</p>
             <p class="font-medium text-gray-900" id="cart-subtotal">
-              ${{ number_format($total, 2, ',', '.') }}
+              ${{ number_format($cart->total, 2, ',', '.') }}
             </p>
           </div>
           @php
-            $tax = ($total * floatval(config('commerce.tax_rate'))) / 100;
+            $tax = ($cart->total * floatval(config('commerce.tax_rate'))) / 100;
           @endphp
           <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
             <p class="text-gray-600">IVA ({{ floatval(config('commerce.tax_rate')) }}%)</p>
@@ -122,7 +120,7 @@
           </div>
           <div class="pt-4 flex items-center justify-between text-lg font-medium text-gray-900 border-t border-gray-200">
             <p>Total del pedido</p>
-            <p id="cart-total">${{ number_format($total + $tax, 2, ',', '.') }}
+            <p id="cart-total">${{ number_format($cart->total + $tax, 2, ',', '.') }}
             </p>
           </div>
           <div class="pt-4 border-t border-gray-200">
