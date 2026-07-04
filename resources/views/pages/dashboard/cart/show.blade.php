@@ -62,7 +62,7 @@
           </div>
         </td>
         <td class="text-center">{{ $product->pivot->quantity }}</td>
-        <td class="text-center font-bold">${{ $product->price_formated }}</td>
+        <td class="text-center font-bold">${{ number_format($product->price, 2, ',', '.') }}</td>
         <td class="text-center hidden md:table-cell">
           ${{ number_format($product->price * $product->pivot->quantity, 2, ',', '.') }}
         </td>
@@ -116,7 +116,7 @@
   <p
     class="w-fit px-8 py-3 ms-auto flex justify-between items-center gap-4 bg-slate-800 rounded-b-lg text-lg font-semibold">
     <span>Total sin impuestos</span>
-    <span>${{ $cart->totalFormated() }}</span>
+    <span>${{ number_format($cart->total, 2, ',', '.') }}</span>
   </p>
 
   @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))

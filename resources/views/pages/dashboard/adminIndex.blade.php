@@ -461,7 +461,7 @@
           </td>
           <td>
             <span class="me-px text-slate-300/80">$</span>
-            {{ $order->total_formated }}
+            {{ number_format($order->total, 2, ',', '.') }}
           </td>
           <td class="hidden md:table-cell">
             <span @class([
@@ -511,7 +511,7 @@
           </td>
           <td class="hidden sm:table-cell">
             <span class="me-px text-slate-300/80">$</span>
-            {{ $order->total_formated }}
+            {{ number_format($order->total, 2, ',', '.') }}
           </td>
           <td class="hidden md:table-cell">
             <span @class([

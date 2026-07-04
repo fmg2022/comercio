@@ -58,7 +58,7 @@
         <p @class([
             'text-slate-600 line-through' => $offerID,
             'py-3 text-lg font-bold text-slate-700' => $offerID === null,
-        ])>${{ $product->priceFormated }}</p>
+        ])>${{ number_format($product->price, 2, ',', '.') }}</p>
       </div>
       <label class="w-full max-w-16 grid grid-cols-1">
         <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}"

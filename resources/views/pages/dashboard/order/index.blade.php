@@ -139,7 +139,7 @@
           <td class="font-bold">{{ $fullName }}</td>
         @endif
         <td class="text-slate-300">{{ $order->date->format('d/m/Y H:i') }}</td>
-        <td><span class="me-px font-semibold">$</span>{{ $order->total_formated }}</td>
+        <td><span class="me-px font-semibold">$</span>{{ number_format($order->total, 2, ',', '.') }}</td>
         <td class="hidden text-slate-300 capitalize lg:table-cell">
           {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>
         <td class="hidden md:table-cell">
@@ -181,7 +181,7 @@
                 @can('manage state-type-tables')
                   <li>
                     <button type="button" data-modal="modal-change-status" data-uid="{{ $order->id }}"
-                      data-from="{{ $fullName }}" data-amount="{{ $order->total_formated }}"
+                      data-from="{{ $fullName }}" data-amount="{{ number_format($order->total, 2, ',', '.') }}"
                       data-status="{{ $order->orderState->code }}"
                       class="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
                       <span>

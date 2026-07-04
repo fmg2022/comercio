@@ -44,7 +44,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
         return [
             $order->id,
             $order->date->format('d/m/Y H:i'),
-            $order->total_formated,
+            number_format($order->total, 2, ',', '.'),
             $order->orderState->code ?? 'N/A',
             $order->total_products,
             $order->products->pluck('name')->implode(', ') ?? 'N/A',

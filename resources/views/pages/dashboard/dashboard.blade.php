@@ -106,7 +106,7 @@
             </td>
             <td>{{ $order->date->format('d/m/Y') }}</td>
             <td>
-              ${{ $order->total_formated }}
+              ${{ number_format($order->total, 2, ',', '.') }}
             </td>
             <td>
               <span @class([
@@ -148,7 +148,7 @@
             <img src="{{ asset('images/products/' . $product->image) }}" class="size-16 object-cover rounded">
             <div class="grow">
               <p class="font-medium">{{ $product->name }}</p>
-              <p class="text-sm text-gray-400">${{ $product->priceFormated }}</p>
+              <p class="text-sm text-gray-400">${{ number_format($product->price, 2, ',', '.') }}</p>
             </div>
             @if ($product->in_stock)
               <form action="{{ route('cart.addToCart') }}" method="POST" class="w-max me-3 flex flex-wrap gap-2">

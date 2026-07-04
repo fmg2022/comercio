@@ -52,10 +52,11 @@
           </div>
         </td>
         <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
-        <td class="text-center font-bold"><span class="me-px">$</span>{{ $orderLine->pivot->price_formated }}</td>
+        <td class="text-center font-bold"><span
+            class="me-px">$</span>{{ number_format($orderLine->pivot->price, 2, ',', '.') }}</td>
         <td class="relative text-center hidden md:table-cell">
           <span class="peer/popup">
-            ${{ $orderLine->pivot->discount_formated }}
+            ${{ number_format($orderLine->pivot->discount, 2, ',', '.') }}
           </span>
           <x-popups.text
             class="top-2/3 left-1/2 -translate-x-1/2 w-max hidden bg-slate-900/80 peer-hover/popup:inline-block">
@@ -109,7 +110,7 @@
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">Total</p>
       </div>
       <div class="text-end [&>p]:ps-6 [&>p]:pe-4">
-        <p>$ {{ $order->totalFormated }}</p>
+        <p>$ {{ number_format($order->total, 2, ',', '.') }}</p>
         <p>$ {{ number_format($order->iva, 2, ',', '.') }}</p>
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">$
           {{ number_format($order->totalWithIva, 2, ',', '.') }}
