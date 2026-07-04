@@ -22,20 +22,6 @@ class OrderProduct extends Pivot
     ];
 
     // Accessors
-    protected function priceFormated(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => number_format($this->price, 2, ',', '.'),
-        );
-    }
-
-    protected function discountFormated(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => number_format($this->discount, 2, ',', '.'),
-        );
-    }
-
     protected function getSubtotal(): Attribute
     {
         return Attribute::make(

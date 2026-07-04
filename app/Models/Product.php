@@ -28,13 +28,6 @@ class Product extends Model
     ];
 
     // Accessors & Mutators
-    protected function priceFormated(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => number_format($this->price, 2, ',', '.'),
-        );
-    }
-
     protected function shortDescription(): Attribute
     {
         return Attribute::make(
@@ -91,7 +84,7 @@ class Product extends Model
     public function carts(): BelongsToMany
     {
         return $this->belongsToMany(Cart::class)
-            ->withPivot(['quantity']);
+            ->withPivot(['quantity', 'discount']);
     }
 
     public function orders(): BelongsToMany

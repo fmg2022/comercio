@@ -30,13 +30,6 @@ class Order extends Model
 	];
 
 	// Accesores
-	protected function totalFormated(): Attribute
-	{
-		return Attribute::make(
-			get: fn() => number_format($this->total, 2, ',', '.'),
-		);
-	}
-
 	protected function firstPayment(): Attribute
 	{
 		return Attribute::make(
