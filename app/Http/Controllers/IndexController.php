@@ -16,7 +16,7 @@ class IndexController extends Controller
             ->select(['id', 'name', 'brand_id', 'image', 'price'])->inRandomOrder()->limit(6)->get();
         $brands = Brand::inRandomOrder()->limit(7)->get(['name', 'id']);
 
-        return view('pages.index', compact('products', 'selectedCategories', 'brands'));
+        return view('pages.home.index', compact('products', 'selectedCategories', 'brands'));
     }
 
     public function showProduct(Product $product): View

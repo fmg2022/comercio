@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-  <x-sections.carousel :length="count($offers)" :is_image="true">
-    @foreach ($offers as $offerItem)
+  <x-sections.carousel :length="$offers?->count() ?? 0" :is_image="true">
+    @foreach ($offers as $offer)
       <li>
-        <img src="{{ asset('images/hero/' . ($loop->index + 1) . '.webp') }}"
-          alt="{{ $offerItem['offer_template']['name'] }}" class="w-full max-h-[420px]" draggable="false" />
+        <img src="{{ asset('images/hero/' . ($loop->index + 1) . '.webp') }}" alt="{{ $offer->offerTemplate->name }}"
+          class="w-full max-h-105" draggable="false" />
       </li>
     @endforeach
   </x-sections.carousel>
