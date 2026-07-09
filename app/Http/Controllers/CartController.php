@@ -26,8 +26,9 @@ class CartController extends Controller
 			$existItem = $item && $item->exists();
 
 			$product = $existItem ? $item : Product::findOrFail($validated['id']);
-			$offerTemplate = $product->getCurrentOffer();
+			$offerTemplate = \App\Models\Offer::find($product->activeOffer())?->offerTemplate;
 			$qty = $existItem ? $item->pivot->quantity + $validated['quantity'] : $validated['quantity'];
+
 			$discount = $offerTemplate ?
 				$product->getDiscountTotal(
 					$qty,
