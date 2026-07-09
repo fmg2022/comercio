@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\MercadoPagoController;
-use App\Http\Controllers\IndexController;
-use App\Http\Controllers\PayPalController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\{CartController, IndexController, MercadoPagoController, PayPalController, ProfileController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [IndexController::class, 'index'])->name('home');
@@ -34,9 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rutas para el carrito
     Route::prefix('cart')->name('cart.')->group(function () {
-        Route::get('/', function () {
-            return view('pages.home.cart.index');
-        })->name('index');
+        Route::livewire('/', 'pages::home.cart.index')->name('index');
         Route::post('/add', [CartController::class, 'addToCart'])->name('addToCart');
         Route::put('/update', [CartController::class, 'update'])->name('update');
         Route::delete('/{cart}/clear', [CartController::class, 'clearCart'])->name('clearCart');
