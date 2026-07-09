@@ -23,10 +23,17 @@ class Cart extends Model
         );
     }
 
-    // Functions
-    public function attachProduct(string $productId, int $quantity): void
+    protected function quantity(): Attribute
     {
-        $this->products()->attach($productId, ['quantity' => $quantity]);
+        return Attribute::make(
+            get: fn() => $this->products()->sum('cart_product.quantity')
+        );
+    }
+
+    // Functions
+    public function attachProduct(string $productId, int $quantity, float $discount): void
+    {
+        $this->products()->attach($productId, ['quantity' => $quantity, 'discount' => $discount]);
         $this->touch();
     }
 
@@ -40,7 +47,7 @@ class Cart extends Model
         $this->touch();
     }
 
-    public function updateProduct(string $productId, int $quantity, float $discount = 0): void
+    public function updateProduct(string $productId, int $quantity, float $discount): void
     {
         $this->products()->updateExistingPivot($productId, ['quantity' => $quantity, 'discount' => $discount]);
         $this->touch();
@@ -55,6 +62,7 @@ class Cart extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class)
+            ->using(CartProduct::class)
             ->withPivot(['quantity', 'discount']);
     }
 }
