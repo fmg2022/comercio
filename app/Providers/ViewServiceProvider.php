@@ -21,10 +21,17 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // sharing daa with multiple views
-        View::composer(['pages.index', 'pages.home.product.show', 'pages.home.product.list', 'pages.home.cart.index'], function ($view) {
+        View::composer(['layouts.partials.header', 'pages.home.*'], function ($view) {
+            $user = auth()->user();
+            if ($user) {
+                $user->loadMissing('cart');
+                $cart = $user->cart;
+            } else {
+                $cart = null;
+            }
             $view->with('categories', \App\Models\Category::getFullTree())
-                ->with('offers', \App\Models\Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,code'])->active()->get()->keyBy('id')->toArray())
-                ->with('cart', auth()->user()->cart ?? []);
+                ->with('offers', \App\Models\Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,code'])->active()->get()->keyBy('id'))
+                ->with('cart', $cart);
         });
     }
 }
