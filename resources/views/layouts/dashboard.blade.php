@@ -10,6 +10,7 @@
   <link rel="icon" href="{{ asset('favicons/favicon.ico') }}" type="image/x-icon">
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @livewireStyles
 
   <style>
     .toggle-input:checked~.absolute {
@@ -56,6 +57,7 @@
       $toggleAside.checked = false
     })
   </script>
+  @livewireScripts
 </body>
 
 </html>

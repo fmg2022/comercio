@@ -12,6 +12,7 @@
 
   <!-- Scripts -->
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+
   @stack('scripts-app')
   <script src="{{ asset('js/modal.js') }}" defer></script>
   <script src="{{ asset('js/alert.js') }}" defer></script>
@@ -25,6 +26,7 @@
       }
     }
   </style>
+  @livewireStyles
 </head>
 
 <body class="relative antialiased min-h-screen flex flex-col bg-neutral-100">
@@ -32,12 +34,17 @@
   @include('layouts.partials.header')
   <!-- Page Content -->
   <main class="grow sm:px-3 md:px-6 lg:px-10">
-    @yield('content')
+    @isset($slot)
+      {{ $slot }}
+    @else
+      @yield('content')
+    @endisset
   </main>
   <!-- Page Footer -->
   @include('layouts.partials.footer')
   <!-- Scripts -->
   @stack('scripts-page')
+  @livewireScripts
 </body>
 
 </html>
