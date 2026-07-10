@@ -51,7 +51,7 @@
             <label class="sm:w-sm lg:w-full">
               <input type="search" name="query" placeholder="Buscar producto..."
                 value="{{ old('query', $query ?? '') }}"
-                class="p-[9px] w-full bg-black/10 rounded-l-lg outline-none placeholder:text-slate-400 placeholder:italic">
+                class="p-2.25 w-full bg-black/10 rounded-l-lg outline-none placeholder:text-slate-400 placeholder:italic">
             </label>
             <button type="submit" class="p-3 rounded-r-lg bg-emerald-700/25 hover:bg-emerald-600/50 cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
@@ -70,7 +70,9 @@
             class="w-full p-3 flex items-center justify-center gap-3 sm:py-2 sm:gap-1 cursor-pointer">
             <x-icons.cart class="size-6" />
             <span class="sm:hidden">Mi carrito</span>
-            {{ empty($cart->products) || $cart->products->count() === 0 ? '' : '(' . $cart->products->count() . ')' }}
+            @if ($cart)
+              <livewire:_partials.cart-qty :startText="'('" :endText="')'" />
+            @endif
           </button>
         </li>
       @endif
@@ -95,16 +97,15 @@
           class="absolute -top-16 left-1/2 -translate-x-1/2 invisible w-1/2 h-max px-3 py-4 flex flex-col opacity-0 rounded-lg text-center bg-cyan-800 divide-y divide-cyan-700 peer-checked/perfil:visible peer-checked/perfil:opacity-100 peer-checked/perfil:top-16 sm:left-full sm:-translate-x-full sm:w-max transition-all duration-300">
           @if (Route::has('login'))
             @auth
-              <a href="{{ route('dashboard.index') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Panel de
-                usuario</a>
+              <a href="{{ route('dashboard.index') }}" class="p-2 hover:text-violet-400">
+                Panel de usuario</a>
               <form action="{{ route('logout') }}" method="post">
                 @csrf
-                <button type="submit"
-                  class="p-2 cursor-pointer hover:text-sky-700 dark:hover:text-violet-400">Desconectarse</button>
+                <button type="submit" class="p-2 cursor-pointer hover:text-violet-400">Desconectarse</button>
               </form>
             @else
-              <a href="{{ route('login') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Iniciar Sesión</a>
-              <a href="{{ route('register') }}" class="p-2 hover:text-sky-700 dark:hover:text-violet-400">Registrarse</a>
+              <a href="{{ route('login') }}" class="p-2 hover:text-violet-400">Iniciar Sesión</a>
+              <a href="{{ route('register') }}" class="p-2 hover:text-violet-400">Registrarse</a>
             @endauth
           @endif
         </div>
@@ -147,9 +148,9 @@
           <ul class="py-5 grid content-start gap-3">
             @foreach ($offers as $offer)
               <li>
-                <x-buttons.link href="{{ route('product.findForOffer', $offer['id']) }}"
+                <x-buttons.link href="{{ route('product.findForOffer', $offer->id) }}"
                   class="block text-lg hover:text-sky-400">
-                  {{ $offer['offer_template']['name'] }}
+                  {{ $offer->offerTemplate->name }}
                 </x-buttons.link>
               </li>
             @endforeach
@@ -167,99 +168,54 @@
     class="group fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent translate-x-full backdrop:bg-black/30 backdrop:opacity-0 transition-[display,overlay,translate] duration-[400ms,1s] transition-discrete backdrop:transition-opacity backdrop:duration-400 open:translate-x-0 open:backdrop:opacity-100 starting:open:translate-x-full starting:open:backdrop:opacity-0"
     closedby="any">
     <div tabindex="0" class="absolute right-0 size-full max-w-md focus:outline-none">
-      <div class="flex h-full flex-col overflow-y-auto bg-white shadow-xl">
-        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-          <div class="relative flex items-start justify-between">
-            @if (!empty($cart->products))
-              <h2 id="drawer-title" class="text-lg font-medium text-gray-900">
-                Mi carrito ({{ $cart->products->count() }} producto/s)
-              </h2>
-            @endif
-            <form method="dialog" class="absolute right-0 h-7 flex items-center">
-              <button type="submit" class="p-2 text-gray-400 hover:text-gray-500">
+      <div @class([
+          'h-full flex flex-col overflow-y-auto bg-white shadow-xl',
+          'items-center justify-center gap-3' => !$cart,
+      ])>
+        @if ($cart)
+          <div class="relative flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+            <h2 class="text-lg font-medium text-gray-900">
+              <livewire:_partials.cart-qty :startText="'Mi carrito ('" :endText="' producto/s)'" />
+            </h2>
+            <form method="dialog" class="absolute right-2 top-2 size-12 flex items-center">
+              <button type="submit" class="p-1 text-gray-400 hover:text-gray-500 cursor-pointer">
                 <x-icons.x />
               </button>
             </form>
+            <livewire:lists.cart-list />
           </div>
 
-          @if (!empty($cart->products))
-            <div class="mt-8 flow-root">
-              <ul role="list" class="-my-6 divide-y divide-gray-200">
-                @foreach ($cart->products as $item)
-                  <li class="flex py-6">
-                    <div class="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      <img src="{{ asset('images/products/' . $item->image) }}" alt="{{ $item->description }}"
-                        class="size-full object-cover" />
-                    </div>
-                    <div class="ml-4 flex flex-1 flex-col">
-                      <div>
-                        <div class="flex justify-between gap-4 text-base font-medium text-gray-900">
-                          <div>
-                            <h3>
-                              <a href="{{ route('product.show', $item->id) }}">{{ $item->name }}</a>
-                            </h3>
-                            <p class="mt-1 text-sm text-gray-500">{{ $item->brand->name }}</p>
-                          </div>
-                          <div @class([
-                              'text-slate-800',
-                              'flex flex-col items-start justify-center' =>
-                                  floatval($item->pivot->discount) != 0,
-                          ])>
-                            <p @class([
-                                'text-sm font-normal text-slate-500 line-through' =>
-                                    floatval($item->pivot->discount) != 0,
-                            ])>
-                              ${{ number_format($item->price * $item->pivot->quantity, 2, ',', '.') }}</p>
-                            @if (floatval($item->pivot->discount) != 0)
-                              <span>
-                                ${{ number_format($item->price * $item->pivot->quantity - $item->pivot->discount, 2, ',', '.') }}
-                              </span>
-                            @endif
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex flex-1 items-end justify-between text-sm">
-                        <p class="text-gray-500">Cantidad: {{ $item->pivot->quantity }}</p>
-                        <form action="{{ route('cart.remove', ['id' => $cart->id, 'id_product' => $item->id]) }}"
-                          method="POST">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit"
-                            class="font-medium text-indigo-600 hover:text-indigo-500 cursor-pointer">Quitar</button>
-                        </form>
-                      </div>
-                    </div>
-                  </li>
-                @endforeach
-              </ul>
+          <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
+            @if ($cart)
+              <livewire:_partials.subtotal />
+            @endif
+            <div class="mt-6">
+              <a href="{{ route('cart.index') }}"
+                class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700">
+                Ver Carrito</a>
             </div>
-          @else
-            <h4 class="relative top-1/2 -translate-y-1/2 font-bold text-2xl text-center">Sin productos en el carrito
-            </h4>
-          @endif
-        </div>
-
-        <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-          <div class="flex justify-between text-base font-medium text-gray-900">
-            <p>Subtotal</p>
-            <p>${{ !empty($cart) ? number_format($cart->total, 2, ',', '.') : 0 }}</p>
+            <div class="mt-6 flex justify-center gap-1 text-sm text-gray-500">
+              <span>o</span>
+              <form method="dialog">
+                <button type="submit"
+                  class="font-medium text-indigo-600 hover:text-indigo-500 underline-offset-4 hover:underline transition-all duration-100">
+                  Continue Comprando
+                  <span aria-hidden="true"> &rarr;</span>
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="mt-6">
-            <a href="{{ route('cart.index') }}"
-              class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700">
-              Ver Carrito</a>
-          </div>
-          <div class="mt-6 flex justify-center gap-1 text-sm text-gray-500">
-            <span>o</span>
-            <form method="dialog">
-              <button type="submit"
-                class="font-medium text-indigo-600 hover:text-indigo-500 underline-offset-4 hover:underline transition-all duration-100">
-                Continue Comprando
-                <span aria-hidden="true"> &rarr;</span>
-              </button>
-            </form>
-          </div>
-        </div>
+        @else
+          <p class="font-bold text-2xl">
+            <x-buttons.link href="{{ route('login') }}"
+              class="font-medium text-indigo-600 hover:text-indigo-500">Inicia Sesión</x-buttons.link>
+            <span>para ver el carrito</span>
+          </p>
+          <p>Aún no tienes cuenta?
+            <x-buttons.link href="{{ route('register') }}"
+              class="font-medium text-indigo-600 hover:text-indigo-500">Registrarse</x-buttons.link>
+          </p>
+        @endif
       </div>
     </div>
   </dialog>
