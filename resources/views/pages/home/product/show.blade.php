@@ -69,7 +69,7 @@
       </article>
       <article class="px-3 flex flex-col gap-5">
         <h2 class="text-xl">Información</h2>
-        <ul class="ms-4 [&>li]:before:content-['\2022'] [&>li]:before:me-[.5rem]">
+        <ul class="ms-4 [&>li]:before:content-['\2022'] [&>li]:before:me-2">
           <li>Tipo de producto: {{ $product->name }}</li>
           <li>Contenido: {{ $product->weight }}</li>
           <li>Envase: {{ $product->container }}</li>

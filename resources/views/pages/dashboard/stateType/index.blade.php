@@ -17,7 +17,7 @@
   </x-sections.headerTitle>
 
   <div
-    class="relative max-h-[calc(100vh-16rem)] overflow-y-auto lg:max-w-7xl lg:mx-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    class="relative max-h-[calc(100vh-16rem)] overflow-y-auto lg:max-w-7xl lg:mx-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
     <x-tables.table>
       <x-slot:thead>
         <tr class="text-left [&>th]:sticky [&>th]:top-0 [&>th]:bg-slate-800">
@@ -228,7 +228,7 @@
 
   {{-- MODAL CREATE, EDIT --}}
   <x-modals.simple id="stateTypeCSE"
-    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+    class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
     <div class="mt-8">
       <label class="block mb-2 font-semibold text-gray-700" for="modelTypeid">Seleccione uno de los modelos</label>
       <select name="modelType" id="modelTypeid"
