@@ -24,17 +24,17 @@
         @if ($offerID)
           <p class="flex justify-star items-center gap-3">
             @php
-              $offerType = $offers[$offerID]['offer_template']['offer_type']['code'];
+              $offerApplied = $offers[$offerID];
+              $offerType = $offerApplied->offerTemplate->offerType->code;
 
               if ($offerType === 'X_FOR_Y') {
-                  $buy = (float) $offers[$offerID]['offer_template']['buy_qty'];
-                  $newPrice =
-                      ($product->price * ($buy - (float) $offers[$offerID]['offer_template']['pay_qty'])) / $buy;
+                  $buy = (float) $offerApplied->offerTemplate->buy_qty;
+                  $newPrice = ($product->price * ($buy - (float) $offerApplied->offerTemplate->pay_qty)) / $buy;
               } else {
                   $newPrice = $product->getDiscountTotal(
-                      (float) $offers[$offerID]['offer_template']['buy_qty'],
-                      (float) $offers[$offerID]['offer_template']['buy_qty'],
-                      (float) $offers[$offerID]['offer_template']['pay_qty'],
+                      (float) $offerApplied->offerTemplate->buy_qty,
+                      (float) $offerApplied->offerTemplate->buy_qty,
+                      (float) $offerApplied->offerTemplate->pay_qty,
                       $offerType,
                   );
               }
@@ -46,12 +46,10 @@
             </span>
             <span class="px-1 py-0.5 bg-amber-400 rounded-lg">
               {{ $offerType === 'FIXED'
-                  ? '-$' . $offers[$offerID]['offer_template']['pay_qty']
+                  ? '-$' . $offerApplied->offerTemplate->pay_qty
                   : ($offerType === 'PERCENTAGE'
-                      ? '-' . $offers[$offerID]['offer_template']['pay_qty'] * 100 . '%'
-                      : $offers[$offerID]['offer_template']['buy_qty'] * 1 .
-                          'x' .
-                          $offers[$offerID]['offer_template']['pay_qty'] * 1) }}
+                      ? '-' . $offerApplied->offerTemplate->pay_qty * 100 . '%'
+                      : $offerApplied->offerTemplate->buy_qty * 1 . 'x' . $offerApplied->offerTemplate->pay_qty * 1) }}
             </span>
           </p>
         @endif
