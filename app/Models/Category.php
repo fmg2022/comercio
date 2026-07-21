@@ -59,4 +59,13 @@ class Category extends Model
 
         return $breadcrumbs;
     }
+
+    public function leafDescendantIds(): array
+    {
+        if ($this->children->isEmpty()) {
+            return [$this->id];
+        }
+
+        return $this->children->flatMap(fn($child) => $child->leafDescendantIds())->toArray();
+    }
 }
