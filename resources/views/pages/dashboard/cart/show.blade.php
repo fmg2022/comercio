@@ -122,7 +122,7 @@
   @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="cartDetailsCES"
-      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
       <form enctype="multipart/form-data" method="POST" action="{{ route('cart.update') }}" data-persist="true"
         class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf
