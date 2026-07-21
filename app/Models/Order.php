@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -67,23 +68,17 @@ class Order extends Model
 
 	// Scopes
 	/**
-	 * Scope para órdenes no canceladas
+	 * Scope para solo órdenes pagadas/compradas
 	 */
-	public function scopeNotCanceled(Builder $query): void
+	#[Scope]
+	public function paid(Builder $query): void
 	{
-		$query->join('order_states', function (JoinClause $join) {
-			$join->on('orders.order_state_id', '=', 'order_states.id')
-				->where('order_states.code', '!=', 'CANCELADO');
-		});
-	}
+		static $paidStateId = null;
 
-	/**
-	 * Scope para rango de fechas personalizado
-	 */
-	public function scopeDateRange(Builder $query, string $startDate, ?string $endDate = null): void
-	{
-		$endDate = $endDate ?? now();
-		$query->whereBetween('date', [$startDate, $endDate]);
+		if ($paidStateId === null) {
+			$paidStateId = OrderState::whereIn('code', ['PAGADO', 'COMPLETO'])->pluck('id');
+		}
+		$query->whereIn('order_state_id', $paidStateId);
 	}
 
 	// Relaciones
