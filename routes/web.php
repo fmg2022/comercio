@@ -11,10 +11,10 @@ Route::post('/webhook/mercadopago', [MercadoPagoController::class, 'handleWebhoo
     ->name('webhook.mercadopago');
 
 // Rutas para los productos
-Route::get('/products/search', [IndexController::class, 'search'])->name('product.search');
-Route::get('/products/{product}', [IndexController::class, 'showProduct'])->name('product.show');
-Route::get('/products/category/{category}', [IndexController::class, 'getProductsCategory'])->name('product.findForCategory');
-Route::get('/products/offers/{offer}', [IndexController::class, 'getProductsOffer'])->name('product.findForOffer');
+Route::prefix('products')->name('products.')->group(function () {
+    Route::livewire('/', 'pages::home.product.index')->name('index');
+    Route::get('/{product}', [IndexController::class, 'showProduct'])->name('show');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas del dashboard
