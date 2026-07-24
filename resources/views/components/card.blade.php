@@ -1,7 +1,7 @@
 @props(['product'])
 
 <article class="max-w-sm h-max rounded-xl shadow-lg bg-slate-300 pb-3 overflow-hidden">
-  <a href="{{ route('product.show', $product->id) }}" class="block">
+  <a href="{{ route('products.show', $product->id) }}" class="block">
     <img class="aspect-square" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
       draggable="false" width="310">
   </a>

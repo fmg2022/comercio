@@ -13,7 +13,7 @@
         Inicio
       </a>
     </li>
-    @forelse ($categoriesNav as $key => $name)
+    @forelse ($categoriesNav as $name)
       <li @if ($loop->last) aria-current="page" @endif>
         <div class="flex items-center gap-1">
           <svg width="10" height="10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -22,7 +22,7 @@
               d="m1 9 4-4-4-4" />
           </svg>
           @if (!$loop->last)
-            <a href="{{ route('product.findForCategory', $key) }}" class="ms-1 md:ms-2">
+            <a href="{{ route('products.index', ['query' => $name]) }}" class="ms-1 md:ms-2">
               {{ $name }}</a>
           @else
             <span class="ms-1 md:ms-2">
