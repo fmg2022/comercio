@@ -1,12 +1,19 @@
 <?php
 
 use App\Models\Cart;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 new class extends Component {
     public Cart $cart;
 
     public function mount()
+    {
+        $this->refreshCart();
+    }
+
+    #[On('cart-updated')]
+    public function refreshCart()
     {
         $this->cart = auth()->user()->cart->load('products.brand');
     }
@@ -15,6 +22,7 @@ new class extends Component {
     {
         $this->cart->products()->detach($productId);
 
+        $this->refreshCart();
         $this->dispatch('cart-updated');
     }
 };
@@ -35,7 +43,7 @@ new class extends Component {
                 <div class="flex justify-between gap-4 text-base font-medium text-gray-900">
                   <div>
                     <h3>
-                      <a href="{{ route('product.show', $item->id) }}">{{ $item->name }}</a>
+                      <a href="{{ route('products.show', $item->id) }}">{{ $item->name }}</a>
                     </h3>
                     <p class="mt-1 text-sm text-gray-500">{{ $item->brand->name }}</p>
                   </div>
