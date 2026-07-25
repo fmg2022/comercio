@@ -16,7 +16,7 @@
   <!-- SECCION: Slider de productos recomendados -->
   <div>
     <h2 class="py-3 mb-4 text-2xl font-bold text-center">Productos recomendados</h2>
-    <x-sections.carousel :length="count($products)">
+    <x-sections.carousel :length="count($products)" class="group grilla">
       @foreach ($products as $product)
         <li class="flex-none">
           <x-cards.product :product="$product" :offers="$offers" />
