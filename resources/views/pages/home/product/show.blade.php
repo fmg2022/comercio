@@ -32,15 +32,15 @@
       </section>
       <section class="w-full px-4 py-8 md:w-4/7 md:py-4">
         <div>
-          <h3 class="text-2xl font-semibold">{{ $product->name }} x {{ $product->weight }}</h3>
+          <h3 class="text-2xl font-semibold">{{ "{$product->name} {$product->brand->name} x {$product->weight}" }}</h3>
           <p class="text-sm">
-            <span class="me-3 font-bold uppercase">{{ $product->category->name }}</span> |
+            <span class="me-3 font-bold uppercase">{{ $product->brand->name }}</span> |
             <span class="ms-3 font-semibold">SKU: {{ $product->sku }}</span>
           </p>
         </div>
         <h4 class="my-8 text-xl font-bold sm:text-2xl">${{ number_format($product->price, 2, ',', '.') }}</h4>
         <ul class="ms-6 mb-12 list-disc text-sm">
-          <li>Tipo de producto: {{ $product->name }}</li>
+          <li>Tipo de producto: {{ $product->category->name }}</li>
           <li>Contenido: {{ $product->weight }}</li>
           <li>Envase: {{ $product->container }}</li>
         </ul>
@@ -79,14 +79,14 @@
   </section>
 
   <!-- SECCION: Slider de productos recomendados -->
-  <div>
+  <section>
     <h2 class="py-3 mb-4 text-2xl font-bold text-center">Productos recomendados</h2>
-    <x-sections.carousel :length="count($products)">
+    <x-sections.carousel :length="count($products)" class="grid grilla">
       @foreach ($products as $product)
         <li class="item flex justify-center items-center snap-start">
-          <x-card :product="$product" />
+          <x-cards.product :product="$product" :offers="$offers" />
         </li>
       @endforeach
     </x-sections.carousel>
-  </div>
+  </section>
 @endsection
