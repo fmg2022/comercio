@@ -1,16 +1,30 @@
 <?php
 
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 new class extends Component {
     public \App\Models\Cart $cart;
 
+    public array $quantities = [];
+    public array $inputErrors = [];
     public float $total = 0.0,
         $tax = 0.0;
+
+    protected function rules(int $stock)
+    {
+        return [
+            'quantity' => 'required|integer|min:1|max:' . $stock,
+        ];
+    }
 
     public function mount()
     {
         $this->cart = auth()->user()->cart->load('products.brand');
+
+        foreach ($this->cart->products as $product) {
+            $this->quantities[$product->id] = $product->pivot->quantity;
+        }
 
         $this->calculateTotal();
     }
@@ -21,29 +35,61 @@ new class extends Component {
         $this->total = $this->cart->total + $this->tax;
     }
 
+    public function updatedQuantities($value, $key)
+    {
+        $id = (int) str_replace('quantities.', '', $key);
+        $product = $this->cart->products()->find($id);
+
+        if (!$product) {
+            return;
+        }
+
+        // Validaciones
+        $validator = Validator::make(['quantity' => $value], $this->rules($product->stock), $this->messages());
+
+        if ($validator->fails()) {
+            $this->inputErrors[$id] = $validator->errors()->first('quantity');
+            $this->quantities[$id] = $product->pivot->quantity;
+            return;
+        }
+
+        unset($this->inputErrors[$id]);
+        $this->updateQuantity($id);
+    }
+
     public function updateQuantity(int $id): void
     {
-        $item = $this->cart->products()->find($id);
-        $request = request()->validate([
-            'quantity' => 'required|integer|min:1|max:' . $item->stock,
-        ]);
+        $product = $this->cart->products->find($id);
 
-        if ($item) {
-            $item->pivot->quantity = $request['quantity'];
-            $item->pivot->save();
-            $this->refreshCart();
+        if (!$product) {
+            return;
         }
+
+        $offerTemplate = \App\Models\Offer::active()->find($product->activeOffer())?->offerTemplate;
+        $quantity = $this->quantities[$id] ?? $product->pivot->quantity;
+
+        $discount = $offerTemplate ? $product->getDiscountTotal($quantity, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->code) : 0;
+
+        if ($quantity < 1 || $quantity > $product->stock) {
+            return;
+        }
+
+        $this->cart->updateProduct($id, $quantity, $discount);
+        $this->refreshCart();
     }
 
     public function removeProduct(int $productId): void
     {
         $this->cart->products()->detach($productId);
+        unset($this->quantities[$productId], $this->inputErrors[$productId]);
         $this->refreshCart();
     }
 
     public function clearCart(): void
     {
         $this->cart->detachProduct([]);
+        $this->quantities = [];
+        $this->inputErrors = [];
         $this->refreshCart();
     }
 
@@ -55,6 +101,19 @@ new class extends Component {
             $this->calculateTotal();
             $this->dispatch('cart-updated');
         }
+    }
+
+    public function messages()
+    {
+        return [
+            'quantity.max' => 'Stock insuficiente',
+            'quantity.min' => 'Cantidad minima es 1',
+        ];
+    }
+
+    public function clearProductError($id)
+    {
+        unset($this->inputErrors[$id]);
     }
 };
 ?>
@@ -120,20 +179,37 @@ new class extends Component {
               </div>
 
               <section class="flex flex-1 items-end justify-between text-sm">
-                <label class="w-full max-w-16 grid grid-cols-1">
-                  <input type="number" name="quantity" value="{{ $item->pivot->quantity }}" min="1"
-                    max="{{ $item->stock }}" wire:change.debounce.500ms="updateQuantity({{ $item->id }})"
-                    class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 outline-gray-300 focus:outline-indigo-600 focus:outline-offset-2 focus:outline-2 sm:text-sm">
-                </label>
+                <div x-data="{
+                    productId: {{ $item->id }},
+                    errorTimeout: null
+                }" x-init=" $watch('$wire.inputErrors.' + productId, value => {
+                     if (value) {
+                         clearTimeout(errorTimeout);
+                         errorTimeout = setTimeout(() => {
+                             $wire.clearProductError(productId);
+                         }, 4000);
+                     }
+                 })" class="relative w-full max-w-16">
+                  <label class="grid grid-cols-1">
+                    <input type="number" name="quantity" min="1" max="{{ $item->stock }}"
+                      wire:model.live.debounce.300ms="quantities.{{ $item->id }}"
+                      wire:key="quantity-{{ $item->id }}"
+                      class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 transition-colors duration-200 sm:text-sm {{ isset($inputErrors[$item->id]) ? 'outline-red-500  ring-2 ring-red-500' : 'outline-gray-300' }}" />
+                  </label>
+                  <div x-show="$wire.inputErrors[productId]" x-transition.opacity
+                    class="absolute top-full left-0 mt-1 w-fit max-w-24 border-red-500 text-red-600 bg-red-50 text-xs text-center p-1 rounded shadow-md"
+                    x-text="$wire.inputErrors[productId]">
+                  </div>
+                </div>
                 <div @class([
                     'ml-4 text-slate-900 font-medium text-lg',
                     'flex flex-col items-start justify-center' =>
                         floatval($item->pivot->discount) != 0,
                 ])>
                   <p class="text-gray-600 text-base">Subtotal</p>
-                  <p wire:loading wire:target="updateQuantity({{ $item->id }})" class="text-sm text-gray-500">
+                  <p wire:loading wire:target="quantities.{{ $item->id }}" class="text-sm text-gray-500">
                     ⏳ Actualizando...</p>
-                  <div wire:loading.remove wire:target="updateQuantity({{ $item->id }})">
+                  <div wire:loading.remove wire:target="quantities.{{ $item->id }}">
                     <x-_partials.showPriceDiscount :item="$item" />
                   </div>
                 </div>
