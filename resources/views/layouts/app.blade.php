@@ -11,7 +11,7 @@
   <title>{{ config('app.name', 'Comercio') }}</title>
 
   <!-- Scripts -->
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @vite(['resources/css/app.css'])
 
   @stack('scripts-app')
   <script src="{{ asset('js/modal.js') }}" defer></script>

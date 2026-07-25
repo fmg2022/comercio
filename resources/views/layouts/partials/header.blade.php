@@ -2,7 +2,7 @@
 <input type="checkbox" id="toggle-cart" class="hidden peer/cart" />
 
 <header
-  class="sticky top-0 left-0 z-20 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 md:px-6 lg:px-10 xl:gap-5">
+  class="sticky top-0 left-0 z-30 w-full px-3 py-2 flex items-center justify-between text-slate-200 bg-[oklch(0.33_0.09_253.09)] border-b-4 border-cyan-700/30 md:px-6 lg:px-10 xl:gap-5">
   <div class="flex items-center flex-wrap gap-3 py-3 px-2">
     <a href="{{ route('home') }}" class="flex flex-wrap gap-2 items-center">
       <img src="{{ asset('images/logo/logo.jpg') }}" alt="logo" width="40px" class="rounded-md">
@@ -46,7 +46,7 @@
         </label>
         <div
           class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:max-w-60 md:p-0 lg:max-w-sm peer-checked/search:sm:top-14 transition-all duration-300">
-          <form method="GET" action="{{ route('product.search') }}"
+          <form method="GET" action="{{ route('products.index') }}"
             class="p-3 flex items-center justify-center sm:p-0">
             <label class="sm:w-sm lg:w-full">
               <input type="search" name="query" placeholder="Buscar producto..."
@@ -123,44 +123,46 @@
 
 <!-- categorias -->
 <aside
-  class="fixed top-0 -left-full z-20 w-full h-screen p-6 bg-sky-950 text-white overflow-y-auto sm:w-96 peer-checked/category:left-0 transition-all duration-300">
-  <div class="flex justify-between mb-4">
+  class="fixed top-0 -left-full z-30 w-full h-screen flex flex-col bg-sky-950 text-white sm:pt-18 sm:w-96 sm:z-20 peer-checked/category:left-0 transition-all duration-300">
+  <section class="py-4 px-3 flex shrink-0 border-b-2 border-sky-900/40">
     <h2 class="grow text-center text-xl font-semibold">Categorias</h2>
     <label for="toggle-category" class="hover:text-blue-200 hover:bg-white/10 rounded-lg cursor-pointer">
       <x-icons.x />
     </label>
-  </div>
-  <ul class="h-[95%] grid content-start gap-2 ">
-    @if ($offers)
-      <li class="border-b border-white/20">
-        <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
-        <label for="ofertas-check"
-          class="px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg cursor-pointer hover:bg-sky-800/50">
-          Ofertas
-          <span class="p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
-            </svg>
-          </span>
-        </label>
-        <div class="px-8 mb-2 hidden bg-sky-900 rounded-lg sm:w-full peer-checked/ofertas:block">
-          <ul class="py-5 grid content-start gap-3">
-            @foreach ($offers as $offer)
-              <li>
-                <x-buttons.link href="{{ route('product.findForOffer', $offer->id) }}"
-                  class="block text-lg hover:text-sky-400">
-                  {{ $offer->offerTemplate->name }}
-                </x-buttons.link>
-              </li>
-            @endforeach
-          </ul>
-        </div>
-      </li>
-    @endif
+  </section>
+  <div class="flex-1 px-3 my-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white scrollbar-track-transparent">
+    <ul class="grid content-start gap-2">
+      @if ($offers->isNotEmpty())
+        <li class="border-b border-white/20">
+          <input type="checkbox" id="ofertas-check" class="hidden peer/ofertas">
+          <label for="ofertas-check"
+            class="px-5 py-2 mb-2 flex items-center justify-between text-lg rounded-lg cursor-pointer hover:bg-sky-800/50">
+            Ofertas
+            <span class="p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2.5" d="m7 10l5 5m0 0l5-5" />
+              </svg>
+            </span>
+          </label>
+          <div class="px-8 mb-2 hidden bg-sky-900 rounded-lg sm:w-full peer-checked/ofertas:block">
+            <ul class="py-5 grid content-start gap-3">
+              @foreach ($offers as $offer)
+                <li>
+                  <x-buttons.link href="{{ route('products.index', ['offer_id' => $offer->id]) }}"
+                    class="block text-lg hover:text-sky-400">
+                    {{ $offer->offerTemplate->name }}
+                  </x-buttons.link>
+                </li>
+              @endforeach
+            </ul>
+          </div>
+        </li>
+      @endif
 
-    <x-sections.category-tree :categories="$categories" />
-  </ul>
+      <x-sections.category-tree :categories="$categories" />
+    </ul>
+  </div>
 </aside>
 @if (!Route::is('cart.index'))
   <!-- carrito -->
@@ -186,9 +188,7 @@
           </div>
 
           <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-            @if ($cart)
-              <livewire:_partials.subtotal />
-            @endif
+            <livewire:_partials.subtotal />
             <div class="mt-6">
               <a href="{{ route('cart.index') }}"
                 class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700">
