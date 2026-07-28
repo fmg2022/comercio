@@ -25,10 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
         modalType.parentElement.classList.add('hidden')
         $submit.textContent = 'Actualizar'
 
-        axios.get('/api/' + button.dataset.path)
-          .then(response => {
-            $form.querySelector('input[name="code"]').value = response.data.code
-            $form.querySelector('textarea[name="description"]').value = response.data.description
+        fetch('/api/' + button.dataset.path)
+          .then(response => response.json())
+          .then(data => {
+            $form.querySelector('input[name="code"]').value = data.code
+            $form.querySelector('textarea[name="description"]').value = data.description
           })
           .catch(error => {
             console.error('Error:', error)

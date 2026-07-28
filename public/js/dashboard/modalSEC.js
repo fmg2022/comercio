@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           if (type === 'select-multiple') {
             instance.removeActiveItems()
-            instance.setValue(value.map(String))
+            instance.setChoiceByValue(value.map(String))
           } else {
             if (value) {
               instance.setChoiceByValue(value.toString())
@@ -78,11 +78,10 @@ document.addEventListener('DOMContentLoaded', function () {
         let pathName = getBaseURL().replace('dashboard', 'api') + `/${button.dataset.path}`
         $form.reset()
 
-        axios.get(pathName)
-          .then(response => setFormValues(response.data, $form))
-          .catch(error => {
-            console.error('Error:', error)
-          })
+        fetch(pathName)
+          .then(response => response.json())
+          .then(data => setFormValues(data, $form))
+          .catch(error => console.error('Error:', error));
       } else {
         $form.reset()
       }
