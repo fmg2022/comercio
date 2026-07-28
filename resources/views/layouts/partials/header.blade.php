@@ -46,7 +46,7 @@
         </label>
         <div
           class="-top-20 right-[10dvw] bg-sky-950 sm:absolute sm:w-[73dvw] sm:py-3 sm:bg-[oklch(0.33_0.09_253.09)] sm:rounded-b-lg md:static md:max-w-60 md:p-0 lg:max-w-sm peer-checked/search:sm:top-14 transition-all duration-300">
-          <form method="GET" action="{{ route('products.index') }}"
+          <form method="GET" action="{{ route('product.index') }}"
             class="p-3 flex items-center justify-center sm:p-0">
             <label class="sm:w-sm lg:w-full">
               <input type="search" name="query" placeholder="Buscar producto..."
@@ -149,7 +149,7 @@
             <ul class="py-5 grid content-start gap-3">
               @foreach ($offers as $offer)
                 <li>
-                  <x-buttons.link href="{{ route('products.index', ['offer_id' => $offer->id]) }}"
+                  <x-buttons.link href="{{ route('product.index', ['offer_id' => $offer->id]) }}"
                     class="block text-lg hover:text-sky-400">
                     {{ $offer->offerTemplate->name }}
                   </x-buttons.link>

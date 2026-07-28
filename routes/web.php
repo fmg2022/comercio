@@ -11,7 +11,7 @@ Route::post('/webhook/mercadopago', [MercadoPagoController::class, 'handleWebhoo
     ->name('webhook.mercadopago');
 
 // Rutas para los productos
-Route::prefix('products')->name('products.')->group(function () {
+Route::prefix('product')->name('product.')->group(function () {
     Route::livewire('/', 'pages::home.product.index')->name('index');
     Route::get('/{product}', [IndexController::class, 'showProduct'])->name('show');
 });

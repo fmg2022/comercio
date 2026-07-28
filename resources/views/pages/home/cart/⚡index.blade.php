@@ -147,7 +147,7 @@ new class extends Component {
             <div class="pe-4 flex flex-1 flex-col gap-2 justify-around sm:ps-4">
               <div>
                 <div class="flex gap-4 justify-between">
-                  <x-buttons.link href="{{ route('products.show', $item->id) }}"
+                  <x-buttons.link href="{{ route('product.show', $item->id) }}"
                     class="text-lg font-medium text-gray-900 hover:text-purple-800">
                     {{ $item->name }}
                   </x-buttons.link>

@@ -22,7 +22,7 @@
               d="m1 9 4-4-4-4" />
           </svg>
           @if (!$loop->last)
-            <a href="{{ route('products.index', ['query' => $name]) }}" class="ms-1 md:ms-2">
+            <a href="{{ route('product.index', ['query' => $name]) }}" class="ms-1 md:ms-2">
               {{ $name }}</a>
           @else
             <span class="ms-1 md:ms-2">

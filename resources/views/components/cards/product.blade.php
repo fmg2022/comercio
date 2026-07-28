@@ -1,7 +1,7 @@
 @php $offerID = $product->activeOffer(); @endphp
 <article
   class="h-full flex rounded-xl bg-slate-300 shadow-lg overflow-hidden group-[.list]:max-w-full group-[.list]:w-full group-[.list]:p-0 group-[.list]:flex-row group-[.grilla]:max-w-fit group-[.grilla]:pb-3 group-[.grilla]:flex-col">
-  <a href="{{ route('products.show', $product->id) }}"
+  <a href="{{ route('product.show', $product->id) }}"
     class="relative hover:[&>span]:bg-slate-500 hover:[&>span]:sm:opacity-100 group-[.list]:flex group-[.list]:max-w-56">
     <img class="aspect-square" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
       draggable="false" width="310">

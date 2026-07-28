@@ -9,7 +9,7 @@
         'cursor-pointer hover:bg-sky-800/50' => $hasChildren,
     ])>
       <span>
-        <x-buttons.link href="{{ route('products.index', ['query' => $category->name]) }}"
+        <x-buttons.link href="{{ route('product.index', ['query' => $category->name]) }}"
           class="block text-lg hover:text-sky-400">
           {{ $category->name }}
         </x-buttons.link>
