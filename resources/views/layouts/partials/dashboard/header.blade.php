@@ -36,7 +36,7 @@
               <span class="opacity-80">Notificaciones</span>
             </div>
             <ul
-              class="max-h-[231px] overflow-y-auto text-xs text-slate-800 dark:text-slate-200/75 divide-y divide-slate-100 dark:divide-slate-600">
+              class="max-h-57.75 overflow-y-auto text-xs text-slate-800 dark:text-slate-200/75 divide-y divide-slate-100 dark:divide-slate-600">
               <li class="flex items-center gap-3 px-6 py-5">
                 <div class="bg-teal-500/40 text-sky-400 rounded-full p-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256">

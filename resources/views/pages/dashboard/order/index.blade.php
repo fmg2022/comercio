@@ -247,7 +247,7 @@
 
     @if (!request()->routeIs('my.orders.index'))
       <x-modals.simple id="exportModal" title="Filtros para la Orden"
-        class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+        class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
         <form id="exportForm" method="GET" action="{{ route('orders.export') }}" class="w-full">
           @csrf
 
