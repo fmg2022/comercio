@@ -5,6 +5,53 @@
 @endPushIf
 @push('scripts-dashboard')
   <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+  <script>
+    const choicesInstances = {};
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectsConfig = [{
+          id: 'parent',
+          placeholder: 'Selecciona una categoría',
+          searchPlaceholderValue: 'Buscar categoría...',
+          searchEnabled: true,
+        },
+        {
+          id: 'children',
+          placeholder: 'Selecciona uno o más categorías',
+          searchEnabled: false,
+        },
+      ]
+      selectsConfig.forEach(config => {
+        const choicesOptions = {
+          placeholderValue: config.placeholder,
+          searchPlaceholderValue: config.searchPlaceholderValue,
+          searchEnabled: config.searchEnabled,
+          removeItemButton: true,
+          placeholder: true,
+          shouldSort: false,
+        };
+
+        choicesInstances[config.id] = new Choices(`#${config.id}`, choicesOptions);
+      });
+    })
+  </script>
+@endPush
+
+@push('styles-dashboard')
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+  <style>
+    .choices__inner {
+      background-color: #fff !important;
+      border-color: #e2e8f0 !important;
+      border-radius: 0.375rem !important;
+      min-height: 42px !important;
+    }
+
+    .choices__list--dropdown {
+      z-index: 10 !important;
+    }
+  </style>
 @endPush
 
 @section('content')
@@ -131,7 +178,7 @@
           <label class="block mb-2 font-semibold" for="parent">Categoría Padre</label>
           <select name="parent_id" id="parent"
             class="w-full px-3 py-2 text-gray-900 text-base border border-gray-300 rounded-md">
-            <option value="">-- Ninguna --</option>
+            <option value="" selected>-- Ninguna --</option>
             @foreach ($categoriesList as $category)
               <option value="{{ $category['id'] }}">
                 {{ str_repeat('-', $category['nivel']) . ' ' . $category['name'] }}</option>
@@ -140,19 +187,14 @@
         </div>
         <div>
           <h4 class="mb-2 text-xl font-semibold">Subcategorías</h4>
-          <div class="max-h-60 flex flex-col overflow-x-auto">
-            @foreach ($categoriesList as $category)
-              <label @class([
-                  'px-3 py-1 mx-4 flex items-center gap-2 group-[&:not(.editable)]:has-[input:not(:checked)]:hidden pointer-events-none group-[.editable]:pointer-events-auto',
-                  'mt-3 text-purple-900 font-bold bg-slate-100 rounded-lg' =>
-                      $category['nivel'] === 0,
-                  'mt-2 text-purple-900 font-semibold' => $category['nivel'] === 1,
-                  'bg-slate-100/75 rounded-lg' => $category['nivel'] === 2,
-              ])>
-                <input type="checkbox" name="children[]" class="size-4 accent-purple-600" value="{{ $category['id'] }}">
-                <span class="ms-1">{{ $category['name'] }}</span>
-              </label>
-            @endforeach
+          <div class="pointer-events-none group-[.editable]:pointer-events-auto">
+            <label for="children" class="block text-sm font-medium text-gray-700">Estados (múltiple)</label>
+            <select name="children[]" id="children" multiple>
+              <option value="" selected>Ninguno</option>
+              @foreach ($categoriesList as $category)
+                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+              @endforeach
+            </select>
           </div>
         </div>
         <button type="submit"
