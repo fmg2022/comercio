@@ -28,47 +28,47 @@
             <th>Nombre</th>
             <th class="text-right">Opciones</th>
           </tr>
-        </x-slot>
+        </x-slot:head>
+        <x-slot:tbody>
+          @forelse ($roles as $index => $role)
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td class="font-bold">{{ $role->name }}</td>
+              <td>
+                @if ($role->name !== 'Super Admin')
+                  <div class="relative flex justify-end">
+                    <x-popups.contentWcheck iid="chrole-{{ $role->id }}" labelClass="hover:bg-slate-900"
+                      class="right-12 -top-1/4">
+                      <x-slot:label>
+                        <x-icons.threeDotsX class="size-6" />
+                      </x-slot:label>
 
-        @forelse ($roles as $index => $role)
-          <tr>
-            <td>{{ $index + 1 }}</td>
-            <td class="font-bold">{{ $role->name }}</td>
-            <td>
-              @if ($role->name !== 'Super Admin')
-                <div class="relative flex justify-end">
-                  <x-popups.contentWcheck iid="chrole-{{ $role->id }}" labelClass="hover:bg-slate-900"
-                    class="right-12 -top-1/4">
-                    <x-slot:label>
-                      <x-icons.threeDotsX class="size-6" />
-                    </x-slot:label>
-
-                    <ul
-                      class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                      @can('list roles')
-                        <li>
-                          <button type="button" data-type="show" data-uid="{{ $role->id }}"
-                            data-path="{{ $role->id }}" data-modalID="roleCES"
-                            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                            <span>
-                              <x-icons.edit class="size-5" />
-                            </span>
-                            Ver Rol
-                          </button>
-                        </li>
-                      @endcan
-                      @can('manage roles')
-                        <li>
-                          <button type="button" data-type="edit" data-uid="{{ $role->id }}"
-                            data-path="{{ $role->id }}" data-modalID="roleCES"
-                            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                            <span>
-                              <x-icons.edit class="size-5" />
-                            </span>
-                            Editar Rol
-                          </button>
-                        </li>
-                        {{-- <li>
+                      <ul
+                        class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                        @can('list roles')
+                          <li>
+                            <button type="button" data-type="show" data-uid="{{ $role->id }}"
+                              data-path="{{ $role->id }}" data-modalID="roleCES"
+                              class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                              <span>
+                                <x-icons.edit class="size-5" />
+                              </span>
+                              Ver Rol
+                            </button>
+                          </li>
+                        @endcan
+                        @can('manage roles')
+                          <li>
+                            <button type="button" data-type="edit" data-uid="{{ $role->id }}"
+                              data-path="{{ $role->id }}" data-modalID="roleCES"
+                              class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                              <span>
+                                <x-icons.edit class="size-5" />
+                              </span>
+                              Editar Rol
+                            </button>
+                          </li>
+                          {{-- <li>
                           <button type="button" data-type="edit" data-uid="{{ $role->id }}"
                             data-path="{{ $role->id }}/assign" data-modalID="roleuserCES"
                             class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
@@ -78,34 +78,35 @@
                             Aignar Rol
                           </button>
                         </li> --}}
-                        <li>
-                          <button type="button" data-text="Rol: '{{ $role->name }}'" data-uid="{{ $role->id }}"
-                            data-modalID="rolDelete" data-path="{{ $role->id }}" data-delete="true"
-                            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                            <span>
-                              <x-icons.trash class="size-5" />
-                            </span>
-                            Eliminar Rol
-                          </button>
-                        </li>
-                      @endcan
-                    </ul>
-                  </x-popups.contentWcheck>
-                </div>
-              @else
-                <p class="px-2 text-end">---</p>
-              @endif
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td class="text-center font-semibold text-slate-300 col-span-full">No hay roles registrados</td>
-          </tr>
-        @endforelse
+                          <li>
+                            <button type="button" data-text="Rol: '{{ $role->name }}'" data-uid="{{ $role->id }}"
+                              data-modalID="rolDelete" data-path="{{ $role->id }}" data-delete="true"
+                              class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                              <span>
+                                <x-icons.trash class="size-5" />
+                              </span>
+                              Eliminar Rol
+                            </button>
+                          </li>
+                        @endcan
+                      </ul>
+                    </x-popups.contentWcheck>
+                  </div>
+                @else
+                  <p class="px-2 text-end">---</p>
+                @endif
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td class="text-center font-semibold text-slate-300 col-span-full">No hay roles registrados</td>
+            </tr>
+          @endforelse
+        </x-slot:tbody>
       </x-tables.table>
     </div>
     <div data-target="permissionContainer"
-      class="relative min-h-80 overflow-y-auto rounded-xl lg:max-w-7xl [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="relative min-h-80 overflow-y-auto rounded-xl lg:max-w-7xl [scrollbar-color:#62748e_transparent] scrollbar-thin">
       <h2 class="sticky top-0 py-2 px-4 text-xl font-semibold text-gray-300 bg-slate-800 border-b-4 border-slate-900">
         Permisos</h2>
       <ul class="px-1 py-2 bg-slate-700 divide-y-4 divide-slate-800 text-gray-200">
@@ -123,7 +124,7 @@
   @can('manage roles')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="roleCES"
-      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf
@@ -158,7 +159,7 @@
     </x-modals.simple>
 
     <x-modals.simple id="roleuserCES"
-      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf

@@ -30,86 +30,87 @@
         <th>Estado</th>
         <th class="text-right">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($providers as $index => $provider)
+        <tr {{ $provider->trashed() ? 'data-trash' : '' }}
+          class="data-trash:[&>td]:bg-gray-700 data-trash:[&>td]:text-gray-300">
+          <td>{{ ($providers->currentPage() - 1) * $providers->perPage() + $index + 1 }}</td>
+          <td class="font-bold">{{ $provider->trade_name }}</td>
+          <td class="hidden lg:table-cell">{{ $provider->phone }}</td>
+          <td class="hidden sm:table-cell">{{ $provider->contact_name }}</td>
+          <td class="hidden md:table-cell">{{ $provider->contact_phone }}</td>
+          <td class="text-center">{{ $provider->products->count() }}</td>
+          <td>{{ $provider->active ? 'Activo' : 'Inactivo' }}</td>
+          <td>
+            @can('manage providers')
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chprovider-{{ $provider->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-    @forelse ($providers as $index => $provider)
-      <tr {{ $provider->trashed() ? 'data-trash' : '' }}
-        class="data-trash:[&>td]:bg-gray-700 data-trash:[&>td]:text-gray-300">
-        <td>{{ ($providers->currentPage() - 1) * $providers->perPage() + $index + 1 }}</td>
-        <td class="font-bold">{{ $provider->trade_name }}</td>
-        <td class="hidden lg:table-cell">{{ $provider->phone }}</td>
-        <td class="hidden sm:table-cell">{{ $provider->contact_name }}</td>
-        <td class="hidden md:table-cell">{{ $provider->contact_phone }}</td>
-        <td class="text-center">{{ $provider->products->count() }}</td>
-        <td>{{ $provider->active ? 'Activo' : 'Inactivo' }}</td>
-        <td>
-          @can('manage providers')
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chprovider-{{ $provider->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
-
-                <ul
-                  class="w-max py-2 {{ $provider->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold">
-                  <li>
-                    <button type="button" data-type="show" data-uid="{{ $provider->id }}" data-path="{{ $provider->id }}"
-                      data-modalID="providerCES"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Ver Proveedor
-                    </button>
-                  </li>
-                  @if (!$provider->trashed())
+                  <ul
+                    class="w-max py-2 {{ $provider->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold">
                     <li>
-                      <button type="button" data-type="edit" data-uid="{{ $provider->id }}"
+                      <button type="button" data-type="show" data-uid="{{ $provider->id }}"
                         data-path="{{ $provider->id }}" data-modalID="providerCES"
                         class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
                         <span>
                           <x-icons.edit class="size-5" />
                         </span>
-                        Editar Proveedor
+                        Ver Proveedor
                       </button>
                     </li>
-                  @endif
-                  <li>
-                    <button type="button" data-text="Proveedor: '{{ $provider->name }}'" data-uid="{{ $provider->id }}"
-                      data-modalID="providerDelete"
-                      data-path="{{ $provider->id . ($provider->trashed() ? '/restore' : '') }}"
-                      data-delete="{{ $provider->trashed() ? 'false' : 'true' }}"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        @if ($provider->trashed())
-                          <x-icons.restore class="size-5" />
-                        @else
-                          <x-icons.trash class="size-5" />
-                        @endif
-                      </span>
-                      {{ $provider->trashed() ? 'Restaurar' : 'Eliminar' }} Proveedor
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          @else
-            <p class="px-2 text-end">---</p>
-          @endcan
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td class="text-center font-semibold text-slate-300 col-span-full">No hay proveedores registrados</td>
-      </tr>
-    @endforelse
+                    @if (!$provider->trashed())
+                      <li>
+                        <button type="button" data-type="edit" data-uid="{{ $provider->id }}"
+                          data-path="{{ $provider->id }}" data-modalID="providerCES"
+                          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                          <span>
+                            <x-icons.edit class="size-5" />
+                          </span>
+                          Editar Proveedor
+                        </button>
+                      </li>
+                    @endif
+                    <li>
+                      <button type="button" data-text="Proveedor: '{{ $provider->name }}'" data-uid="{{ $provider->id }}"
+                        data-modalID="providerDelete"
+                        data-path="{{ $provider->id . ($provider->trashed() ? '/restore' : '') }}"
+                        data-delete="{{ $provider->trashed() ? 'false' : 'true' }}"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          @if ($provider->trashed())
+                            <x-icons.restore class="size-5" />
+                          @else
+                            <x-icons.trash class="size-5" />
+                          @endif
+                        </span>
+                        {{ $provider->trashed() ? 'Restaurar' : 'Eliminar' }} Proveedor
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            @else
+              <p class="px-2 text-end">---</p>
+            @endcan
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td class="text-center font-semibold text-slate-300 col-span-full">No hay proveedores registrados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   @can('manage providers')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="providerCES"
-      class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf

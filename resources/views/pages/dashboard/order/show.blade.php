@@ -39,59 +39,62 @@
         <th class="hidden md:table-cell">Subtotal</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
-    @foreach ($order->products as $index => $orderLine)
-      <tr class="[&>td]:text-slate-200">
-        <td class="text-center">{{ $index + 1 }}</td>
-        <td>
-          <div class="flex items-center flex-wrap gap-2 text-base">
-            <img src="{{ asset('images/products/' . $orderLine->image) }}" alt="{{ $orderLine->name }}"
-              class="w-16 h-16 object-cover hidden lg:block">
-            <span class="text-slate-400 font-semibold">{{ $orderLine->name }}</span>
-            <span class="me-2 font-bold">{{ $orderLine->brand->name }}</span>
-          </div>
-        </td>
-        <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
-        <td class="text-center font-bold"><span
-            class="me-px">$</span>{{ number_format($orderLine->pivot->price, 2, ',', '.') }}</td>
-        <td class="relative text-center hidden md:table-cell">
-          <span class="peer/popup">
-            ${{ number_format($orderLine->pivot->discount, 2, ',', '.') }}
-          </span>
-          <x-popups.text
-            class="top-2/3 left-1/2 -translate-x-1/2 w-max hidden bg-slate-900/80 peer-hover/popup:inline-block">
-            {{ $orderLine->pivot->offer_template_id ? $orderLine->pivot->offerName() : 'Sin descuento' }}
-          </x-popups.text>
-        </td>
-        <td class="text-center hidden md:table-cell">
-          <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
-        </td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
+    </x-slot:thead>
+    <x-slot:tbody>
+      @foreach ($order->products as $index => $orderLine)
+        <tr class="[&>td]:text-slate-200">
+          <td class="text-center">{{ $index + 1 }}</td>
+          <td>
+            <div class="flex items-center flex-wrap gap-2 text-base">
+              <img src="{{ asset('images/products/' . $orderLine->image) }}" alt="{{ $orderLine->name }}"
+                class="w-16 h-16 object-cover hidden lg:block">
+              <span class="text-slate-400 font-semibold">{{ $orderLine->name }}</span>
+              <span class="me-2 font-bold">{{ $orderLine->brand->name }}</span>
+            </div>
+          </td>
+          <td class="text-center">{{ $orderLine->pivot->quantity }}</td>
+          <td class="text-center font-bold"><span
+              class="me-px">$</span>{{ number_format($orderLine->pivot->price, 2, ',', '.') }}</td>
+          <td class="relative text-center hidden md:table-cell">
+            <span class="peer/popup">
+              ${{ number_format($orderLine->pivot->discount, 2, ',', '.') }}
+            </span>
+            <x-popups.text
+              class="top-2/3 left-1/2 -translate-x-1/2 w-max hidden bg-slate-900/80 peer-hover/popup:inline-block">
+              {{ $orderLine->pivot->offer_template_id ? $orderLine->pivot->offerName() : 'Sin descuento' }}
+            </x-popups.text>
+          </td>
+          <td class="text-center hidden md:table-cell">
+            <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
+          </td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                <li>
-                  @can('list products')
-                    <a href="{{ route('products.show', $orderLine->id) }}"
-                      class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Producto
-                    </a>
-                  @endcan
-                </li>
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @endforeach
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  <li>
+                    @can('list products')
+                      <a href="{{ route('products.show', $orderLine->id) }}"
+                        class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                        <span>
+                          <x-icons.show class="size-5" />
+                        </span>
+                        Ver Producto
+                      </a>
+                    @endcan
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @endforeach
+    </x-slot:tbody>
   </x-tables.table>
   <section class="grid grid-cols-[repeat(auto-fit,minmax(500px,1fr))] gap-4 place-content-center">
     @if (isset($order->notes))

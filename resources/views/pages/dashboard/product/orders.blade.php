@@ -126,49 +126,50 @@
         <th class="hidden sm:table-cell">Precio</th>
       </tr>
     </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($orders as $index => $order)
+        <tr>
+          <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
+          <td class="relative">
+            <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
+              {{ $order->user->fullName() }}
+            </x-buttons.link>
+            <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+              Ver Perfil
+            </x-popups.text>
+          </td>
+          <td class="relative">
+            <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+              #{{ $order->id }}
+            </x-buttons.link>
+            <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+              Ver Orden
+            </x-popups.text>
+          </td>
+          <td>{{ $order->date->format('d/m/Y') }}</td>
+          <td class="hidden md:table-cell">
+            <span @class([
+                "font-semibold before:content-['●'] before:me-px",
+                'text-amber-400' => $order->orderState->code === 'CREADO',
+                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderState->code === 'PAGADO',
+                'text-green-400' => $order->orderState->code === 'COMPLETO',
+                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderState->code === 'CANCELADO',
+            ])>
+              {{ $order->orderState->code }}
+            </span>
+          </td>
+          <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
+          <td class="hidden sm:table-cell">${{ number_format($order->pivot->price, 2, '.', ',') }}</td>
+        </tr>
 
-    @forelse ($orders as $index => $order)
-      <tr>
-        <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-        <td class="relative">
-          <x-buttons.link href="" class="hover:text-purple-500 peer/popup">
-            {{ $order->user->fullName() }}
-          </x-buttons.link>
-          <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-            Ver Perfil
-          </x-popups.text>
-        </td>
-        <td class="relative">
-          <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
-            #{{ $order->id }}
-          </x-buttons.link>
-          <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-            Ver Orden
-          </x-popups.text>
-        </td>
-        <td>{{ $order->date->format('d/m/Y') }}</td>
-        <td class="hidden md:table-cell">
-          <span @class([
-              "font-semibold before:content-['●'] before:me-px",
-              'text-amber-400' => $order->orderState->code === 'CREADO',
-              'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-              'text-cyan-400' => $order->orderState->code === 'PAGADO',
-              'text-green-400' => $order->orderState->code === 'COMPLETO',
-              'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-              'text-red-400' => $order->orderState->code === 'CANCELADO',
-          ])>
-            {{ $order->orderState->code }}
-          </span>
-        </td>
-        <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
-        <td class="hidden sm:table-cell">${{ number_format($order->pivot->price, 2, '.', ',') }}</td>
-      </tr>
-
-    @empty
-      <tr>
-        <td colspan="8" class="text-center font-semibold text-slate-300">Sin ordenes registradas</td>
-      </tr>
-    @endforelse
+      @empty
+        <tr>
+          <td colspan="8" class="text-center font-semibold text-slate-300">Sin ordenes registradas</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

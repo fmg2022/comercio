@@ -26,203 +26,205 @@
           <th>Descripción</th>
           <th class="z-10 text-end">Opciones</th>
         </tr>
-      </x-slot>
-
-      <tr>
-        <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ofertas: ESTADOS</td>
-      </tr>
-      @forelse ($offerStates as $index => $state)
+      </x-slot:head>
+      <x-slot:tbody>
         <tr>
-          <td>{{ $index + 1 }}</td>
-          <td class="font-bold">{{ $state->code }}</td>
-          <td class="text-slate-300">{{ $state->description }}</td>
-          <td>
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chofferState-{{ $state->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
+          <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ofertas: ESTADOS</td>
+        </tr>
+        @forelse ($offerStates as $index => $state)
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td class="font-bold">{{ $state->code }}</td>
+            <td class="text-slate-300">{{ $state->description }}</td>
+            <td>
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chofferState-{{ $state->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $state->id }}"
-                      data-path="offer-states/{{ $state->id }}" data-modalID="stateTypeCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Estado
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
-                      data-modalID="stateTypeDelete" data-path="offer-states/{{ $state->id }}" data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Estado
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          </td>
-        </tr>
-      @empty
-        <tr>
-          <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de ofertas registradas</td>
-        </tr>
-      @endforelse
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $state->id }}"
+                        data-path="offer-states/{{ $state->id }}" data-modalID="stateTypeCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Estado
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                        data-modalID="stateTypeDelete" data-path="offer-states/{{ $state->id }}" data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Eliminar Estado
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de ofertas registradas</td>
+          </tr>
+        @endforelse
 
-      <tr>
-        <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ofertas: TIPOS</td>
-      </tr>
-      @forelse ($offerTypes as $index => $type)
         <tr>
-          <td>{{ $index + 1 }}</td>
-          <td class="font-bold">{{ $type->code }}</td>
-          <td class="text-slate-300">{{ $type->description }}</td>
-          <td>
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chofferType-{{ $type->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
+          <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ofertas: TIPOS</td>
+        </tr>
+        @forelse ($offerTypes as $index => $type)
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td class="font-bold">{{ $type->code }}</td>
+            <td class="text-slate-300">{{ $type->description }}</td>
+            <td>
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chofferType-{{ $type->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $type->id }}"
-                      data-path="offer-types/{{ $type->id }}" data-modalID="stateTypeCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Tipo
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Tipo: '{{ $type->code }}'" data-uid="{{ $type->id }}"
-                      data-modalID="stateTypeDelete" data-path="offer-types/{{ $type->id }}" data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Tipo
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          </td>
-        </tr>
-      @empty
-        <tr>
-          <td class="text-center font-semibold text-slate-300 col-span-full">No hay tipos de ofertas registradas</td>
-        </tr>
-      @endforelse
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $type->id }}"
+                        data-path="offer-types/{{ $type->id }}" data-modalID="stateTypeCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Tipo
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Tipo: '{{ $type->code }}'" data-uid="{{ $type->id }}"
+                        data-modalID="stateTypeDelete" data-path="offer-types/{{ $type->id }}" data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Eliminar Tipo
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td class="text-center font-semibold text-slate-300 col-span-full">No hay tipos de ofertas registradas</td>
+          </tr>
+        @endforelse
 
-      <tr>
-        <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ordenes: ESTADOS</td>
-      </tr>
-      @forelse ($orderStates as $index => $state)
         <tr>
-          <td>{{ $index + 1 }}</td>
-          <td class="font-bold">{{ $state->code }}</td>
-          <td class="text-slate-300">{{ $state->description }}</td>
-          <td>
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chorderState-{{ $state->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
+          <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ordenes: ESTADOS</td>
+        </tr>
+        @forelse ($orderStates as $index => $state)
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td class="font-bold">{{ $state->code }}</td>
+            <td class="text-slate-300">{{ $state->description }}</td>
+            <td>
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chorderState-{{ $state->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $state->id }}"
-                      data-path="order-states/{{ $state->id }}" data-modalID="stateTypeCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Estado
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
-                      data-modalID="stateTypeDelete" data-path="order-states/{{ $state->id }}" data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Estado
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          </td>
-        </tr>
-      @empty
-        <tr>
-          <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de ordenes registradas</td>
-        </tr>
-      @endforelse
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $state->id }}"
+                        data-path="order-states/{{ $state->id }}" data-modalID="stateTypeCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Estado
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                        data-modalID="stateTypeDelete" data-path="order-states/{{ $state->id }}" data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Eliminar Estado
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de ordenes registradas</td>
+          </tr>
+        @endforelse
 
-      <tr>
-        <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Pagos: ESTADOS</td>
-      </tr>
-      @forelse ($paymentStates as $index => $state)
         <tr>
-          <td>{{ $index + 1 }}</td>
-          <td class="font-bold">{{ $state->code }}</td>
-          <td class="text-slate-300">{{ $state->description }}</td>
-          <td>
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chpaymentState-{{ $state->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
+          <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Pagos: ESTADOS</td>
+        </tr>
+        @forelse ($paymentStates as $index => $state)
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td class="font-bold">{{ $state->code }}</td>
+            <td class="text-slate-300">{{ $state->description }}</td>
+            <td>
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chpaymentState-{{ $state->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $state->id }}"
-                      data-path="payment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Estado
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
-                      data-modalID="stateTypeDelete" data-path="payment-states/{{ $state->id }}" data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Estado
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          </td>
-        </tr>
-      @empty
-        <tr>
-          <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de pagos registradas</td>
-        </tr>
-      @endforelse
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $state->id }}"
+                        data-path="payment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Estado
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                        data-modalID="stateTypeDelete" data-path="payment-states/{{ $state->id }}"
+                        data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Eliminar Estado
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td class="text-center font-semibold text-slate-300 col-span-full">No hay estados de pagos registradas</td>
+          </tr>
+        @endforelse
+      </x-slot:tbody>
     </x-tables.table>
   </div>
 

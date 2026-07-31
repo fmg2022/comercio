@@ -48,70 +48,73 @@
         <th class="hidden md:table-cell">Subtotal</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:head>
+    <x-slot:tbody>
+      @foreach ($cart->products as $index => $product)
+        <tr class="[&>td]:text-slate-200">
+          <td class="text-center">{{ $index + 1 }}</td>
+          <td>
+            <div class="flex items-center flex-wrap gap-2 text-base">
+              <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                class="w-16 h-16 object-cover hidden lg:block">
+              <span class="text-slate-400 font-semibold">{{ $product->name }}</span>
+              <span class="me-2 font-bold">{{ $product->brand->name }}</span>
+            </div>
+          </td>
+          <td class="text-center">{{ $product->pivot->quantity }}</td>
+          <td class="text-center font-bold">${{ number_format($product->price, 2, ',', '.') }}</td>
+          <td class="text-center hidden md:table-cell">
+            ${{ number_format($product->price * $product->pivot->quantity, 2, ',', '.') }}
+          </td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @foreach ($cart->products as $index => $product)
-      <tr class="[&>td]:text-slate-200">
-        <td class="text-center">{{ $index + 1 }}</td>
-        <td>
-          <div class="flex items-center flex-wrap gap-2 text-base">
-            <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-              class="w-16 h-16 object-cover hidden lg:block">
-            <span class="text-slate-400 font-semibold">{{ $product->name }}</span>
-            <span class="me-2 font-bold">{{ $product->brand->name }}</span>
-          </div>
-        </td>
-        <td class="text-center">{{ $product->pivot->quantity }}</td>
-        <td class="text-center font-bold">${{ number_format($product->price, 2, ',', '.') }}</td>
-        <td class="text-center hidden md:table-cell">
-          ${{ number_format($product->price * $product->pivot->quantity, 2, ',', '.') }}
-        </td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @can('manage carts-details')
-                  <li>
-                    <a href="{{ route('products.show', $product->id) }}" class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Producto
-                    </a>
-                  </li>
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $product->id }}"
-                      data-path="{{ $cart->id }}/product/{{ $product->id }}" data-modalID="cartDetailsCES"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Cantidad
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
-                      data-modalID="cartDeatailDelete" data-path="{{ $cart->id }}/products/{{ $product->id }}"
-                      data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Quitar Producto
-                    </button>
-                  </li>
-                @endcan
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @endforeach
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  @can('manage carts-details')
+                    <li>
+                      <a href="{{ route('products.show', $product->id) }}"
+                        class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                        <span>
+                          <x-icons.show class="size-5" />
+                        </span>
+                        Ver Producto
+                      </a>
+                    </li>
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $product->id }}"
+                        data-path="{{ $cart->id }}/product/{{ $product->id }}" data-modalID="cartDetailsCES"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Cantidad
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
+                        data-modalID="cartDeatailDelete" data-path="{{ $cart->id }}/products/{{ $product->id }}"
+                        data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Quitar Producto
+                      </button>
+                    </li>
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @endforeach
+    </x-slot:tbody>
   </x-tables.table>
   <p
     class="w-fit px-8 py-3 ms-auto flex justify-between items-center gap-4 bg-slate-800 rounded-b-lg text-lg font-semibold">

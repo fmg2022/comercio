@@ -73,86 +73,87 @@
         <th class="hidden sm:table-cell">Subcategorías</th>
         <th class="text-right">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:head>
+    <x-slot:tbody>
+      @forelse ($categories as $index => $category)
+        <tr {{ $category->trashed() ? 'data-trash' : '' }}
+          class="data-trash:[&>td]:bg-gray-700 data-trash:[&>td]:text-gray-300">
+          <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $index + 1 }}</td>
+          <td>{{ $category->name }}</td>
+          <td class="relative hidden sm:table-cell">
+            @php
+              $contChildren = $category->children->count();
+            @endphp
+            <span {{ $category->trashed() ? 'class="px-4 text-gray-300"' : '' }}>
+              @if ($category->trashed())
+                ---
+              @else
+                {{ $contChildren > 0 ? $contChildren : 'Sin' }} subcategorías
+              @endif
+            </span>
+          </td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chcategory-{{ $category->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @forelse ($categories as $index => $category)
-      <tr {{ $category->trashed() ? 'data-trash' : '' }}
-        class="data-trash:[&>td]:bg-gray-700 data-trash:[&>td]:text-gray-300">
-        <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $index + 1 }}</td>
-        <td>{{ $category->name }}</td>
-        <td class="relative hidden sm:table-cell">
-          @php
-            $contChildren = $category->children->count();
-          @endphp
-          <span {{ $category->trashed() ? 'class="px-4 text-gray-300"' : '' }}>
-            @if ($category->trashed())
-              ---
-            @else
-              {{ $contChildren > 0 ? $contChildren : 'Sin' }} subcategorías
-            @endif
-          </span>
-        </td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chcategory-{{ $category->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul
-                class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
-                <li>
-                  <button type="button" data-type="show" data-uid="{{ $category->id }}" data-path="{{ $category->id }}"
-                    data-modalID="categoryCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Categoría
-                  </button>
-                </li>
-                @can('manage products-and-attributes')
-                  @if (!$category->trashed())
-                    <li>
-                      <button type="button" data-type="edit" data-uid="{{ $category->id }}"
-                        data-path="{{ $category->id }}" data-modalID="categoryCSE"
-                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                        <span>
-                          <x-icons.edit class="size-5" />
-                        </span>
-                        Editar Categoría
-                      </button>
-                    </li>
-                  @endif
+                <ul
+                  class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
                   <li>
-                    <button type="button" data-text="Categoria: '{{ $category->name }}'" data-uid="{{ $category->id }}"
-                      data-modalID="categoryDeleteRestore" data-delete="{{ $category->trashed() ? 'false' : 'true' }}"
-                      data-path="{{ $category->id . ($category->trashed() ? '/restore' : '') }}"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                    <button type="button" data-type="show" data-uid="{{ $category->id }}"
+                      data-path="{{ $category->id }}" data-modalID="categoryCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
                       <span>
-                        @if ($category->trashed())
-                          <x-icons.restore class="size-5" />
-                        @else
-                          <x-icons.trash class="size-5" />
-                        @endif
+                        <x-icons.show class="size-5" />
                       </span>
-                      {{ $category->trashed() ? 'Restaurar' : 'Eliminar' }} Categoría
+                      Ver Categoría
                     </button>
                   </li>
-                @endcan
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
+                  @can('manage products-and-attributes')
+                    @if (!$category->trashed())
+                      <li>
+                        <button type="button" data-type="edit" data-uid="{{ $category->id }}"
+                          data-path="{{ $category->id }}" data-modalID="categoryCSE"
+                          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                          <span>
+                            <x-icons.edit class="size-5" />
+                          </span>
+                          Editar Categoría
+                        </button>
+                      </li>
+                    @endif
+                    <li>
+                      <button type="button" data-text="Categoria: '{{ $category->name }}'" data-uid="{{ $category->id }}"
+                        data-modalID="categoryDeleteRestore" data-delete="{{ $category->trashed() ? 'false' : 'true' }}"
+                        data-path="{{ $category->id . ($category->trashed() ? '/restore' : '') }}"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          @if ($category->trashed())
+                            <x-icons.restore class="size-5" />
+                          @else
+                            <x-icons.trash class="size-5" />
+                          @endif
+                        </span>
+                        {{ $category->trashed() ? 'Restaurar' : 'Eliminar' }} Categoría
+                      </button>
+                    </li>
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
 
-    @empty
-      <tr>
-        <td colspan="4" class="text-center font-semibold text-slate-300 col-span-full">No hay Categorías registradas
-        </td>
-      </tr>
-    @endforelse
+      @empty
+        <tr>
+          <td colspan="4" class="text-center font-semibold text-slate-300 col-span-full">No hay Categorías registradas
+          </td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $categories->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

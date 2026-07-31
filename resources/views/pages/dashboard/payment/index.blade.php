@@ -114,69 +114,71 @@
         <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($payments as $index => $payment)
+        <tr>
+          <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
+          <td class="font-bold">
+            <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
+              #{{ $payment->order->id }}
+            </x-buttons.link>
+          </td>
+          <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
+          <td class="text-slate-300">{{ $payment->date_formated }}</td>
+          <td class="hidden sm:table-cell">{{ $payment->nro_fee }}</td>
+          <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
+          <td class="hidden md:table-cell">
+            <span @class([
+                "font-semibold before:content-['●'] before:me-px",
+                'text-amber-400' => $payment->paymentState->code === 'PENDIENTE',
+                'text-green-400' => $payment->paymentState->code === 'APROBADO',
+                'text-blue-400' => $payment->paymentState->code === 'EN_PROCESO',
+                'text-cyan-400' => $payment->paymentState->code === 'REEMBOLSADO',
+                'text-lime-400' => $payment->paymentState->code === 'EXPIRADO',
+                'text-rose-400' => $payment->paymentState->code === 'EN_DEVOLUCION',
+                'text-purple-400' => $payment->paymentState->code === 'RECHAZADO',
+                'text-red-400' => $payment->paymentState->code === 'CANCELADO',
+            ])>
+              {{ $payment->paymentState->codeFormated }}
+            </span>
+          </td>
+          <td>
+            @can('manage state-type-tables')
+              <div class="relative flex justify-end">
+                <x-popups.contentWcheck iid="chpayment-{{ $payment->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-    @forelse ($payments as $index => $payment)
-      <tr>
-        <td>{{ ($payments->currentPage() - 1) * $payments->perPage() + $index + 1 }}</td>
-        <td class="font-bold">
-          <x-buttons.link href="{{ route('orders.show', $payment->order->id) }}" class="text-purple-600 ">
-            #{{ $payment->order->id }}
-          </x-buttons.link>
-        </td>
-        <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
-        <td class="text-slate-300">{{ $payment->date_formated }}</td>
-        <td class="hidden sm:table-cell">{{ $payment->nro_fee }}</td>
-        <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
-        <td class="hidden md:table-cell">
-          <span @class([
-              "font-semibold before:content-['●'] before:me-px",
-              'text-amber-400' => $payment->paymentState->code === 'PENDIENTE',
-              'text-green-400' => $payment->paymentState->code === 'APROBADO',
-              'text-blue-400' => $payment->paymentState->code === 'EN_PROCESO',
-              'text-cyan-400' => $payment->paymentState->code === 'REEMBOLSADO',
-              'text-lime-400' => $payment->paymentState->code === 'EXPIRADO',
-              'text-rose-400' => $payment->paymentState->code === 'EN_DEVOLUCION',
-              'text-purple-400' => $payment->paymentState->code === 'RECHAZADO',
-              'text-red-400' => $payment->paymentState->code === 'CANCELADO',
-          ])>
-            {{ $payment->paymentState->codeFormated }}
-          </span>
-        </td>
-        <td>
-          @can('manage state-type-tables')
-            <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chpayment-{{ $payment->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
-
-                <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    <button type="button" data-modal="modal-change-status" data-uid="{{ $payment->id }}"
-                      data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
-                      data-status="{{ $payment->paymentState->code }}"
-                      class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Cambiar Estado
-                    </button>
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
-            </div>
-          @else
-            <p class="px-2 text-end">---</p>
-          @endcan
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td class="text-center font-semibold text-slate-300 col-span-full">No hay pagos registradas</td>
-      </tr>
-    @endforelse
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
+                      <button type="button" data-modal="modal-change-status" data-uid="{{ $payment->id }}"
+                        data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
+                        data-status="{{ $payment->paymentState->code }}"
+                        class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Cambiar Estado
+                      </button>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              </div>
+            @else
+              <p class="px-2 text-end">---</p>
+            @endcan
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td class="text-center font-semibold text-slate-300 col-span-full">No hay pagos registradas</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $payments->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

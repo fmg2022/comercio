@@ -23,51 +23,53 @@
         <th>Name</th>
         <th class="z-10 text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:head>
+    <x-slot:tbody>
+      @forelse ($brands as $index => $brand)
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td class="font-bold">{{ $brand->name }}</td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chbrand-{{ $brand->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @forelse ($brands as $index => $brand)
-      <tr>
-        <td>{{ $index + 1 }}</td>
-        <td class="font-bold">{{ $brand->name }}</td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chbrand-{{ $brand->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                <li>
-                  <button type="button" data-type="edit" data-uid="{{ $brand->id }}" data-path="{{ $brand->id }}"
-                    data-modalID="brandCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.edit class="size-5" />
-                    </span>
-                    Editar Marca
-                  </button>
-                </li>
-                <li>
-                  <button type="button" data-text="Marca: '{{ $brand->name }}'" data-uid="{{ $brand->id }}"
-                    data-modalID="brandDelete" data-path="{{ $brand->id }}" data-delete="true"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      <x-icons.trash class="size-5" />
-                    </span>
-                    Eliminar Marca
-                  </button>
-                </li>
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td class="text-center font-semibold text-slate-300 col-span-full">No hay Marcas de productos registrados</td>
-      </tr>
-    @endforelse
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  <li>
+                    <button type="button" data-type="edit" data-uid="{{ $brand->id }}" data-path="{{ $brand->id }}"
+                      data-modalID="brandCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.edit class="size-5" />
+                      </span>
+                      Editar Marca
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" data-text="Marca: '{{ $brand->name }}'" data-uid="{{ $brand->id }}"
+                      data-modalID="brandDelete" data-path="{{ $brand->id }}" data-delete="true"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.trash class="size-5" />
+                      </span>
+                      Eliminar Marca
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td class="text-center font-semibold text-slate-300 col-span-full">No hay Marcas de productos registrados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
   {{ $brands->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
@@ -79,41 +81,43 @@
         <th>Name</th>
         <th class="z-10 text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:head>
+    <x-slot:tbody>
+      @forelse ($brandsDeleted as $index => $brand)
+        <tr class="text-slate-400">
+          <td>{{ $index + 1 }}</td>
+          <td class="font-bold">{{ $brand->name }}</td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chbrandDeleted-{{ $brand->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @forelse ($brandsDeleted as $index => $brand)
-      <tr class="text-slate-400">
-        <td>{{ $index + 1 }}</td>
-        <td class="font-bold">{{ $brand->name }}</td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chbrandDeleted-{{ $brand->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                <li>
-                  <button type="button" data-text="Marca: '{{ $brand->name }}'" data-uid="{{ $brand->id }}"
-                    data-modalID="brandDelete" data-path="{{ $brand->id }}/restore" data-delete="false"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      <x-icons.restore class="size-5" />
-                    </span>
-                    Restaurar Marca
-                  </button>
-                </li>
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td class="text-center font-semibold text-slate-300" colspan="3">No hay Marcas de productos eliminados</td>
-      </tr>
-    @endforelse
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  <li>
+                    <button type="button" data-text="Marca: '{{ $brand->name }}'" data-uid="{{ $brand->id }}"
+                      data-modalID="brandDelete" data-path="{{ $brand->id }}/restore" data-delete="false"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.restore class="size-5" />
+                      </span>
+                      Restaurar Marca
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td class="text-center font-semibold text-slate-300" colspan="3">No hay Marcas de productos eliminados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
   {{ $brandsDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 

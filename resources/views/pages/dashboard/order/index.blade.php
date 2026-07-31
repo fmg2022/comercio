@@ -127,80 +127,82 @@
         <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:head>
+    <x-slot:tbody>
+      @forelse ($orders as $index => $order)
+        @php
+          $fullName = $order->user()->withTrashed()->first()->fullName();
+        @endphp
+        <tr>
+          <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
+          @if (!request()->routeIs('my.orders.index'))
+            <td class="font-bold">{{ $fullName }}</td>
+          @endif
+          <td class="text-slate-300">{{ $order->date->format('d/m/Y H:i') }}</td>
+          <td><span class="me-px font-semibold">$</span>{{ number_format($order->total, 2, ',', '.') }}</td>
+          <td class="hidden text-slate-300 capitalize lg:table-cell">
+            {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>
+          <td class="hidden md:table-cell">
+            <span @class([
+                "font-semibold before:content-['●'] before:me-px",
+                'text-amber-400' => $order->orderState->code === 'CREADO',
+                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+                'text-cyan-400' => $order->orderState->code === 'PAGADO',
+                'text-green-400' => $order->orderState->code === 'COMPLETO',
+                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+                'text-red-400' => $order->orderState->code === 'CANCELADO',
+            ])>
+              {{ $order->orderState->code }}
+            </span>
+          </td>
+          <td>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chorder-{{ $order->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @forelse ($orders as $index => $order)
-      @php
-        $fullName = $order->user()->withTrashed()->first()->fullName();
-      @endphp
-      <tr>
-        <td>{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
-        @if (!request()->routeIs('my.orders.index'))
-          <td class="font-bold">{{ $fullName }}</td>
-        @endif
-        <td class="text-slate-300">{{ $order->date->format('d/m/Y H:i') }}</td>
-        <td><span class="me-px font-semibold">$</span>{{ number_format($order->total, 2, ',', '.') }}</td>
-        <td class="hidden text-slate-300 capitalize lg:table-cell">
-          {{ $order->payment?->paymentProvider->name ?? 'Sin pago' }}</td>
-        <td class="hidden md:table-cell">
-          <span @class([
-              "font-semibold before:content-['●'] before:me-px",
-              'text-amber-400' => $order->orderState->code === 'CREADO',
-              'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-              'text-cyan-400' => $order->orderState->code === 'PAGADO',
-              'text-green-400' => $order->orderState->code === 'COMPLETO',
-              'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-              'text-red-400' => $order->orderState->code === 'CANCELADO',
-          ])>
-            {{ $order->orderState->code }}
-          </span>
-        </td>
-        <td>
-          <div class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chorder-{{ $order->id }}" labelClass="hover:bg-slate-900"
-              class="right-12 -top-1/4">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @can('show orders')
-                  @php
-                    $route = request()->routeIs('my.orders.index') ? 'my.orders.show' : 'orders.show';
-                  @endphp
-                  <li>
-                    <a href="{{ route($route, $order->id) }}"
-                      class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Detalles
-                    </a>
-                  </li>
-                @endcan
-                @can('manage state-type-tables')
-                  <li>
-                    <button type="button" data-modal="modal-change-status" data-uid="{{ $order->id }}"
-                      data-from="{{ $fullName }}" data-amount="{{ number_format($order->total, 2, ',', '.') }}"
-                      data-status="{{ $order->orderState->code }}"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Cambiar Estado
-                    </button>
-                  </li>
-                @endcan
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td colspan="7" class="text-center font-semibold text-slate-300">No hay ordenes registradas</td>
-      </tr>
-    @endforelse
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  @can('show orders')
+                    @php
+                      $route = request()->routeIs('my.orders.index') ? 'my.orders.show' : 'orders.show';
+                    @endphp
+                    <li>
+                      <a href="{{ route($route, $order->id) }}"
+                        class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
+                        <span>
+                          <x-icons.show class="size-5" />
+                        </span>
+                        Detalles
+                      </a>
+                    </li>
+                  @endcan
+                  @can('manage state-type-tables')
+                    <li>
+                      <button type="button" data-modal="modal-change-status" data-uid="{{ $order->id }}"
+                        data-from="{{ $fullName }}" data-amount="{{ number_format($order->total, 2, ',', '.') }}"
+                        data-status="{{ $order->orderState->code }}"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Cambiar Estado
+                      </button>
+                    </li>
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td colspan="7" class="text-center font-semibold text-slate-300">No hay ordenes registradas</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

@@ -37,100 +37,102 @@
         <th class="hidden xl:table-cell">Rol</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($users as $index => $user)
+        <tr>
+          <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
+          <td>
+            <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
+          </td>
+          <td class="relative max-w-44">
+            <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+              data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
+              {{ $user->fullName() }}
+            </button>
+            <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+              Ver Usuario
+            </x-popups.text>
+          </td>
+          <td class="max-w-44 truncate">{{ $user->email }}</td>
+          <td>{{ $user->phone }}</td>
+          <td {{ $user->active ? 'data-active' : '' }}
+            class="hidden text-red-700 md:table-cell font-semibold before:content-['●'] before:me-px data-active:text-green-700">
+            {{ $user->active ? 'Activo' : 'Inactivo' }}
+          </td>
+          <td class="hidden xl:table-cell">
+            <p class="flex flex-wrap gap-1">
+              @foreach ($user->getRoleNames() as $role)
+                <span class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
+                  {{ $role }}
+                </span>
+              @endforeach
+            </p>
+          </td>
+          <td>
+            <div class="relative flex justify-end items-center">
+              <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-    @forelse ($users as $index => $user)
-      <tr>
-        <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
-        <td>
-          <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
-        </td>
-        <td class="relative max-w-44">
-          <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-            data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
-            {{ $user->fullName() }}
-          </button>
-          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-            Ver Usuario
-          </x-popups.text>
-        </td>
-        <td class="max-w-44 truncate">{{ $user->email }}</td>
-        <td>{{ $user->phone }}</td>
-        <td {{ $user->active ? 'data-active' : '' }}
-          class="hidden text-red-700 md:table-cell font-semibold before:content-['●'] before:me-px data-active:text-green-700">
-          {{ $user->active ? 'Activo' : 'Inactivo' }}
-        </td>
-        <td class="hidden xl:table-cell">
-          <p class="flex flex-wrap gap-1">
-            @foreach ($user->getRoleNames() as $role)
-              <span class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
-                {{ $role }}
-              </span>
-            @endforeach
-          </p>
-        </td>
-        <td>
-          <div class="relative flex justify-end items-center">
-            <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
-
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                @can('manage roles')
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  @can('manage roles')
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $user->id }}"
+                        data-path="{{ $user->id }}/roles" data-modalID="roleCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.role class="size-5" />
+                        </span>
+                        {{ $user->roles->isNotEmpty() ? 'Editar Rol' : 'Asignar Rol' }}
+                      </button>
+                    </li>
+                  @endcan
                   <li>
-                    <button type="button" data-type="edit" data-uid="{{ $user->id }}"
-                      data-path="{{ $user->id }}/roles" data-modalID="roleCSE"
+                    <button type="button" data-type="show" data-uid="{{ $user->id }}"
+                      data-path="{{ $user->id }}" data-modalID="userCSE"
                       class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
                       <span>
-                        <x-icons.role class="size-5" />
+                        <x-icons.show class="size-5" />
                       </span>
-                      {{ $user->roles->isNotEmpty() ? 'Editar Rol' : 'Asignar Rol' }}
+                      Ver Usuario
                     </button>
                   </li>
-                @endcan
-                <li>
-                  <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                    data-modalID="userCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Usuario
-                  </button>
-                </li>
-                @can('manage users')
-                  <li>
-                    <button type="button" data-type="edit" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                      data-modalID="userCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.edit class="size-5" />
-                      </span>
-                      Editar Usuario
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
-                      data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                      <span>
-                        <x-icons.trash class="size-5" />
-                      </span>
-                      Eliminar Usuario
-                    </button>
-                  </li>
-                @endcan
-              </ul>
-            </x-popups.contentWcheck>
-          </div>
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td colspan="8" class="text-center font-semibold text-slate-300">Sin usuarios registrados</td>
-      </tr>
-    @endforelse
+                  @can('manage users')
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $user->id }}"
+                        data-path="{{ $user->id }}" data-modalID="userCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Usuario
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                        data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                        <span>
+                          <x-icons.trash class="size-5" />
+                        </span>
+                        Eliminar Usuario
+                      </button>
+                    </li>
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td colspan="8" class="text-center font-semibold text-slate-300">Sin usuarios registrados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $users->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
@@ -147,65 +149,67 @@
         <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
-
-    @forelse ($usersDeleted as $index => $user)
-      <tr class="text-slate-400">
-        <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
-        <td>
-          <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}" class="h-12 aspect-auto">
-        </td>
-        <td class="relative">
-          <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-            data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
-            {{ $user->fullName() }}
-          </button>
-          <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 text-white peer-hover/popup:inline-block">
-            Ver Usuario
-          </x-popups.text>
-        </td>
-        <td>{{ $user->email }}</td>
-        <td>{{ $user->phone }}</td>
-        <td class="hidden md:table-cell font-semibold before:content-['●'] before:me-px">
-          {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
-        <td class="relative flex justify-end text-slate-300">
-          <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
-            <x-slot:label>
-              <x-icons.threeDotsX class="size-6" />
-            </x-slot:label>
-            <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs font-semibold">
-              <li>
-                <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
-                  data-modalID="userCSE"
-                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                  <span>
-                    <x-icons.show class="size-5" />
-                  </span>
-                  Ver Usuario
-                </button>
-              </li>
-              @can('manage users')
+    </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($usersDeleted as $index => $user)
+        <tr class="text-slate-400">
+          <td>{{ ($users->currentPage() - 1) * $users->perPage() + $index + 1 }}</td>
+          <td>
+            <img src="{{ asset('images/users/' . $user->image) }}" alt="{{ $user->fullName() }}"
+              class="h-12 aspect-auto">
+          </td>
+          <td class="relative">
+            <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+              data-modalID="userCSE" class="w-full text-left cursor-pointer button-create-edit-show peer/popup">
+              {{ $user->fullName() }}
+            </button>
+            <x-popups.text class="top-3/4 left-12 hidden bg-purple-800/80 text-white peer-hover/popup:inline-block">
+              Ver Usuario
+            </x-popups.text>
+          </td>
+          <td>{{ $user->email }}</td>
+          <td>{{ $user->phone }}</td>
+          <td class="hidden md:table-cell font-semibold before:content-['●'] before:me-px">
+            {{ $user->active ? 'Activo' : 'Inactivo' }}</td>
+          <td class="relative flex justify-end text-slate-300">
+            <x-popups.contentWcheck iid="chuser-{{ $user->id }}" labelClass="hover:bg-slate-900" class="right-14">
+              <x-slot:label>
+                <x-icons.threeDotsX class="size-6" />
+              </x-slot:label>
+              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs font-semibold">
                 <li>
-                  <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
-                    data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                  <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
+                    data-modalID="userCSE"
+                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
                     <span>
-                      <x-icons.restore class="size-5" />
+                      <x-icons.show class="size-5" />
                     </span>
-                    Restaurar Usuario
+                    Ver Usuario
                   </button>
                 </li>
-              @endcan
-            </ul>
-          </x-popups.contentWcheck>
-        </td>
-      </tr>
+                @can('manage users')
+                  <li>
+                    <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
+                      data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.restore class="size-5" />
+                      </span>
+                      Restaurar Usuario
+                    </button>
+                  </li>
+                @endcan
+              </ul>
+            </x-popups.contentWcheck>
+          </td>
+        </tr>
 
-    @empty
-      <tr>
-        <td colspan="8" class="text-center font-semibold text-slate-300">Sin usuarios eliminados</td>
-      </tr>
-    @endforelse
+      @empty
+        <tr>
+          <td colspan="8" class="text-center font-semibold text-slate-300">Sin usuarios eliminados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $usersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
@@ -213,7 +217,7 @@
   @can('list users')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="userCSE"
-      class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf
@@ -279,7 +283,7 @@
   @endcan
   @can('manage roles')
     <x-modals.simple id="roleCSE"
-      class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] [scrollbar-width:thin]">
+      class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group p-4 w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
         @csrf

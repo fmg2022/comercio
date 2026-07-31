@@ -87,82 +87,83 @@
         <th class="hidden md:table-cell">Categoría</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot>
+    </x-slot:thead>
+    <x-slot:tbody>
+      @forelse ($products as $index => $product)
+        <tr>
+          <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
+          <td>
+            <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
+              <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                class="size-12 aspect-square">
+              <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+            </a>
+          </td>
+          <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->brand->name }}</td>
+          <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->sku }}</td>
+          <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
+          <td class="text-slate-300">{{ $product->stock }}</td>
+          <td class="hidden text-slate-300 xl:table-cell">{{ $product->min_stock }}</td>
+          <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
+          <td class="relative flex justify-end">
+            <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
+              class="right-14">
+              <x-slot:label>
+                <x-icons.threeDotsX class="size-6" />
+              </x-slot:label>
 
-    @forelse ($products as $index => $product)
-      <tr>
-        <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
-        <td>
-          <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
-            <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-              class="size-12 aspect-square">
-            <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
-          </a>
-        </td>
-        <td class="hidden text-xs text-slate-300 sm:table-cell">{{ $product->brand->name }}</td>
-        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->sku }}</td>
-        <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-        <td class="text-slate-300">{{ $product->stock }}</td>
-        <td class="hidden text-slate-300 xl:table-cell">{{ $product->min_stock }}</td>
-        <td class="hidden text-xs text-slate-300 md:table-cell">{{ $product->category->name }}</td>
-        <td class="relative flex justify-end">
-          <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
-            class="right-14">
-            <x-slot:label>
-              <x-icons.threeDotsX class="size-6" />
-            </x-slot:label>
-
-            <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold ">
-              <li>
-                <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
-                  data-modalID="productCSE"
-                  class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                  <span>
-                    <x-icons.show class="size-5" />
-                  </span>
-                  Ver Producto
-                </button>
-              </li>
-              @can('manage products-and-attributes')
+              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold ">
                 <li>
-                  <button type="button" data-type="edit" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
+                  <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
                     data-modalID="productCSE"
                     class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
                     <span>
-                      <x-icons.edit class="size-5" />
+                      <x-icons.show class="size-5" />
                     </span>
-                    Editar Producto
+                    Ver Producto
                   </button>
                 </li>
-                <li>
-                  <a href="{{ route('products.orders', $product->id) }}"
-                    class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
-                    <span>
-                      <x-icons.statistics class="size-5" />
-                    </span>
-                    Productos en Ordenes
-                  </a>
-                </li>
-                <li>
-                  <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
-                    data-modalID="{{ $type1 }}" data-path="{{ $product->id }}" data-delete="true"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      <x-icons.trash class="size-5" />
-                    </span>
-                    Eliminar Producto
-                  </button>
-                </li>
-              @endcan
-            </ul>
-          </x-popups.contentWcheck>
-        </td>
-      </tr>
-    @empty
-      <tr>
-        <td colspan="8" class="text-center font-semibold text-slate-300">Sin productos registrados</td>
-      </tr>
-    @endforelse
+                @can('manage products-and-attributes')
+                  <li>
+                    <button type="button" data-type="edit" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
+                      data-modalID="productCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.edit class="size-5" />
+                      </span>
+                      Editar Producto
+                    </button>
+                  </li>
+                  <li>
+                    <a href="{{ route('products.orders', $product->id) }}"
+                      class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
+                      <span>
+                        <x-icons.statistics class="size-5" />
+                      </span>
+                      Productos en Ordenes
+                    </a>
+                  </li>
+                  <li>
+                    <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
+                      data-modalID="{{ $type1 }}" data-path="{{ $product->id }}" data-delete="true"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.trash class="size-5" />
+                      </span>
+                      Eliminar Producto
+                    </button>
+                  </li>
+                @endcan
+              </ul>
+            </x-popups.contentWcheck>
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td colspan="8" class="text-center font-semibold text-slate-300">Sin productos registrados</td>
+        </tr>
+      @endforelse
+    </x-slot:tbody>
   </x-tables.table>
 
   {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
@@ -181,70 +182,72 @@
           <th class="hidden md:table-cell">Categoría</th>
           <th class="text-end">Opciones</th>
         </tr>
-      </x-slot>
-      @forelse ($productsDeleted as $index => $product)
-        <tr class="text-slate-400">
-          <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
-          <td>
-            <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
-              <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-                class="size-12 aspect-square">
-              <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
-            </a>
-          </td>
-          <td class="hidden text-xs sm:table-cell">{{ $product->brand->name }}</td>
-          <td class="hidden text-xs md:table-cell">{{ $product->sku }}</td>
-          <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
-          <td>{{ $product->stock }}</td>
-          <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
-          <td class="relative flex justify-end">
-            <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
-              class="right-14">
-              <x-slot:label>
-                <x-icons.threeDotsX class="size-6" />
-              </x-slot:label>
+      </x-slot:thead>
+      <x-slot:tbody>
+        @forelse ($productsDeleted as $index => $product)
+          <tr class="text-slate-400">
+            <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
+            <td>
+              <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
+                <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
+                  class="size-12 aspect-square">
+                <span class="hidden text-base font-semibold sm:inline">{{ $product->name }}</span>
+              </a>
+            </td>
+            <td class="hidden text-xs sm:table-cell">{{ $product->brand->name }}</td>
+            <td class="hidden text-xs md:table-cell">{{ $product->sku }}</td>
+            <td class="font-bold"><span class="me-px">$</span>{{ $product->price }}</td>
+            <td>{{ $product->stock }}</td>
+            <td class="hidden text-xs md:table-cell">{{ $product->category->name }}</td>
+            <td class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chproduct-{{ $product->id }}" labelClass="dark:hover:bg-slate-900"
+                class="right-14">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-              <ul
-                class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
-                <li>
-                  <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
-                    data-modalID="productCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Producto
-                  </button>
-                </li>
-                <li>
-                  <a href="{{ route('products.orders', $product->id) }}"
-                    class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700 transition-colors">
-                    <span>
-                      <x-icons.statistics class="size-5" />
-                    </span>
-                    Productos en Ordenes
-                  </a>
-                </li>
-                <li class="flex gap-3">
-                  <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
-                    data-modalID="{{ $type1 }}" data-path="{{ $product->id . '/restore' }}" data-delete="false"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
-                    <span>
-                      <x-icons.restore class="size-5" />
-                    </span>
-                    Restaurar Producto
-                  </button>
-                </li>
-              </ul>
-            </x-popups.contentWcheck>
-          </td>
-        </tr>
+                <ul
+                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
+                  <li>
+                    <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
+                      data-modalID="productCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.show class="size-5" />
+                      </span>
+                      Ver Producto
+                    </button>
+                  </li>
+                  <li>
+                    <a href="{{ route('products.orders', $product->id) }}"
+                      class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700 transition-colors">
+                      <span>
+                        <x-icons.statistics class="size-5" />
+                      </span>
+                      Productos en Ordenes
+                    </a>
+                  </li>
+                  <li class="flex gap-3">
+                    <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
+                      data-modalID="{{ $type1 }}" data-path="{{ $product->id . '/restore' }}" data-delete="false"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
+                      <span>
+                        <x-icons.restore class="size-5" />
+                      </span>
+                      Restaurar Producto
+                    </button>
+                  </li>
+                </ul>
+              </x-popups.contentWcheck>
+            </td>
+          </tr>
 
-      @empty
-        <tr>
-          <td colspan="8" class="text-center font-semibold text-slate-300">Sin productos eliminados</td>
-        </tr>
-      @endforelse
+        @empty
+          <tr>
+            <td colspan="8" class="text-center font-semibold text-slate-300">Sin productos eliminados</td>
+          </tr>
+        @endforelse
+      </x-slot:tbody>
     </x-tables.table>
 
     {{ $productsDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}

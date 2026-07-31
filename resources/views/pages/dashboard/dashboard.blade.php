@@ -95,49 +95,50 @@
             <th>Estado</th>
           </tr>
         </x-slot:thead>
+        <x-slot:tbody>
+          @forelse ($recentOrders as $order)
+            <tr>
+              <td>
+                <x-buttons.link href="{{ route('orders.show', $order->id) }}"
+                  class="font-semibold text-purple-500 hover:text-purple-600">
+                  #{{ $order->id }}
+                </x-buttons.link>
+              </td>
+              <td>{{ $order->date->format('d/m/Y') }}</td>
+              <td>
+                ${{ number_format($order->total, 2, ',', '.') }}
+              </td>
+              <td>
+                <span @class([
+                    'font-semibold',
+                    'text-amber-400' => $order->orderState->code === 'CREADO',
+                    'text-blue-400' => $order->orderState->code === 'PENDIENTE',
+                    'text-cyan-400' => $order->orderState->code === 'PAGADO',
+                    'text-green-400' => $order->orderState->code === 'COMPLETO',
+                    'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
+                    'text-red-400' => $order->orderState->code === 'CANCELADO',
+                ])>
+                  {{ $order->orderState->code }}
+                </span>
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="5" class="text-center font-semibold text-slate-300">No hay ordenes disponibles</td>
+            </tr>
+          @endforelse
 
-        @forelse ($recentOrders as $order)
-          <tr>
-            <td>
-              <x-buttons.link href="{{ route('orders.show', $order->id) }}"
-                class="font-semibold text-purple-500 hover:text-purple-600">
-                #{{ $order->id }}
-              </x-buttons.link>
-            </td>
-            <td>{{ $order->date->format('d/m/Y') }}</td>
-            <td>
-              ${{ number_format($order->total, 2, ',', '.') }}
-            </td>
-            <td>
-              <span @class([
-                  'font-semibold',
-                  'text-amber-400' => $order->orderState->code === 'CREADO',
-                  'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-                  'text-cyan-400' => $order->orderState->code === 'PAGADO',
-                  'text-green-400' => $order->orderState->code === 'COMPLETO',
-                  'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-                  'text-red-400' => $order->orderState->code === 'CANCELADO',
-              ])>
-                {{ $order->orderState->code }}
-              </span>
-            </td>
-          </tr>
-        @empty
-          <tr>
-            <td colspan="5" class="text-center font-semibold text-slate-300">No hay ordenes disponibles</td>
-          </tr>
-        @endforelse
-
-        @if ($recentOrders)
-          <tr>
-            <td colspan="5" class="text-center font-semibold text-slate-300">
-              <x-buttons.linkFill href="{{ route('my.orders.index') }}"
-                class="underline-offset-4 hover:text-purple-500 hover:underline">
-                Ver historial completo
-              </x-buttons.linkFill>
-            </td>
-          </tr>
-        @endif
+          @if ($recentOrders)
+            <tr>
+              <td colspan="5" class="text-center font-semibold text-slate-300">
+                <x-buttons.linkFill href="{{ route('my.orders.index') }}"
+                  class="underline-offset-4 hover:text-purple-500 hover:underline">
+                  Ver historial completo
+                </x-buttons.linkFill>
+              </td>
+            </tr>
+          @endif
+        </x-slot:tbody>
       </x-tables.table>
     </section>
     <section class="p-4 bg-slate-800/60 rounded shadow-md shadow-slate-500/60">
