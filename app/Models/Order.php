@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany, HasMany, HasOne};
 
 class Order extends Model
 {
@@ -102,9 +100,9 @@ class Order extends Model
 		return $this->belongsTo(Address::class);
 	}
 
-	public function shipping(): BelongsTo
+	public function shipping(): HasMany
 	{
-		return $this->belongsTo(Shipping::class);
+		return $this->hasMany(Shipping::class);
 	}
 
 	public function products(): BelongsToMany
