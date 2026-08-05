@@ -18,7 +18,7 @@ class OrderSeeder extends Seeder
 			->join('offers', 'offer_product.offer_id', '=', 'offers.id')
 			->join('offer_templates', 'offers.offer_template_id', '=', 'offer_templates.id')
 			->join('offer_types', 'offer_templates.offer_type_id', '=', 'offer_types.id')
-			->select(['offer_product.product_id', 'offer_templates.id as template_id', 'offer_types.code', 'offer_templates.pay_qty', 'offer_templates.buy_qty', 'offers.start_date', 'offers.end_date'])
+			->select(['offer_product.product_id', 'offer_product.offer_id', 'offer_types.slug', 'offer_templates.pay_qty', 'offer_templates.buy_qty', 'offer_templates.name', 'offers.start_date', 'offers.end_date'])
 			->get()
 			->groupBy('product_id');
 
@@ -42,6 +42,7 @@ class OrderSeeder extends Seeder
 			$products = [];
 
 			$randomProducts = DB::table('products')->inRandomOrder()
+				->select(['id', 'price'])
 				->limit(rand(1, 15))
 				->get();
 
@@ -52,13 +53,14 @@ class OrderSeeder extends Seeder
 
 				$offerData = $currentOffers->get($product->id)?->random();
 				$discount = 0;
-				$templateId = '';
-				$typeCode = '';
+				$offerId = '';
+				$typeslug = '';
+				$offerName = '';
 
 				if ($offerData) {
 					$discount = round(
 						$this->calculateDiscountAmount(
-							$offerData->code,
+							$offerData->slug,
 							$qty,
 							$product->price,
 							$offerData->pay_qty,
@@ -66,8 +68,9 @@ class OrderSeeder extends Seeder
 						),
 						2
 					);
-					$templateId = $offerData->template_id;
-					$typeCode = $offerData->code;
+					$offerId = $offerData->offer_id;
+					$offerName = $offerData->name;
+					$typeslug = $offerData->slug;
 					$discountTotal += $discount;
 				}
 
@@ -75,8 +78,9 @@ class OrderSeeder extends Seeder
 					'quantity' => $qty,
 					'price' => $product->price,
 					'discount' => $discount,
-					'offer_template_id' => $templateId,
-					'offer_type_code' => $typeCode,
+					'offer_id' => $offerId,
+					'offer_template_name' => $offerName,
+					'offer_type_slug' => $typeslug,
 				];
 			}
 
@@ -97,19 +101,19 @@ class OrderSeeder extends Seeder
 
 	private function calculateDiscountAmount(string $offerType, int $quantity, float $unitPrice, float $discountValue, int $buyQuantity): float
 	{
-		if ($offerType === 'PERCENTAGE') {
+		if ($offerType === 'percentage') {
 			$percentage = $discountValue;
 			if ($percentage > 1) {
 				$percentage /= 100;
 			}
 			return $unitPrice * $quantity * $percentage;
 		}
-		if ($offerType === 'X_FOR_Y') {
+		if ($offerType === 'x_for_y') {
 			$sets = intdiv($quantity, $buyQuantity);
 			$freeItemsPerSet = $buyQuantity - $discountValue;
 			return $unitPrice * ($sets * $freeItemsPerSet);
 		}
-		if ($offerType === 'FIXED') {
+		if ($offerType === 'fixed') {
 			return $discountValue * $quantity;
 		}
 		return 0;

@@ -17,14 +17,14 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $user = DB::table('users')->where('active', true)->inRandomOrder()->first();
+        $user = \App\Models\User::where('active', true)->inRandomOrder()->first();
         $state_id = DB::table('order_states')->inRandomOrder()->first()->id;
 
         return [
-            'date' => $this->faker->dateTimeBetween('-6 months', 'now')->format('Y-m-d H:i:s'),
+            'date' => $this->faker->dateTimeBetween('-12 months', 'now')->format('Y-m-d H:i:s'),
             'total' => 0,
             'iva' => 0,
-            'address' => $user->address,
+            'address_id' => $user->addresses()->inRandomOrder()->first()->id,
             'user_id' => $user->id,
             'order_state_id' => $state_id,
         ];

@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\JoinClause;
 
 class Order extends Model
 {
@@ -20,8 +19,9 @@ class Order extends Model
 		'date',
 		'total',
 		'iva',
+		'shipping_cost',
 		'notes',
-		'address',
+		'address_id',
 		'order_state_id',
 		'user_id',
 	];
@@ -68,7 +68,7 @@ class Order extends Model
 
 	// Scopes
 	/**
-	 * Scope para solo órdenes pagadas/compradas
+	 * Solo órdenes pagadas/compradas
 	 */
 	#[Scope]
 	public function paid(Builder $query): void
@@ -76,7 +76,7 @@ class Order extends Model
 		static $paidStateId = null;
 
 		if ($paidStateId === null) {
-			$paidStateId = OrderState::whereIn('code', ['PAGADO', 'COMPLETO'])->pluck('id');
+			$paidStateId = OrderState::whereIn('slug', ['paid', 'completed'])->pluck('id');
 		}
 		$query->whereIn('order_state_id', $paidStateId);
 	}
@@ -97,11 +97,21 @@ class Order extends Model
 		return $this->hasOne(Payment::class);
 	}
 
+	public function address(): BelongsTo
+	{
+		return $this->belongsTo(Address::class);
+	}
+
+	public function shipping(): BelongsTo
+	{
+		return $this->belongsTo(Shipping::class);
+	}
+
 	public function products(): BelongsToMany
 	{
 		return $this->belongsToMany(Product::class)
 			->using(OrderProduct::class)
-			->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_code'])
+			->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_slug'])
 			->withTimestamps();
 	}
 }

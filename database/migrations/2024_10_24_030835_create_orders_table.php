@@ -16,8 +16,9 @@ return new class extends Migration
             $table->dateTime('date')->default(now());
             $table->decimal('total', 12, 2)->default(0);
             $table->decimal('iva', 10, 2)->default(0);
+            $table->decimal('shipping_cost', 10, 2)->default(0);
             $table->text('notes')->nullable();
-            $table->string('address', 255);
+            $table->foreignId('address_id')->constrained()->onUpdate('cascade');
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');
             $table->foreignId('order_state_id')->constrained()->onUpdate('cascade');
             $table->timestamps();

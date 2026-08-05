@@ -17,8 +17,9 @@ class OrderProduct extends Pivot
         'quantity',
         'price',
         'discount',
-        'offer_template_id',
-        'offer_type_code',
+        'offer_id',
+        'offer_template_name',
+        'offer_type_slug',
     ];
 
     // Accessors
