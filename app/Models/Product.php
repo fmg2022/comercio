@@ -48,7 +48,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Offer::class)
             ->whereHas('offerState', function ($query) {
-                $query->where('code', 'ACTIVA');
+                $query->where('slug', 'active');
             })
             ->first()
             ?->offerTemplate;
@@ -56,13 +56,13 @@ class Product extends Model
 
     public function getDiscountTotal(int $quantity, float $buyQuantity, float $payQuantity, string $offerType): float
     {
-        if ($offerType === 'PERCENTAGE') {
+        if ($offerType === 'percentage') {
             return $this->price * $payQuantity * $quantity;
         }
-        if ($offerType === 'X_FOR_Y') {
+        if ($offerType === 'x_for_y') {
             return $this->price * ((intdiv($quantity, $buyQuantity) * ($buyQuantity - $payQuantity)));
         }
-        if ($offerType === 'FIXED') {
+        if ($offerType === 'fixed') {
             return $payQuantity * $quantity;
         }
         return 0;
@@ -90,7 +90,7 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class)
             ->using(OrderProduct::class)
-            ->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_code'])
+            ->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_slug'])
             ->withTimestamps();
     }
 

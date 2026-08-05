@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('offer_states', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 100)->unique();
-            $table->text('description');
+            $table->string('name');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

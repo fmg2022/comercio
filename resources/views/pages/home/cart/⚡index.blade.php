@@ -68,7 +68,7 @@ new class extends Component {
         $offerTemplate = \App\Models\Offer::active()->find($product->activeOffer())?->offerTemplate;
         $quantity = $this->quantities[$id] ?? $product->pivot->quantity;
 
-        $discount = $offerTemplate ? $product->getDiscountTotal($quantity, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->code) : 0;
+        $discount = $offerTemplate ? $product->getDiscountTotal($quantity, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->slug) : 0;
 
         if ($quantity < 1 || $quantity > $product->stock) {
             return;

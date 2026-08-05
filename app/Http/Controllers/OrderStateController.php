@@ -13,8 +13,8 @@ class OrderStateController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:255|unique:order_states,code',
-            'description' => 'required|string|max:255'
+            'slug' => 'required|string|max:255|unique:order_states,slug',
+            'name' => 'required|string|max:255'
         ]);
         OrderState::create($validated);
 
@@ -24,13 +24,13 @@ class OrderStateController extends Controller
     public function update(Request $request, OrderState $orderState): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => [
+            'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('order_states', 'code')->ignore($orderState->id),
+                Rule::unique('order_states', 'slug')->ignore($orderState->id),
             ],
-            'description' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
         $orderState->update($validated);
 
@@ -40,11 +40,11 @@ class OrderStateController extends Controller
     public function destroy(OrderState $orderState): RedirectResponse
     {
         $type = 'warning';
-        $message = 'No se ha podido eliminar el estado: ' . $orderState->code . ' porque tiene ordenes asociadas';
+        $message = 'No se ha podido eliminar el estado: ' . $orderState->name . ' porque tiene ordenes asociadas';
 
         if (!$orderState->orders()->exists()) {
             $type = 'success';
-            $message = 'El estado ' . $orderState->code . ' se ha eliminado correctamente';
+            $message = 'El estado ' . $orderState->name . ' se ha eliminado correctamente';
             $orderState->delete();
         }
 
@@ -55,6 +55,6 @@ class OrderStateController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        return response()->json(OrderState::findOrFail($id, ['id', 'code', 'description']));
+        return response()->json(OrderState::findOrFail($id, ['id', 'slug', 'name']));
     }
 }

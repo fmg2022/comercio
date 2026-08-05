@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('order_purchase_states', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 50)->unique();
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->string('name');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

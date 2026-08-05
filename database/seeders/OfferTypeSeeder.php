@@ -14,9 +14,9 @@ class OfferTypeSeeder extends Seeder
     public function run(): void
     {
         DB::table('offer_types')->insert([
-            ['code' => 'PERCENTAGE', 'description' => 'Oferta por porcentaje'],
-            ['code' => 'X_FOR_Y', 'description' => 'Oferta por cantidad'],
-            ['code' => 'FIXED', 'description' => 'Oferta fija'],
+            ['slug' => 'percentage', 'name' => 'Oferta por porcentaje'],
+            ['slug' => 'x_for_y', 'name' => 'Oferta por cantidad'],
+            ['slug' => 'fixed', 'name' => 'Oferta por precio fijo'],
         ]);
     }
 }

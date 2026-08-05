@@ -50,8 +50,8 @@ class PaymentsExport implements FromCollection, WithHeadings, WithProperties, Wi
             $payment->order->date->format('d/m/Y H:i'),
             $payment->amount_formated,
             $payment->nro_fee,
-            $payment->paymentState->code,
-            $payment->date_formated,
+            $payment->paymentState->name,
+            $payment->paid_at->format('d/m/Y H:i'),
         ];
     }
 

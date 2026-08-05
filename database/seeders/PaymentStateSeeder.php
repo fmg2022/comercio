@@ -13,14 +13,12 @@ class PaymentStateSeeder extends Seeder
     public function run(): void
     {
         DB::table('payment_states')->insert([
-            ['code' => 'PENDIENTE', 'description' => 'Pago creado, esperando confirmación.'],
-            ['code' => 'EN_PROCESO', 'description' => 'El proveedor está validando (banco, antifraude).'],
-            ['code' => 'APROBADO', 'description' => 'Pago aprobado por el proveedor.'],
-            ['code' => 'RECHAZADO', 'description' => 'Pago rechazado.'],
-            ['code' => 'REEMBOLSADO', 'description' => 'Pago reembolsado totalmente.'],
-            ['code' => 'EXPIRADO', 'description' => 'Pago expirado.'],
-            ['code' => 'EN_DEVOLUCION', 'description' => 'El cliente desconoció el pago.'],
-            ['code' => 'CANCELADO', 'description' => 'Pago cancelado por el cliente/sistema.'],
+            ['slug' => 'pending', 'name' => 'Pendiente'],
+            ['slug' => 'approved', 'name' => 'Aprobado'],
+            ['slug' => 'rejected', 'name' => 'Rechazado'],
+            ['slug' => 'refunded', 'name' => 'Reembolsado'],
+            ['slug' => 'expired', 'name' => 'Expirado'],
+            ['slug' => 'cancelled', 'name' => 'Cancelado'],
         ]);
     }
 }

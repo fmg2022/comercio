@@ -111,14 +111,13 @@
               <td>
                 <span @class([
                     'font-semibold',
-                    'text-amber-400' => $order->orderState->code === 'CREADO',
-                    'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-                    'text-cyan-400' => $order->orderState->code === 'PAGADO',
-                    'text-green-400' => $order->orderState->code === 'COMPLETO',
-                    'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-                    'text-red-400' => $order->orderState->code === 'CANCELADO',
+                    'text-blue-400' => $order->orderState->slug === 'pending',
+                    'text-cyan-400' => $order->orderState->slug === 'paid',
+                    'text-green-400' => $order->orderState->slug === 'completed',
+                    'text-purple-400' => $order->orderState->slug === 'refunded',
+                    'text-red-400' => $order->orderState->slug === 'cancelled',
                 ])>
-                  {{ $order->orderState->code }}
+                  {{ $order->orderState->name }}
                 </span>
               </td>
             </tr>

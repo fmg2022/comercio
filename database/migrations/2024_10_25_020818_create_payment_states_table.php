@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('payment_states', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->unique();
-            $table->text('description')->nullable();
+            $table->string('name');
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

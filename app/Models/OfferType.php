@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OfferType extends Model
 {
-    protected $fillable = [
-        'code',
-        'description',
-    ];
+    protected $fillable = ['name', 'slug',];
 
     public function offerTemplates(): HasMany
     {

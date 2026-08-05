@@ -21,7 +21,7 @@ class PaymentController extends Controller
 	{
 		return view('pages.dashboard.payment.index', [
 			'payments' => Payment::orderByDesc('paid_at')->paginate(10),
-			'statuses' => PaymentState::all(['id', 'code']),
+			'statuses' => PaymentState::all(['id', 'slug', 'name']),
 			'users' => User::whereHas('orders.payment')->select('id', 'name', 'surname')->get(),
 		]);
 	}
@@ -58,7 +58,7 @@ class PaymentController extends Controller
 		$user = auth()->user();
 		return view('pages.dashboard.payment.index', [
 			'payments' => $user->payments()->orderByDesc('paid_at')->paginate(10),
-			'statuses' => PaymentState::all(['id', 'code']),
+			'statuses' => PaymentState::all(['id', 'slug', 'name']),
 		]);
 	}
 

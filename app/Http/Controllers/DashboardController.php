@@ -94,15 +94,15 @@ class DashboardController extends Controller
 	public function indexStatesTypes(): View
 	{
 		return view('pages.dashboard.statetype.index', [
-			'orderStates' => \App\Models\OrderState::get(['id', 'code', 'description']),
-			'offerStates' => \App\Models\OfferState::get(['id', 'code', 'description']),
-			'offerTypes' => \App\Models\OfferType::get(['id', 'code', 'description']),
-			'paymentStates' => \App\Models\PaymentState::get(['id', 'code', 'description']),
+			'orderStates' => \App\Models\OrderState::get(['id', 'slug', 'name']),
+			'offerStates' => \App\Models\OfferState::get(['id', 'slug', 'name']),
+			'offerTypes' => \App\Models\OfferType::get(['id', 'slug', 'name']),
+			'paymentStates' => \App\Models\PaymentState::get(['id', 'slug', 'name']),
 		]);
 	}
 
 	private function completedStateIds()
 	{
-		return OrderState::whereIn('code', ['COMPLETO', 'PAGADO', 'ENTREGADO'])->pluck('id')->toArray();
+		return OrderState::whereIn('slug', ['completed', 'paid'])->pluck('id')->toArray();
 	}
 }

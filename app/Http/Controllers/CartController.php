@@ -34,7 +34,7 @@ class CartController extends Controller
 					$qty,
 					$offerTemplate->buy_qty,
 					$offerTemplate->pay_qty,
-					$offerTemplate->offerType->code
+					$offerTemplate->offerType->slug
 				)
 				: 0;
 
@@ -65,7 +65,7 @@ class CartController extends Controller
 				$validated['quantity'],
 				$offerTemplate->buy_qty,
 				$offerTemplate->pay_qty,
-				$offerTemplate->offerType->code
+				$offerTemplate->offerType->slug
 			)
 			: 0;
 

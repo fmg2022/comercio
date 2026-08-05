@@ -13,8 +13,8 @@ class OfferTypeController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:255|unique:offer_type,code',
-            'description' => 'required|string|max:255'
+            'slug' => 'required|string|max:255|unique:offer_type,slug',
+            'name' => 'required|string|max:255'
         ]);
         OfferType::create($validated);
 
@@ -24,13 +24,13 @@ class OfferTypeController extends Controller
     public function update(Request $request, OfferType $offerType): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => [
+            'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('offer_type', 'code')->ignore($offerType->id),
+                Rule::unique('offer_type', 'slug')->ignore($offerType->id),
             ],
-            'description' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
         $offerType->update($validated);
 
@@ -40,11 +40,11 @@ class OfferTypeController extends Controller
     public function destroy(OfferType $offerType): RedirectResponse
     {
         $type = 'warning';
-        $message = 'No se ha podido eliminar el tipo: ' . $offerType->code . ' porque tiene ofertas asociadas';
+        $message = 'No se ha podido eliminar el tipo: ' . $offerType->name . ' porque tiene ofertas asociadas';
 
         if (!$offerType->offerTemplates()->exists()) {
             $type = 'success';
-            $message = 'El tipo ' . $offerType->code . ' se ha eliminado correctamente';
+            $message = 'El tipo ' . $offerType->name . ' se ha eliminado correctamente';
             $offerType->delete();
         }
 
@@ -55,6 +55,6 @@ class OfferTypeController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        return response()->json(OfferType::findOrFail($id, ['id', 'code', 'description']));
+        return response()->json(OfferType::findOrFail($id, ['id', 'slug', 'name']));
     }
 }

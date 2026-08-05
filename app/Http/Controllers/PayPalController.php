@@ -64,10 +64,10 @@ class PayPalController extends Controller
                     'paid_at' => now(),
                     'paymentId' => $capture['id'],
                     'provider_state' => 'approved',
-                    'payment_state_id' => PaymentState::where('code', 'APROBADO')->value('id'),
+                    'payment_state_id' => PaymentState::where('slug', 'approved')->value('id'),
                 ]);
 
-                $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+                $payment->order->update(['order_state_id' => OrderState::where('slug', 'paid')->value('id')]);
 
 
                 // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
@@ -95,9 +95,9 @@ class PayPalController extends Controller
         if ($payment) {
             $payment->update([
                 'provider_state' => 'rejected',
-                'payment_state_id' => PaymentState::where('code', 'RECHAZADO')->value('id'),
+                'payment_state_id' => PaymentState::where('slug', 'rejected')->value('id'),
             ]);
-            $payment->order->update(['order_state_id' => OrderState::where('code', 'CANCELADO')->value('id')]);
+            $payment->order->update(['order_state_id' => OrderState::where('slug', 'cancelled')->value('id')]);
         }
 
         return redirect()->route('home')->with('error', 'Pago cancelado');

@@ -34,8 +34,8 @@
         @forelse ($offerStates as $index => $state)
           <tr>
             <td>{{ $index + 1 }}</td>
-            <td class="font-bold">{{ $state->code }}</td>
-            <td class="text-slate-300">{{ $state->description }}</td>
+            <td class="font-bold">{{ $state->slug }}</td>
+            <td class="text-slate-300">{{ $state->name }}</td>
             <td>
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chofferState-{{ $state->id }}" labelClass="hover:bg-slate-900"
@@ -57,7 +57,7 @@
                       </button>
                     </li>
                     <li>
-                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                      <button type="button" data-text="Estado: '{{ $state->name }}'" data-uid="{{ $state->id }}"
                         data-modalID="stateTypeDelete" data-path="offer-states/{{ $state->id }}" data-delete="true"
                         class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                         <span>
@@ -83,8 +83,8 @@
         @forelse ($offerTypes as $index => $type)
           <tr>
             <td>{{ $index + 1 }}</td>
-            <td class="font-bold">{{ $type->code }}</td>
-            <td class="text-slate-300">{{ $type->description }}</td>
+            <td class="font-bold">{{ $type->slug }}</td>
+            <td class="text-slate-300">{{ $type->name }}</td>
             <td>
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chofferType-{{ $type->id }}" labelClass="hover:bg-slate-900"
@@ -106,7 +106,7 @@
                       </button>
                     </li>
                     <li>
-                      <button type="button" data-text="Tipo: '{{ $type->code }}'" data-uid="{{ $type->id }}"
+                      <button type="button" data-text="Tipo: '{{ $type->name }}'" data-uid="{{ $type->id }}"
                         data-modalID="stateTypeDelete" data-path="offer-types/{{ $type->id }}" data-delete="true"
                         class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                         <span>
@@ -132,8 +132,8 @@
         @forelse ($orderStates as $index => $state)
           <tr>
             <td>{{ $index + 1 }}</td>
-            <td class="font-bold">{{ $state->code }}</td>
-            <td class="text-slate-300">{{ $state->description }}</td>
+            <td class="font-bold">{{ $state->slug }}</td>
+            <td class="text-slate-300">{{ $state->name }}</td>
             <td>
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chorderState-{{ $state->id }}" labelClass="hover:bg-slate-900"
@@ -155,7 +155,7 @@
                       </button>
                     </li>
                     <li>
-                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                      <button type="button" data-text="Estado: '{{ $state->name }}'" data-uid="{{ $state->id }}"
                         data-modalID="stateTypeDelete" data-path="order-states/{{ $state->id }}" data-delete="true"
                         class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
                         <span>
@@ -181,8 +181,8 @@
         @forelse ($paymentStates as $index => $state)
           <tr>
             <td>{{ $index + 1 }}</td>
-            <td class="font-bold">{{ $state->code }}</td>
-            <td class="text-slate-300">{{ $state->description }}</td>
+            <td class="font-bold">{{ $state->slug }}</td>
+            <td class="text-slate-300">{{ $state->name }}</td>
             <td>
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chpaymentState-{{ $state->id }}" labelClass="hover:bg-slate-900"
@@ -204,7 +204,7 @@
                       </button>
                     </li>
                     <li>
-                      <button type="button" data-text="Estado: '{{ $state->code }}'" data-uid="{{ $state->id }}"
+                      <button type="button" data-text="Estado: '{{ $state->name }}'" data-uid="{{ $state->id }}"
                         data-modalID="stateTypeDelete" data-path="payment-states/{{ $state->id }}"
                         data-delete="true"
                         class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
@@ -248,14 +248,14 @@
       @method('PUT')
       <fieldset class="py-3 grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6 text-gray-700 md:px-3">
         <div class="pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="code">Código</label>
-          <input type="text" id="code" name="code" autocomplete="off"
+          <label class="block mb-2 font-semibold" for="slug">Código</label>
+          <input type="text" id="slug" name="slug" autocomplete="off"
             class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
             required>
         </div>
         <div class="col-span-full pointer-events-none group-[.editable]:pointer-events-auto">
-          <label class="block mb-2 font-semibold" for="description">Descripción</label>
-          <textarea id="description" name="description"
+          <label class="block mb-2 font-semibold" for="name">Nombre</label>
+          <textarea id="name" name="name"
             class="w-full max-w-lg min-h-lh px-3 py-2 text-gray-900 text-base resize-none overflow-hidden bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 field-sizing-content"></textarea>
         </div>
         <button type="submit"

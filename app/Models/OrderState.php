@@ -7,10 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderState extends Model
 {
-    protected $fillable = [
-        'code',
-        'description',
-    ];
+    protected $fillable = ['slug', 'name'];
 
     public function orders(): HasMany
     {

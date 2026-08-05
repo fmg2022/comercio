@@ -74,7 +74,7 @@ class MercadoPagoController extends Controller
             ]);
             $payment->update([
                 'provider_state' => 'rejected',
-                'payment_state_id' => DB::table('payment_states')->where('code', 'CANCELADO')->value('id'),
+                'payment_state_id' => DB::table('payment_states')->where('slug', 'cancel')->value('id'),
             ]);
 
             return back()->with('error', 'No se pudo iniciar el pago');
@@ -114,18 +114,18 @@ class MercadoPagoController extends Controller
                 Log::warning("No se encontró orden local para external_reference: {$mpPayment->external_reference}");
                 return response()->json(['error' => 'Order not found'], 404);
             }
-            $stateName = $mpPayment->status === 'approved' ? 'PAGADO' : ($mpPayment->status === 'rejected' ? 'RECHAZADO' : 'PENDIENTE');
+            $stateName = $mpPayment->status === 'approved' ?? ($mpPayment->status === 'rejected' ?? 'pending');
 
             $payment->update([
                 'paymentId'               => $mpPayment->collector_id,
                 'provider_state'          => $mpPayment->status,
                 'paid_at'                 => $mpPayment->status === 'approved' ? $mpPayment->date_approved : null,
                 'nro_fee'                 => 1,
-                'payment_state_id' => PaymentState::where('code', $stateName)->value('id'),
+                'payment_state_id' => PaymentState::where('slug', $stateName)->value('id'),
             ]);
 
             if ($mpPayment->status === 'approved') {
-                $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+                $payment->order->update(['order_state_id' => OrderState::where('slug', 'paid')->value('id')]);
             }
 
             Log::info("Pago {$paymentId} procesado correctamente. Orden {$payment->order->id} actualizada.");
@@ -160,10 +160,10 @@ class MercadoPagoController extends Controller
                     'paymentId' => $paymentId,
                     'provider_state' => 'approved',
                     'paid_at' => now(),
-                    'payment_state_id' => PaymentState::where('code', 'APROBADO')->value('id'),
+                    'payment_state_id' => PaymentState::where('slug', 'approved')->value('id'),
                 ]);
 
-                $payment->order->update(['order_state_id' => OrderState::where('code', 'PAGADO')->value('id')]);
+                $payment->order->update(['order_state_id' => OrderState::where('slug', 'paid')->value('id')]);
             }
 
             // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
@@ -194,7 +194,7 @@ class MercadoPagoController extends Controller
                     'paymentId' => $paymentId,
                     'provider_state' => 'rejected'
                 ]);
-                $pago->order->update(['order_state_id' => OrderState::where('code', 'CANCELADO')->value('id')]);
+                $pago->order->update(['order_state_id' => OrderState::where('slug', 'cancel')->value('id')]);
             }
         }
 

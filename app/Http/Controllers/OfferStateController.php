@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OfferState;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\{JsonResponse, RedirectResponse, Request};
 use Illuminate\Validation\Rule;
 
 class OfferStateController extends Controller
@@ -13,8 +11,8 @@ class OfferStateController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => 'required|string|max:255|unique:offer_states,code',
-            'description' => 'required|string|max:255'
+            'slug' => 'required|string|max:255|unique:offer_states,slug',
+            'name' => 'required|string|max:255'
         ]);
         OfferState::create($validated);
 
@@ -24,13 +22,13 @@ class OfferStateController extends Controller
     public function update(Request $request, OfferState $offerState): RedirectResponse
     {
         $validated = $request->validate([
-            'code' => [
+            'slug' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('offer_states', 'code')->ignore($offerState->id),
+                Rule::unique('offer_states', 'slug')->ignore($offerState->id),
             ],
-            'description' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
         $offerState->update($validated);
 
@@ -40,11 +38,11 @@ class OfferStateController extends Controller
     public function destroy(OfferState $offerState): RedirectResponse
     {
         $type = 'warning';
-        $message = 'No se ha podido eliminar el estado: ' . $offerState->code . ' porque tiene offertas asociadas';
+        $message = 'No se ha podido eliminar el estado: ' . $offerState->name . ' porque tiene offertas asociadas';
 
         if (!$offerState->offers()->exists()) {
             $type = 'success';
-            $message = 'El estado ' . $offerState->code . ' se ha eliminado correctamente';
+            $message = 'El estado ' . $offerState->name . ' se ha eliminado correctamente';
             $offerState->delete();
         }
 
@@ -55,6 +53,6 @@ class OfferStateController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        return response()->json(OfferState::findOrFail($id, ['id', 'code', 'description']));
+        return response()->json(OfferState::findOrFail($id, ['id', 'slug', 'name']));
     }
 }

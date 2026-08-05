@@ -17,7 +17,7 @@ class OrderController extends Controller
 	{
 		return view('pages.dashboard.order.index', [
 			'orders' => Order::orderByDesc('date')->paginate(10),
-			'orderStates' => OrderState::all(['code', 'id']),
+			'orderStates' => OrderState::all(['id', 'slug', 'name']),
 			'users' => User::has('orders')->select('id', 'name', 'surname')->get(),
 		]);
 	}
@@ -30,7 +30,7 @@ class OrderController extends Controller
 
 		return view('pages.dashboard.order.index', [
 			'orders' => $orders->orderByDesc('date')->paginate(10),
-			'orderStates' => OrderState::all(['code', 'id']),
+			'orderStates' => OrderState::all(['id', 'slug', 'name']),
 			'users' => $users,
 		]);
 	}
@@ -92,7 +92,7 @@ class OrderController extends Controller
 				'total' => 0,
 				'iva' => 0,
 				'notes' => $validated['notes'],
-				'order_state_id' => OrderState::where('code', 'PENDIENTE')->value('id'),
+				'order_state_id' => OrderState::where('slug', 'pending')->value('id'),
 				'user_id' => $user->id,
 				'address' => $user->address,
 			]);
@@ -106,7 +106,7 @@ class OrderController extends Controller
 						$productItem->pivot->quantity,
 						$templateOffer->buy_qty,
 						$templateOffer->pay_qty,
-						$templateOffer->offerType->code
+						$templateOffer->offerType->slug
 					)
 					: 0;
 
@@ -115,7 +115,7 @@ class OrderController extends Controller
 					'price' => $productItem->price,
 					'discount' => $discount,
 					'offer_template_id' => $templateOffer?->id ?? '',
-					'offer_type_code' => $templateOffer?->offerType->code ?? '',
+					'offer_type_slug' => $templateOffer?->offerType->slug ?? '',
 				]);
 
 				$total += (($productItem->price * $productItem->pivot->quantity) - $productItem->pivot->discount);
@@ -132,7 +132,7 @@ class OrderController extends Controller
 			return $order;
 		});
 
-		$code = $validated['payment_method'] === 'mercadopago' ? 'MERCADO_PAGO' : 'PAYPAL';
+		$slug = $validated['payment_method'] === 'mercadopago' ? 'MERCADO_PAGO' : 'PAYPAL';
 		$payment = Payment::create([
 			'transaction_id' => 'pending_' . uniqid('', true),
 			'paymentId' => 'pay_' . uniqid('', true),
@@ -142,8 +142,8 @@ class OrderController extends Controller
 			'amount' => $order->total + $order->iva,
 			'paid_at' => null,
 			'order_id' => $order->id,
-			'payment_state_id' => PaymentState::where('code', 'EN_PROCESO')->value('id'),
-			'payment_provider_id' => PaymentProvider::where('code', $code)->value('id'),
+			'payment_state_id' => PaymentState::where('slug', 'pending')->value('id'),
+			'payment_provider_id' => PaymentProvider::where('slug', $slug)->value('id'),
 		]);
 
 		if ($validated['payment_method'] === 'mercadopago')
@@ -170,7 +170,7 @@ class OrderController extends Controller
 		$user = auth()->user();
 		return view('pages.dashboard.order.index', [
 			'orders' => $user->orders()->orderByDesc('date')->paginate(10),
-			'orderStates' => OrderState::all(['code', 'id']),
+			'orderStates' => OrderState::all(['slug', 'id']),
 		]);
 	}
 
@@ -223,7 +223,7 @@ class OrderController extends Controller
 	{
 		$filters = $request->validated();
 		$query = Order::query()
-			->with(['user:id,name,surname', 'orderState:id,code', 'products']);
+			->with(['user:id,name,surname', 'orderState:id,slug', 'products']);
 
 		$this->applyFilters($query, $filters);
 

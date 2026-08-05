@@ -13,10 +13,11 @@ class OfferStateSeeder extends Seeder
     public function run(): void
     {
         DB::table('offer_states')->insert([
-            ['code' => 'PENDIENTE', 'description' => 'La oferta está en borrador y no es visible para los usuarios.'],
-            ['code' => 'ACTIVA', 'description' => 'La oferta está activa y disponible para los usuarios.'],
-            ['code' => 'PAUSADA', 'description' => 'La oferta está pausada temporalmente y no es visible para los usuarios.'],
-            ['code' => 'EXPIRADA', 'description' => 'La oferta ha expirado y ya no es válida.'],
+            ['slug' => 'pending', 'name' => 'Pendiente'],
+            ['slug' => 'active', 'name' => 'Activa'],
+            ['slug' => 'paused', 'name' => 'Pausada'],
+            ['slug' => 'expired', 'name' => 'Expirada'],
+            ['slug' => 'cancelled', 'name' => 'Cancelada'],
         ]);
     }
 }

@@ -13,12 +13,11 @@ class OrderStateSeeder extends Seeder
     public function run(): void
     {
         DB::table('order_states')->insert([
-            ['code' => 'CREADO', 'description' => 'El pedido se ha creado.'],
-            ['code' => 'PENDIENTE', 'description' => 'Esperando confirmación de pago.'],
-            ['code' => 'PAGADO', 'description' => 'Pago confirmado, preparando pedido.'],
-            ['code' => 'COMPLETO', 'description' => 'El pedido se ha completado con éxito.'],
-            ['code' => 'REEMBOLSADO', 'description' => 'El pedido ha sido reembolsado.'],
-            ['code' => 'CANCELADO', 'description' => 'El pedido ha sido cancelado por el cliente/sistema.'],
+            ['slug' => 'pending', 'name' => 'Pendiente'],
+            ['slug' => 'paid', 'name' => 'Pagado'],
+            ['slug' => 'completed', 'name' => 'Completado'],
+            ['slug' => 'refunded', 'name' => 'Reembolsado'],
+            ['slug' => 'cancelled', 'name' => 'Cancelado'],
         ]);
     }
 }

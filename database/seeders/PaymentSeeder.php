@@ -16,10 +16,10 @@ class PaymentSeeder extends Seeder
     {
         $orders = Order::doesntHave('payment')
             ->join('order_states', 'orders.order_state_id', '=', 'order_states.id')
-            ->select('orders.id', 'orders.total', 'orders.date', 'order_states.code')
+            ->select('orders.id', 'orders.total', 'orders.date', 'order_states.slug')
             ->get();
 
-        $paymentStates = DB::table('payment_states')->pluck('id', 'code');
+        $paymentStates = DB::table('payment_states')->pluck('id', 'slug');
         $nonCanceledStateIds = $paymentStates->except('CANCELADO')->values()->all();
 
         $activeProviderIds = DB::table('payment_providers')
@@ -47,7 +47,7 @@ class PaymentSeeder extends Seeder
             };
 
             $paidAt = null;
-            if ($order->code !== 'CANCELADO') {
+            if ($order->slug !== 'cancelled') {
                 $calculatedPaidAt = $order->date->addDays($daysDelay);
                 $paidAt = $calculatedPaidAt->isFuture() ? now() : $calculatedPaidAt;
             }
@@ -66,7 +66,7 @@ class PaymentSeeder extends Seeder
                     'order_id' => $order->id,
                 ]);
 
-            if ($order->code === 'CANCELADO') {
+            if ($order->slug === 'cancelled') {
                 $paymentFactory->forCanceledOrder();
             } else {
                 $paymentFactory->state(['payment_state_id' => fake()->randomElement($nonCanceledStateIds)]);

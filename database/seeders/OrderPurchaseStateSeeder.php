@@ -13,11 +13,14 @@ class OrderPurchaseStateSeeder extends Seeder
     public function run(): void
     {
         DB::table('order_purchase_states')->insert([
-            ['code' => 'Pendiente', 'description' => 'Pedido de compra pendiente de aprobación'],
-            ['code' => 'Enviada al Proveedor', 'description' => 'Pedido de compra enviado al proveedor'],
-            ['code' => 'Recibida', 'description' => 'Pedido de compra recibido por el proveedor'],
-            ['code' => 'Pagada', 'description' => 'Pedido de compra pagada'],
-            ['code' => 'Cancelada', 'description' => 'Pedido de compra cancelada'],
+            ['slug' => 'pending', 'name' => 'Pendiente'],
+            ['slug' => 'sent', 'name' => 'Enviado'],
+            ['slug' => 'approved', 'name' => 'Aprobado'],
+            ['slug' => 'rejected', 'name' => 'Rechazado'],
+            ['slug' => 'refunded', 'name' => 'Reembolsado'],
+            ['slug' => 'expired', 'name' => 'Expirado'],
+            ['slug' => 'paid', 'name' => 'Pagado'],
+            ['slug' => 'cancelled', 'name' => 'Cancelado'],
         ]);
     }
 }

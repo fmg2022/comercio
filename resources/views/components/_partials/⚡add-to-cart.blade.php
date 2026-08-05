@@ -67,7 +67,7 @@ new class extends Component {
             $offerTemplate = Offer::find($this->product->activeOffer())?->offerTemplate;
             $qty = $existItem ? $item->pivot->quantity + $this->quantity : $this->quantity;
 
-            $discount = $offerTemplate ? $this->product->getDiscountTotal($qty, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->code) : 0;
+            $discount = $offerTemplate ? $this->product->getDiscountTotal($qty, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->slug) : 0;
 
             if ($existItem) {
                 $cart->updateProduct($this->productId, $qty, $discount);
@@ -128,9 +128,9 @@ new class extends Component {
       @if ($offerId)
         <p class="flex justify-star items-center gap-3">
           @php
-            $offerType = $this->offerTemplate->offerType->code;
+            $offerType = $this->offerTemplate->offerType->slug;
 
-            if ($offerType === 'X_FOR_Y') {
+            if ($offerType === 'x_for_y') {
                 $buy = (float) $this->offerTemplate->buy_qty;
                 $newPrice = ($this->product->price * ($buy - (float) $this->offerTemplate->pay_qty)) / $buy;
             } else {
@@ -145,12 +145,12 @@ new class extends Component {
           <span class="text-lg font-bold text-slate-700">
             {!! "$" .
                 number_format($this->product->price - $newPrice, 2, ',', '.') .
-                ($offerType === 'X_FOR_Y' ? '<sup>c/u</sup>' : '') !!}
+                ($offerType === 'x_for_y' ? '<sup>c/u</sup>' : '') !!}
           </span>
           <span class="p-1 bg-amber-400 rounded-lg text-xs">
-            {{ $offerType === 'FIXED'
+            {{ $offerType === 'fixed'
                 ? '-$' . $this->offerTemplate->pay_qty
-                : ($offerType === 'PERCENTAGE'
+                : ($offerType === 'percentage'
                     ? '-' . $this->offerTemplate->pay_qty * 100 . '%'
                     : $this->offerTemplate->buy_qty * 1 . 'x' . $this->offerTemplate->pay_qty * 1) }}
           </span>
