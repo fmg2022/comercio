@@ -23,9 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('dashboard.index');
         Route::get('/clients', [\App\Http\Controllers\DashboardController::class, 'index'])
             ->name('client.dashboard');
-        Route::get('/admins', [\App\Http\Controllers\AdminDashboardController::class, 'index'])
-            ->middleware('permission:list roles')
-            ->name('admin.dashboard');
+        Route::livewire('/admins', 'pages::dashboard.admin-index')->name('admin.dashboard')->middleware('permission:view_any_roles');
     });
 
     // Rutas para el carrito

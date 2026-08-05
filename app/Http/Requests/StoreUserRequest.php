@@ -12,7 +12,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('manage users');
+        return auth()->user()->hasAnyPermission(['create_users', 'update_users']);
     }
 
     protected function prepareForValidation(): void

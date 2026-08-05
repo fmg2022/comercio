@@ -1,68 +1,72 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('delete_product_attributes'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endPushIf
-@push('scripts-dashboard')
-  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
-  <script>
-    const choicesInstances = {};
+@can('view_any_product_attributes')
+  @push('scripts-dashboard')
+    <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
+    <script>
+      const choicesInstances = {};
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectsConfig = [{
-          id: 'parent',
-          placeholder: 'Selecciona una categoría',
-          searchPlaceholderValue: 'Buscar categoría...',
-          searchEnabled: true,
-        },
-        {
-          id: 'children',
-          placeholder: 'Selecciona uno o más categorías',
-          searchEnabled: false,
-        },
-      ]
-      selectsConfig.forEach(config => {
-        const choicesOptions = {
-          placeholderValue: config.placeholder,
-          searchPlaceholderValue: config.searchPlaceholderValue,
-          searchEnabled: config.searchEnabled,
-          removeItemButton: true,
-          placeholder: true,
-          shouldSort: false,
-        };
+      document.addEventListener('DOMContentLoaded', function() {
+        const selectsConfig = [{
+            id: 'parent',
+            placeholder: 'Selecciona una categoría',
+            searchPlaceholderValue: 'Buscar categoría...',
+            searchEnabled: true,
+          },
+          {
+            id: 'children',
+            placeholder: 'Selecciona uno o más categorías',
+            searchEnabled: false,
+          },
+        ]
+        selectsConfig.forEach(config => {
+          const choicesOptions = {
+            placeholderValue: config.placeholder,
+            searchPlaceholderValue: config.searchPlaceholderValue,
+            searchEnabled: config.searchEnabled,
+            removeItemButton: true,
+            placeholder: true,
+            shouldSort: false,
+          };
 
-        choicesInstances[config.id] = new Choices(`#${config.id}`, choicesOptions);
-      });
-    })
-  </script>
-@endPush
+          choicesInstances[config.id] = new Choices(`#${config.id}`, choicesOptions);
+        });
+      })
+    </script>
+  @endPush
 
-@push('styles-dashboard')
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
-  <style>
-    .choices__inner {
-      background-color: #fff !important;
-      border-color: #e2e8f0 !important;
-      border-radius: 0.375rem !important;
-      min-height: 42px !important;
-    }
+  @push('styles-dashboard')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+    <style>
+      .choices__inner {
+        background-color: #fff !important;
+        border-color: #e2e8f0 !important;
+        border-radius: 0.375rem !important;
+        min-height: 42px !important;
+      }
 
-    .choices__list--dropdown {
-      z-index: 10 !important;
-    }
-  </style>
-@endPush
+      .choices__list--dropdown {
+        z-index: 10 !important;
+      }
+    </style>
+  @endPush
+@endcan
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Categorías</x-slot:textTitle>
 
-    <button type="button" data-type="create" data-modalID="categoryCSE"
-      class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
-      <x-icons.plus class="size-6" />
-      Nueva Categoría
-    </button>
+    @can('create_product_attributes')
+      <button type="button" data-type="create" data-modalID="categoryCSE"
+        class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
+        <x-icons.plus class="size-6" />
+        Nueva Categoría
+      </button>
+    @endcan
   </x-sections.headerTitle>
 
   <x-tables.table>
@@ -102,29 +106,31 @@
 
                 <ul
                   class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
-                  <li>
-                    <button type="button" data-type="show" data-uid="{{ $category->id }}"
-                      data-path="{{ $category->id }}" data-modalID="categoryCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Categoría
-                    </button>
-                  </li>
-                  @can('manage products-and-attributes')
-                    @if (!$category->trashed())
-                      <li>
-                        <button type="button" data-type="edit" data-uid="{{ $category->id }}"
-                          data-path="{{ $category->id }}" data-modalID="categoryCSE"
-                          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                          <span>
-                            <x-icons.edit class="size-5" />
-                          </span>
-                          Editar Categoría
-                        </button>
-                      </li>
-                    @endif
+                  @can('view_any_product_attributes')
+                    <li>
+                      <button type="button" data-type="show" data-uid="{{ $category->id }}"
+                        data-path="{{ $category->id }}" data-modalID="categoryCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.show class="size-5" />
+                        </span>
+                        Ver Categoría
+                      </button>
+                    </li>
+                  @endcan
+                  @if (!$category->trashed() && auth()->user()->can('update_product_attributes'))
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $category->id }}"
+                        data-path="{{ $category->id }}" data-modalID="categoryCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Categoría
+                      </button>
+                    </li>
+                  @endif
+                  @can('delete_product_attributes')
                     <li>
                       <button type="button" data-text="Categoria: '{{ $category->name }}'" data-uid="{{ $category->id }}"
                         data-modalID="categoryDeleteRestore" data-delete="{{ $category->trashed() ? 'false' : 'true' }}"
@@ -163,7 +169,7 @@
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @can('manage products-and-attributes')
+      @can('update_product_attributes')
         @csrf
         @method('PUT')
       @endcan
@@ -208,7 +214,7 @@
   </x-modals.simple>
 
   {{-- Modal DELETE y RESTORE --}}
-  @can('manage products-and-attributes')
+  @can('delete_product_attributes')
     <x-modals.delete id="categoryDeleteRestore" />
   @endcan
 @endsection

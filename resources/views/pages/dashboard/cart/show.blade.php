@@ -1,9 +1,11 @@
 @extends('layouts.dashboard')
 
-@pushIf($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'),
+@pushIf($cart->products->count() > 0 && auth()->user()?->can('view_any_carts'),
 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
-<script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@if (auth()->user()?->can('manage_cart_details'))
+  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@endif
 @endPushIf
 
 @section('content')
@@ -76,7 +78,7 @@
 
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  @can('manage carts-details')
+                  @can('view_any_carts')
                     <li>
                       <a href="{{ route('products.show', $product->id) }}"
                         class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
@@ -86,6 +88,8 @@
                         Ver Producto
                       </a>
                     </li>
+                  @endcan
+                  @can('manage_cart_details')
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $product->id }}"
                         data-path="{{ $cart->id }}/product/{{ $product->id }}" data-modalID="cartDetailsCES"
@@ -122,7 +126,7 @@
     <span>${{ number_format($cart->total, 2, ',', '.') }}</span>
   </p>
 
-  @if ($cart->products->count() > 0 && auth()->user()?->can('manage carts-details'))
+  @if ($cart->products->count() > 0 && auth()->user()?->can('view_any_carts'))
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="cartDetailsCES"
       class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">

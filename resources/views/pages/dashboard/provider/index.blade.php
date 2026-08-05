@@ -1,15 +1,18 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->user()?->can('manage providers'), 'scripts-dashboard')
-<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@pushIf(auth()->user()?->can('view_providers'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+
+@if (auth()->user()?->can('delete_providers'))
+  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@endif
 @endPushIf
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Lista de Proveedores</x-slot:textTitle>
 
-    @can('manage providers')
+    @can('create_providers')
       <button type="button" data-type="create" data-modalID="providerCES"
         class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
         <x-icons.plus class="size-6" />
@@ -43,16 +46,16 @@
           <td class="text-center">{{ $provider->products->count() }}</td>
           <td>{{ $provider->active ? 'Activo' : 'Inactivo' }}</td>
           <td>
-            @can('manage providers')
-              <div class="relative flex justify-end">
-                <x-popups.contentWcheck iid="chprovider-{{ $provider->id }}" labelClass="hover:bg-slate-900"
-                  class="right-12 -top-1/4">
-                  <x-slot:label>
-                    <x-icons.threeDotsX class="size-6" />
-                  </x-slot:label>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chprovider-{{ $provider->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-                  <ul
-                    class="w-max py-2 {{ $provider->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold">
+                <ul
+                  class="w-max py-2 {{ $provider->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold">
+                  @can('view_providers')
                     <li>
                       <button type="button" data-type="show" data-uid="{{ $provider->id }}"
                         data-path="{{ $provider->id }}" data-modalID="providerCES"
@@ -63,18 +66,20 @@
                         Ver Proveedor
                       </button>
                     </li>
-                    @if (!$provider->trashed())
-                      <li>
-                        <button type="button" data-type="edit" data-uid="{{ $provider->id }}"
-                          data-path="{{ $provider->id }}" data-modalID="providerCES"
-                          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                          <span>
-                            <x-icons.edit class="size-5" />
-                          </span>
-                          Editar Proveedor
-                        </button>
-                      </li>
-                    @endif
+                  @endcan
+                  @if (!$provider->trashed() && auth()->user()->can('update_providers'))
+                    <li>
+                      <button type="button" data-type="edit" data-uid="{{ $provider->id }}"
+                        data-path="{{ $provider->id }}" data-modalID="providerCES"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.edit class="size-5" />
+                        </span>
+                        Editar Proveedor
+                      </button>
+                    </li>
+                  @endif
+                  @can('delete_providers')
                     <li>
                       <button type="button" data-text="Proveedor: '{{ $provider->name }}'" data-uid="{{ $provider->id }}"
                         data-modalID="providerDelete"
@@ -91,12 +96,10 @@
                         {{ $provider->trashed() ? 'Restaurar' : 'Eliminar' }} Proveedor
                       </button>
                     </li>
-                  </ul>
-                </x-popups.contentWcheck>
-              </div>
-            @else
-              <p class="px-2 text-end">---</p>
-            @endcan
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
           </td>
         </tr>
       @empty
@@ -107,7 +110,7 @@
     </x-slot:tbody>
   </x-tables.table>
 
-  @can('manage providers')
+  @can('view_providers')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="providerCES"
       class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">

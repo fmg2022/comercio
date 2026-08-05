@@ -39,16 +39,15 @@ class RegisteredUserController extends Controller
             'phone' => $request->phone,
             'dni' => $request->dni,
         ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
+        $user->assignRole('client');
 
         Cart::create([
             'user_id' => $user->id,
         ]);
 
-        $user->assignRole('Cliente');
+        event(new Registered($user));
+
+        Auth::login($user);
 
         return redirect(route('dashboard.index', absolute: false));
     }

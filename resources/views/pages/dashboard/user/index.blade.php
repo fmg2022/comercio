@@ -1,10 +1,10 @@
 @extends('layouts.dashboard')
 
 @push('scripts-dashboard')
-  @can('list users')
+  @can('view_any_users')
     <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
   @endcan
-  @can('manage users')
+  @can('delete_users')
     <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
   @endcan
 @endPush
@@ -16,7 +16,7 @@
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Lista de Usuarios</x-slot:textTitle>
 
-    @can('manage users')
+    @can('create_users')
       <button type="button" data-type="create" data-modalID="userCSE"
         class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
         <x-icons.plus class="size-6" />
@@ -78,7 +78,7 @@
 
                 <ul
                   class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  @can('manage roles')
+                  @can('update_roles')
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $user->id }}"
                         data-path="{{ $user->id }}/roles" data-modalID="roleCSE"
@@ -90,17 +90,19 @@
                       </button>
                     </li>
                   @endcan
-                  <li>
-                    <button type="button" data-type="show" data-uid="{{ $user->id }}"
-                      data-path="{{ $user->id }}" data-modalID="userCSE"
-                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                      <span>
-                        <x-icons.show class="size-5" />
-                      </span>
-                      Ver Usuario
-                    </button>
-                  </li>
-                  @can('manage users')
+                  @can('view_users')
+                    <li>
+                      <button type="button" data-type="show" data-uid="{{ $user->id }}"
+                        data-path="{{ $user->id }}" data-modalID="userCSE"
+                        class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                        <span>
+                          <x-icons.show class="size-5" />
+                        </span>
+                        Ver Usuario
+                      </button>
+                    </li>
+                  @endcan
+                  @can('update_users')
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $user->id }}"
                         data-path="{{ $user->id }}" data-modalID="userCSE"
@@ -111,6 +113,8 @@
                         Editar Usuario
                       </button>
                     </li>
+                  @endcan
+                  @can('delete_users')
                     <li>
                       <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
                         data-modalID="{{ $type1 }}" data-path="{{ $user->id }}" data-delete="true"
@@ -187,7 +191,7 @@
                     Ver Usuario
                   </button>
                 </li>
-                @can('manage users')
+                @can('delete_users')
                   <li>
                     <button type="button" data-text="Usuario: '{{ $user->fullName() }}'" data-uid="{{ $user->id }}"
                       data-modalID="{{ $type1 }}" data-path="{{ $user->id . '/restore' }}" data-delete="false"
@@ -214,7 +218,7 @@
 
   {{ $usersDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
-  @can('list users')
+  @can('view_any_users')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="userCSE"
       class="max-w-xl w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] scrollbat-thin">
@@ -281,7 +285,7 @@
     {{-- MODAL DELETE, RESTORE --}}
     <x-modals.delete id="{{ $type1 }}" />
   @endcan
-  @can('manage roles')
+  @can('update_roles')
     <x-modals.simple id="roleCSE"
       class="max-w-md w-full max-h-[90%] overflow-y-auto bg-slate-200 [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"

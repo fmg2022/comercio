@@ -1,8 +1,10 @@
 @extends('layouts.dashboard')
 
-@push('scripts-dashboard')
-  @can('manage products-and-attributes')
-    <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@can('view_product')
+  @push('scripts-dashboard')
+    @can('delete_products')
+      <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+    @endcan
     <script src="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/scripts/choices.min.js"></script>
     <script>
       const choicesInstances = {};
@@ -33,25 +35,25 @@
         });
       })
     </script>
-  @endcan
-  <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
-@endPush
+    <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+  @endPush
 
-@push('styles-dashboard')
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
-  <style>
-    .choices__inner {
-      background-color: #fff !important;
-      border-color: #e2e8f0 !important;
-      border-radius: 0.375rem !important;
-      min-height: 42px !important;
-    }
+  @push('styles-dashboard')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js@11.1.0/public/assets/styles/choices.min.css" />
+    <style>
+      .choices__inner {
+        background-color: #fff !important;
+        border-color: #e2e8f0 !important;
+        border-radius: 0.375rem !important;
+        min-height: 42px !important;
+      }
 
-    .choices__list--dropdown {
-      z-index: 10 !important;
-    }
-  </style>
-@endPush
+      .choices__list--dropdown {
+        z-index: 10 !important;
+      }
+    </style>
+  @endPush
+@endcan
 
 <!-- Mostrar un mensaje para:
     - Los errores en las operaciones desde está página
@@ -65,7 +67,7 @@
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Lista de Productos</x-slot:textTitle>
 
-    @can('manage products-and-attributes')
+    @can('create_products')
       <button type="button" data-type="create" data-modalID="productCSE"
         class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
         <x-icons.plus class="size-6" />
@@ -113,17 +115,19 @@
               </x-slot:label>
 
               <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold ">
-                <li>
-                  <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
-                    data-modalID="productCSE"
-                    class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                    <span>
-                      <x-icons.show class="size-5" />
-                    </span>
-                    Ver Producto
-                  </button>
-                </li>
-                @can('manage products-and-attributes')
+                @can('view_product')
+                  <li>
+                    <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
+                      data-modalID="productCSE"
+                      class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                      <span>
+                        <x-icons.show class="size-5" />
+                      </span>
+                      Ver Producto
+                    </button>
+                  </li>
+                @endcan
+                @can('update_products')
                   <li>
                     <button type="button" data-type="edit" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
                       data-modalID="productCSE"
@@ -134,6 +138,8 @@
                       Editar Producto
                     </button>
                   </li>
+                @endcan
+                @can('view_any_orders')
                   <li>
                     <a href="{{ route('products.orders', $product->id) }}"
                       class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 transition-colors">
@@ -143,6 +149,8 @@
                       Productos en Ordenes
                     </a>
                   </li>
+                @endcan
+                @can('delete_products')
                   <li>
                     <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
                       data-modalID="{{ $type1 }}" data-path="{{ $product->id }}" data-delete="true"
@@ -168,7 +176,7 @@
 
   {{ $products->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
-  @can('manage products-and-attributes')
+  @can('delete_products')
     <h2 class="mb-5 mt-10 px-4 text-2xl font-semibold text-gray-300">Productos Eliminados</h2>
     <x-tables.table>
       <x-slot:thead>
@@ -253,12 +261,12 @@
     {{ $productsDeleted->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
   @endcan
 
-  {{-- MODAL SHOW, EDIT --}}
+  {{-- MODAL SHOW, EDIT, CREATE --}}
   <x-modals.simple id="productCSE"
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @can('manage products-and-attributes')
+      @can('edit_products')
         @csrf
         @method('PUT')
       @endcan
@@ -351,7 +359,7 @@
   </x-modals.simple>
 
   {{-- MODAL DELETE, RESTORE --}}
-  @can('manage products-and-attributes')
+  @can('delete_products')
     <x-modals.delete id="{{ $type1 }}" />
   @endcan
 @endsection

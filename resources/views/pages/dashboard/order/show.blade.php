@@ -69,16 +69,16 @@
           </td>
           <td>
             <div class="relative flex justify-end">
-              <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
-                class="right-12 -top-1/4">
-                <x-slot:label>
-                  <x-icons.threeDotsX class="size-6" />
-                </x-slot:label>
+              @can('view_product')
+                <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
+                  class="right-12 -top-1/4">
+                  <x-slot:label>
+                    <x-icons.threeDotsX class="size-6" />
+                  </x-slot:label>
 
-                <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  <li>
-                    @can('list products')
+                  <ul
+                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    <li>
                       <a href="{{ route('products.show', $orderLine->id) }}"
                         class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                         <span>
@@ -86,10 +86,12 @@
                         </span>
                         Ver Producto
                       </a>
-                    @endcan
-                  </li>
-                </ul>
-              </x-popups.contentWcheck>
+                    </li>
+                  </ul>
+                </x-popups.contentWcheck>
+              @else
+                <p class="px-2 text-end">---</p>
+              @endcan
             </div>
           </td>
         </tr>

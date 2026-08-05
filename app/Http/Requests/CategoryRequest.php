@@ -12,7 +12,10 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('manage products-and-attributes');
+        return auth()->user()->hasAnyPermission([
+            'create_product_attributes',
+            'update_product_attributes',
+        ]);
     }
 
     /**

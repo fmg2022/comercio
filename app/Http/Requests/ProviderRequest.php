@@ -12,7 +12,7 @@ class ProviderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->can('manage providers');
+        return auth()->user()->hasAnyPermission(['create_providers', 'update_providers']);
     }
 
     protected function prepareForValidation(): void

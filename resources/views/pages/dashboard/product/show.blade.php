@@ -9,12 +9,12 @@
       <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
         Volver
       </x-buttons.linkFill>
-      @can('manage products-and-attributes')
+      @can('update_products')
         <x-buttons.linkFill href="{{ route('products.edit', $product->id) }}" class="bg-purple-600 active:bg-purple-700">
           Editar
         </x-buttons.linkFill>
       @endcan
-      @can('list products')
+      @can('view_any_products')
         <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-indigo-500 active:bg-indigo-600">
           Ver listado
         </x-buttons.linkFill>

@@ -1,15 +1,17 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->user()?->can('manage roles'), 'scripts-dashboard')
-<script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@pushIf(auth()->user()?->can('view_any_roles'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalSEC.js') }}" defer></script>
+@can('delete_roles')
+  <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
+@endcan
 @endPushIf
 
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>Lista de Roles y Permisos</x-slot:textTitle>
 
-    @can('manage roles')
+    @can('create_roles')
       <button type="button" data-type="create" data-modalID="roleCES"
         class="px-4 py-2 flex items-center gap-2 rounded-md cursor-pointer bg-purple-600 active:bg-purple-700 button-create-edit-show">
         <x-icons.plus class="size-6" />
@@ -45,19 +47,17 @@
 
                       <ul
                         class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                        @can('list roles')
-                          <li>
-                            <button type="button" data-type="show" data-uid="{{ $role->id }}"
-                              data-path="{{ $role->id }}" data-modalID="roleCES"
-                              class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
-                              <span>
-                                <x-icons.edit class="size-5" />
-                              </span>
-                              Ver Rol
-                            </button>
-                          </li>
-                        @endcan
-                        @can('manage roles')
+                        <li>
+                          <button type="button" data-type="show" data-uid="{{ $role->id }}"
+                            data-path="{{ $role->id }}" data-modalID="roleCES"
+                            class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-create-edit-show">
+                            <span>
+                              <x-icons.edit class="size-5" />
+                            </span>
+                            Ver Rol
+                          </button>
+                        </li>
+                        @can('update_roles')
                           <li>
                             <button type="button" data-type="edit" data-uid="{{ $role->id }}"
                               data-path="{{ $role->id }}" data-modalID="roleCES"
@@ -121,14 +121,16 @@
     </div>
   </div>
 
-  @can('manage roles')
+  @can('view_any_roles')
     {{-- MODAL SHOW, EDIT --}}
     <x-modals.simple id="roleCES"
       class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbat-thin">
       <form enctype="multipart/form-data" method="POST"
         class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-        @csrf
-        @method('PUT')
+        @can('update_roles')
+          @csrf
+          @method('PUT')
+        @endcan
         <fieldset class="py-3 grid grid-cols-1 gap-6 text-gray-700 md:px-3">
           <div class="pointer-events-none group-[.editable]:pointer-events-auto">
             <label class="block mb-2 font-semibold" for="name">Nombre</label>
@@ -187,6 +189,8 @@
         <button class="px-3 py-2 bg-red-700 text-lg text-white rounded-md hover:bg-red-600 cursor-pointer">Cancelar</button>
       </form>
     </x-modals.simple>
+  @endcan
+  @can('delete_roles')
     {{-- MODAL DELETE, RESTORE --}}
     <x-modals.delete id="rolDelete" />
   @endcan

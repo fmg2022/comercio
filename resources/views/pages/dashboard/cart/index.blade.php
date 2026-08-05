@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@pushIf(auth()->user()?->can('manage carts-details'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('manage_cart_details'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endPushIf
 
@@ -35,15 +35,15 @@
           <td>{{ $cart->products_count }}</td>
           <td>{{ $cart->updated_at }}</td>
           <td>
-            @can('manage carts-details')
-              <div class="relative flex justify-end">
-                <x-popups.contentWcheck iid="chcart-{{ $cart->id }}" labelClass="hover:bg-slate-900"
-                  class="right-12 -top-1/4">
-                  <x-slot:label>
-                    <x-icons.threeDotsX class="size-6" />
-                  </x-slot:label>
+            <div class="relative flex justify-end">
+              <x-popups.contentWcheck iid="chcart-{{ $cart->id }}" labelClass="hover:bg-slate-900"
+                class="right-12 -top-1/4">
+                <x-slot:label>
+                  <x-icons.threeDotsX class="size-6" />
+                </x-slot:label>
 
-                  <ul class="w-max py-2 bg-slate-800 text-slate-300 border border-slate-700 rounded-md font-semibold">
+                <ul class="w-max py-2 bg-slate-800 text-slate-300 border border-slate-700 rounded-md font-semibold">
+                  @can('view_any_carts')
                     <li>
                       <a href="{{ route('carts.show', $cart->id) }}"
                         class="px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
@@ -53,6 +53,8 @@
                         Detalles
                       </a>
                     </li>
+                  @endcan
+                  @can('manage_cart_details')
                     <li>
                       <button type="button" data-text="Carrito de '{{ $cart->fullName }}'" data-uid="{{ $cart->id }}"
                         data-modalID="cartDelete" data-path="{{ $cart->id }}/clear" data-delete="true"
@@ -63,12 +65,10 @@
                         Vaciar Carrito
                       </button>
                     </li>
-                  </ul>
-                </x-popups.contentWcheck>
-              </div>
-            @else
-              <p class="px-2 text-end">---</p>
-            @endcan
+                  @endcan
+                </ul>
+              </x-popups.contentWcheck>
+            </div>
           </td>
         </tr>
       @empty
@@ -79,7 +79,7 @@
     </x-slot:tbody>
   </x-tables.table>
 
-  @can('manage carts-details')
+  @can('manage_cart_details')
     {{-- MODAL DELETE, RESTORE --}}
     <x-modals.delete id="cartDelete" />
   @endcan
