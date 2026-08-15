@@ -40,30 +40,30 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     // User routes
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
     Route::prefix('users')->name('users.')->group(function () {
-      Route::get('/', [UserController::class, 'index'])->name('.index')->middleware('permission:view_any_users');
-      Route::get('/{id}/show', [UserController::class, 'show'])->name('.show')->middleware('permission:view_users');
-      Route::post('/', [UserController::class, 'store'])->name('.store')->middleware('permission:create_users');
-      Route::put('/{user}', [UserController::class, 'update'])->name('.update')->middleware('permission:update_users');
-      Route::delete('/{user}', [UserController::class, 'destroy'])->name('.destroy')->middleware('permission:delete_users');
+      Route::get('/', [UserController::class, 'index'])->name('index')->middleware('permission:view_any_users');
+      Route::get('/{id}/show', [UserController::class, 'show'])->name('show')->middleware('permission:view_users');
+      Route::post('/', [UserController::class, 'store'])->name('store')->middleware('permission:create_users');
+      Route::put('/{user}', [UserController::class, 'update'])->name('update')->middleware('permission:update_users');
+      Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy')->middleware('permission:delete_users');
       Route::post('/{id}/restore', [UserController::class, 'restore'])->name('restore')->middleware('permission:delete_users');
       Route::put('/{user}/roles', [UserController::class, 'updateRole'])->name('updateRole')->middleware('permission:update_roles');
     });
 
     // Role routes
     Route::prefix('roles')->name('roles.')->group(function () {
-      Route::get('/', [RoleController::class, 'index'])->name('.index')->middleware('permission:view_any_roles');
-      Route::post('/', [RoleController::class, 'store'])->name('.store')->middleware('permission:create_roles');
-      Route::put('/{role}', [RoleController::class, 'update'])->name('.update')->middleware('permission:update_roles');
-      Route::delete('/{role}', [RoleController::class, 'destroy'])->name('.destroy')->middleware('permission:delete_roles');
+      Route::get('/', [RoleController::class, 'index'])->name('index')->middleware('permission:view_any_roles');
+      Route::post('/', [RoleController::class, 'store'])->name('store')->middleware('permission:create_roles');
+      Route::put('/{role}', [RoleController::class, 'update'])->name('update')->middleware('permission:update_roles');
+      Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy')->middleware('permission:delete_roles');
     });
 
     // Product, category, brand routes
     Route::prefix('products')->name('products.')->group(function () {
-      Route::get('/', [ProductController::class, 'index'])->name('.index')->middleware('permission:view_any_products');
-      Route::get('/{id}/show', [ProductController::class, 'show'])->name('.show')->middleware('permission:view_product');
-      Route::post('/', [ProductController::class, 'store'])->name('.store')->middleware('permission:create_products');
-      Route::put('/{product}', [ProductController::class, 'update'])->name('.update')->middleware('permission:edit_products');
-      Route::delete('/{product}', [ProductController::class, 'destroy'])->name('.destroy')->middleware('permission:delete_products');
+      Route::get('/', [ProductController::class, 'index'])->name('index')->middleware('permission:view_any_products');
+      Route::get('/{id}/show', [ProductController::class, 'show'])->name('show')->middleware('permission:view_product');
+      Route::post('/', [ProductController::class, 'store'])->name('store')->middleware('permission:create_products');
+      Route::put('/{product}', [ProductController::class, 'update'])->name('update')->middleware('permission:edit_products');
+      Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy')->middleware('permission:delete_products');
       Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('restore')->middleware('permission:delete_products');
       Route::get('/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('orders')->middleware('permission:view_orders');
     });
@@ -112,12 +112,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Provider routes
     Route::prefix('providers')->name('providers.')->group(function () {
-      Route::get('/', [ProviderController::class, 'index'])->name('.index')->middleware('permission:view_any_providers');
-      Route::post('/', [ProviderController::class, 'store'])->name('.store')->middleware('permission:create_providers');
-      Route::put('/{provider}', [ProviderController::class, 'update'])->name('.update')->middleware('permission:update_providers');
+      Route::get('/', [ProviderController::class, 'index'])->name('index')->middleware('permission:view_any_providers');
+      Route::post('/', [ProviderController::class, 'store'])->name('store')->middleware('permission:create_providers');
+      Route::put('/{provider}', [ProviderController::class, 'update'])->name('update')->middleware('permission:update_providers');
       Route::middleware(['permission:delete_providers'])->group(function () {
-        Route::delete('/{provider}', [ProviderController::class, 'destroy'])->name('.destroy');
-        Route::post('/{id}/restore', [ProviderController::class, 'restore'])->name('.restore');
+        Route::delete('/{provider}', [ProviderController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/restore', [ProviderController::class, 'restore'])->name('restore');
       });
     });
 
