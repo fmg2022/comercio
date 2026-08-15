@@ -114,7 +114,8 @@
                 <x-icons.threeDotsX class="size-6" />
               </x-slot:label>
 
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold ">
+              <ul
+                class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold ">
                 @can('view_product')
                   <li>
                     <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
@@ -215,7 +216,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
+                  class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold [&>li]:bg-slate-800 [&>li]:cursor-pointer[&>li]:transition-colors">
                   <li>
                     <button type="button" data-type="show" data-uid="{{ $product->id }}" data-path="{{ $product->id }}"
                       data-modalID="productCSE"

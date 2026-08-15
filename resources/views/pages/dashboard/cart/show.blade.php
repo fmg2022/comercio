@@ -77,7 +77,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   @can('view_any_carts')
                     <li>
                       <a href="{{ route('products.show', $product->id) }}"

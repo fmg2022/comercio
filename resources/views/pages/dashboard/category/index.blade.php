@@ -105,7 +105,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
+                  class="w-max py-2 {{ $category->trashed() ? 'bg-gray-800 text-gray-300' : 'bg-slate-800 text-slate-300 ' }} border border-slate-700 rounded-md font-semibold text-xs">
                   @can('view_any_product_attributes')
                     <li>
                       <button type="button" data-type="show" data-uid="{{ $category->id }}"

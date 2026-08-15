@@ -45,7 +45,7 @@
                   </x-slot:label>
 
                   <ul
-                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                         data-path="offer-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -94,7 +94,7 @@
                   </x-slot:label>
 
                   <ul
-                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $type->id }}"
                         data-path="offer-types/{{ $type->id }}" data-modalID="stateTypeCSE"
@@ -143,7 +143,7 @@
                   </x-slot:label>
 
                   <ul
-                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                         data-path="order-states/{{ $state->id }}" data-modalID="stateTypeCSE"
@@ -192,7 +192,7 @@
                   </x-slot:label>
 
                   <ul
-                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $state->id }}"
                         data-path="payment-states/{{ $state->id }}" data-modalID="stateTypeCSE"
