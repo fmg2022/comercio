@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('locality');      // Ciudad o localidad
             $table->string('province');      // Provincia o estado
             $table->string('postal_code');   // Código postal
+            $table->decimal('latitude', 10, 7)->nullable();      // Latitud
+            $table->decimal('longitude', 10, 7)->nullable();     // Longitud
             $table->boolean('is_default')->default(false);
 
             $table->timestamps();

@@ -19,7 +19,14 @@ class Address extends Model
         'locality',
         'province',
         'postal_code',
+        'latitude',
+        'longitude',
         'is_default',
+    ];
+
+    protected $hidden = [
+        'longitude',
+        'latitude',
     ];
 
     protected $casts = [

@@ -24,6 +24,8 @@ class AddressFactory extends Factory
             'locality' => $this->faker->city,
             'province' => $this->faker->state,
             'postal_code' => $this->faker->postcode,
+            'latitude' => $this->faker->latitude,
+            'longitude' => $this->faker->longitude,
             'is_default' => false,
         ];
     }
