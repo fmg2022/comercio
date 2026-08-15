@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade')->unique();
             $table->foreignId('transport_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('shipping_states_id')->constrained('shipping_states')->onDelete('restrict');
+            $table->foreignId('shipping_rate_id')->constrained('shipping_rates')->onDelete('restrict');
 
             // Campos operativos
             $table->string('tracking_number')->nullable();
+            $table->decimal('distance_km', 8, 3)->default(0);
             $table->decimal('shipping_cost', 10, 2)->default(0);
             $table->date('estimated_delivery_date')->nullable();
             $table->timestamp('delivered_at')->nullable();
