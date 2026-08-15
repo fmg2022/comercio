@@ -47,11 +47,13 @@ class Product extends Model
     public function getCurrentOffer(): ?object
     {
         return $this->belongsToMany(Offer::class)
+            ->with('offerTemplate:id,name,description,buy_qty,pay_qty,offer_type_id,offerType:id,slug')
             ->whereHas('offerState', function ($query) {
                 $query->where('slug', 'active');
             })
-            ->first()
-            ?->offerTemplate;
+            ->select('offers.id', 'offers.name', 'offers.start_date', 'offers.end_date', 'offers.offer_state_id', 'offers.offer_template_id')
+            ->lockForUpdate()
+            ->first();
     }
 
     public function getDiscountTotal(int $quantity, float $buyQuantity, float $payQuantity, string $offerType): float
