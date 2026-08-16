@@ -38,7 +38,7 @@ class PaymentFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'payment_state_id' => PaymentState::where('code', 'CANCELADO')->value('id'),
+                'payment_state_id' => PaymentState::where('slug', 'cancelled')->value('id'),
                 'provider_state' => 'failed',
                 'checkout_url' => null,
                 'paid_at' => null,

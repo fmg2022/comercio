@@ -35,7 +35,7 @@ new class extends Component {
 
     public function boot()
     {
-        $this->offers = Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,code'])
+        $this->offers = Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,slug,name'])
             ->active()
             ->get()
             ->keyBy('id');
@@ -147,8 +147,8 @@ new class extends Component {
             'Más vendidos' => $this->products->sortByDesc('orders_count'),
             'Menor precio' => $this->products->sortBy('price'),
             'Mayor precio' => $this->products->sortByDesc('price'),
-            'A-Z' => $this->products->sortByDesc('name'),
-            'Z-A' => $this->products->sortBy('name'),
+            'A-Z' => $this->products->sortBy('name'),
+            'Z-A' => $this->products->sortByDesc('name'),
             default => $this->products,
         };
 

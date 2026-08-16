@@ -166,7 +166,7 @@
                     <p style="margin:0 0 6px; font-weight:bold;">📅 Fecha del pedido</p>
                     <p style="margin:0; color:#4a5568;">{{ $order->date->format('d/m/Y H:i') }}</p>
                     <p style="margin:6px 0 0; font-size:12px; color:#718096;">Estado:
-                      <strong>{{ $order->orderState->code ?? 'Listo para retirar' }}</strong>
+                      <strong>{{ $order->orderState->name ?? 'Listo para retirar' }}</strong>
                     </p>
                   </div>
                 </td>

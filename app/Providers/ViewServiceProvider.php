@@ -30,7 +30,7 @@ class ViewServiceProvider extends ServiceProvider
                 $cart = null;
             }
             $view->with('categories', \App\Models\Category::getFullTree())
-                ->with('offers', \App\Models\Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,code'])->active()->get()->keyBy('id'))
+                ->with('offers', \App\Models\Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,slug,name'])->active()->get()->keyBy('id'))
                 ->with('cart', $cart);
         });
     }
