@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@can('manage state-type-tables')
+@can('manage_state_types')
   @push('scripts-dashboard')
     <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
 
@@ -90,15 +90,13 @@
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>{{ request()->routeIs('my.payments.index') ? 'Mis' : '' }} Pagos</x-slot:textTitle>
-    @can('manage state-type-tables')
-      @can('manage state-type-tables')
-        @if (!request()->routeIs('my.payments.index'))
-          <button onclick="openModal('exportModal')"
-            class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
-            Exportar a Excel
-          </button>
-        @endif
-      @endcan
+    @can('view_payments')
+      @if (!request()->routeIs('my.payments.index'))
+        <button onclick="openModal('exportModal')"
+          class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
+          Exportar a Excel
+        </button>
+      @endif
     @endcan
   </x-sections.headerTitle>
 
@@ -125,26 +123,24 @@
             </x-buttons.link>
           </td>
           <td class="text-slate-300">{{ $payment->paymentProvider->name }}</td>
-          <td class="text-slate-300">{{ $payment->date_formated }}</td>
+          <td class="text-slate-300">{{ $payment->paid_at?->format('d/m/Y H:i') }}</td>
           <td class="hidden sm:table-cell">{{ $payment->nro_fee }}</td>
           <td class="sm:table-cell">{{ $payment->amount_formated }}</td>
           <td class="hidden md:table-cell">
             <span @class([
                 "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $payment->paymentState->code === 'PENDIENTE',
-                'text-green-400' => $payment->paymentState->code === 'APROBADO',
-                'text-blue-400' => $payment->paymentState->code === 'EN_PROCESO',
-                'text-cyan-400' => $payment->paymentState->code === 'REEMBOLSADO',
-                'text-lime-400' => $payment->paymentState->code === 'EXPIRADO',
-                'text-rose-400' => $payment->paymentState->code === 'EN_DEVOLUCION',
-                'text-purple-400' => $payment->paymentState->code === 'RECHAZADO',
-                'text-red-400' => $payment->paymentState->code === 'CANCELADO',
+                'text-amber-400' => $payment->paymentState->slug === 'pending',
+                'text-green-400' => $payment->paymentState->slug === 'approved',
+                'text-cyan-400' => $payment->paymentState->slug === 'expired',
+                'text-lime-400' => $payment->paymentState->slug === 'rejected',
+                'text-rose-400' => $payment->paymentState->slug === 'refunded',
+                'text-purple-400' => $payment->paymentState->slug === 'cancelled',
             ])>
-              {{ $payment->paymentState->codeFormated }}
+              {{ $payment->paymentState->name }}
             </span>
           </td>
           <td>
-            @can('manage state-type-tables')
+            @can('manage_state_types')
               <div class="relative flex justify-end">
                 <x-popups.contentWcheck iid="chpayment-{{ $payment->id }}" labelClass="hover:bg-slate-900"
                   class="right-12 -top-1/4">
@@ -153,11 +149,11 @@
                   </x-slot:label>
 
                   <ul
-                    class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                     <li>
                       <button type="button" data-modal="modal-change-status" data-uid="{{ $payment->id }}"
                         data-from="{{ $payment->paymentProvider->name }}" data-amount="{{ $payment->amount_formated }}"
-                        data-status="{{ $payment->paymentState->code }}"
+                        data-status="{{ $payment->paymentState->slug }}"
                         class="w-full px-4 py-2.5 flex gap-3 hover:bg-slate-700">
                         <span>
                           <x-icons.edit class="size-5" />
@@ -184,7 +180,7 @@
   {{ $payments->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   {{-- Modal CHANGE STATUS --}}
-  @can('manage state-type-tables')
+  @can('manage_state_types')
     <x-modals.simple id="modal-change-status" class="max-w-md w-full" title="Cambiar el estado del pago">
       <div class="relative mt-4 flex flex-col items-center justify-center text-white">
         <form method="POST" class="w-full" id="form-modalSimple" action="{{ route('payments.updateStates', 0) }}">
@@ -204,7 +200,7 @@
                   class="outline-none px-3 py-2 rounded-md border border-slate-300 text-base text-slate-900">
                   @foreach ($statuses as $states)
                     <option value="{{ $states->id }}">
-                      {{ $states->code }}
+                      {{ $states->name }}
                     </option>
                   @endforeach
                 </select>
@@ -242,7 +238,7 @@
               <select name="states[]" id="states" multiple required>
                 <option value="" selected>Todos</option>
                 @foreach ($statuses as $state)
-                  <option value="{{ $state->id }}">{{ $state->code }}</option>
+                  <option value="{{ $state->id }}">{{ $state->name }}</option>
                 @endforeach
               </select>
             </div>

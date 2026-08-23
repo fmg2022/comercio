@@ -38,7 +38,7 @@ class ShippingSeeder extends Seeder
             $shippingStateId = $shippingStates[$shippingStateSlug] ?? null;
 
             $transportista = $shippingStateSlug != 'cancelled'
-                ? \App\Models\User::where('role', 'logistics')->where('id', '!=', $order->user_id)->inRandomOrder()->first()
+                ? \App\Models\User::where('id', '!=', $order->user_id)->role('logistics')->inRandomOrder()->first()
                 : null;
 
             $shippingData = [
@@ -49,22 +49,34 @@ class ShippingSeeder extends Seeder
             ];
 
             if ($shippingStateSlug === 'cancelled') {
-                $shippingData['traking_number'] = null;
+                $shippingData['tracking_number'] = null;
                 $shippingData['shipping_cost'] = 0;
                 $shippingData['notes'] = 'Cancelado por el cliente';
+                $shippingData['is_feasible'] = false;
+            } elseif ($shippingStateSlug === 'failed') {
+                $shippingData['tracking_number'] = null;
+                $shippingData['shipping_cost'] = 0;
+                $shippingData['notes'] = 'No es posible enviar, distancia excedida';
                 $shippingData['is_feasible'] = false;
             } else {
                 $shippingData['notes'] = fake()->optional()->sentence;
                 $shippingData['delivered_at'] = $shippingStateSlug === 'delivered'
                     ? $order->date->addDays(rand(1, 7))
                     : null;
-                $shippingData['estimated_delivery_date'] = $shippingData['delivered_at']->addDays(rand(-2, 2));
+                $shippingData['estimated_delivery_date'] = $shippingStateSlug === 'delivered' ?
+                    $shippingData['delivered_at']->addDays(rand(-2, 2))
+                    : null;
             }
 
-            \App\Models\Shipping::factory()
+            $shipping = \App\Models\Shipping::factory()
                 ->for($order)
                 ->state($shippingData)
                 ->create();
+
+            $order->update([
+                'shipping_cost' => $shipping->shipping_cost,
+                'total' => $order->total + $shipping->shipping_cost,
+            ]);
         }
     }
 }

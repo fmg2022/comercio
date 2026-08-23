@@ -73,7 +73,7 @@
 </script>
 @endPushIf
 
-@pushIf(auth()->user()?->can('manage products-and-attributes'), 'scripts-dashboard')
+@pushIf(auth()->user()?->can('delete_products'), 'scripts-dashboard')
 <script src="{{ asset('js/dashboard/modalDelete.js') }}" defer></script>
 @endPushIf
 
@@ -98,10 +98,12 @@
       </p>
     </div>
     <div class="mb-4 flex flex-wrap gap-4">
-      <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-700 active:bg-slate-600">
-        Volver al listado
-      </x-buttons.linkFill>
-      @if ($product->trashed())
+      @can('view_any_products')
+        <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-700 active:bg-slate-600">
+          Volver al listado
+        </x-buttons.linkFill>
+      @endcan
+      @if ($product->trashed() && auth()->user()->can('delete_products'))
         <button type="button" data-text="Producto: '{{ $product->name }}'" data-uid="{{ $product->id }}"
           data-modalID="restDialog" data-path="{{ $product->id . '/restore' }}" data-delete="false"
           class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors button-delete-restore">
@@ -139,25 +141,28 @@
             </x-popups.text>
           </td>
           <td class="relative">
-            <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+            @can('view_orders')
+              <x-buttons.link href="{{ route('orders.show', $order->id) }}" class="hover:text-purple-500 peer/popup">
+                #{{ $order->id }}
+              </x-buttons.link>
+              <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
+                Ver Orden
+              </x-popups.text>
+            @else
               #{{ $order->id }}
-            </x-buttons.link>
-            <x-popups.text class="top-3/4 left-1/4 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-              Ver Orden
-            </x-popups.text>
+            @endcan
           </td>
           <td>{{ $order->date->format('d/m/Y') }}</td>
           <td class="hidden md:table-cell">
             <span @class([
                 "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $order->orderState->code === 'CREADO',
-                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-                'text-cyan-400' => $order->orderState->code === 'PAGADO',
-                'text-green-400' => $order->orderState->code === 'COMPLETO',
-                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-                'text-red-400' => $order->orderState->code === 'CANCELADO',
+                'text-blue-400' => $order->orderState->slug === 'pending',
+                'text-cyan-400' => $order->orderState->slug === 'paid',
+                'text-green-400' => $order->orderState->slug === 'completed',
+                'text-purple-400' => $order->orderState->slug === 'refunded',
+                'text-red-400' => $order->orderState->slug === 'cancelled',
             ])>
-              {{ $order->orderState->code }}
+              {{ $order->orderState->name }}
             </span>
           </td>
           <td><span class="ms-2">{{ $order->pivot->quantity }}</span></td>
@@ -180,7 +185,7 @@
 
   {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
-  @can('manage products-and-attributes')
+  @can('delete_products')
     <x-modals.delete id="restDialog" />
   @endcan
 @endsection

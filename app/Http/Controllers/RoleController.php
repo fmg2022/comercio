@@ -15,9 +15,9 @@ class RoleController extends Controller
     public function index(): View
     {
         return view('pages.dashboard.rolePermission.index', [
-            'roles' => Role::whereNotIn('name', ['Super Admin'])->orderBy('name', 'asc')->get(['id', 'name']),
-            'permissions' => Permission::orderBy('name', 'asc')->get(['id', 'name']),
-            'users' => User::withoutRole('Super Admin')->orderBy('name', 'asc')->get(['id', 'name', 'surname']),
+            'roles' => Role::whereNotIn('name', ['super_admin'])->orderBy('name', 'asc')->get(['id', 'name', 'display_name']),
+            'permissions' => Permission::orderBy('name', 'asc')->get(['id', 'name', 'display_name']),
+            'users' => User::withoutRole('super_admin')->orderBy('name', 'asc')->get(['id', 'name', 'surname']),
         ]);
     }
 
@@ -49,7 +49,7 @@ class RoleController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $role = Role::with('permissions:id')->findOrFail($id, ['id', 'name']);
+        $role = Role::with('permissions:id')->findOrFail($id, ['id', 'display_name']);
 
         $role->permissions_ids = $role->permissions->pluck('id');
         $role->unsetRelation('permissions');

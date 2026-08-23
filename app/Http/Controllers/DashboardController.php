@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
 	public function redirectToDashboard(): RedirectResponse
 	{
-		if (auth()->user()->hasRole(['Admin', 'Super Admin'])) {
+		if (auth()->user()->hasRole(['Admin', 'super_admin'])) {
 			return redirect()->route('admin.dashboard');
 		}
 		return redirect()->route('client.dashboard');
@@ -45,9 +45,10 @@ class DashboardController extends Controller
 
 		$currentCart = $user->cart;
 
-		$totalSaved = $user->orders
-			->whereIn('order_state_id', $this->completedStateIds())
-			->sum('discount');
+		$totalSaved = $user->orders()
+			->whereIn('orders.order_state_id', $this->completedStateIds())
+			->join('order_product', 'orders.id', '=', 'order_product.order_id')
+			->sum('order_product.discount');
 
 		return view('pages.dashboard.dashboard', compact(
 			'recentOrders',

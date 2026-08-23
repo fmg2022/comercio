@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@can('manage state-type-tables')
+@can('manage_state_types')
   @push('scripts-dashboard')
     <script src="{{ asset('js/dashboard/modalStatus.js') }}" defer></script>
     @if (!request()->routeIs('my.orders.index'))
@@ -95,23 +95,20 @@
 @section('content')
   <x-sections.headerTitle class="flex justify-between items-center">
     <x-slot:textTitle>{{ request()->routeIs('my.orders.index') ? 'Mis' : '' }} Ordenes</x-slot:textTitle>
-    @can('manage state-type-tables')
-      @if (!request()->routeIs('my.orders.index'))
-        <div>
-          @if (request()->routeIs('orders.filter'))
-            <x-buttons.linkFill href="{{ route('orders.index') }}"
-              class="py-2.5 me-4 font-semibold bg-slate-700 hover:bg-slate-600">
-              Volver a la lista
-            </x-buttons.linkFill>
-          @endif
-
+    @if (request()->routeIs('orders.filter'))
+      <div>
+        <x-buttons.linkFill href="{{ url()->previous() }}"
+          class="py-2.5 me-4 font-semibold bg-slate-700 hover:bg-slate-600">
+          Volver atras
+        </x-buttons.linkFill>
+        @can('update_orders')
           <button onclick="openModal('exportModal')"
             class="px-3 py-2 rounded-lg font-semibold bg-green-700 hover:bg-green-600 cursor-pointer">
             Exportar a Excel
           </button>
-        </div>
-      @endif
-    @endcan
+        @endcan
+      </div>
+    @endif
   </x-sections.headerTitle>
 
   <x-tables.table>
@@ -145,14 +142,13 @@
           <td class="hidden md:table-cell">
             <span @class([
                 "font-semibold before:content-['●'] before:me-px",
-                'text-amber-400' => $order->orderState->code === 'CREADO',
-                'text-blue-400' => $order->orderState->code === 'PENDIENTE',
-                'text-cyan-400' => $order->orderState->code === 'PAGADO',
-                'text-green-400' => $order->orderState->code === 'COMPLETO',
-                'text-purple-400' => $order->orderState->code === 'REEMBOLSADO',
-                'text-red-400' => $order->orderState->code === 'CANCELADO',
+                'text-blue-400' => $order->orderState->slug === 'pending',
+                'text-cyan-400' => $order->orderState->slug === 'paid',
+                'text-green-400' => $order->orderState->slug === 'completed',
+                'text-purple-400' => $order->orderState->slug === 'refunded',
+                'text-red-400' => $order->orderState->slug === 'cancelled',
             ])>
-              {{ $order->orderState->code }}
+              {{ $order->orderState->name }}
             </span>
           </td>
           <td>
@@ -164,8 +160,8 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  @can('show orders')
+                  class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  @can('view_orders')
                     @php
                       $route = request()->routeIs('my.orders.index') ? 'my.orders.show' : 'orders.show';
                     @endphp
@@ -179,11 +175,11 @@
                       </a>
                     </li>
                   @endcan
-                  @can('manage state-type-tables')
+                  @can('manage_state_types')
                     <li>
                       <button type="button" data-modal="modal-change-status" data-uid="{{ $order->id }}"
                         data-from="{{ $fullName }}" data-amount="{{ number_format($order->total, 2, ',', '.') }}"
-                        data-status="{{ $order->orderState->code }}"
+                        data-status="{{ $order->orderState->slug }}"
                         class="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-slate-700">
                         <span>
                           <x-icons.edit class="size-5" />
@@ -208,7 +204,7 @@
   {{ $orders->onEachSide(1)->links('pages.dashboard.partials.pagination') }}
 
   {{-- Modal CHANGE STATUS --}}
-  @can('manage state-type-tables')
+  @can('manage_state_types')
     <x-modals.simple id="modal-change-status" class="max-w-md w-full" title="Cambiar el estado de la orden">
       <div class="relative mt-4 flex flex-col items-center justify-center text-white">
         <form method="POST" class="w-full" id="form-modalSimple" action="{{ route('orders.updateStates', 0) }}">
@@ -231,7 +227,7 @@
                   class="outline-none px-3 py-2 rounded-md border border-slate-300 text-slate-900">
                   @foreach ($orderStates as $states)
                     <option value="{{ $states->id }}">
-                      {{ $states->code }}
+                      {{ $states->name }}
                     </option>
                   @endforeach
                 </select>
@@ -271,7 +267,7 @@
               <select name="states[]" id="states" multiple required>
                 <option value="" selected>Todos</option>
                 @foreach ($orderStates as $state)
-                  <option value="{{ $state->id }}">{{ $state->code }}</option>
+                  <option value="{{ $state->id }}">{{ $state->name }}</option>
                 @endforeach
               </select>
             </div>

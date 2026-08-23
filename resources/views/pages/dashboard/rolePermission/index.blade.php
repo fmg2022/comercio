@@ -35,9 +35,9 @@
           @forelse ($roles as $index => $role)
             <tr>
               <td>{{ $index + 1 }}</td>
-              <td class="font-bold">{{ $role->name }}</td>
+              <td class="font-bold">{{ $role->display_name }}</td>
               <td>
-                @if ($role->name !== 'Super Admin')
+                @if ($role->name !== 'super_admin')
                   <div class="relative flex justify-end">
                     <x-popups.contentWcheck iid="chrole-{{ $role->id }}" labelClass="hover:bg-slate-900"
                       class="right-12 -top-1/4">
@@ -46,7 +46,7 @@
                       </x-slot:label>
 
                       <ul
-                        class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                        class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                         <li>
                           <button type="button" data-type="show" data-uid="{{ $role->id }}"
                             data-path="{{ $role->id }}" data-modalID="roleCES"
@@ -111,7 +111,7 @@
         Permisos</h2>
       <ul class="px-1 py-2 bg-slate-700 divide-y-4 divide-slate-800 text-gray-200">
         @forelse ($permissions as $permission)
-          <li class="px-4 py-3 font-semibold capitalize">{{ $permission->name }}</li>
+          <li class="px-4 py-3 font-semibold capitalize">{{ $permission->display_name }}</li>
         @empty
           <li>
             <h3 class="font-semibold">Sin Permisos registrados</h3>
@@ -134,7 +134,7 @@
         <fieldset class="py-3 grid grid-cols-1 gap-6 text-gray-700 md:px-3">
           <div class="pointer-events-none group-[.editable]:pointer-events-auto">
             <label class="block mb-2 font-semibold" for="name">Nombre</label>
-            <input type="text" id="name" name="name" autocomplete="off"
+            <input type="text" id="name" name="display_name" autocomplete="off"
               class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required>
           </div>
@@ -146,7 +146,7 @@
                   class="px-3 py-1 mx-4 flex items-center gap-2 group-[&:not(.editable)]:has-[input:not(:checked)]:hidden pointer-events-none group-[.editable]:pointer-events-auto">
                   <input type="checkbox" name="permissions_ids[]" class="size-4 accent-purple-600"
                     value="{{ $permission->id }}">
-                  <span class="ms-1">{{ $permission->name }}</span>
+                  <span class="ms-1">{{ $permission->display_name }}</span>
                 </label>
               @endforeach
             </div>

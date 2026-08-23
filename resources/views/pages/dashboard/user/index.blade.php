@@ -61,12 +61,8 @@
             {{ $user->active ? 'Activo' : 'Inactivo' }}
           </td>
           <td class="hidden xl:table-cell">
-            <p class="flex flex-wrap gap-1">
-              @foreach ($user->getRoleNames() as $role)
-                <span class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
-                  {{ $role }}
-                </span>
-              @endforeach
+            <p class="w-fit px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
+              {{ $user->roles->first()->display_name }}
             </p>
           </td>
           <td>
@@ -77,7 +73,7 @@
                 </x-slot:label>
 
                 <ul
-                  class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
+                  class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
                   @can('update_roles')
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $user->id }}"
@@ -180,7 +176,7 @@
               <x-slot:label>
                 <x-icons.threeDotsX class="size-6" />
               </x-slot:label>
-              <ul class="w-48 py-2 bg-slate-800 border border-slate-700 rounded-md text-xs font-semibold">
+              <ul class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs font-semibold">
                 <li>
                   <button type="button" data-type="show" data-uid="{{ $user->id }}" data-path="{{ $user->id }}"
                     data-modalID="userCSE"

@@ -14,9 +14,9 @@
     </div>
     <nav class="px-5 py-4">
       <ul class="flex items-center gap-2">
-        <li>
+        <li class="hidden sm:list-item">
           <h4 class="px-3 py-2 text-sm font-semibold text-slate-200 bg-slate-900 rounded-lg">
-            {{ auth()->user()->getRoleNames()->first() }}
+            {{ auth()->user()->roles->first()->display_name }}
           </h4>
         </li>
         <!-- notificaciones -->

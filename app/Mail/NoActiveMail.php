@@ -44,7 +44,7 @@ class NoActiveMail extends Mailable
     {
         $adminUser = auth()->user();
         $desactiveBy = [
-            'role' => $adminUser->getRoleNames()->filter(fn($role) => $role != 'Cliente')[0] ?? 'Administrador',
+            'role' => $adminUser->getRoleNames()->filter(fn($role) => $role != 'client')[0] ?? 'Administrador',
             'name' => $adminUser->name ?? 'Sistema'
         ];
 

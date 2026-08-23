@@ -22,10 +22,10 @@ class UserController extends Controller
     {
         return view('pages.dashboard.user.index', [
             'users' => User::whereDoesntHave('roles', function ($query) {
-                $query->where('name', 'Super Admin');
+                $query->where('name', 'super_admin');
             })->paginate(10),
             'usersDeleted' => User::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
-            'roles' => Role::where('name', '!=', 'Super Admin')->get(['name', 'id']),
+            'roles' => Role::where('name', '!=', 'super_admin')->get(['name', 'id']),
         ]);
     }
 
@@ -40,7 +40,7 @@ class UserController extends Controller
         $validated = $request->validated();
         $validated['password'] = Hash::make($password);
         $validated['active'] = true;
-        $user = User::create($validated)->assignRole('Cliente');
+        $user = User::create($validated)->assignRole('client');
 
         // Mail::to($user)->send(new WelcomeWithPasswordMail($user, $password));
         Mail::to('maximo4735@gmail.com')->send(new WelcomeWithPasswordMail($user, $password));
