@@ -34,4 +34,20 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+
+    'openrouteservice' => [
+        'key' => env('OPENROUTESERVICE_API_KEY'),
+    ],
+
+    'nominatim' => [
+        'url' => env(
+            'NOMINATIM_URL',
+            'https://nominatim.openstreetmap.org'
+        ),
+
+        'country' => env(
+            'NOMINATIM_COUNTRY',
+            'ar'
+        ),
+    ],
 ];
