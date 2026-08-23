@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
+  AddressController,
   BrandController,
   CartController,
   CategoryController,
@@ -38,7 +39,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     })->name('my.cart.index')->middleware('permission:view_any_own_cart');
 
     // User routes
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+    Route::prefix('/addresses')->name('profile.')->group(function () {
+      Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('index');
+      // Address routes
+      Route::prefix('/addresses')->name('addresses.')->group(function () {
+        Route::post('/', [AddressController::class, 'store'])->name('store');
+        Route::put('/{address}', [AddressController::class, 'update'])->name('update');
+        Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault');
+      });
+    });
     Route::prefix('users')->name('users.')->group(function () {
       Route::get('/', [UserController::class, 'index'])->name('index')->middleware('permission:view_any_users');
       Route::get('/{id}/show', [UserController::class, 'show'])->name('show')->middleware('permission:view_users');
@@ -47,6 +56,15 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy')->middleware('permission:delete_users');
       Route::post('/{id}/restore', [UserController::class, 'restore'])->name('restore')->middleware('permission:delete_users');
       Route::put('/{user}/roles', [UserController::class, 'updateRole'])->name('updateRole')->middleware('permission:update_roles');
+    });
+
+    // Address routes
+    Route::prefix('addresses')->name('addresses.')->group(function () {
+      // Route::get('/', [AddressController::class, 'index'])->name('index')->middleware('permission:view_any_addresses');
+      Route::post('/', [AddressController::class, 'store'])->name('store')->middleware('permission:create_addresses');
+      Route::put('/{address}', [AddressController::class, 'update'])->name('update')->middleware('permission:update_addresses');
+      Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault')->middleware('permission:update_addresses');
+      // Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy')->middleware('permission:delete_addresses');
     });
 
     // Role routes
