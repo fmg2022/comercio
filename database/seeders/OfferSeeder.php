@@ -14,8 +14,28 @@ class OfferSeeder extends Seeder
     public function run(): void
     {
         Offer::factory(16)->create()->each(function ($offer) {
+            $products = Product::query()
+                ->when(
+                    $offer->offerTemplate->offerType === 'fixed',
+                    fn($query) => $query->where(
+                        'price',
+                        '>',
+                        $offer->offerTemplate->pay_qty
+                    )
+                )
+                ->pluck('id');
+
+            if ($products->isEmpty()) {
+                return;
+            }
+
+            $quantity = rand(
+                1,
+                min(4, $products->count())
+            );
+
             $offer->products()->attach(
-                Product::pluck('id')->random(rand(1, 3))
+                $products->random($quantity)
             );
         });
     }
