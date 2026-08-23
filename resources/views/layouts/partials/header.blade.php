@@ -151,7 +151,7 @@
                 <li>
                   <x-buttons.link href="{{ route('product.index', ['offer_id' => $offer->id]) }}"
                     class="block text-lg hover:text-sky-400">
-                    {{ $offer->offerTemplate->name }}
+                    {{ $offer->name }}
                   </x-buttons.link>
                 </li>
               @endforeach

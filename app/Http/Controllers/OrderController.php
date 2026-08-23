@@ -91,16 +91,18 @@ class OrderController extends Controller
 				'date' => now(),
 				'total' => 0,
 				'iva' => 0,
+				'shipping_cost' => $cart->shippingCost(),
 				'notes' => $validated['notes'],
 				'order_state_id' => OrderState::where('slug', 'pending')->value('id'),
 				'user_id' => $user->id,
-				'address' => $user->address,
+				'address_id' => $user->defaultAddress->id,
 			]);
 
 			$total = 0;
 
 			foreach ($cart->products as $productItem) {
-				$templateOffer = $productItem->getCurrentOffer();
+				$offer = $productItem->getCurrentOffer();
+				$templateOffer = $offer?->offerTemplate;
 				$discount = $templateOffer ?
 					$productItem->getDiscountTotal(
 						$productItem->pivot->quantity,
@@ -114,7 +116,8 @@ class OrderController extends Controller
 					'quantity' => $productItem->pivot->quantity,
 					'price' => $productItem->price,
 					'discount' => $discount,
-					'offer_template_id' => $templateOffer?->id ?? '',
+					'offer_id' => $offer?->id ?? '',
+					'offer_template_name' => $templateOffer?->name ?? '',
 					'offer_type_slug' => $templateOffer?->offerType->slug ?? '',
 				]);
 

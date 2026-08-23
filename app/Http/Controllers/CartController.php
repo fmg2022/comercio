@@ -59,7 +59,7 @@ class CartController extends Controller
 		$validated = $request->validated();
 
 		$product = Product::findOrFail($validated['id']);
-		$offerTemplate = $product->getCurrentOffer();
+		$offerTemplate = $product->getCurrentOffer()?->offerTemplate;
 		$discount = $offerTemplate ?
 			$product->getDiscountTotal(
 				$validated['quantity'],
