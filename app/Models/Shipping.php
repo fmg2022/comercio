@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Shipping extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'order_id',
         'transport_user_id',
         'shipping_states_id',
+        'shipping_rate_id',
         'tracking_number',
         'shipping_cost',
         'estimated_delivery_date',
@@ -76,5 +80,10 @@ class Shipping extends Model
     public function shippingState(): BelongsTo
     {
         return $this->belongsTo(ShippingState::class, 'shipping_states_id');
+    }
+
+    public function shippingRate(): BelongsTo
+    {
+        return $this->belongsTo(ShippingRate::class, 'shipping_rate_id');
     }
 }
