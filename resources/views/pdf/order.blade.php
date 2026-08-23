@@ -234,8 +234,7 @@
     <!-- Header con color sólido -->
     <div class="arca-header clearfix">
       <div class="arca-logo">
-        <h2>ARCA</h2>
-        <p>Agencia de Recaudación y Control Aduanero</p>
+        <h2>Factura</h2>
       </div>
       <div class="comprobante-tipo">
         <div class="label">COMPROBANTE AUTORIZADO</div>

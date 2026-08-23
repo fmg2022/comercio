@@ -143,7 +143,7 @@
     <section class="p-4 bg-slate-800/60 rounded shadow-md shadow-slate-500/60">
       <h3 class="text-xl font-semibold px-5 mb-3">❤️ Tus productos favoritos</h3>
       <ul class="flex flex-col gap-3">
-        @foreach ($favoriteProducts as $product)
+        @forelse ($favoriteProducts as $product)
           <li class="flex items-center gap-3 bg-slate-800">
             <img src="{{ asset('images/products/' . $product->image) }}" class="size-16 object-cover rounded">
             <div class="grow">
@@ -176,7 +176,11 @@
               </button>
             @endif
           </li>
-        @endforeach
+        @empty
+          <li class="py-3.5 mt-1 flex items-center justify-center font-semibold bg-slate-800">
+            Sin productos favoritos
+          </li>
+        @endforelse
       </ul>
     </section>
   </div>

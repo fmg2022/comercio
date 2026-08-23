@@ -39,6 +39,13 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'update_users', 'display_name' => 'Editar usuarios'],
             ['name' => 'delete_users', 'display_name' => 'Eliminar usuarios'],
 
+            // ---------- Direcciones ----------
+            ['name' => 'view_any_addresses', 'display_name' => 'Listar direcciones'],
+            ['name' => 'view_address', 'display_name' => 'Ver direccion'],
+            ['name' => 'create_addresses', 'display_name' => 'Crear direcciones'],
+            ['name' => 'update_addresses', 'display_name' => 'Editar direcciones'],
+            ['name' => 'delete_addresses', 'display_name' => 'Eliminar direcciones'],
+
             // ---------- Productos ----------
             ['name' => 'view_any_products', 'display_name' => 'Listar productos'],
             ['name' => 'view_product', 'display_name' => 'Ver producto'],

@@ -50,13 +50,6 @@ class Order extends Model
 		);
 	}
 
-	protected function discount(): Attribute
-	{
-		return Attribute::make(
-			get: fn() => $this->products->sum('pivot.discount')
-		);
-	}
-
 	protected function totalWithIva(): Attribute
 	{
 		return Attribute::make(

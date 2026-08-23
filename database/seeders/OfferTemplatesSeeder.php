@@ -42,8 +42,8 @@ class OfferTemplatesSeeder extends Seeder
                 'pay_qty' => 0.25,
             ],
             [
-                'name' => 'Precio fijo $50',
-                'description' => 'Paga $50 por cada producto seleccionado',
+                'name' => 'Descuento de $50',
+                'description' => 'Descuento de $50 en productos seleccionados',
                 'offer_type_id' => 3,
                 'buy_qty' => 1,
                 'pay_qty' => 50,

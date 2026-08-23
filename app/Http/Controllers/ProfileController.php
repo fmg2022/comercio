@@ -13,7 +13,10 @@ class ProfileController extends Controller
 {
     public function index(Request $request): View
     {
-        return view('pages.home.profile.index', ['user' => $request->user()]);
+        return view('pages.home.profile.index', [
+            'user' => $request->user(),
+            'address' => $request->user()->defaultAddress,
+        ]);
     }
 
     /**
@@ -31,15 +34,23 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+        $user = $request->user();
+        $userData = array_slice($data, 0, 5);
+        $addressData = array_slice($data, 5, 6);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill($userData);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('pages.home.profile.edit')->with('status', 'profile-updated');
+        // Address
+        $user->defaultAddress->update($addressData);
+
+        return redirect()->back()->with('success', 'Perfil actualizado');
     }
 
     /**

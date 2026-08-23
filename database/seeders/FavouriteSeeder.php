@@ -13,7 +13,7 @@ class FavouriteSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all();
+        $users = User::get('id');
 
         foreach ($users as $user) {
             $qty = random_int(0, 8);

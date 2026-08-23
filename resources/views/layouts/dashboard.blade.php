@@ -30,17 +30,20 @@
   @stack('styles-dashboard')
 
   <script src="{{ asset('js/indexDash.js') }}" type="module"></script>
-  @stack('scripts-dashboard')
 </head>
 
-<body class="antialiased relative font-sans bg-slate-900 text-teal-50 xl:flex">
+<body class="antialiased scroll-smooth relative font-sans bg-slate-900 text-teal-50 xl:flex">
   <x-asideMenu />
 
   <main class="min-h-screen flex flex-col grow">
     @include('layouts.partials.dashboard.header')
 
     <section class="px-2 py-5 grow sm:px-5 sm:py-7">
-      @yield('content')
+      @isset($slot)
+        {{ $slot }}
+      @else
+        @yield('content')
+      @endisset
     </section>
 
     @include('layouts.partials.dashboard.footer')
@@ -58,6 +61,7 @@
     })
   </script>
   @livewireScripts
+  @stack('scripts-dashboard')
 </body>
 
 </html>
