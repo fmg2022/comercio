@@ -21,8 +21,8 @@ class Offer extends Model
     ];
 
     public $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     // Scopes

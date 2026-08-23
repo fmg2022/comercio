@@ -27,6 +27,10 @@ class Payment extends Model
         'payment_provider_id',
     ];
 
+    protected $casts = [
+        'paid_at' => 'datetime',
+    ];
+
     // Accessors
     public function amountFormated(): Attribute
     {
@@ -35,18 +39,12 @@ class Payment extends Model
         );
     }
 
-    public function dateFormated(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => date('d/m/Y', strtotime($this->paid_at))
-        );
-    }
 
     // Scopes
     public function scopeOnlyAprobed(Builder $query): void
     {
         $query->whereHas('paymentState', function (Builder $q) {
-            $q->where('code', 'APROBADO');
+            $q->where('slug', 'approved');
         });
     }
 
