@@ -2,20 +2,37 @@
 
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 
 new class extends Component {
     public \App\Models\Cart $cart;
 
-    public array $quantities = [];
-    public array $inputErrors = [];
+    public array $quantities = [],
+        $inputErrors = [],
+        $route = [];
     public float $total = 0.0,
-        $tax = 0.0;
+        $tax = 0.0,
+        $shippingCost = 0.0;
 
     protected function rules(int $stock)
     {
         return [
             'quantity' => 'required|integer|min:1|max:' . $stock,
         ];
+    }
+
+    public function messages()
+    {
+        return [
+            'quantity.max' => 'Stock insuficiente',
+            'quantity.min' => 'Cantidad minima es 1',
+        ];
+    }
+
+    #[Computed]
+    public function addresses()
+    {
+        return auth()->user()->addresses()->orderByDesc('is_default')->get();
     }
 
     public function mount()
@@ -26,6 +43,8 @@ new class extends Component {
             $this->quantities[$product->id] = $product->pivot->quantity;
         }
 
+        $this->calculateDistance();
+
         $this->calculateTotal();
     }
 
@@ -33,6 +52,30 @@ new class extends Component {
     {
         $this->tax = ($this->cart->total * floatval(config('commerce.tax_rate'))) / 100;
         $this->total = $this->cart->total + $this->tax;
+
+        if (array_key_exists('error', $this->route)) {
+            $this->shippingCost = 0;
+            return;
+        }
+
+        $service = app(ShippingCostService::class);
+        $calculatedShippingCost = $service->calculateShippingCost($this->route['distance_km']);
+
+        if (!$calculatedShippingCost['is_feasible']) {
+            $this->shippingCost = 0;
+            return;
+        }
+
+        $this->shippingCost = $calculatedShippingCost['rate']->cost;
+    }
+
+    public function calculateDistance(): void
+    {
+        $address = auth()->user()->defaultAddress;
+        $store = \App\Models\Setting::whereIn('key', ['longitude', 'latitude'])->pluck('value', 'key');
+
+        $service = app(RoutingService::class);
+        $this->route = $service->cachedDistance(cacheKey: "shipping:route:1:{$address->id}", fromLatitude: $store['latitude'], fromLongitude: $store['longitude'], toLatitude: $address->latitude, toLongitude: $address->longitude);
     }
 
     public function updatedQuantities($value, $key)
@@ -101,14 +144,6 @@ new class extends Component {
             $this->calculateTotal();
             $this->dispatch('cart-updated');
         }
-    }
-
-    public function messages()
-    {
-        return [
-            'quantity.max' => 'Stock insuficiente',
-            'quantity.min' => 'Cantidad minima es 1',
-        ];
     }
 
     public function clearProductError($id)
@@ -180,13 +215,12 @@ new class extends Component {
 
               <section class="flex flex-1 items-end justify-between text-sm">
                 <div x-data="{
-                    productId: {{ $item->id }},
                     errorTimeout: null
-                }" x-init=" $watch('$wire.inputErrors.' + productId, value => {
+                }" x-init=" $watch('$wire.inputErrors[{{ $item->id }}]', value => {
                      if (value) {
                          clearTimeout(errorTimeout);
                          errorTimeout = setTimeout(() => {
-                             $wire.clearProductError(productId);
+                             $wire.clearProductError({{ $item->id }});
                          }, 4000);
                      }
                  })" class="relative w-full max-w-16">
@@ -196,9 +230,9 @@ new class extends Component {
                       wire:key="quantity-{{ $item->id }}"
                       class="px-3 py-1.5 text-base text-gray-900 rounded-md outline outline-offset-1 transition-colors duration-200 sm:text-sm {{ isset($inputErrors[$item->id]) ? 'outline-red-500  ring-2 ring-red-500' : 'outline-gray-300' }}" />
                   </label>
-                  <div x-show="$wire.inputErrors[productId]" x-transition.opacity
+                  <div x-show="$wire.inputErrors[{{ $item->id }}]" x-transition.opacity
                     class="absolute top-full left-0 mt-1 w-fit max-w-24 border-red-500 text-red-600 bg-red-50 text-xs text-center p-1 rounded shadow-md"
-                    x-text="$wire.inputErrors[productId]">
+                    x-text="$wire.inputErrors[{{ $item->id }}]">
                   </div>
                 </div>
                 <div @class([
@@ -237,6 +271,17 @@ new class extends Component {
             placeholder="Ej: Prefiero retirar después de las 17hs..."></textarea>
         </div>
 
+        <div class="mb-8">
+          <label for="address_id" class="mb-4 text-lg font-medium text-gray-900">Dirección de envio</label>
+          <select id="address_id" name="address_id"
+            class="block w-full px-3 py-2 rounded-md bg-white border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            @foreach ($this->addresses as $address)
+              <option value="{{ $address->id }}" @selected($address->id === auth()->user()->defaultAddress->id)>
+                {{ $address->street_1 }}</option>
+            @endforeach
+          </select>
+        </div>
+
         <div class="flex items-center justify-between text-base">
           <p class="text-gray-600">Subtotal</p>
           <p wire:loading class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
@@ -252,22 +297,32 @@ new class extends Component {
             ${{ number_format($this->tax, 2, ',', '.') }}
           </p>
         </div>
+        <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
+          <p class="text-gray-600">Costo de envio</p>
+          <p wire:loading class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
+          <p wire:loading.remove class="font-medium text-gray-900">
+            ${{ number_format($this->shippingCost, 2, ',', '.') }}
+          </p>
+        </div>
         <div class="pt-4 flex items-center justify-between text-lg font-medium text-gray-900 border-t border-gray-200">
           <p>Total del pedido</p>
           <p wire:loading class="animate-pulse">⏳ Actualizando...</p>
           <p wire:loading.remove>
-            ${{ number_format($cart->total + $this->tax, 2, ',', '.') }}
+            ${{ number_format($cart->total + $this->tax + $this->shippingCost, 2, ',', '.') }}
           </p>
         </div>
 
-        <div class="border-t border-gray-200">
-          <div class="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800">
-            <p class="font-medium">📦 Retiro en local</p>
-            <p class="mt-1">Dirección: {{ config('app_settings.address') ?? 'Dirección no configurada' }}</p>
-            <p class="mt-1">Horario: {{ config('app_settings.pickup_hours') ?? 'Consultar' }}</p>
-            <p class="mt-1 text-xs">⚠️ Presentá tu DNI y el número de pedido al retirar.</p>
+        {{-- Modificar en caso de que no se pueda enviar el pedido --}}
+        @if (array_key_exists('error', $this->route))
+          <div class="border-t border-gray-200">
+            <div class="rounded-md bg-yellow-50 p-4 text-sm text-yellow-800">
+              <p class="font-medium">📦 Retiro en local</p>
+              <p class="mt-1">Dirección: {{ config('app_settings.address') ?? 'Dirección no configurada' }}</p>
+              <p class="mt-1">Horario: {{ config('app_settings.pickup_hours') ?? 'Consultar' }}</p>
+              <p class="mt-1 text-xs">⚠️ Presentá tu DNI y el número de pedido al retirar.</p>
+            </div>
           </div>
-        </div>
+        @endif
         <div class="border-t border-gray-200">
           <fieldset>
             <legend class="text-sm font-medium text-gray-900 mb-3">Método de pago</legend>
