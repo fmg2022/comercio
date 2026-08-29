@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     })->name('my.cart.index')->middleware('permission:view_any_own_cart');
 
     // User routes
-    Route::prefix('/addresses')->name('profile.')->group(function () {
+    Route::prefix('/profile')->name('profile.')->group(function () {
       Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('index');
       // Address routes
       Route::prefix('/addresses')->name('addresses.')->group(function () {
