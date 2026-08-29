@@ -17,8 +17,10 @@ class Shipping extends Model
         'transport_user_id',
         'shipping_states_id',
         'shipping_rate_id',
+        'address_id',
         'tracking_number',
         'shipping_cost',
+        'delivery_method',
         'estimated_delivery_date',
         'delivered_at',
         'notes',
@@ -85,5 +87,10 @@ class Shipping extends Model
     public function shippingRate(): BelongsTo
     {
         return $this->belongsTo(ShippingRate::class, 'shipping_rate_id');
+    }
+
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }

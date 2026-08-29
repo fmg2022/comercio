@@ -19,11 +19,13 @@ class ShippingFactory extends Factory
     public function definition(): array
     {
         $shippingRate = ShippingRate::inRandomOrder()->first(['id', 'cost', 'min_distance', 'max_distance']);
+        $deliveryMethod = $this->faker->randomElement(['shipping', 'pickup']);
 
         return [
             'tracking_number' => $this->faker->bothify('TRK-####-????'),
-            'shipping_cost' => $shippingRate->cost,
+            'shipping_cost' => $deliveryMethod === 'shipping' ? $shippingRate->cost : 0.0,
             'shipping_rate_id' => $shippingRate->id,
+            'delivery_method' => $deliveryMethod,
             'distance_km' => $this->faker->randomFloat(1, $shippingRate->min_distance, $shippingRate->max_distance),
             'delivered_at' => null,
             'notes' => $this->faker->optional()->sentence,

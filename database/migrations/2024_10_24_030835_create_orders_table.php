@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('iva', 10, 2)->default(0);
             $table->decimal('shipping_cost', 10, 2)->default(0);
             $table->text('notes')->nullable();
-            $table->foreignId('address_id')->constrained()->onUpdate('cascade');
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');
             $table->foreignId('order_state_id')->constrained()->onUpdate('cascade');
             $table->timestamps();

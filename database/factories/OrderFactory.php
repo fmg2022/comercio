@@ -17,8 +17,8 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $user = \App\Models\User::where('active', true)->inRandomOrder()->first();
-        $state_id = DB::table('order_states')->inRandomOrder()->first()->id;
+        $user_id = DB::table('users')->inRandomOrder()->value('id');
+        $state_id = DB::table('order_states')->inRandomOrder()->value('id');
 
         return [
             'date' => $this->faker->dateTimeBetween('-12 months', 'now')->format('Y-m-d H:i:s'),
@@ -26,8 +26,7 @@ class OrderFactory extends Factory
             'iva' => 0,
             'shipping_cost' => 0,
             'notes' => $this->faker->optional(0.3)->sentence,
-            'address_id' => $user->addresses()->inRandomOrder()->first()->id,
-            'user_id' => $user->id,
+            'user_id' => $user_id,
             'order_state_id' => $state_id,
         ];
     }

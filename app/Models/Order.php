@@ -19,7 +19,6 @@ class Order extends Model
 		'iva',
 		'shipping_cost',
 		'notes',
-		'address_id',
 		'order_state_id',
 		'user_id',
 	];
@@ -88,11 +87,6 @@ class Order extends Model
 		return $this->hasOne(Payment::class);
 	}
 
-	public function address(): BelongsTo
-	{
-		return $this->belongsTo(Address::class);
-	}
-
 	public function shipping(): HasMany
 	{
 		return $this->hasMany(Shipping::class);
@@ -102,7 +96,7 @@ class Order extends Model
 	{
 		return $this->belongsToMany(Product::class)
 			->using(OrderProduct::class)
-			->withPivot(['quantity', 'price', 'discount', 'offer_template_id', 'offer_type_slug'])
+			->withPivot(['quantity', 'price', 'discount', 'offer_id', 'offer_template_name', 'offer_type_slug'])
 			->withTimestamps();
 	}
 }

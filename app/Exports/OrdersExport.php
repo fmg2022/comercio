@@ -49,7 +49,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
             $order->total_products,
             $order->products->pluck('name')->implode(', ') ?? 'N/A',
             $order->user->fullName() ?? 'N/A',
-            $order->address,
+            $order->shipping->address?->street_1 ?? 'N/A',
         ];
     }
 

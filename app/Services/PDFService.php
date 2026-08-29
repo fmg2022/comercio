@@ -36,7 +36,7 @@ class PDFService
             'cliente_nombre' => $order->user->fullName(),
             'cliente_tipo_doc' => 'DNI',
             'cliente_documento' => $order->user->dni,
-            'cliente_domicilio' => $order->address,
+            'cliente_domicilio' => $order->shipping->address?->street_1 ?? '',
             'cliente_telefono' => $order->user->phone,
             'subtotal' => $order->subtotal,
             'iva' => $order->total * ($iva / 100),
