@@ -48,6 +48,10 @@ class AddressController extends Controller
                     'user_id' => $user->id,
                 ]);
 
+                if ($request->route('profile.index')) {
+                    return redirect()->route('profile.index')->with('success', 'Dirección creada');
+                }
+
                 return redirect()->back()->with('success', 'Dirección creada');
             });
         } catch (\RuntimeException $e) {
