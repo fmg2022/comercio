@@ -61,7 +61,7 @@
             </span>
             <x-popups.text
               class="top-2/3 left-1/2 -translate-x-1/2 w-max hidden bg-slate-900/80 peer-hover/popup:inline-block">
-              {{ $orderLine->pivot->offer_template_id ? $orderLine->pivot->offerName() : 'Sin descuento' }}
+              {{ $orderLine->pivot->offerName() }}
             </x-popups.text>
           </td>
           <td class="text-center hidden md:table-cell">
@@ -108,7 +108,7 @@
         </p>
       </div>
     @endif
-    <div class="max-w-xs px-4 py-5 grid grid-cols-2 self-start justify-self-end rounded-b-xl font-medium bg-slate-800">
+    <div class="max-w-md px-4 py-5 grid grid-cols-2 self-start justify-self-end rounded-b-xl font-medium bg-slate-800">
       <div class="[&>p]:ps-4">
         <p>Total (sin IVA)</p>
         <p>IVA (21%)</p>

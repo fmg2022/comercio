@@ -49,6 +49,6 @@ class OrderProduct extends Pivot
 
     public function offerName(): string
     {
-        return OfferTemplate::where('id', $this->offer_template_id)->first()?->name ?? 'Sin descuento';
+        return Offer::where('id', $this->offer_id)->first()?->name ?? 'Sin descuento';
     }
 }
