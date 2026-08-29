@@ -15,6 +15,7 @@ class ShippingStateSeeder extends Seeder
     {
         $statuses = [
             ['name' => 'Pendiente', 'slug' => 'pending'],
+            ['name' => 'Preparado', 'slug' => 'ready_for_pickup'],
             ['name' => 'Asignado', 'slug' => 'assigned'],
             ['name' => 'En camino', 'slug' => 'in_transit'],
             ['name' => 'Entregado', 'slug' => 'delivered'],

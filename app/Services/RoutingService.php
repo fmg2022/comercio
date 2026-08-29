@@ -34,11 +34,15 @@ class RoutingService
 
     if ($response->failed()) {
       return [
-        'error' => $response->json()['error'],
-        'menssage' => 'No fue posible calcular la ruta.',
-        'distance_meters' => (float)0,
-        'distance_km' => (float)0,
-        'duration_seconds' => (float)0,
+        'error' => true,
+        'message' => data_get(
+          $response->json(),
+          'error',
+          'No fue posible obtener la distancia de la ruta.'
+        ),
+        'distance_meters' => 0.0,
+        'distance_km' => 0.0,
+        'duration_seconds' => 0.0,
       ];
     }
 
@@ -48,17 +52,21 @@ class RoutingService
 
     if (!$summary) {
       return [
-        'error' => $response->json()['error'],
-        'menssage' => 'No fue posible obtener la distancia de la ruta.',
-        'distance_meters' => (float)0,
-        'distance_km' => (float)0,
-        'duration_seconds' => (float)0,
+        'error' => true,
+        'message' => data_get(
+          $response->json(),
+          'error',
+          'No fue posible obtener la distancia de la ruta.'
+        ),
+        'distance_meters' => 0.0,
+        'distance_km' => 0.0,
+        'duration_seconds' => 0.0,
       ];
     }
 
     return [
       'distance_meters' => (float) $summary['distance'],
-      'distance_km' => (float) $summary['distance'] / 1000,
+      'distance_km' => round((float) $summary['distance'] / 1000, 2),
       'duration_seconds' => (float) $summary['duration'],
     ];
   }
