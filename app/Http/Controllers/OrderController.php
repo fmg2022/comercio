@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exports\OrdersExport;
 use App\Http\Requests\OrderExportRequest;
-use App\Models\{Cart, Order, OrderState, Payment, PaymentProvider, PaymentState, Product, User};
+use App\Models\{Cart, Order, OrderState, Payment, PaymentProvider, PaymentState, Product, Setting, Shipping, User};
+use App\Services\{RoutingService, ShippingCostService};
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\{Request, JsonResponse, RedirectResponse};
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class OrderController extends Controller
 {
+
+	public function __construct(
+		public ShippingCostService $shippingService,
+		public RoutingService $routingService
+	) {}
+
 	public function index(): View
 	{
 		return view('pages.dashboard.order.index', [
@@ -44,25 +51,65 @@ class OrderController extends Controller
 	public function store(Request $request): RedirectResponse
 	{
 		$user = auth()->user();
-		if (!$user->address) {
-			return back()->with('error', 'Debes crear una dirección antes de poder realizar el pago.');
-		}
 
 		$validated = $request->validate([
 			'cart_id' => 'required|exists:carts,id',
+			'address_id' => 'nullable|exists:addresses,id',
 			'notes' => 'nullable|string',
+			'delivery_method' => 'required|string|in:shipping,pickup',
 			'payment_method' => 'required|string|in:mercadopago,paypal',
 		]);
 
+		if ($validated['delivery_method'] === 'shipping' && empty($validated['address_id'])) {
+			return back()->withErrors([
+				'address_id' => 'Debes seleccionar una dirección para el envío.',
+			]);
+		}
+
 		$cart = Cart::where('id', $validated['cart_id'])
-			->where('user_id', auth()->id())
+			->where('user_id', $user->id)
+			->with('products')
 			->firstOrFail();
 
 		if ($cart->products->isEmpty()) {
 			return back()->with('error', 'El carrito está vacío.');
 		}
 
-		$order = DB::transaction(function () use ($cart, $validated, $user) {
+		$shippingRate = null;
+		$shippingCost = 0.0;
+
+		if ($validated['delivery_method'] === 'shipping') {
+			$address = $user->addresses()->findOrFail($validated['address_id']);
+
+			$localLocation = Setting::query()
+				->whereIn('key', ['longitude', 'latitude',])
+				->pluck('value', 'key');
+
+			if (!isset($localLocation['latitude']) || !isset($localLocation['longitude'])) {
+				return back()->with('error', 'No fue posible obtener la ubicación del local.');
+			}
+
+			$route = $this->routingService->distance(
+				fromLatitude: (float) $localLocation['latitude'],
+				fromLongitude: (float) $localLocation['longitude'],
+				toLatitude: (float) $address->latitude,
+				toLongitude: (float) $address->longitude,
+			);
+
+			if (!empty($route['error'])) {
+				return back()->with('error', $route['message'] ?? 'No fue posible calcular la distancia de la ruta del envío.');
+			}
+
+			$shippingRate = $this->shippingService->calculateShippingCost($route['distance_km']);
+
+			if (!$shippingRate['is_feasible']) {
+				return back()->with('error', 'El envío no está disponible para la dirección seleccionada. ' . 'Podés seleccionar retiro en local.');
+			}
+
+			$shippingCost = (float) $shippingRate['rate']->cost;
+		}
+
+		$result = DB::transaction(function () use ($cart, $validated, $user, $shippingRate, $shippingCost) {
 			$cartProducts = $cart->products;
 			$productsIds = $cartProducts->pluck('id')->unique()->sort()->values();
 
@@ -91,16 +138,16 @@ class OrderController extends Controller
 				'date' => now(),
 				'total' => 0,
 				'iva' => 0,
-				'shipping_cost' => $cart->shippingCost(),
+				'shipping_cost' => $shippingCost,
 				'notes' => $validated['notes'],
 				'order_state_id' => OrderState::where('slug', 'pending')->value('id'),
 				'user_id' => $user->id,
-				'address_id' => $user->defaultAddress->id,
+				'address_id' => $validated['address_id'],
 			]);
 
 			$total = 0;
 
-			foreach ($cart->products as $productItem) {
+			foreach ($cartProducts as $productItem) {
 				$offer = $productItem->getCurrentOffer();
 				$templateOffer = $offer?->offerTemplate;
 				$discount = $templateOffer ?
@@ -121,10 +168,11 @@ class OrderController extends Controller
 					'offer_type_slug' => $templateOffer?->offerType->slug ?? '',
 				]);
 
-				$total += (($productItem->price * $productItem->pivot->quantity) - $productItem->pivot->discount);
+				$total += (($productItem->price * $productItem->pivot->quantity) - $discount);
 			}
 
 			$iva = $total * floatval(config('commerce.tax_rate', 21)) / 100;
+			$total = $total + $iva + $shippingCost;
 			$order->update(['total' => $total, 'iva' => round($iva, 2)]);
 
 			foreach ($cartProducts as $cartItem) {
@@ -132,27 +180,74 @@ class OrderController extends Controller
 				$product->decrement('stock', $cartItem->pivot->quantity);
 			}
 
-			return $order;
+
+			$trackingNumber = null;
+			$deliveryDate = null;
+			if ($validated['delivery_method'] === 'shipping') {
+				$random = bin2hex(random_bytes(5));
+				$date = date('YmdHis');
+				$trackingNumber = "TRK-{$random}-{$date}";
+				$deliveryDate = now()->addhours(random_int(1, 6));
+			}
+
+			$shippingStateSlug = $validated['delivery_method'] === 'pickup'
+				? 'ready_for_pickup'
+				: 'pending';
+
+			Shipping::create([
+				'order_id' => $order->id,
+				'transport_user_id' => null,
+				'shipping_states_id' => \App\Models\ShippingState::where('slug', $shippingStateSlug)->value('id'),
+				'shipping_rate_id' => $shippingRate['is_feasible'] ? $shippingRate['rate']->id : null,
+				'tracking_number' => $trackingNumber,
+				'shipping_cost' => $shippingRate['is_feasible'] ? $shippingRate['rate']->cost : 0,
+				'delivery_method' => $validated['delivery_method'],
+				'estimated_delivery_date' => $deliveryDate,
+				'delivered_at' => null,
+				'notes' => null,
+				'is_feasible' => $shippingRate['is_feasible'],
+			]);
+
+			$slug = $validated['payment_method'] === 'mercadopago' ? 'MERCADO_PAGO' : 'PAYPAL';
+			$payment = Payment::create([
+				'transaction_id' => 'pending_' . uniqid('', true),
+				'paymentId' => 'pay_' . uniqid('', true),
+				'provider_state' => 'pending',
+				'checkout_url' => '#',
+				'method' => $validated['payment_method'],
+				'amount' => $order->total,
+				'paid_at' => null,
+				'order_id' => $order->id,
+				'payment_state_id' => PaymentState::where('slug', 'pending')->value('id'),
+				'payment_provider_id' => PaymentProvider::where('slug', $slug)->value('id'),
+			]);
+
+			return [
+				'order' => $order,
+				'payment' => $payment,
+			];
 		});
 
-		$slug = $validated['payment_method'] === 'mercadopago' ? 'MERCADO_PAGO' : 'PAYPAL';
-		$payment = Payment::create([
-			'transaction_id' => 'pending_' . uniqid('', true),
-			'paymentId' => 'pay_' . uniqid('', true),
-			'provider_state' => 'pending',
-			'checkout_url' => '#',
-			'method' => $validated['payment_method'],
-			'amount' => $order->total + $order->iva,
-			'paid_at' => null,
-			'order_id' => $order->id,
-			'payment_state_id' => PaymentState::where('slug', 'pending')->value('id'),
-			'payment_provider_id' => PaymentProvider::where('slug', $slug)->value('id'),
-		]);
+		$order = $result['order'];
+		$payment = $result['payment'];
 
-		if ($validated['payment_method'] === 'mercadopago')
-			return redirect()->route('checkout.process', ['order' => $order->id, 'payment' => $payment->id]);
-		else
-			return redirect()->route('paypal.checkout', ['order' => $order->id, 'payment' => $payment->id]);
+		return match ($validated['payment_method']) {
+			'mercadopago' => redirect()->route(
+				'checkout.process',
+				[
+					'order' => $order->id,
+					'payment' => $payment->id,
+				]
+			),
+
+			'paypal' => redirect()->route(
+				'paypal.checkout',
+				[
+					'order' => $order->id,
+					'payment' => $payment->id,
+				]
+			),
+		};
 	}
 
 	public function updateStates(Request $request, Order $order): RedirectResponse
