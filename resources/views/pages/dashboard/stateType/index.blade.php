@@ -26,7 +26,7 @@
           <th>Descripción</th>
           <th class="z-10 text-end">Opciones</th>
         </tr>
-      </x-slot:head>
+      </x-slot:thead>
       <x-slot:tbody>
         <tr>
           <td colspan="4" class="bg-slate-700 text-center text-2xl font-bold">Ofertas: ESTADOS</td>

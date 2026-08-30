@@ -50,7 +50,7 @@
         <th class="hidden md:table-cell">Subtotal</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @foreach ($cart->products as $index => $product)
         <tr class="[&>td]:text-slate-200">

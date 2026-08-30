@@ -18,7 +18,7 @@
         <th>Última Modificación</th>
         <th class="text-right">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @forelse ($carts as $index => $cart)
         <tr>

@@ -30,7 +30,7 @@
             <th>Nombre</th>
             <th class="text-right">Opciones</th>
           </tr>
-        </x-slot:head>
+        </x-slot:thead>
         <x-slot:tbody>
           @forelse ($roles as $index => $role)
             <tr>

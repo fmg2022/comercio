@@ -77,7 +77,7 @@
         <th class="hidden sm:table-cell">Subcategorías</th>
         <th class="text-right">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @forelse ($categories as $index => $category)
         <tr {{ $category->trashed() ? 'data-trash' : '' }}

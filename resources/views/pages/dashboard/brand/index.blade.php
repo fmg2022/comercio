@@ -23,7 +23,7 @@
         <th>Name</th>
         <th class="z-10 text-end">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @forelse ($brands as $index => $brand)
         <tr>
@@ -81,7 +81,7 @@
         <th>Name</th>
         <th class="z-10 text-end">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @forelse ($brandsDeleted as $index => $brand)
         <tr class="text-slate-400">

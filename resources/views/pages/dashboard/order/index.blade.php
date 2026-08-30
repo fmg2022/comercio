@@ -124,7 +124,7 @@
         <th class="hidden md:table-cell">Estado</th>
         <th class="text-end">Opciones</th>
       </tr>
-    </x-slot:head>
+    </x-slot:thead>
     <x-slot:tbody>
       @forelse ($orders as $index => $order)
         @php
