@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade')->unique();
             $table->foreignId('transport_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('shipping_states_id')->constrained('shipping_states')->onDelete('restrict');
-            $table->foreignId('shipping_rate_id')->constrained('shipping_rates')->onDelete('restrict');
+            $table->foreignId('shipping_rate_id')->nullable()->constrained('shipping_rates')->onDelete('set null');
             $table->foreignId('address_id')->nullable()->constrained('addresses')->onDelete('set null');
 
             // Campos operativos

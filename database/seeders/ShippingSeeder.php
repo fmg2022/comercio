@@ -56,11 +56,13 @@ class ShippingSeeder extends Seeder
 				$shippingData['shipping_cost'] = 0;
 				$shippingData['notes'] = 'Cancelado por el cliente';
 				$shippingData['is_feasible'] = false;
+				$shippingData['distance_km'] = 0;
 			} elseif ($shippingStateSlug === 'failed') {
 				$shippingData['tracking_number'] = null;
 				$shippingData['shipping_cost'] = 0;
 				$shippingData['notes'] = 'No es posible enviar, distancia excedida';
 				$shippingData['is_feasible'] = false;
+				$shippingData['distance_km'] = 0;
 			} else {
 				$shippingData['notes'] = fake()->optional()->sentence;
 				$shippingData['delivered_at'] = $shippingStateSlug === 'delivered'

@@ -15,25 +15,25 @@ class PaymentProviderSeeder extends Seeder
     {
         DB::table('payment_providers')->insert([
             [
-                'code' => 'PAYPAL',
+                'code' => 'paypal',
                 'name' => 'PayPal',
                 'active' => true,
                 'default_currency' => 'USD',
             ],
             [
-                'code' => 'STRIPE',
+                'code' => 'stripe',
                 'name' => 'Stripe',
                 'active' => true,
                 'default_currency' => 'USD',
             ],
             [
-                'code' => 'SQUARE',
+                'code' => 'square',
                 'name' => 'Square',
                 'active' => false,
                 'default_currency' => 'USD',
             ],
             [
-                'code' => 'MERCADO_PAGO',
+                'code' => 'mercadopago',
                 'name' => 'Mercado Pago',
                 'active' => true,
                 'default_currency' => 'ARS',

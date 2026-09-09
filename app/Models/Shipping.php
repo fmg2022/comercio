@@ -19,6 +19,7 @@ class Shipping extends Model
         'shipping_rate_id',
         'address_id',
         'tracking_number',
+        'distance_km',
         'shipping_cost',
         'delivery_method',
         'estimated_delivery_date',
