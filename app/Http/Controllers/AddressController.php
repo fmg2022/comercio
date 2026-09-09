@@ -5,13 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddressRequest;
 use App\Models\Address;
 use App\Services\GeocodingService;
-use Illuminate\Http\Request;
+use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class AddressController extends Controller
 {
 
     public function __construct(public GeocodingService $geocodingService) {}
+
+    public function index(): View
+    {
+        return view('pages.dashboard.address.index', [
+            'addresses' => Address::orderBy('is_default', 'desc')->orderBy('id', 'desc')->paginate(10),
+            'addressesDeleted' => Address::onlyTrashed()->paginate(10, pageName: 'pageDeleted'),
+            'users' => \App\Models\User::get(['id', 'name', 'surname']),
+        ]);
+    }
 
     public function store(AddressRequest $request)
     {
@@ -19,7 +29,7 @@ class AddressController extends Controller
             $user = $request->user();
 
             $address = implode(', ', [
-                $request->street_1,
+                $request->street,
                 $request->locality,
                 $request->province,
                 $request->postal_code,
@@ -37,8 +47,8 @@ class AddressController extends Controller
 
                 Address::create([
                     'name' => ucwords($request->name),
-                    'street_1' => ucwords($request->street_1),
-                    'street_2' => $request->street_2 ? ucwords($request->street_2) : null,
+                    'street' => ucwords($request->street),
+                    'intersection' => $request->intersection ? ucwords($request->intersection) : null,
                     'locality' => ucwords($request->locality),
                     'province' => ucwords($request->province),
                     'postal_code' => $request->postal_code,
@@ -47,10 +57,6 @@ class AddressController extends Controller
                     'is_default' => true,
                     'user_id' => $user->id,
                 ]);
-
-                if ($request->route('profile.index')) {
-                    return redirect()->route('profile.index')->with('success', 'Dirección creada');
-                }
 
                 return redirect()->back()->with('success', 'Dirección creada');
             });
@@ -87,5 +93,12 @@ class AddressController extends Controller
         }
 
         return redirect()->back()->with('success', 'Dirección actualizada');
+    }
+
+    public function fetch(String $id): JsonResponse
+    {
+        $address = Address::withTrashed()->findOrFail($id, ['name', 'street', 'locality', 'province', 'postal_code', 'is_default', 'user_id']);
+
+        return response()->json($address);
     }
 }

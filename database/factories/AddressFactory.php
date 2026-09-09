@@ -18,14 +18,14 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->randomElement(['Casa', 'Oficina', 'Departamento', 'Otro']),
-            'street_1' => $this->faker->streetAddress,
-            'street_2' => $this->faker->optional()->secondaryAddress, // 50% de probabilidad de ser nulo
-            'locality' => $this->faker->city,
-            'province' => $this->faker->state,
-            'postal_code' => $this->faker->postcode,
-            'latitude' => $this->faker->latitude,
-            'longitude' => $this->faker->longitude,
+            'name' => $this->faker->randomElement(['Casa', 'Oficina', 'Departamento', 'Local', 'Otro']),
+            'street' => $this->faker->streetName(),
+            'intersection' => $this->faker->optional()->streetName(), // 50% de probabilidad de ser nulo
+            'locality' => $this->faker->city(),
+            'province' => $this->faker->state(),
+            'postal_code' => $this->faker->postcode(),
+            'latitude' => $this->faker->latitude(-24.77738, -24.67713),
+            'longitude' => $this->faker->longitude(-65.44865, -65.38531),
             'is_default' => false,
         ];
     }

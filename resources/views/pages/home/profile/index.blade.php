@@ -138,7 +138,7 @@
           <li class="flex justify-between text-slate-400">
             <div class="flex flex-col items-center md:flex-row md:w-full">
               <p class="md:w-1/2">Dirección</p>
-              <p class="text-wrap">{{ $address ? $address->street_1 : 'Sin dirección' }}</p>
+              <p class="text-wrap">{{ $address ? $address->street : 'Sin dirección' }}</p>
             </div>
             <div class="flex items-center md:w-50 md:justify-end">
               <button type="button" class="px-3 py-1 cursor-pointer hover:text-white"
@@ -252,13 +252,13 @@
                     </div>
                     <div class="col-span-full flex flex-col gap-y-2">
                       <label for="pf-dir1" class="text-sm font-semibold">Calle 1</label>
-                      <input value="{{ $address?->street_1 }}" id="pf-dir1" name="street_1"
+                      <input value="{{ $address?->street }}" id="pf-dir1" name="street"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50"
                         required>
                     </div>
                     <div class="col-span-full flex flex-col gap-y-2">
                       <label for="pf-dir2" class="text-sm font-semibold">Calle 2</label>
-                      <input value="{{ $address?->street_2 }}" id="pf-dir2" name="street_2"
+                      <input value="{{ $address?->intersection }}" id="pf-dir2" name="intersection"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50">
                     </div>
                     <div class="flex flex-col gap-y-2">
@@ -296,19 +296,17 @@
               <h3 class="px-6 py-2 mb-3 text-sm font-semibold uppercase bg-slate-700/75 rounded">
                 {{ $user->addresses->isEmpty() ? 'Sin' : '' }} Direcciones Disponibles</h3>
               @if (!$user->addresses->isEmpty())
-                <form action="{{ route('profile.addresses.updateDefault') }}" method="POST"
+                <form action="{{ route('addresses.updateDefault') }}" method="POST"
                   class="mb-7 flex flex-wrap items-center justify-center gap-y-2 gap-x-5">
                   @csrf
                   @method('PATCH')
                   <select name="address[]"
                     class="grow px-4 py-2.5 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50 [&>option]:text-black"
-                    @disabled($user->addresses->isEmpty()) required>
-                    @forelse ($user->addresses as $addressItem)
+                    required>
+                    @foreach ($user->addresses as $addressItem)
                       <option value="{{ $addressItem->id }}" @selected($addressItem->id === $address->id)>
-                        {{ $addressItem->street_1 }}</option>
-                    @empty
-                      <option value="" disabled selected>Sin direcciones</option>
-                    @endforelse
+                        {{ "{$addressItem->name}: {$addressItem->street}" }}</option>
+                    @endforeach
                   </select>
                   <button type="submit"
                     class="px-3 py-2 bg-green-800 rounded-md text-lg hover:bg-green-700 cursor-pointer">Seleccionar</button>
@@ -316,7 +314,7 @@
               @endif
               <h3 class="px-6 py-2 mb-3 text-sm font-semibold uppercase bg-slate-700/75 rounded">
                 Nueva dirección</h3>
-              <form action="{{ route('profile.addresses.store') }}" method="POST"
+              <form action="{{ route('addresses.store') }}" method="POST"
                 class="flex flex-wrap items-center gap-y-2 gap-x-5">
                 @csrf
                 <fieldset class="grow max-h-[44dvh] flex">
@@ -330,13 +328,13 @@
                     </div>
                     <div class="flex flex-col gap-y-2">
                       <label for="dir_street1" class="text-sm font-semibold">Calle 1</label>
-                      <input id="dir_street1" name="street_1"
+                      <input id="dir_street1" name="street"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50"
                         required>
                     </div>
                     <div class="flex flex-col gap-y-2">
                       <label for="dir_street2" class="text-sm font-semibold">Calle 2</label>
-                      <input id="dir_street2" name="street_2"
+                      <input id="dir_street2" name="intersection"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50">
                     </div>
                     <div class="flex flex-col gap-y-2">

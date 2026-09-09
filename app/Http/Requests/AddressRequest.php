@@ -24,8 +24,8 @@ class AddressRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'street_1' => 'required|string|max:255',
-            'street_2' => 'nullable|string|max:255',
+            'street' => 'required|string|max:255',
+            'intersection' => 'nullable|string|max:255',
             'province' => 'required|string|max:255',
             'locality' => 'required|string|max:255',
             'postal_code' => 'required|string|max:255',

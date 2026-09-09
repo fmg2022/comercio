@@ -17,8 +17,8 @@ return new class extends Migration
                 ->constrained()
                 ->onDelete('cascade');
             $table->string('name')->nullable();
-            $table->string('street_1');
-            $table->string('street_2')->nullable(); // Puede ser nulo
+            $table->string('street');
+            $table->string('intersection')->nullable(); // Puede ser nulo
             $table->string('locality');      // Ciudad o localidad
             $table->string('province');      // Provincia o estado
             $table->string('postal_code');   // Código postal

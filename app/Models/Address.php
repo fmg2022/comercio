@@ -14,8 +14,8 @@ class Address extends Model
     protected $fillable = [
         'user_id',
         'name',
-        'street_1',
-        'street_2',
+        'street',
+        'intersection',
         'locality',
         'province',
         'postal_code',
@@ -45,6 +45,16 @@ class Address extends Model
             ->update(['is_default' => false]);
 
         $this->update(['is_default' => true]);
+    }
+
+    public function fullAddress(): string
+    {
+
+        return $this->street
+            . ($this->intersection ? ', ' . $this->intersection : '')
+            . ', ' . $this->locality
+            . ', ' . $this->province
+            . ' ' . $this->postal_code;;
     }
 
     // Relationships

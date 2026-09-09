@@ -38,16 +38,14 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       return $controller->show($cart);
     })->name('my.cart.index')->middleware('permission:view_any_own_cart');
 
-    // User routes
-    Route::prefix('/profile')->name('profile.')->group(function () {
-      Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('index');
-      // Address routes
-      Route::prefix('/addresses')->name('addresses.')->group(function () {
-        Route::post('/', [AddressController::class, 'store'])->name('store');
-        Route::put('/{address}', [AddressController::class, 'update'])->name('update');
-        Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault');
-      });
+    // Address routes
+    Route::prefix('/addresses')->name('addresses.')->group(function () {
+      Route::post('/', [AddressController::class, 'store'])->name('store');
+      Route::put('/{address}', [AddressController::class, 'update'])->name('update');
+      Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault');
     });
+
+    // User routes
     Route::prefix('users')->name('users.')->group(function () {
       Route::get('/', [UserController::class, 'index'])->name('index')->middleware('permission:view_any_users');
       Route::get('/{id}/show', [UserController::class, 'show'])->name('show')->middleware('permission:view_users');
@@ -60,7 +58,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Address routes
     Route::prefix('addresses')->name('addresses.')->group(function () {
-      // Route::get('/', [AddressController::class, 'index'])->name('index')->middleware('permission:view_any_addresses');
+      Route::get('/', [AddressController::class, 'index'])->name('index')->middleware('permission:view_any_addresses');
       Route::post('/', [AddressController::class, 'store'])->name('store')->middleware('permission:create_addresses');
       Route::put('/{address}', [AddressController::class, 'update'])->name('update')->middleware('permission:update_addresses');
       Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault')->middleware('permission:update_addresses');

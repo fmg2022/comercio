@@ -85,6 +85,12 @@ return [
       'permission' => 'view_any_state_type',
     ],
     [
+      'name' => 'Direcciones',
+      'icon' => 'address',
+      'route' => 'addresses.index',
+      'permission' => 'view_any_addresses',
+    ],
+    [
       'name' => 'Carritos',
       'icon' => 'cart',
       'route' => 'carts.index',
