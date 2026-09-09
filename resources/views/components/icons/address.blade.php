@@ -1,0 +1,11 @@
+@props(['class' => ''])
+
+<svg xmlns = 'http://www.w3.org/2000/svg' width = '32' height = '32' viewBox = '0 0 48 48'
+  {{ $attributes->merge(['class' => $class]) }}>
+  <path d="M0 0h48v48H0z" fill="none" />
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+    <path d="M8 36v8h32V4H8v8M6 30h4m-4-6h4m-4-6h4" />
+    <circle cx="24" cy="17" r="4" />
+    <path d="M32 35a8 8 0 1 0-16 0" />
+  </g>
+</svg>
