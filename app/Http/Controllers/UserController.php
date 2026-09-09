@@ -43,7 +43,7 @@ class UserController extends Controller
         $user = User::create($validated)->assignRole('client');
 
         // Mail::to($user)->send(new WelcomeWithPasswordMail($user, $password));
-        Mail::to('maximo4735@gmail.com')->send(new WelcomeWithPasswordMail($user, $password));
+        Mail::to('sin.utilidad.comercio@gmail.com')->send(new WelcomeWithPasswordMail($user, $password));
 
         return redirect()->back()->with('success', 'Usuario creado correctamente. Verifique su correo para activar su cuenta.');
     }
@@ -71,7 +71,7 @@ class UserController extends Controller
             }
 
             // Mail::to($user)->send(new NoActiveMail($user));
-            Mail::to('maximo4735@gmail.com')->send(new NoActiveMail($user));
+            Mail::to('sin.utilidad.comercio@gmail.com')->send(new NoActiveMail($user));
 
             DB::table('sessions')->where('user_id', $user->id)->delete();
             $user->remember_token = null;
@@ -101,7 +101,7 @@ class UserController extends Controller
 
     public function fetch(String $id): JsonResponse
     {
-        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image', 'dni', 'address', 'active']);
+        $user = User::withTrashed()->findOrFail($id, ['name', 'surname', 'email', 'phone', 'image', 'dni',  'active']);
 
         return response()->json($user);
     }

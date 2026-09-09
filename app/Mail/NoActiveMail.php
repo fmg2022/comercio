@@ -5,7 +5,6 @@ namespace App\Mail;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -44,7 +43,7 @@ class NoActiveMail extends Mailable
     {
         $adminUser = auth()->user();
         $desactiveBy = [
-            'role' => $adminUser->getRoleNames()->filter(fn($role) => $role != 'client')[0] ?? 'Administrador',
+            'role' => $adminUser->roles->first()?->display_name ?? 'Administrador',
             'name' => $adminUser->name ?? 'Sistema'
         ];
 

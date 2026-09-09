@@ -255,14 +255,8 @@
               class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               required>
           </div>
-          <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
-            <label class="block mb-2 font-semibold" for="address">Dirección</label>
-            <input type="address" id="address" name="address" autocomplete="street-address"
-              class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              required>
-          </div>
           <section
-            class="col-span-full py-3 hidden flex-wrap gap-x-10 gap-y-5 items-center justify-center pointer-events-none group-[.editable]:pointer-events-auto group-[.editable]:flex">
+            class="col-span-2 py-3 hidden flex-wrap gap-x-10 gap-y-5 items-center justify-center pointer-events-none group-[.editable]:pointer-events-auto group-[.editable]:flex">
             <p class="w-max">¿Activar usuario?</p>
             <x-inputs.checkSwitch name="active"
               class="bg-slate-200 checked:bg-green-700 group-[.editable]:cursor-pointer"

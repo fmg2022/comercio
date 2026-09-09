@@ -167,7 +167,7 @@ class MercadoPagoController extends Controller
             }
 
             // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
-            Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
+            Mail::to('sin.utilidad.comercio@gmail.com')->send(new InvoiceMail($payment->order));
 
             // Limpiar el carrito
             $cart = Cart::where('user_id', $payment->order->user->id)

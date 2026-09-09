@@ -71,7 +71,7 @@ class PayPalController extends Controller
 
 
                 // Mail::to(auth()->user()->email)->send(new InvoiceMail($payment->order));
-                Mail::to('maximo4735@gmail.com')->send(new InvoiceMail($payment->order));
+                Mail::to('sin.utilidad.comercio@gmail.com')->send(new InvoiceMail($payment->order));
             } else {
                 Log::warning("No se encontró el pago para el ID: {$paypalOrderId}");
             }
