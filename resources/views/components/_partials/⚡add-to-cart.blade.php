@@ -64,15 +64,12 @@ new class extends Component {
 
             $existItem = $item && $item->exists();
 
-            $offerTemplate = Offer::find($this->product->activeOffer())?->offerTemplate;
             $qty = $existItem ? $item->pivot->quantity + $this->quantity : $this->quantity;
 
-            $discount = $offerTemplate ? $this->product->getDiscountTotal($qty, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->slug) : 0;
-
             if ($existItem) {
-                $cart->updateProduct($this->productId, $qty, $discount);
+                $cart->updateProduct($this->productId, $qty);
             } else {
-                $cart->attachProduct($this->productId, $qty, $discount);
+                $cart->attachProduct($this->productId, $qty);
             }
 
             DB::commit();

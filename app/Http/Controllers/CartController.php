@@ -25,23 +25,12 @@ class CartController extends Controller
 
 			$existItem = $item && $item->exists();
 
-			$product = $existItem ? $item : Product::findOrFail($validated['id']);
-			$offerTemplate = \App\Models\Offer::find($product->activeOffer())?->offerTemplate;
 			$qty = $existItem ? $item->pivot->quantity + $validated['quantity'] : $validated['quantity'];
 
-			$discount = $offerTemplate ?
-				$product->getDiscountTotal(
-					$qty,
-					$offerTemplate->buy_qty,
-					$offerTemplate->pay_qty,
-					$offerTemplate->offerType->slug
-				)
-				: 0;
-
 			if ($existItem) {
-				$cart->updateProduct($validated['id'], $qty, $discount);
+				$cart->updateProduct($validated['id'], $qty);
 			} else {
-				$cart->attachProduct($validated['id'], $qty, $discount);
+				$cart->attachProduct($validated['id'], $qty);
 			}
 
 			DB::commit();
@@ -58,18 +47,7 @@ class CartController extends Controller
 	{
 		$validated = $request->validated();
 
-		$product = Product::findOrFail($validated['id']);
-		$offerTemplate = $product->getCurrentOffer()?->offerTemplate;
-		$discount = $offerTemplate ?
-			$product->getDiscountTotal(
-				$validated['quantity'],
-				$offerTemplate->buy_qty,
-				$offerTemplate->pay_qty,
-				$offerTemplate->offerType->slug
-			)
-			: 0;
-
-		auth()->user()->cart->updateProduct($validated['id'], $validated['quantity'], $discount);
+		auth()->user()->cart->updateProduct($validated['id'], $validated['quantity']);
 
 		return redirect()->back()->with('success', 'Producto actualizado en el carrito');
 	}

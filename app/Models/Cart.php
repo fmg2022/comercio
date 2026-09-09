@@ -31,8 +31,18 @@ class Cart extends Model
     }
 
     // Functions
-    public function attachProduct(string $productId, int $quantity, float $discount): void
+    public function attachProduct(int $productId, int $quantity): void
     {
+        $product = Product::findOrFail($productId);
+        $offerTemplate = Offer::active()->find($product->activeOffer())?->offerTemplate;
+        $discount = $offerTemplate
+            ? $product->getDiscountTotal(
+                $quantity,
+                $offerTemplate->buy_qty,
+                $offerTemplate->pay_qty,
+                $offerTemplate->offerType->slug
+            )
+            : 0;
         $this->products()->attach($productId, ['quantity' => $quantity, 'discount' => $discount]);
         $this->touch();
     }
@@ -47,8 +57,19 @@ class Cart extends Model
         $this->touch();
     }
 
-    public function updateProduct(string $productId, int $quantity, float $discount): void
+    public function updateProduct(int $productId, int $quantity): void
     {
+        $product = $this->products()->find($productId);
+        $offerTemplate = Offer::active()->find($product->activeOffer())?->offerTemplate;
+        $discount = $offerTemplate
+            ? $product->getDiscountTotal(
+                $quantity,
+                $offerTemplate->buy_qty,
+                $offerTemplate->pay_qty,
+                $offerTemplate->offerType->slug
+            )
+            : 0;
+
         $this->products()->updateExistingPivot($productId, ['quantity' => $quantity, 'discount' => $discount]);
         $this->touch();
     }
