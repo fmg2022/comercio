@@ -1,25 +1,25 @@
 <?php
 
+use App\Livewire\Forms\CheckoutForm;
+use App\Services\ShippingCalculationService;
 use Illuminate\Support\Facades\Validator;
-use App\Services\{ShippingCostService, RoutingService};
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 
 new class extends Component {
     public \App\Models\Cart $cart;
+    public CheckoutForm $checkoutForm;
 
-    public ?int $addressId = null;
-    public string $deliveryMethod = 'shipping';
     public bool $isShippingFeasible = false;
     public ?string $shippingMessage = null;
 
     public array $quantities = [],
-        $inputErrors = [],
-        $route = [];
+        $inputErrors = [];
 
     public float $total = 0.0,
         $tax = 0.0,
-        $shippingCost = 0.0;
+        $shippingCost = 0.0,
+        $distanceKm = 0.0;
 
     protected function rules(int $stock)
     {
@@ -44,17 +44,16 @@ new class extends Component {
 
     public function mount()
     {
-        $this->cart = auth()->user()->cart->load('products.brand');
+        $this->cart = auth()
+            ->user()
+            ->cart->load(['products.brand', 'products.category']);
+        $this->checkoutForm->cartId = $this->cart->id;
 
         foreach ($this->cart->products as $product) {
             $this->quantities[$product->id] = $product->pivot->quantity;
         }
 
-        $this->addressId = auth()->user()->defaultAddress?->id;
-
-        if ($this->addressId) {
-            $this->calculateDistance();
-        }
+        $this->checkoutForm->addressId = auth()->user()->defaultAddress?->id;
         $this->calculateTotal();
     }
 
@@ -88,103 +87,70 @@ new class extends Component {
             return;
         }
 
-        $offerTemplate = \App\Models\Offer::active()->find($product->activeOffer())?->offerTemplate;
         $quantity = $this->quantities[$id] ?? $product->pivot->quantity;
-
-        $discount = $offerTemplate ? $product->getDiscountTotal($quantity, $offerTemplate->buy_qty, $offerTemplate->pay_qty, $offerTemplate->offerType->slug) : 0;
 
         if ($quantity < 1 || $quantity > $product->stock) {
             return;
         }
 
-        $this->cart->updateProduct($id, $quantity, $discount);
+        $this->cart->updateProduct($id, $quantity);
         $this->refreshCart();
     }
 
-    public function updatedAddressId(): void
+    public function updatedCheckoutFormAddressId(): void
     {
-        $this->calculateDistance();
         $this->calculateTotal();
     }
 
-    public function updatedDeliveryMethod(): void
+    public function updatedCheckoutFormDeliveryMethod(): void
     {
-        if ($this->deliveryMethod === 'shipping' && !$this->isShippingFeasible) {
-            $this->deliveryMethod = 'pickup';
+        if ($this->checkoutForm->deliveryMethod === 'shipping' && !$this->isShippingFeasible) {
+            $this->checkoutForm->deliveryMethod = 'pickup';
         }
 
         $this->calculateTotal();
+    }
+
+    public function saveCheckout()
+    {
+        $this->checkoutForm->save();
     }
 
     public function calculateTotal(): void
     {
         $this->tax = ($this->cart->total * floatval(config('commerce.tax_rate'))) / 100;
-        $this->total = $this->cart->total + $this->tax;
 
         $this->shippingCost = 0.0;
+        $this->distanceKm = 0.0;
         $this->isShippingFeasible = false;
         $this->shippingMessage = null;
 
-        if (!empty($this->route['error'])) {
-            if (gettype($this->route['message']) === 'array') {
-                $this->shippingMessage = implode(': ', $this->route['message']);
-            } else {
-                $this->shippingMessage = $this->route['message'] ?? 'No fue posible calcular la distancia hasta la dirección seleccionada.';
+        $address = auth()->user()->addresses()->find($this->checkoutForm->addressId);
+        try {
+            $shipping = app(ShippingCalculationService::class)->calculateForCheckout($address);
+
+            $this->isShippingFeasible = true;
+            $this->distanceKm = $shipping['distance_km'];
+
+            if ($this->checkoutForm->deliveryMethod === 'shipping') {
+                $this->shippingCost = (float) $shipping['shipping_cost'];
             }
-            $this->deliveryMethod = 'pickup';
-            $this->addressId = null;
-            return;
-        }
-
-        $calculatedShippingCost = app(ShippingCostService::class)->calculateShippingCost($this->route['distance_km']);
-
-        if (!$calculatedShippingCost['is_feasible']) {
+            $this->updateOrderTotal();
+        } catch (CheckoutException $e) {
+            $this->shippingMessage = $e->getMessage();
+            $this->addError('checkoutForm.addressId', $e->getMessage());
+        } catch (RouteCalculationException $e) {
+            $this->shippingMessage = $e->getMessage();
+            $this->addError('checkoutForm.addressId', $e->getMessage());
+        } catch (ShippingNotFeasibleException $e) {
             $this->shippingMessage = 'La dirección seleccionada se encuentra fuera de nuestra zona de envío.';
-            $this->deliveryMethod = 'pickup';
-            $this->addressId = null;
-            return;
-        }
-
-        $this->isShippingFeasible = true;
-
-        if ($this->deliveryMethod === 'shipping') {
-            $this->shippingCost = (float) $calculatedShippingCost['rate']->cost;
+            $this->distanceKm = $e->distance_km;
         }
     }
 
-    public function calculateDistance(): void
+    protected function updateOrderTotal(): void
     {
-        $address = auth()->user()->addresses()->find($this->addressId);
-
-        if (!$address) {
-            $this->route = [
-                'error' => true,
-                'message' => 'La dirección seleccionada no es válida.',
-                'distance_meters' => 0.0,
-                'distance_km' => 0.0,
-                'duration_seconds' => 0.0,
-            ];
-            return;
-        }
-
-        $store = \App\Models\Setting::query()
-            ->whereIn('key', ['longitude', 'latitude'])
-            ->pluck('value', 'key');
-
-        if (!isset($store['latitude']) || !isset($store['longitude'])) {
-            $this->route = [
-                'error' => true,
-                'message' => 'No fue posible obtener la ubicación del local.',
-                'distance_meters' => 0.0,
-                'distance_km' => 0.0,
-                'duration_seconds' => 0.0,
-            ];
-            return;
-        }
-
-        $cacheKey = 'shipping:route:' . md5(implode('|', [$store['latitude'], $store['longitude'], $address->latitude, $address->longitude]));
-
-        $this->route = app(RoutingService::class)->cachedDistance(cacheKey: $cacheKey, fromLatitude: $store['latitude'], fromLongitude: $store['longitude'], toLatitude: $address->latitude, toLongitude: $address->longitude);
+        $this->total = $this->cart->total + $this->tax + $this->shippingCost;
     }
 
     public function removeProduct(int $productId): void
@@ -322,68 +288,68 @@ new class extends Component {
         @endforelse
       </ul>
     </div>
-    <form action="{{ route('orders.store') }}" method="POST"
+    <form method="POST" wire:submit="saveCheckout"
       class="px-4 py-6 mt-16 rounded-lg bg-indigo-50 space-y-6 sm:p-6 lg:mt-0 lg:p-8 lg:col-span-5">
-      @if (!$this->addresses->isEmpty())
-        @csrf
-        <input type="hidden" name="cart_id" value="{{ auth()->user()->cart->id }}">
-        <input type="hidden" name="address_id" value="{{ $this->addressId }}">
-        <input type="hidden" name="delivery_method" value="{{ $this->deliveryMethod }}">
-      @endif
+      @csrf
       <h2 class="text-lg font-medium text-gray-900">Resumen del pedido</h2>
       <div class="space-y-4">
         <div class="mb-8">
           <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">
             Notas adicionales (Opcional)
           </label>
-          <textarea name="notes" id="notes" rows="3"
+          <textarea id="notes" rows="3" wire:model.defer="checkoutForm.notes"
             class="block w-full rounded-md border-gray-300 shadow-sm bg-white/50 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             placeholder="Ej: Prefiero retirar después de las 17hs..."></textarea>
         </div>
-
         <div class="mb-8">
           <label for="address_id" class="mb-4 text-lg font-medium text-gray-900">Dirección de envio</label>
-          <select id="address_id" name="address_id" wire:model.live="addressId"
+          <select id="address_id" wire:model.live="checkoutForm.addressId"
             class="block w-full px-3 py-2 rounded-md bg-white/50 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-            @foreach ($this->addresses as $address)
+            @forelse ($this->addresses as $address)
               <option value="{{ $address->id }}">
-                {{ $address->street_1 }}</option>
-            @endforeach
+                {{ $address->street }}</option>
+            @empty
+              <option value="" selected>Sin direcciones disponibles</option>
+            @endforelse
           </select>
         </div>
-
         <div class="border-t border-gray-200 pt-6">
           <fieldset>
             <legend class="text-lg font-medium text-gray-900 mb-4">Método de entrega</legend>
             <div class="space-y-3">
               <label @class([
                   'flex items-start gap-3 rounded-lg border p-4 transition',
-                  'cursor-pointer border-gray-300 hover:bg-gray-50' =>
-                      $this->isShippingFeasible,
-                  'cursor-not-allowed border-gray-200 bg-gray-100 opacity-60' => !$this->isShippingFeasible,
+                  'cursor-pointer border-gray-300 hover:bg-gray-50' => $isShippingFeasible,
+                  'cursor-not-allowed border-gray-200 bg-gray-100 opacity-60' => !$isShippingFeasible,
               ])>
-                <input type="radio" name="delivery_method" value="shipping" wire:model.live="deliveryMethod"
+                <input type="radio" name="delivery_method" value="shipping"
+                  wire:model.live="checkoutForm.deliveryMethod"
                   class="mt-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  @disabled(!$this->isShippingFeasible)>
+                  @disabled(!$isShippingFeasible)>
                 <div>
                   <p class="font-medium text-gray-900">🚚 Envío a domicilio</p>
 
-                  @if ($this->isShippingFeasible)
+                  @if ($isShippingFeasible)
                     <p class="mt-1 text-sm text-gray-600">Podemos realizar el envío a esta dirección.</p>
                     <p class="mt-1 text-sm text-gray-600">
                       Distancia:
-                      <strong>{{ number_format($this->route['distance_km'], 2, ',', '.') }} km</strong>
+                      <strong wire:loading.remove
+                        wire:target="distanceKm">{{ number_format($distanceKm, 2, ',', '.') }}
+                        km</strong>
+                      <span wire:loading wire:target="distanceKm" class="text-gray-900 animate-pulse">⏳
+                        Actualizando...</span>
                     </p>
                   @else
                     <p class="mt-1 text-sm text-red-600">
-                      {{ $this->shippingMessage ?? 'El envío no está disponible para esta dirección.' }}
+                      {{ $shippingMessage ?? 'El envío no está disponible para esta dirección.' }}
                     </p>
                   @endif
                 </div>
               </label>
               <label
                 class="flex items-start gap-3 rounded-lg border border-gray-300 p-4 cursor-pointer transition hover:bg-gray-50">
-                <input type="radio" name="delivery_method" value="pickup" wire:model.live="deliveryMethod"
+                <input type="radio" name="delivery_method" value="pickup"
+                  wire:model.live="checkoutForm.deliveryMethod"
                   class="mt-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
                 <div>
                   <p class="font-medium text-gray-900">🏪 Retiro en local</p>
@@ -401,7 +367,6 @@ new class extends Component {
             </div>
           </fieldset>
         </div>
-
         <div class="flex items-center justify-between text-base">
           <p class="text-gray-600">Subtotal</p>
           <p wire:loading class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
@@ -409,25 +374,24 @@ new class extends Component {
             ${{ number_format($cart->total, 2, ',', '.') }}
           </p>
         </div>
-
         <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
           <p class="text-gray-600">IVA ({{ floatval(config('commerce.tax_rate')) }}%)</p>
           <p wire:loading class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
           <p wire:loading.remove class="font-medium text-gray-900">
-            ${{ number_format($this->tax, 2, ',', '.') }}
+            ${{ number_format($tax, 2, ',', '.') }}
           </p>
         </div>
         <div class="pt-4 flex items-center justify-between text-base border-t border-gray-200">
           <p class="text-gray-600">
-            {{ $this->deliveryMethod === 'pickup' ? 'Costo de retiro' : 'Costo de envío' }}
+            {{ $checkoutForm->deliveryMethod === 'pickup' ? 'Costo de retiro' : 'Costo de envío' }}
           </p>
-          <p wire:loading class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
-          <div wire:loading.remove wire:target="addressId, deliveryMethod">
-            @if ($this->deliveryMethod === 'pickup')
+          <p wire:loading wire:target="calculateTotal" class="text-gray-900 animate-pulse">⏳ Actualizando...</p>
+          <div wire:loading.remove wire:target="calculateTotal">
+            @if ($checkoutForm->deliveryMethod === 'pickup')
               <p class="font-medium text-green-700">Gratis</p>
             @else
               <p class="font-medium text-gray-900">
-                ${{ number_format($this->shippingCost, 2, ',', '.') }}
+                ${{ number_format($shippingCost, 2, ',', '.') }}
               </p>
             @endif
           </div>
@@ -436,7 +400,7 @@ new class extends Component {
           <p>Total del pedido</p>
           <p wire:loading class="animate-pulse">⏳ Actualizando...</p>
           <p wire:loading.remove>
-            ${{ number_format($cart->total + $this->tax + $this->shippingCost, 2, ',', '.') }}
+            ${{ number_format($total, 2, ',', '.') }}
           </p>
         </div>
         <div class="pt-4 border-t border-gray-200">
@@ -445,11 +409,12 @@ new class extends Component {
             <div class="space-y-3">
               <label class="flex items-center gap-3 cursor-pointer">
                 <input type="radio" name="payment_method" value="mercadopago"
+                  wire:model="checkoutForm.paymentMethod"
                   class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500" checked>
                 <span class="text-sm text-gray-700">💳 <b>Mercado Pago</b> (Tarjeta / Transferencia)</span>
               </label>
               <label class="flex items-center gap-3 cursor-pointer">
-                <input type="radio" name="payment_method" value="paypal"
+                <input type="radio" name="payment_method" value="paypal" wire:model="checkoutForm.paymentMethod"
                   class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500">
                 <span class="text-sm text-gray-700">💳 <b>PayPal</b> (Tarjeta / Transferencia) solo en Dolares</span>
               </label>
@@ -459,13 +424,13 @@ new class extends Component {
       </div>
       <button type="submit"
         class="w-full rounded-md bg-indigo-600 px-6 py-3 text-center text-base font-medium text-white shadow-xs hover:bg-indigo-700 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-        @disabled($this->addresses->isEmpty())>
-        Proceder al pago</button>
-      @if ($this->addresses->isEmpty())
-        <a href="{{ route('profile.index') }}"
-          class="w-fit px-6 py-3 mx-auto block font-medium rounded-lg text-white bg-green-700 hover:bg-green-800">
-          Crear nueva dirección</a>
-      @endif
+        wire:target="saveCheckout" wire:loading.attr="disabled">
+        <span wire:loading wire:loading.flex wire:target="saveCheckout" class="gap-4 items-center justify-center">
+          <x-icons.animate.spinner class="size-6" />
+          Procesando...
+        </span>
+        <span wire:loading.remove wire:target="saveCheckout">Proceder al pago</span>
+      </button>
       <div class="flex justify-center gap-2 text-sm text-gray-500">
         <span>o</span>
         <x-buttons.link href="{{ route('home') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
