@@ -41,6 +41,11 @@ class OrderProduct extends Pivot
         return $this->belongsTo(Product::class);
     }
 
+    public function offer(): BelongsTo
+    {
+        return $this->belongsTo(Offer::class, 'offer_id');
+    }
+
     // Functions
     public function subtotal(): string
     {

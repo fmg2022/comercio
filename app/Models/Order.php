@@ -87,16 +87,21 @@ class Order extends Model
 		return $this->hasOne(Payment::class);
 	}
 
-	public function shipping(): HasMany
+	public function shippings(): HasMany
 	{
 		return $this->hasMany(Shipping::class);
+	}
+
+	public function shipping(): HasOne
+	{
+		return $this->hasOne(Shipping::class)->latestOfMany();
 	}
 
 	public function products(): BelongsToMany
 	{
 		return $this->belongsToMany(Product::class)
 			->using(OrderProduct::class)
-			->withPivot(['quantity', 'price', 'discount', 'offer_id', 'offer_template_name', 'offer_type_slug'])
+			->withPivot(['quantity', 'price', 'discount', 'offer_id', 'offer_id', 'offer_template_name', 'offer_type_slug'])
 			->withTimestamps();
 	}
 }

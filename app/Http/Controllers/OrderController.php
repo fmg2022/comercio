@@ -142,7 +142,6 @@ class OrderController extends Controller
 				'notes' => $validated['notes'],
 				'order_state_id' => OrderState::where('slug', 'pending')->value('id'),
 				'user_id' => $user->id,
-				'address_id' => $validated['address_id'],
 			]);
 
 			$total = 0;
@@ -163,16 +162,16 @@ class OrderController extends Controller
 					'quantity' => $productItem->pivot->quantity,
 					'price' => $productItem->price,
 					'discount' => $discount,
-					'offer_id' => $offer?->id ?? '',
-					'offer_template_name' => $templateOffer?->name ?? '',
-					'offer_type_slug' => $templateOffer?->offerType->slug ?? '',
+					'offer_id' => $offer?->id ?? null,
+					'offer_template_name' => $templateOffer?->name ?? null,
+					'offer_type_slug' => $templateOffer?->offerType->slug ?? null,
 				]);
 
 				$total += (($productItem->price * $productItem->pivot->quantity) - $discount);
 			}
 
 			$iva = $total * floatval(config('commerce.tax_rate', 21)) / 100;
-			$total = $total + $iva + $shippingCost;
+			$total += $iva + $shippingCost;
 			$order->update(['total' => $total, 'iva' => round($iva, 2)]);
 
 			foreach ($cartProducts as $cartItem) {
@@ -196,6 +195,7 @@ class OrderController extends Controller
 
 			Shipping::create([
 				'order_id' => $order->id,
+				'address_id' => $validated['delivery_method'] === 'shipping' ? $validated['address_id'] : null,
 				'transport_user_id' => null,
 				'shipping_states_id' => \App\Models\ShippingState::where('slug', $shippingStateSlug)->value('id'),
 				'shipping_rate_id' => $shippingRate['is_feasible'] ? $shippingRate['rate']->id : null,

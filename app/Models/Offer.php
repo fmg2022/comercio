@@ -49,4 +49,10 @@ class Offer extends Model
         return $this->belongsToMany(Product::class)
             ->withTimestamps();
     }
+
+    public function orderProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(OrderProduct::class)
+            ->withTimestamps();
+    }
 }

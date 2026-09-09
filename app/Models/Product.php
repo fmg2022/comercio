@@ -47,7 +47,7 @@ class Product extends Model
     public function getCurrentOffer(): ?object
     {
         return $this->belongsToMany(Offer::class)
-            ->with('offerTemplate:id,name,description,buy_qty,pay_qty,offer_type_id,offerType:id,slug')
+            ->with(['offerTemplate:id,description,buy_qty,pay_qty,offer_type_id', 'offerTemplate.offerType:id,slug'])
             ->whereHas('offerState', function ($query) {
                 $query->where('slug', 'active');
             })

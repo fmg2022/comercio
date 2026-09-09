@@ -75,9 +75,9 @@ class OrderSeeder extends Seeder
 					: null;
 
 				$discount = 0;
-				$offerId = '';
-				$offerName = '';
-				$offerTypeSlug = '';
+				$offerId = null;
+				$offerName = null;
+				$offerTypeSlug = null;
 
 				if ($offer) {
 					$discount = round(
