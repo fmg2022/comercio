@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\GeocodingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+    public function __construct(private GeocodingService $geocodingService) {}
+
     public function index(Request $request): View
     {
         return view('pages.home.profile.index', [
@@ -36,21 +40,68 @@ class ProfileController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
-        $userData = array_slice($data, 0, 5);
-        $addressData = array_slice($data, 5, 6);
+        $userData = [
+            'name' => $data['name'],
+            'surname' => $data['surname'],
+            'email' => $data['email'],
+            'dni' => $data['dni'],
+            'phone' => $data['phone'],
+        ];
 
-        $user->fill($userData);
+        $addressData = [
+            'name' => $data['name'],
+            'street' => $data['street'],
+            'intersection' => $data['intersection'] ?? null,
+            'locality' => $data['locality'],
+            'province' => $data['province'],
+            'postal_code' => $data['postal_code'],
+        ];
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+
+        try {
+            $address = implode(', ', array_filter([
+                $addressData['street'],
+                $addressData['intersection'] ?? null,
+                $addressData['locality'],
+                $addressData['province'],
+                $addressData['postal_code'],
+                'Argentina',
+            ]));
+            $geoData = $this->geocodingService->geocode($address);
+
+            $emailChanged = false;
+
+            DB::transaction(function () use ($user, $userData, $addressData, $geoData, &$emailChanged) {
+                // Address
+                if (!$user->defaultAddress) {
+                    $user->addresses()->create([...$addressData, 'latitude' => $geoData['latitude'], 'longitude' => $geoData['longitude']]);
+                    return;
+                } else {
+                    $user->defaultAddress->update([...$addressData, 'latitude' => $geoData['latitude'], 'longitude' => $geoData['longitude']]);
+                }
+
+                // User
+                $user->fill($userData);
+
+                if ($user->isDirty('email')) {
+                    $user->email_verified_at = null;
+                }
+
+                $user->save();
+                $emailChanged = $user->wasChanged('email');
+            });
+
+            if ($emailChanged) {
+                $user->sendEmailVerificationNotification();
+            }
+
+            return redirect()->back()->with('success', 'Perfil actualizado');
+        } catch (\RuntimeException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withInput()->with('error', 'Ocurrió un error al actualizar el perfil.');
         }
-
-        $user->save();
-
-        // Address
-        $user->defaultAddress->update($addressData);
-
-        return redirect()->back()->with('success', 'Perfil actualizado');
     }
 
     /**
