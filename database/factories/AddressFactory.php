@@ -17,9 +17,10 @@ class AddressFactory extends Factory
      */
     public function definition(): array
     {
+        $streetName = $this->faker->streetName() . ' ' . $this->faker->optional()->buildingNumber();
         return [
             'name' => $this->faker->randomElement(['Casa', 'Oficina', 'Departamento', 'Local', 'Otro']),
-            'street' => $this->faker->streetName(),
+            'street' => $streetName,
             'intersection' => $this->faker->optional()->streetName(), // 50% de probabilidad de ser nulo
             'locality' => $this->faker->city(),
             'province' => $this->faker->state(),
