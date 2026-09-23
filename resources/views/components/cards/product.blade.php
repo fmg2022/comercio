@@ -4,7 +4,7 @@
   <a href="{{ route('product.show', $product->id) }}"
     class="relative hover:[&>span]:bg-slate-500 hover:[&>span]:sm:opacity-100 group-[.list]:flex group-[.list]:max-w-56">
     <img class="aspect-square" src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
-      draggable="false" width="310">
+      draggable="false" width="280">
     <span
       class="absolute bottom-0 left-1/2 -translate-x-1/2 px-3 py-2 text-nowrap text-white bg-slate-600 rounded-lg sm:bottom-1/2 sm:translate-y-1/2 sm:opacity-0 transition-opacity duration-300">
       Ver Producto

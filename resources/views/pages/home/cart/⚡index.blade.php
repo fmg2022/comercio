@@ -185,7 +185,7 @@ new class extends Component {
 };
 ?>
 
-<article class="px-4 py-10 max-w-2xl mx-auto md:py-14 md:px-6 lg:px-8 lg:max-w-7xl">
+<article class="px-4 py-7 max-w-2xl mx-auto md:px-6 lg:px-8 lg:max-w-7xl">
 
   <div class="flex items-center justify-between gap-4 sm:gap-8">
     <h1 class="text-3xl text-gray-900 font-bold tracking-tight sm:text-4xl">🛒 Carrito de compras</h1>

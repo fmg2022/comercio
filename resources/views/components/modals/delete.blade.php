@@ -1,7 +1,7 @@
 @props(['iconClass' => ''])
 
 <dialog
-  {{ $attributes->merge(['class' => 'backdrop:bg-purple-900/35 backdrop:backdrop-blur-sm rounded-md overflow-hidden top-1/2 left-1/2 -translate-1/2 max-w-md']) }}
+  {{ $attributes->merge(['class' => 'backdrop:bg-black/60 backdrop:backdrop-blur-sm rounded-md overflow-hidden top-1/2 left-1/2 -translate-1/2 max-w-md']) }}
   closedby="any">
   <div class="relative flex flex-col gap-4 p-4">
     <div class="flex flex-col items-center justify-center">

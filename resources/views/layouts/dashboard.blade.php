@@ -38,12 +38,14 @@
   <main class="min-h-screen flex flex-col grow">
     @include('layouts.partials.dashboard.header')
 
-    <section class="px-2 py-5 grow sm:px-5 sm:py-7">
+    <section class="relative px-2 py-5 grow sm:px-5 sm:py-7">
       @isset($slot)
         {{ $slot }}
       @else
         @yield('content')
       @endisset
+
+      <x-popups.notification />
     </section>
 
     @include('layouts.partials.dashboard.footer')

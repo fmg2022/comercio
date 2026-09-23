@@ -165,7 +165,7 @@
     </div>
 
     <dialog
-      class="top-1/2 left-1/2 -translate-1/2 max-w-2xl w-full backdrop:bg-purple-900/35 backdrop:backdrop-blur-sm rounded-lg overflow-hidden text-white bg-slate-800"
+      class="top-1/2 left-1/2 -translate-1/2 max-w-2xl w-full backdrop:bg-black/60 backdrop:backdrop-blur-sm rounded-lg overflow-hidden text-white bg-slate-800"
       x-ref="dialogPerf" x-effect="openProfile ? $refs.dialogPerf.showModal() : $refs.dialogPerf.close() "
       @click.self="openProfile = false" @keydown.escape.window="openProfile = false" closedby="any">
       <div class="relative flex flex-col items-center gap-4 p-4">
@@ -251,13 +251,13 @@
                         required>
                     </div>
                     <div class="col-span-full flex flex-col gap-y-2">
-                      <label for="pf-dir1" class="text-sm font-semibold">Calle 1</label>
+                      <label for="pf-dir1" class="text-sm font-semibold">Calle</label>
                       <input value="{{ $address?->street }}" id="pf-dir1" name="street"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50"
                         required>
                     </div>
                     <div class="col-span-full flex flex-col gap-y-2">
-                      <label for="pf-dir2" class="text-sm font-semibold">Calle 2</label>
+                      <label for="pf-dir2" class="text-sm font-semibold">Calle de Intersección</label>
                       <input value="{{ $address?->intersection }}" id="pf-dir2" name="intersection"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50">
                     </div>
@@ -327,13 +327,13 @@
                         required>
                     </div>
                     <div class="flex flex-col gap-y-2">
-                      <label for="dir_street1" class="text-sm font-semibold">Calle 1</label>
+                      <label for="dir_street1" class="text-sm font-semibold">Calle</label>
                       <input id="dir_street1" name="street"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50"
                         required>
                     </div>
                     <div class="flex flex-col gap-y-2">
-                      <label for="dir_street2" class="text-sm font-semibold">Calle 2</label>
+                      <label for="dir_street2" class="text-sm font-semibold">Calle de Intersección</label>
                       <input id="dir_street2" name="intersection"
                         class="py-2.5 px-4 outline-none border border-slate-700 rounded-lg focus:shadow focus:shadow-slate-400/50">
                     </div>

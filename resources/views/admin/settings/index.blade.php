@@ -5,7 +5,7 @@
     <x-slot:textTitle>Configuración de la tienda</x-slot:textTitle>
   </x-sections.headerTitle>
 
-  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="h-max flex items-center justify-center pb-12 pt-4 px-4 sm:px-6">
     <div class="max-w-2xl w-full bg-slate-800 rounded-xl shadow-lg p-8">
       <h2 class="text-2xl font-bold text-white mb-6 text-center">Configuración de la tienda</h2>
 

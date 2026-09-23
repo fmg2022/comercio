@@ -80,8 +80,8 @@
   </script>
 @endpushOnce
 
-<section {{ $attributes->merge(['class' => $idCarousel . ' mb-7']) }} data-sliders="{{ $length }}"
-  data-image="{{ $is_image }}">
+<section {{ $attributes->merge(['class' => $idCarousel . ' max-w-6xl mx-auto mb-7']) }}
+  data-sliders="{{ $length }}" data-image="{{ $is_image }}">
   <div class="relative overflow-hidden">
     <ul @class([
         'carousel-track w-max relative flex flex-nowrap transition-transform duration-600 ease-out',
