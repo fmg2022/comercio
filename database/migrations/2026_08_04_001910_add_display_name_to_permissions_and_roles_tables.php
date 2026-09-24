@@ -26,11 +26,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('permissions', function (Blueprint $table) {
-            $table->string('display_name')->nullable()->after('name');
+            $table->dropColumn('display_name');
         });
 
         Schema::table('roles', function (Blueprint $table) {
-            $table->string('display_name')->nullable()->after('name');
+            $table->dropColumn('display_name');
         });
     }
 };
