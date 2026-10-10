@@ -37,7 +37,7 @@ class OrderSeeder extends Seeder
 			->get()
 			->groupBy('product_id');
 
-		Order::factory(1200)->create()->each(function ($order) use ($offersByProduct, $products, $taxRate) {
+		Order::factory(600)->create()->each(function ($order) use ($offersByProduct, $products, $taxRate) {
 			UserSessionHistory::factory()->create([
 				'user_id' => $order->user_id,
 				'login_at' => $order->date->copy()->subSeconds(rand(360, 900)),

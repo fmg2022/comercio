@@ -18,6 +18,7 @@ class Order extends Model
 		'total',
 		'iva',
 		'shipping_cost',
+		'delivery_method',
 		'notes',
 		'order_state_id',
 		'user_id',
