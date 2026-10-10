@@ -30,6 +30,8 @@ class OrderExportRequest extends FormRequest
             'states.*' => 'nullable|exists:order_states,id',
             'total_from' => 'nullable|numeric',
             'total_to' => 'nullable|numeric',
+            'providers' => 'nullable|array',
+            'providers.*' => 'nullable|exists:payment_providers,id',
         ];
     }
 }
