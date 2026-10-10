@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Order;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -12,9 +13,9 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
 {
     protected Collection $orders;
 
-    public function __construct(Collection $orders)
+    public function __construct(array $filters)
     {
-        $this->orders = $orders;
+        $this->orders = $this->getOrdersFilters($filters);
     }
 
     /**
@@ -29,6 +30,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
     {
         return [
             'ID',
+            'Método de pago',
             'Fecha',
             'Total',
             'Estado',
@@ -43,6 +45,7 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
     {
         return [
             $order->id,
+            $order->payment?->paymentProvider?->name ?? 'N/A',
             $order->date->format('d/m/Y H:i'),
             number_format($order->total, 2, ',', '.'),
             $order->orderState->name ?? 'N/A',
@@ -62,5 +65,20 @@ class OrdersExport implements FromCollection, WithHeadings, WithProperties, With
             'keywords'    => 'ordenes, exportación',
             'category'    => 'Ordenes',
         ];
+    }
+
+    private function getOrdersFilters(array $filters): Collection
+    {
+        return Order::query()
+            ->with(['user:id,name,surname', 'orderState:id,name', 'products', 'payment.paymentProvider:id,name'])
+            ->when(isset($filters['users']), fn($query) => $query->whereIn('user_id', $filters['users']))
+            ->when(isset($filters['states']), fn($query) => $query->whereIn('order_state_id', $filters['states']))
+            ->when(isset($filters['providers']), fn($query) => $query->whereHas('payment.paymentProvider', fn($q) => $q->whereIn('id', $filters['providers'])))
+            ->when(isset($filters['date_from']), fn($query) => $query->where('date', '>=', $filters['date_from']))
+            ->when(isset($filters['date_to']), fn($query) => $query->where('date', '<=', $filters['date_to']))
+            ->when(isset($filters['total_from']), fn($query) => $query->where('total', '>=', $filters['total_from']))
+            ->when(isset($filters['total_to']), fn($query) => $query->where('total', '<=', $filters['total_to']))
+            ->orderByDesc('date')
+            ->get();
     }
 }
