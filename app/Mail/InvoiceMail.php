@@ -33,7 +33,7 @@ class InvoiceMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Tu factura adjunta - Pedido #' . $this->order->id,
+            subject: 'Tu comprobante adjunto - Pedido #' . $this->order->id,
         );
     }
 
