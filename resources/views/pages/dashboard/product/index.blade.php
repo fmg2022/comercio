@@ -195,7 +195,7 @@
       <x-slot:tbody>
         @forelse ($productsDeleted as $index => $product)
           <tr class="text-slate-400">
-            <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
+            <td>{{ ($productsDeleted->currentPage() - 1) * $productsDeleted->perPage() + $index + 1 }}</td>
             <td>
               <a class="flex items-center gap-3" href="{{ route('products.show', $product->id) }}">
                 <img src="{{ asset('images/products/' . $product->image) }}" alt="{{ $product->name }}"
@@ -273,7 +273,7 @@
       @endcan
       <x-images.borderFill src="{{ asset('images/products') }}/zz_emptyProducto.webp" alt="Producto" />
       <fieldset class="py-3 grid grid-cols-2 gap-6 text-gray-700 md:px-3">
-        <input type="hidden" name="image" value="{{ $product->image }}" />
+        <input type="hidden" name="image" value="zz_emptyProducto.webp" />
         <div class="col-span-2 pointer-events-none group-[.editable]:pointer-events-auto">
           <label class="block mb-2 font-semibold" for="name">Nombre</label>
           <input type="text" id="name" name="name" autocomplete="off"
