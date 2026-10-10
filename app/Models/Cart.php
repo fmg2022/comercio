@@ -34,7 +34,7 @@ class Cart extends Model
     public function attachProduct(int $productId, int $quantity): void
     {
         $product = Product::findOrFail($productId);
-        $offerTemplate = Offer::active()->find($product->activeOffer())?->offerTemplate;
+        $offerTemplate = Offer::find($product->activeOffer())?->active()?->offerTemplate;
         $discount = $offerTemplate
             ? $product->getDiscountTotal(
                 $quantity,
@@ -60,7 +60,7 @@ class Cart extends Model
     public function updateProduct(int $productId, int $quantity): void
     {
         $product = $this->products()->find($productId);
-        $offerTemplate = Offer::active()->find($product->activeOffer())?->offerTemplate;
+        $offerTemplate = Offer::find($product->activeOffer())?->active()?->offerTemplate;
         $discount = $offerTemplate
             ? $product->getDiscountTotal(
                 $quantity,
