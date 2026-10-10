@@ -77,10 +77,12 @@
         <!-- CUERPO PRINCIPAL (igual que antes, pero se incluye el bloque de retiro y detalles) -->
         <tr>
           <td style="padding: 30px 30px 20px;">
-            <h2 style="margin:0 0 8px; font-size: 24px; color:#1e2a3a;">¡Gracias por tu compra,
-              {{ $order->user->fullName() ?? 'cliente' }}!</h2>
-            <p style="margin:0 0 24px; color:#4a5568; font-size: 16px;">Tu pedido <strong>#{{ $order->id }}</strong>
-              fue procesado correctamente y ya está listo para retirar.</p>
+            <h2 style="margin:0 0 8px; font-size: 24px; color:#1e2a3a;">
+              ¡Gracias por tu compra, {{ $order->user->fullName() ?? 'cliente' }}!
+            </h2>
+            <p style="margin:0 0 24px; color:#4a5568; font-size: 16px;">
+              Tu pedido <strong>#{{ $order->id }}</strong> fue procesado correctamente y ya está listo para retirar.
+            </p>
 
             <!-- BLOQUE DE RETIRO -->
             <div
@@ -91,11 +93,12 @@
                 {{ $store->address ?? 'Av. Corrientes 1234, CABA' }}</p>
               <p style="margin:0 0 12px; color:#4a5568;"><strong>Horario de atención para retiros:</strong>
                 {{ $store->pickup_hours ?? 'Lunes a Viernes de 10 a 18 hs, Sábados 10 a 13 hs' }}</p>
-              <p style="margin:0 0 8px; color:#4a5568;"><strong>¿Qué necesitas presentar?</strong> Este correo (o la
-                factura adjunta) + tu DNI.</p>
-              <p style="margin:12px 0 0; font-size:14px; color:#2d3748;">⚠️ Tenés
-                <strong>{{ $order->pickup_deadline_days ?? 7 }} días</strong> para retirar tu pedido. Pasado ese plazo,
-                deberás coordinar con nosotros.
+              <p style="margin:0 0 8px; color:#4a5568;">
+                <strong>¿Qué necesitas presentar?</strong> Este correo (o el comprobante adjunto) + tu DNI.
+              </p>
+              <p style="margin:12px 0 0; font-size:14px; color:#2d3748;">
+                ⚠️ Tenés <strong>{{ $order->pickup_deadline_days ?? 7 }} días</strong> para retirar tu pedido. Pasado
+                ese plazo, deberás coordinar con nosotros. Recuerda que el comprobante no posee validación legal.
               </p>
             </div>
 
@@ -185,7 +188,7 @@
           </td>
         </tr>
 
-        <!-- FOOTER con logo centrado o a la izquierda (usaremos centrado para que sea más profesional) -->
+        <!-- FOOTER con logo centrado -->
         <tr>
           <td style="background-color:#f8fafc; padding: 20px 30px; text-align: center; border-top:1px solid #e2e8f0;">
             <!-- Logo pequeño en el footer -->
@@ -193,8 +196,10 @@
               style="max-width: 60px; height: auto; margin-bottom: 12px; opacity: 0.8;">
             <p style="margin:0; font-size:12px; color:#64748b;">© {{ date('Y') }} {{ config('app.name') }}. Todos
               los derechos reservados.</p>
-            <p style="margin:8px 0 0; font-size:12px; color:#94a3b8;">Este correo es informativo. Guardá la factura
-              adjunta para cualquier gestión.</p>
+            <p style="margin:8px 0 0; font-size:12px; color:#94a3b8;">
+              Este correo es informativo. Guardá el comprobante adjunto para cualquier gestión.
+              El comprobante no posee validación legal.
+            </p>
             <p style="margin:12px 0 0; font-size:11px; color:#a0aec0;">
               {{ $store->address ?? 'Av. Corrientes 1234, CABA' }} | Tel: {{ $store->phone ?? '(011) 1234-5678' }}</p>
           </td>

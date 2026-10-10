@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Factura B {{ $factura->numero }}</title>
+  <title>Comprobante {{ $factura->numero }}</title>
   <style>
     /* ========== ESTILOS COMPATIBLES CON DOMPDF ========== */
     * {
@@ -237,8 +237,8 @@
         <h2>Factura</h2>
       </div>
       <div class="comprobante-tipo">
-        <div class="label">COMPROBANTE AUTORIZADO</div>
-        <div class="tipo">FACTURA B</div>
+        {{-- <div class="label">COMPROBANTE AUTORIZADO</div> --}}
+        <div class="tipo">COMPROBANTE</div>
         <div style="font-size:8px;">Consumidor Final / Exento</div>
       </div>
     </div>
@@ -360,11 +360,12 @@
               <div class="qr-fake">[ CÓDIGO QR ]<br>validación</div>
             @endif
           </div>
-          <p class="footer-col" style="text-align: right;">Factura autorizada por ARCA - RG 1415<br>IVA incluido -
-            Comprobante original</p>
+          {{-- <p class="footer-col" style="text-align: right;">Factura autorizada por ARCA - RG 1415<br>IVA incluido -
+            Comprobante original</p> --}}
         </div>
         <p style="clear: both; font-size: 8px; padding-top: 20px;">
-          La presente factura responde a la normativa vigente de ARCA. Verifique en la web oficial.
+          {{-- La presente factura responde a la normativa vigente de ARCA. Verifique en la web oficial. --}}
+          El presente comprobante no posee una validación legal.
         </p>
         <!-- FOOTER -->
         <p class="footer">
