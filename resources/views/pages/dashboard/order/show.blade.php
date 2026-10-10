@@ -110,13 +110,15 @@
     @endif
     <div class="max-w-md px-4 py-5 grid grid-cols-2 self-start justify-self-end rounded-b-xl font-medium bg-slate-800">
       <div class="[&>p]:ps-4">
-        <p>Total (sin IVA)</p>
+        <p>Subtotal</p>
         <p>IVA (21%)</p>
+        <p>Costo de envio</p>
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">Total</p>
       </div>
       <div class="text-end [&>p]:ps-6 [&>p]:pe-4">
         <p>$ {{ number_format($order->total, 2, ',', '.') }}</p>
         <p>$ {{ number_format($order->iva, 2, ',', '.') }}</p>
+        <p>$ {{ number_format($order->shipping_cost, 2, ',', '.') }}</p>
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">$
           {{ number_format($order->totalWithIva, 2, ',', '.') }}
         </p>
