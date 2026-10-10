@@ -15,6 +15,7 @@ class OrderStateSeeder extends Seeder
         DB::table('order_states')->insert([
             ['slug' => 'pending', 'name' => 'Pendiente'],
             ['slug' => 'paid', 'name' => 'Pagado'],
+            ['slug' => 'ready_for_pickup', 'name' => 'Listo para retirar'],
             ['slug' => 'completed', 'name' => 'Completado'],
             ['slug' => 'refunded', 'name' => 'Reembolsado'],
             ['slug' => 'cancelled', 'name' => 'Cancelado'],
