@@ -33,12 +33,14 @@
   <!-- Page Header -->
   @include('layouts.partials.header')
   <!-- Page Content -->
-  <main class="grow max-w-7xl mx-auto sm:px-3 md:px-6 lg:px-10">
+  <main class="grow w-full max-w-7xl mx-auto sm:px-3 md:px-6 lg:px-10">
     @isset($slot)
       {{ $slot }}
     @else
       @yield('content')
     @endisset
+
+    <x-popups.notification />
   </main>
   <!-- Page Footer -->
   @include('layouts.partials.footer')
