@@ -22,14 +22,10 @@ return new class extends Migration
             // Campos operativos
             $table->string('tracking_number')->nullable();
             $table->decimal('distance_km', 8, 3)->default(0);
-            $table->decimal('shipping_cost', 10, 2)->default(0);
-            $table->string('delivery_method', 20)->default('shipping');
-            $table->date('estimated_delivery_date')->nullable();
-            $table->timestamp('delivered_at')->nullable();
+            $table->decimal('cost', 10, 2)->default(0);
+            $table->dateTime('estimated_delivery_date')->nullable();
+            $table->dateTime('delivered_to')->nullable();
             $table->text('notes')->nullable();
-
-            // Indica si es factible enviar esta orden (ej: dentro de zona de cobertura)
-            $table->boolean('is_feasible')->default(true);
 
             $table->timestamps();
         });

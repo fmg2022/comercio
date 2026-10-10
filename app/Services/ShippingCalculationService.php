@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exceptions\{CheckoutException, RouteCalculationException, ShippingNotFeasibleException};
 use App\Models\Address;
+use Illuminate\Support\Facades\Log;
 
 class ShippingCalculationService
 {
@@ -63,7 +64,8 @@ class ShippingCalculationService
         }
 
         if ($route['error']) {
-            throw new RouteCalculationException($route['message']);
+            Log::error($route['message']);
+            throw new RouteCalculationException('No fue posible calcular la distancia de la ruta.');
         }
 
         $shipping = $this->shippingCostService->calculateShippingCost($route['distance_km']);
@@ -73,7 +75,6 @@ class ShippingCalculationService
         }
 
         return [
-            'is_feasible' => true,
             'distance_km' => (float) $route['distance_km'],
             'shipping_rate_id' => $shipping['rate']->id,
             'shipping_cost' => (float) $shipping['rate']->cost,

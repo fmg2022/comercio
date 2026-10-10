@@ -61,6 +61,12 @@ return [
       'permission' => 'view_any_payments',
     ],
     [
+      'name' => 'Envíos',
+      'icon' => 'shippings',
+      'route' => 'shippings.index',
+      'permission' => 'view_any_shipments',
+    ],
+    [
       'name' => 'Productos',
       'icon' => 'product',
       'route' => 'products.index',

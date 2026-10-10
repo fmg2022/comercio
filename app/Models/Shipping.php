@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,36 +18,23 @@ class Shipping extends Model
         'address_id',
         'tracking_number',
         'distance_km',
-        'shipping_cost',
-        'delivery_method',
+        'cost',
         'estimated_delivery_date',
-        'delivered_at',
+        'delivered_to',
         'notes',
-        'is_feasible',
     ];
 
     protected $casts = [
-        'estimated_delivery_date' => 'date',
-        'delivered_at' => 'datetime',
-        'is_feasible' => 'boolean',
+        'estimated_delivery_date' => 'datetime',
+        'delivered_to' => 'datetime',
     ];
-
-    // Scopes
-    /**
-     * Solo envíos factibles
-     */
-    #[Scope]
-    public function feasible(Builder $query)
-    {
-        return $query->where('is_feasible', true);
-    }
 
     // Functions
     /**
      * Asignar usuario de transporte
      * @return void 
      * */
-    public function assignTransportUser(User $user)
+    public function assignTransportUser(User $user): void
     {
         if (!$user->hasRole('logistics')) {
             throw new \Exception('El usuario no tiene el rol de Logística.');
@@ -65,7 +50,7 @@ class Shipping extends Model
     public function markAsDelivered()
     {
         $this->shipping_states_id = ShippingState::where('slug', 'delivered')->first()->id;
-        $this->delivered_at = now();
+        $this->delivered_to = now();
         $this->save();
     }
 
