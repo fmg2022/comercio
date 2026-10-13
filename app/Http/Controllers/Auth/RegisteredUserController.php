@@ -38,6 +38,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'dni' => $request->dni,
+            'active' => true,
         ]);
         $user->assignRole('client');
 
