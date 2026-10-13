@@ -49,7 +49,7 @@ class ProfileController extends Controller
         ];
 
         $addressData = [
-            'name' => $data['name'],
+            'name' => $data['dir_name'],
             'street' => $data['street'],
             'intersection' => $data['intersection'] ?? null,
             'locality' => $data['locality'],
@@ -57,45 +57,65 @@ class ProfileController extends Controller
             'postal_code' => $data['postal_code'],
         ];
 
-
         try {
-            $address = implode(', ', array_filter([
-                $addressData['street'],
-                $addressData['intersection'] ?? null,
-                $addressData['locality'],
-                $addressData['province'],
-                $addressData['postal_code'],
-                'Argentina',
-            ]));
-            $geoData = $this->geocodingService->geocode($address);
-
             $emailChanged = false;
+            $message = 'Perfil actualizado';
 
-            DB::transaction(function () use ($user, $userData, $addressData, $geoData, &$emailChanged) {
-                // Address
-                if (!$user->defaultAddress) {
-                    $user->addresses()->create([...$addressData, 'latitude' => $geoData['latitude'], 'longitude' => $geoData['longitude']]);
-                    return;
-                } else {
-                    $user->defaultAddress->update([...$addressData, 'latitude' => $geoData['latitude'], 'longitude' => $geoData['longitude']]);
-                }
-
+            DB::transaction(function () use ($user, $userData, $addressData, &$emailChanged) {
                 // User
                 $user->fill($userData);
 
-                if ($user->isDirty('email')) {
-                    $user->email_verified_at = null;
+                if ($user->isDirty()) {
+                    if ($user->isDirty('email')) {
+                        $user->email_verified_at = null;
+                    }
+
+                    $user->save();
+                    $emailChanged = $user->wasChanged('email');
                 }
 
-                $user->save();
-                $emailChanged = $user->wasChanged('email');
+                // Address
+                $defaultAddress = $user->defaultAddress;
+                $address = implode(', ', array_filter([
+                    $addressData['street'],
+                    $addressData['intersection'] ?? null,
+                    $addressData['locality'],
+                    $addressData['province'],
+                    $addressData['postal_code'],
+                    'Argentina',
+                ]));
+
+                if ($defaultAddress) {
+                    $defaultAddress->fill($addressData);
+                    $nameChanged = $defaultAddress->isDirty('name');
+
+                    if ($defaultAddress->isDirty() && !$nameChanged) {
+                        $geoData = $this->geocodingService->geocode($address);
+
+                        $defaultAddress->update([
+                            ...$addressData,
+                            'latitude' => $geoData['latitude'],
+                            'longitude' => $geoData['longitude']
+                        ]);
+                    } else if ($nameChanged) {
+                        $defaultAddress->save();
+                    }
+                } else {
+                    $geoData = $this->geocodingService->geocode($address);
+                    $user->addresses()->create([
+                        ...$addressData,
+                        'latitude' => $geoData['latitude'],
+                        'longitude' => $geoData['longitude']
+                    ]);
+                }
             });
 
             if ($emailChanged) {
                 $user->sendEmailVerificationNotification();
+                $message = 'Perfil actualizado y correo de confirmación enviado';
             }
 
-            return redirect()->back()->with('success', 'Perfil actualizado');
+            return redirect()->back()->with('success', $message);
         } catch (\RuntimeException $e) {
             return back()->withInput()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
