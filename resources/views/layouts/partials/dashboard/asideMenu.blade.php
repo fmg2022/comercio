@@ -13,14 +13,14 @@
         class="relative block font-semibold text-lg group-hover:opacity-100 group-hover:visible check-visible transition duration-500 ease-in">{{ config('app.name', 'Comercio') }}</span>
     </a>
     <label for="sidebar-toggle"
-      class="relative p-2 hover:bg-slate-900 rounded-full cursor-pointer opacity-80 xl:opacity-0 xl:invisible group-hover:opacity-100 group-hover:visible check-visible group-checked:bg-slate-900 transition-opacity duration-500">
+      class="relative p-2 rounded-full cursor-pointer check-visible group-checked:bg-slate-900 transition-colors duration-500 ease-in-out">
       <span class="block xl:hidden peer-checked:xl:block">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
           <path fill="currentColor"
             d="m7.85 13l2.85 2.85q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L4.7 12.7q-.3-.3-.3-.7t.3-.7l4.575-4.575q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7L7.85 11H19q.425 0 .713.288T20 12t-.288.713T19 13z" />
         </svg>
       </span>
-      <span class="hidden xl:block has-checked:xl:hidden">
+      <span class="hidden xl:block">
         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
           <path class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
             d="M4 6h16M4 12h16M4 18h16" />

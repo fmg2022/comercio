@@ -7,8 +7,7 @@
       </a>
       <label for="sidebar-toggle" class="p-2 hover:bg-slate-900 rounded-full cursor-pointer xl:hidden">
         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-          <path class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </label>
     </div>
@@ -120,7 +119,7 @@
                 $user = auth()->user();
               @endphp
               <div class="p-3 size-11 flex items-center justify-center bg-purple-600 rounded-full">
-                <span class="font-bold">{{ $user->surname[0] . $user->name[0] }}</span>
+                <span class="font-bold">{{ $user->getAlias() }}</span>
               </div>
               <div class="flex flex-col gap-1 w-max">
                 <h5>{{ $user->surname . ' ' . $user->name }}</h5>
