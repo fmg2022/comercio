@@ -61,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->surname . ', ' . $this->name;
     }
 
+    public function getAlias(): string
+    {
+        return $this->surname[0] . $this->name[0];
+    }
+
     public function getLastLogin(): string
     {
         return $this->sessions->last()->login_at;
