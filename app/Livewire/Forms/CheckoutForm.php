@@ -48,23 +48,26 @@ class CheckoutForm extends Form
         $data = CheckoutDTO::fromArray($this->validate());
         $result = app(CheckoutService::class)->checkout($user, $data);
 
-        $order = $result['order'];
-        $payment = $result['payment'];
+        $orderId = $result['order'];
+        $paymentId = $result['payment'];
+        $shippingId = $result['shipping'];
 
         return match ($this->paymentMethod) {
             'mercadopago' => redirect()->route(
                 'checkout.process',
                 [
-                    'order' => $order->id,
-                    'payment' => $payment->id,
+                    'order' => $orderId,
+                    'payment' => $paymentId,
+                    'shipping' => $shippingId,
                 ]
             ),
 
             'paypal' => redirect()->route(
                 'paypal.checkout',
                 [
-                    'order' => $order->id,
-                    'payment' => $payment->id,
+                    'order' => $orderId,
+                    'payment' => $paymentId,
+                    'shipping' => $shippingId,
                 ]
             ),
         };

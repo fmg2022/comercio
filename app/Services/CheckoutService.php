@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\CheckoutDTO;
-use App\Exceptions\{CheckoutException, InsufficientStockException};
+use App\Exceptions\InsufficientStockException;
 use App\Models\{Cart, Order, OrderState, Payment, PaymentProvider, PaymentState, Product, Shipping, ShippingState, User};
 use Illuminate\Support\Facades\DB;
 
@@ -26,7 +26,6 @@ class CheckoutService
     } else {
       $shippingResult = [
         'error' => false,
-        'is_feasible' => false,
         'shipping_rate_id' => null,
         'shipping_cost' => 0.0,
         'distance_km' => 0.0,
@@ -34,7 +33,6 @@ class CheckoutService
     }
 
     $result = DB::transaction(function () use ($cart, $user, $shippingResult, $data) {
-      $isShipping = $data->deliveryMethod === 'shipping';
       $cartProducts = $cart->products;
       $productsIds = $cartProducts->pluck('id')->unique()->sort()->values();
 
@@ -98,36 +96,31 @@ class CheckoutService
         $product->decrement('stock', $cartItem->pivot->quantity);
       }
 
-
-      $trackingNumber = null;
-      $deliveryDate = null;
-
-      if ($isShipping) {
+      /* 
+        * Solo se crea si es posible el envío
+        * Caso contrario no se registra el envío 
+        */
+      $shipping = null;
+      if ($data->deliveryMethod === 'shipping') {
         $random = bin2hex(random_bytes(5));
         $date = date('YmdHis');
         $trackingNumber = "TRK-{$random}-{$date}";
         $deliveryDate = now()->addhours(random_int(1, 6));
+
+        $shipping = Shipping::create([
+          'order_id' => $order->id,
+          'address_id' => $data->addressId,
+          'transport_user_id' => null,
+          'shipping_state_id' => ShippingState::where('slug', 'pending')->value('id'),
+          'shipping_rate_id' => $shippingResult['shipping_rate_id'],
+          'tracking_number' => $trackingNumber,
+          'cost' => $shippingResult['shipping_cost'],
+          'distance_km' => $shippingResult['distance_km'],
+          'estimated_delivery_date' => $deliveryDate,
+          'delivered_to' => null,
+          'notes' => null,
+        ]);
       }
-
-      $shippingStateSlug = $isShipping
-        ? 'pending'
-        : 'ready_for_pickup';
-
-      Shipping::create([
-        'order_id' => $order->id,
-        'address_id' => $isShipping ? $data->addressId : null,
-        'transport_user_id' => null,
-        'shipping_states_id' => ShippingState::where('slug', $shippingStateSlug)->value('id'),
-        'shipping_rate_id' => $shippingResult['shipping_rate_id'],
-        'tracking_number' => $trackingNumber,
-        'shipping_cost' => $shippingResult['shipping_cost'],
-        'distance_km' => $shippingResult['distance_km'],
-        'delivery_method' => $data->deliveryMethod,
-        'estimated_delivery_date' => $deliveryDate,
-        'delivered_at' => null,
-        'notes' => null,
-        'is_feasible' => $isShipping,
-      ]);
 
       $payment = Payment::create([
         'transaction_id' => 'pending_' . uuid_create(),
@@ -143,8 +136,9 @@ class CheckoutService
       ]);
 
       return [
-        'order' => $order,
-        'payment' => $payment,
+        'order' => $order->id,
+        'payment' => $payment->id,
+        'shipping' => $shipping->id,
       ];
     });
     return $result;
