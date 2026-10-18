@@ -70,10 +70,10 @@ class RolesAndPermissionsSeeder extends Seeder
             ['name' => 'delete_orders', 'display_name' => 'Eliminar pedidos'],
 
             // ---------- Envíos ----------
-            ['name' => 'view_any_shipments', 'display_name' => 'Listar todos los envíos'],
-            ['name' => 'view_shipments', 'display_name' => 'Ver detalle de envío'],
-            ['name' => 'update_shipments', 'display_name' => 'Editar envíos'],
-            ['name' => 'delete_shipments', 'display_name' => 'Eliminar envíos'],
+            ['name' => 'view_any_shippings', 'display_name' => 'Listar todos los envíos'],
+            ['name' => 'view_shippings', 'display_name' => 'Ver detalle de envío'],
+            ['name' => 'update_shippings', 'display_name' => 'Editar envíos'],
+            ['name' => 'delete_shippings', 'display_name' => 'Eliminar envíos'],
 
             // ---------- Pagos ----------
             ['name' => 'view_any_payments', 'display_name' => 'Listar todos los pagos'],
@@ -161,10 +161,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_orders',
             'update_orders',
             'delete_orders',
-            'view_any_shipments',
-            'view_shipments',
-            'update_shipments',
-            'delete_shipments',
+            'view_any_shippings',
+            'view_shippings',
+            'update_shippings',
+            'delete_shippings',
             'view_any_payments',
             'view_payments',
             'view_any_offers',
@@ -195,9 +195,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_orders',
             'update_orders',
             // Envíos (gestión completa)
-            'view_any_shipments',
-            'view_shipments',
-            'update_shipments',
+            'view_any_shippings',
+            'view_shippings',
+            'update_shippings',
             // Pagos (lectura)
             'view_any_payments',
             'view_payments',
@@ -224,8 +224,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_orders',
             'update_orders',
             // Envíos (solo lectura)
-            'view_any_shipments',
-            'view_shipments',
+            'view_any_shippings',
+            'view_shippings',
             // Pagos (solo lectura)
             'view_any_payments',
             'view_payments',

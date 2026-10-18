@@ -64,7 +64,7 @@ return [
       'name' => 'Envíos',
       'icon' => 'shippings',
       'route' => 'shippings.index',
-      'permission' => 'view_any_shipments',
+      'permission' => 'view_any_shippings',
     ],
     [
       'name' => 'Productos',

@@ -43,7 +43,7 @@ class ShippingSeeder extends Seeder
 			$shippingData = [
 				'address_id' => $addressId,
 				'transport_user_id' => $transportista,
-				'shipping_states_id' => $shippingStateId,
+				'shipping_state_id' => $shippingStateId,
 				'estimated_delivery_date' => $estimatedDeliveryDate,
 			];
 

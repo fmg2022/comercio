@@ -13,7 +13,7 @@ class Shipping extends Model
     protected $fillable = [
         'order_id',
         'transport_user_id',
-        'shipping_states_id',
+        'shipping_state_id',
         'shipping_rate_id',
         'address_id',
         'tracking_number',
@@ -49,7 +49,7 @@ class Shipping extends Model
      * */
     public function markAsDelivered()
     {
-        $this->shipping_states_id = ShippingState::where('slug', 'delivered')->first()->id;
+        $this->shipping_state_id = ShippingState::where('slug', 'delivered')->first()->id;
         $this->delivered_to = now();
         $this->save();
     }
@@ -67,7 +67,7 @@ class Shipping extends Model
 
     public function shippingState(): BelongsTo
     {
-        return $this->belongsTo(ShippingState::class, 'shipping_states_id');
+        return $this->belongsTo(ShippingState::class, 'shipping_state_id');
     }
 
     public function shippingRate(): BelongsTo
