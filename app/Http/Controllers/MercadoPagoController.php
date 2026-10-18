@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\InvoiceMail;
-use App\Models\{Cart, Order, OrderState, Payment, PaymentState};
+use App\Models\{Cart, Order, OrderState, Payment, PaymentState, Shipping};
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Log, Mail};
@@ -14,10 +14,11 @@ use MercadoPago\MercadoPagoConfig;
 
 class MercadoPagoController extends Controller
 {
-    public function process(Order $order, Payment $payment): RedirectResponse
+    public function process(Order $order, Payment $payment, Shipping $shipping): RedirectResponse
     {
-        $items = $order->products->map(function ($product) {
-            $finalUnitPrice = $product->pivot->price - ($product->pivot->discount / $product->pivot->quantity);
+        $iva = floatval(config('commerce.tax_rate', 21)) / 100;
+        $items = $order->products->map(function ($product) use ($iva) {
+            $finalUnitPrice = ($product->pivot->price - ($product->pivot->discount / $product->pivot->quantity)) * (1 + $iva);
             return [
                 'id' => $product->id,
                 'title' => $product->name . ' ' . strtoupper($product->brand->name) . ', ' . $product->weight,
@@ -33,8 +34,27 @@ class MercadoPagoController extends Controller
 
         $baseUrl = route('webhook.mercadopago');
 
+        $shipments = null;
+
+        if ($shipping !== null) {
+            $shipping->load('address');
+            $shipments[] = [
+                'mode' => 'custom',
+                'cost' => (float) $shipping->cost,
+                'free_shipping' => (float) $shipping->cost === 0,
+                'receiver_address' => (object) [
+                    'zip_code' => $shipping->address->postal_code,
+                    'street_name' => $shipping->address->street,
+                    'city_name' => $shipping->address->city,
+                    'state_name' => $shipping->address->province,
+                    'country_name' => 'Argentina',
+                ],
+            ];
+        }
+
         $preferenceData = [
             'items' => $items,
+            'shipments' => $shipments,
             'payer' => [
                 'name' => $order->user->name,
                 'surname' => $order->user->surname,
@@ -74,7 +94,7 @@ class MercadoPagoController extends Controller
             ]);
             $payment->update([
                 'provider_state' => 'rejected',
-                'payment_state_id' => DB::table('payment_states')->where('slug', 'cancel')->value('id'),
+                'payment_state_id' => DB::table('payment_states')->where('slug', 'cancelled')->value('id'),
             ]);
 
             return back()->with('error', 'No se pudo iniciar el pago');
@@ -101,13 +121,14 @@ class MercadoPagoController extends Controller
 
         try {
             $paymentClient = new PaymentClient();
-            $mpPayment = $paymentClient->get('160220617939');
+            $mpPayment = $paymentClient->get($paymentId);
 
             if (!$mpPayment) {
                 Log::warning("No se encontró información del pago para el ID: {$paymentId}");
                 return response()->json(['error' => 'Payment not found'], 404);
             }
 
+            Log::info("Datos del pago:}", $mpPayment);
             $payment = Payment::where('id', $mpPayment->external_reference)->first();
 
             if (!$payment) {
@@ -192,9 +213,12 @@ class MercadoPagoController extends Controller
             if ($pago && $pago->provider_state !== 'rejected') {
                 $pago->update([
                     'paymentId' => $paymentId,
-                    'provider_state' => 'rejected'
+                    'provider_state' => 'rejected',
+                    'payment_state_id' => PaymentState::where('slug', 'rejected')->value('id'),
                 ]);
-                $pago->order->update(['order_state_id' => OrderState::where('slug', 'cancel')->value('id')]);
+                $pago->order->update([
+                    'order_state_id' => OrderState::where('slug', 'cancelled')->value('id')
+                ]);
             }
         }
 
