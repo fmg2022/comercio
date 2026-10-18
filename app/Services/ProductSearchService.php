@@ -17,7 +17,7 @@ class ProductSearchService
     $category = Category::where('name', $query)->first();
 
     if ($brand || $category) {
-      return $this->searchByBrandOrCategory($brand, $category);
+      return $this->searchByModels($brand, $category);
     }
 
     return $this->searchByText($query);
@@ -28,7 +28,7 @@ class ProductSearchService
    */
   public function getProductsByOffer(int $offerId): Collection
   {
-    $offer = Offer::active()->findOrFail($offerId);
+    $offer = Offer::findOrFail($offerId)->active();
     return $offer->products()
       ->with('category')
       ->whereColumn('stock', '>', 'min_stock')
@@ -54,10 +54,10 @@ class ProductSearchService
 
   // --- Métodos privados auxiliares ---
 
-  private function searchByBrandOrCategory(?Brand $brand, ?Category $category): Collection
+  private function searchByModels(?Brand $brand, ?Category $category): Collection
   {
     $query = Product::query()
-      ->select(['id', 'name', 'brand_id', 'category_id', 'image', 'price', 'stock', 'weight']);
+      ->select(['id', 'name', 'brand_id', 'category_id', 'image', 'price', 'stock', 'weight', 'container']);
 
     if ($brand) {
       $query->orWhere('brand_id', $brand->id);
@@ -73,7 +73,7 @@ class ProductSearchService
   private function searchByText(string $query): Collection
   {
     return Product::query()
-      ->select(['id', 'name', 'brand_id', 'category_id', 'image', 'price', 'stock', 'weight'])
+      ->select(['id', 'name', 'brand_id', 'category_id', 'image', 'price', 'stock', 'weight', 'container'])
       ->where(function (Builder $q) use ($query) {
         $q->where('name', 'LIKE', "%{$query}%")
           ->orWhere('container', 'LIKE', "%{$query}%")
