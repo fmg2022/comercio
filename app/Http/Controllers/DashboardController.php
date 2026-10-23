@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Order, OrderProduct, OrderState, Payment};
+use App\Models\{OfferState, OfferType, Order, OrderProduct, OrderState, Payment, PaymentState};
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -95,10 +95,10 @@ class DashboardController extends Controller
 	public function indexStatesTypes(): View
 	{
 		return view('pages.dashboard.statetype.index', [
-			'orderStates' => \App\Models\OrderState::get(['id', 'slug', 'name']),
-			'offerStates' => \App\Models\OfferState::get(['id', 'slug', 'name']),
-			'offerTypes' => \App\Models\OfferType::get(['id', 'slug', 'name']),
-			'paymentStates' => \App\Models\PaymentState::get(['id', 'slug', 'name']),
+			'orderStates' => OrderState::get(['id', 'slug', 'name']),
+			'offerStates' => OfferState::get(['id', 'slug', 'name']),
+			'offerTypes' => OfferType::get(['id', 'slug', 'name']),
+			'paymentStates' => PaymentState::get(['id', 'slug', 'name']),
 		]);
 	}
 

@@ -36,8 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Ruta para la compra
-    Route::post('/store', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
-    Route::get('/checkout/{order}/{payment}', [MercadoPagoController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/{order}/{payment}/{shipping}', [MercadoPagoController::class, 'process'])->name('checkout.process');
 
     // Rutas para las redirecciones de Mercado Pago (back_urls)
     Route::prefix('checkout')->name('checkout.')->group(function () {
