@@ -61,15 +61,16 @@ class CheckoutService
 
       $order = Order::create([
         'date' => now(),
-        'total' => 0,
+        'subtotal' => 0,
         'iva' => 0,
         'shipping_cost' => $shippingResult['shipping_cost'],
+        'total' => 0,
         'notes' => $data->notes,
         'order_state_id' => OrderState::where('slug', 'pending')->value('id'),
         'user_id' => $user->id,
       ]);
 
-      $total = 0;
+      $subtotal = 0;
 
       foreach ($cartProducts as $productItem) {
         $offer = $productItem->getCurrentOffer();
@@ -84,12 +85,12 @@ class CheckoutService
           'offer_type_slug' => $templateOffer?->offerType->slug ?? null,
         ]);
 
-        $total += (($productItem->price * $productItem->pivot->quantity) - $productItem->pivot->discount);
+        $subtotal += (($productItem->price * $productItem->pivot->quantity) - $productItem->pivot->discount);
       }
 
-      $iva = round($total * floatval(config('commerce.tax_rate', 21)) / 100, 2);
-      $total += $iva + $shippingResult['shipping_cost'];
-      $order->update(['total' => $total, 'iva' => $iva]);
+      $iva = round($subtotal * floatval(config('commerce.tax_rate', 21)) / 100, 2);
+      $total = $subtotal + $iva + $shippingResult['shipping_cost'];
+      $order->update(['subtotal' => $subtotal, 'iva' => $iva, 'total' => $total]);
 
       foreach ($cartProducts as $cartItem) {
         $product = $lockedProducts->get($cartItem->id);

@@ -8,8 +8,8 @@
       <span class="text-base">({{ $order->date->format('d/m/Y') }})</span>
     </x-slot:textTitle>
     <div class="flex gap-4">
-      <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
-        Volver
+      <x-buttons.linkFill href="{{ url()->previous() }}" class="py-2.5 font-semibold bg-slate-700 hover:bg-slate-600">
+        Volver atras
       </x-buttons.linkFill>
       @if (request()->routeIs('my.orders.show'))
         <form action="{{ route('carts.addFromOrder') }}" method="POST">
@@ -116,11 +116,11 @@
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">Total</p>
       </div>
       <div class="text-end [&>p]:ps-6 [&>p]:pe-4">
-        <p>$ {{ number_format($order->total, 2, ',', '.') }}</p>
+        <p>$ {{ number_format($order->subtotal, 2, ',', '.') }}</p>
         <p>$ {{ number_format($order->iva, 2, ',', '.') }}</p>
         <p>$ {{ number_format($order->shipping_cost, 2, ',', '.') }}</p>
         <p class="pt-2 mt-4 text-lg font-bold border-t-2 border-slate-600">$
-          {{ number_format($order->totalWithIva, 2, ',', '.') }}
+          {{ number_format($order->total, 2, ',', '.') }}
         </p>
       </div>
     </div>

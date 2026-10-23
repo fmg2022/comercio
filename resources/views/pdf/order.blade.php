@@ -325,6 +325,10 @@
             <td colspan="4" class="text-right"><strong>+ IVA 21% (incluido)</strong></td>
             <td class="text-right"><strong>$ {{ number_format($factura->iva, 2, ',', '.') }}</strong></td>
           </tr>
+          <tr style="background:#fef9e3;">
+            <td colspan="4" class="text-right"><strong>+ Costo de envío</strong></td>
+            <td class="text-right"><strong>$ {{ number_format($factura->costo_de_envio, 2, ',', '.') }}</strong></td>
+          </tr>
           <tr class="total-row">
             <td colspan="4" class="text-right"><strong>TOTAL A PAGAR</strong></td>
             <td class="text-right"><strong>$ {{ number_format($factura->total, 2, ',', '.') }}</strong></td>

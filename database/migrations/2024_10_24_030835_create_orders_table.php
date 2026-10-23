@@ -15,9 +15,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->dateTime('date')->default(now());
-            $table->decimal('total', 12, 2)->default(0);
+            $table->decimal('subtotal', 12, 2)->default(0);
             $table->decimal('iva', 10, 2)->default(0);
             $table->decimal('shipping_cost', 10, 2)->default(0);
+            $table->decimal('total', 12, 2)->default(0);
             $table->enum('delivery_method', DeliveryMethod::cases())->default(DeliveryMethod::Shipping);
             $table->text('notes')->nullable();
             $table->foreignId('user_id')->constrained()->onUpdate('cascade');

@@ -24,9 +24,10 @@ class OrderFactory extends Factory
 
         return [
             'date' => $this->faker->dateTimeBetween('-12 months', 'now')->format('Y-m-d H:i:s'),
-            'total' => 0,
+            'subtotal' => 0,
             'iva' => 0,
             'shipping_cost' => 0,
+            'total' => 0,
             'delivery_method' => $randomDeliveryMethod,
             'notes' => $this->faker->optional(0.3)->sentence,
             'user_id' => $user_id,

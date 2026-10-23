@@ -15,9 +15,10 @@ class Order extends Model
 
 	protected $fillable = [
 		'date',
-		'total',
+		'subtotal',
 		'iva',
 		'shipping_cost',
+		'total',
 		'delivery_method',
 		'notes',
 		'order_state_id',
@@ -40,20 +41,6 @@ class Order extends Model
 	{
 		return Attribute::make(
 			get: fn() => $this->products->sum('pivot.quantity')
-		);
-	}
-
-	protected function subTotal(): Attribute
-	{
-		return Attribute::make(
-			get: fn() => $this->products->sum(fn($product) => $product->pivot->price * $product->pivot->quantity)
-		);
-	}
-
-	protected function totalWithIva(): Attribute
-	{
-		return Attribute::make(
-			get: fn() => $this->total + $this->iva
 		);
 	}
 

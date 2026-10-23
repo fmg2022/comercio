@@ -112,9 +112,9 @@ class OrderSeeder extends Seeder
 			$iva = round($base * $taxRate, 2);
 			$total = $base + $iva;
 
-			// Adjuntar productos y actualizar la orden
 			$order->products()->attach($orderProducts);
 			$order->update([
+				'subtotal' => $base,
 				'total' => $total,
 				'iva' => $iva,
 			]);
