@@ -8,7 +8,7 @@
       <span class="text-base">({{ $order->date->format('d/m/Y') }})</span>
     </x-slot:textTitle>
     <div class="flex gap-4">
-      <x-buttons.linkFill href="{{ url()->previous() }}" class="py-2.5 font-semibold bg-slate-700 hover:bg-slate-600">
+      <x-buttons.linkFill href="{{ url()->previous() }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
         Volver atras
       </x-buttons.linkFill>
       @if (request()->routeIs('my.orders.show'))

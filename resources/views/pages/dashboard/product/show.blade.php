@@ -6,8 +6,8 @@
     <x-slot:textTitle>{{ $product->name }}</x-slot:textTitle>
 
     <div class="w-full px-3 mb-4 flex justify-around md:mb-0 md:w-max md:gap-4 md:justify-normal">
-      <x-buttons.linkFill href="{{ url()->previous() }}" class="bg-slate-500 active:bg-slate-600">
-        Volver
+      <x-buttons.linkFill href="{{ url()->previous() }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
+        Volver atras
       </x-buttons.linkFill>
       @can('update_products')
         <x-buttons.linkFill href="{{ route('products.edit', $product->id) }}" class="bg-purple-600 active:bg-purple-700">

@@ -6,7 +6,7 @@
     <x-slot:textTitle>Usuario #{{ $user->id }}</x-slot:textTitle>
 
     <div class="w-full px-3 flex justify-around md:mb-0 md:w-max md:gap-4 md:justify-normal">
-      <x-buttons.linkFill href="{{ route('users.index') }}" class="bg-slate-500 active:bg-slate-600">
+      <x-buttons.linkFill href="{{ route('users.index') }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
         Volver al listado
       </x-buttons.linkFill>
       <x-buttons.linkFill href="{{ route('users.edit', $user->id) }}" class="bg-purple-600 active:bg-purple-700">

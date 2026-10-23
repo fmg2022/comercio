@@ -99,7 +99,7 @@
     </div>
     <div class="mb-4 flex flex-wrap gap-4">
       @can('view_any_products')
-        <x-buttons.linkFill href="{{ route('products.index') }}" class="bg-slate-700 active:bg-slate-600">
+        <x-buttons.linkFill href="{{ route('products.index') }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
           Volver al listado
         </x-buttons.linkFill>
       @endcan

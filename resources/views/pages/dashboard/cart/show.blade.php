@@ -14,12 +14,8 @@
     <x-slot:textTitle>
       Productos en el carrito actualmente
     </x-slot:textTitle>
-    <div class="flex gap-4">
-      <x-buttons.linkFill href="{{ url()->previous() ?: route('dashboard.index') }}"
-        class="bg-slate-500 active:bg-slate-600">
-        Volver
-      </x-buttons.linkFill>
-      @if (request()->routeIs('my.cart.index'))
+    @if (request()->routeIs('my.cart.index'))
+      <div class="flex gap-4">
         <form action="{{ route('cart.clearCart', $cart->id) }}" method="POST" class="flex justify-center items-start">
           @csrf
           @method('DELETE')
@@ -36,8 +32,12 @@
               d="M5 12h14m-6 6l6-6m-6-6l6 6" />
           </svg>
         </x-buttons.linkFill>
-      @endif
-    </div>
+      </div>
+    @else
+      <x-buttons.linkFill href="{{ url()->previous() }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
+        Volver atras
+      </x-buttons.linkFill>
+    @endif
   </x-sections.headerTitle>
 
   <x-tables.table>
@@ -123,7 +123,7 @@
   <p
     class="w-fit px-8 py-3 ms-auto flex justify-between items-center gap-4 bg-slate-800 rounded-b-lg text-lg font-semibold">
     <span>Total sin impuestos</span>
-    <span>${{ number_format($cart->total, 2, ',', '.') }}</span>
+    <span>${{ number_format($cart->subtotal, 2, ',', '.') }}</span>
   </p>
 
   @if ($cart->products->count() > 0 && auth()->user()?->can('view_any_carts'))
