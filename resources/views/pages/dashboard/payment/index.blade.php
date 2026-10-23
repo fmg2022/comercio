@@ -18,7 +18,7 @@
           exportBtn.disabled = true;
           exportBtn.innerText = 'Verificando...';
 
-          fetch("{{ route('orders.count') }}", {
+          fetch("{{ route('payments.count') }}", {
               method: 'POST',
               headers: {
                 'X-CSRF-TOKEN': formData.get('_token'),
@@ -29,7 +29,7 @@
             .then(response => response.json())
             .then(data => {
               if (data.count === 0) {
-                alert('⚠️ Sin ordenes para exportar a Excel.');
+                alert('⚠️ Sin pagos para exportar a Excel.');
               } else {
                 form.submit();
                 form.reset();
@@ -217,7 +217,7 @@
     </x-modals.simple>
 
     @if (!request()->routeIs('my.payments.index'))
-      <x-modals.simple id="exportModal" title="Filtros para la Orden"
+      <x-modals.simple id="exportModal" title="Filtros para los Pagos"
         class="max-w-lg w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
         <form id="exportForm" method="GET" action="{{ route('payments.export') }}" class="w-full">
           @csrf
