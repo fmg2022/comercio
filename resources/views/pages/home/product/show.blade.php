@@ -44,10 +44,13 @@
           <li>Contenido: {{ $product->weight }}</li>
           <li>Envase: {{ $product->container }}</li>
         </ul>
-        <div class="flex justify-center">
-          <button
+        <form action="{{ route('cart.addToCart') }}" class="flex justify-center" method="POST">
+          @csrf
+          <input type="hidden" name="id" value="{{ $product->id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit"
             class="w-full max-w-sm p-4 bg-emerald-800 rounded-lg font-bold uppercase text-white cursor-pointer hover:bg-emerald-700 active:bg-emerald-800">Agregar</button>
-        </div>
+        </form>
       </section>
     </article>
   </section>
