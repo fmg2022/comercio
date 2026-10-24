@@ -7,7 +7,7 @@ use Livewire\Attributes\{Url, Validate};
 use Livewire\Component;
 
 new class extends Component {
-    public array $categoriesNav, $sorts;
+    public array $categoriesNav, $sorts, $containersProduct;
     public Collection $brandsProducts, $categoriesProduct, $offers, $products;
 
     #[Url(as: 'query')]
@@ -23,6 +23,9 @@ new class extends Component {
 
     #[Url(as: 'brands', history: true)]
     public array $selectedBrands = [];
+
+    #[Url(as: 'container', history: true)]
+    public array $selectedContainer = [];
 
     #[Url(as: 'sort', history: true)]
     public ?string $selectedSort = null;
@@ -54,7 +57,7 @@ new class extends Component {
 
         $this->originalProducts = $this->products;
 
-        if (!empty($this->selectedCategories) || !empty($this->selectedBrands)) {
+        if (!empty($this->selectedCategories) || !empty($this->selectedBrands) || !empty($this->selectedContainer)) {
             $this->applyFilters();
         }
 
@@ -75,6 +78,12 @@ new class extends Component {
         $this->applySorting();
     }
 
+    public function updatedSelectedContainer()
+    {
+        $this->applyFilters();
+        $this->applySorting();
+    }
+
     public function updatedSelectedSort()
     {
         $this->applySorting();
@@ -85,7 +94,7 @@ new class extends Component {
     //  --- Métodos privados auxiliares ---
     protected function applyFilters(): void
     {
-        if (empty($this->selectedCategories) && empty($this->selectedBrands)) {
+        if (empty($this->selectedCategories) && empty($this->selectedBrands) && empty($this->selectedContainer)) {
             $this->products = $this->originalProducts;
         } else {
             $this->products = $this->originalProducts
@@ -94,15 +103,17 @@ new class extends Component {
 
                     $matchBrand = empty($this->selectedBrands) || in_array($product->brand_id, $this->selectedBrands);
 
-                    return $matchCategory && $matchBrand;
+                    $matchContainer = empty($this->selectedContainer) || in_array($product->container, $this->selectedContainer);
+
+                    return $matchCategory && $matchBrand && $matchContainer;
                 })
                 ->values();
         }
 
-        $this->updateNavigationAndSidebar();
+        $this->updateNavigation();
     }
 
-    protected function updateNavigationAndSidebar(): void
+    protected function updateNavigation(): void
     {
         // --- Construir categoriesNav ---
         $nav[] = $this->categoriesNav[0];
@@ -117,23 +128,12 @@ new class extends Component {
             $nav = array_merge($nav, $brandNames);
         }
 
-        $this->categoriesNav = $nav;
-
-        // --- Actualizar colecciones del sidebar ---
-        if ($this->products->isNotEmpty()) {
-            $categoryIds = $this->products->pluck('category_id')->unique()->values();
-            $this->categoriesProduct = Category::whereIn('id', $categoryIds)
-                ->select(['id', 'name'])
-                ->get();
-
-            $brandIds = $this->products->pluck('brand_id')->unique()->values();
-            $this->brandsProducts = Brand::whereIn('id', $brandIds)
-                ->select(['id', 'name'])
-                ->get();
-        } else {
-            $this->categoriesProduct = collect();
-            $this->brandsProducts = collect();
+        if (!empty($this->selectedContainer)) {
+            $containerNames = Product::whereIn('container', $this->selectedContainer)->pluck('container')->unique()->toArray();
+            $nav = array_merge($nav, $containerNames);
         }
+
+        $this->categoriesNav = $nav;
     }
 
     protected function applySorting(): void
@@ -161,15 +161,17 @@ new class extends Component {
         $this->categoriesNav = [$this->query];
         $this->brandsProducts = $service->getRelatedBrands($this->products);
         $this->categoriesProduct = $service->getRelatedCategories($this->products);
+        $this->containersProduct = $this->products->pluck('container')->unique()->toArray();
     }
 
     protected function getByOffer(ProductSearchService $service): void
     {
-        $offer = Offer::active()->findOrFail($this->offerId);
+        $offer = Offer::findOrFail($this->offerId)->active();
         $this->products = $service->getProductsByOffer($this->offerId);
         $this->categoriesNav = [$offer->offerTemplate->name];
         $this->brandsProducts = $service->getRelatedBrands($this->products);
         $this->categoriesProduct = $service->getRelatedCategories($this->products);
+        $this->containersProduct = $this->products->pluck('container')->unique()->toArray();
     }
 };
 ?>
@@ -258,30 +260,57 @@ new class extends Component {
           <x-icons.x />
         </label>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1" wire:loading.class="pointer-events-none">
-        <div class="px-4 flex flex-col gap-1 max-h-52 overflow-y-auto scroll-smooth scrollbar-thin"
-          style="scrollbar-color: white transparent">
-          <h4 class="w-full py-1 px-3 mb-2 text-lg font-semibold text-center border-b border-white/20 lg:text-center">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-1" wire:loading.class="pointer-events-none">
+        <div class="ps-4">
+          <h4
+            class="w-full py-1 px-3 mb-2 text-lg font-semibold text-center border-b
+          border-white/20 lg:text-center">
             Categorias
           </h4>
-          @foreach ($categoriesProduct as $category)
-            <x-inputs.checkbox wire:model.live.debounce.250ms="selectedCategories" wire:loading.attr="disabled"
-              wire:key="category-{{ $category->id }}" value="{{ $category->id }}" :labelClass="'font-semibold'" :labelFor="'checkbox_c' . $category->id">
-              {{ $category->name }}
-            </x-inputs.checkbox>
-          @endforeach
+          <div
+            class="flex flex-col gap-1 max-h-52 overflow-y-auto scroll-smooth scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white">
+            @forelse ($categoriesProduct as $category)
+              <x-inputs.checkbox wire:model.live.debounce.250ms="selectedCategories" wire:loading.attr="disabled"
+                wire:key="category-{{ $category->id }}" value="{{ $category->id }}" :labelClass="'font-semibold'" :labelFor="'checkbox_c' . $category->id">
+                {{ $category->name }}
+              </x-inputs.checkbox>
+            @empty
+              <p class="text-center text-slate-200 text-sm">No hay categorias disponibles</p>
+            @endforelse
+          </div>
         </div>
-        <div class="px-4 flex flex-col gap-1 max-h-52 overflow-y-auto scroll-smooth scrollbar-thin"
-          style="scrollbar-color: white transparent">
+        <div class="ps-4">
           <h4 class="w-full py-1 px-3 mb-2 text-lg font-semibold text-center border-b border-white/20 lg:text-center">
             Marcas
           </h4>
-          @foreach ($brandsProducts as $brand)
-            <x-inputs.checkbox wire:model.live.debounce.250ms="selectedBrands" wire:loading.attr="disabled"
-              wire:key="brand-{{ $brand->id }}" value="{{ $brand->id }}" :labelClass="'font-semibold'" :labelFor="'checkbox_b' . $brand->id">
-              {{ $brand->name }}
-            </x-inputs.checkbox>
-          @endforeach
+          <div
+            class="flex flex-col gap-1 max-h-52 overflow-y-auto scroll-smooth scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white">
+            @forelse ($brandsProducts as $brand)
+              <x-inputs.checkbox wire:model.live.debounce.250ms="selectedBrands" wire:loading.attr="disabled"
+                wire:key="brand-{{ $brand->id }}" value="{{ $brand->id }}" :labelClass="'font-semibold'" :labelFor="'checkbox_b' . $brand->id">
+                {{ $brand->name }}
+              </x-inputs.checkbox>
+            @empty
+              <p class="text-center text-slate-200 text-sm">No hay marcas disponibles</p>
+            @endforelse
+          </div>
+        </div>
+        <div class="ps-4">
+          <h4 class="w-full py-1 px-3 mb-2 text-lg font-semibold text-center border-b border-white/20 lg:text-center">
+            Tipo de envase
+          </h4>
+          <div
+            class="flex flex-col gap-1 max-h-52 overflow-y-auto scroll-smooth scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white">
+            @forelse ($containersProduct as $container)
+              <x-inputs.checkbox wire:model.live.debounce.250ms="selectedContainer" wire:loading.attr="disabled"
+                wire:key="container-{{ $container }}" value="{{ $container }}" :labelClass="'font-semibold'"
+                :labelFor="'checkbox_c' . $container">
+                {{ $container }}
+              </x-inputs.checkbox>
+            @empty
+              <p class="text-center text-slate-200 text-sm">No hay envases disponibles</p>
+            @endforelse
+          </div>
         </div>
       </div>
     </aside>
