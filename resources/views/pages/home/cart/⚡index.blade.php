@@ -2,6 +2,7 @@
 
 use App\Livewire\Forms\CheckoutForm;
 use App\Services\ShippingCalculationService;
+use App\Exceptions\{CheckoutException, InsufficientStockException, RouteCalculationException, ShippingNotFeasibleException};
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
@@ -113,7 +114,13 @@ new class extends Component {
 
     public function saveCheckout()
     {
-        $this->checkoutForm->save();
+        try {
+            $this->checkoutForm->save();
+        } catch (\Exception $e) {
+            $this->dispatch('notification', message: $e->getMessage(), type: 'error');
+        } catch (InsufficientStockException $e) {
+            $this->dispatch('notification', message: $e->getMessage(), type: 'error');
+        }
     }
 
     public function calculateTotal(): void
@@ -126,6 +133,12 @@ new class extends Component {
         $this->shippingMessage = null;
 
         $address = auth()->user()->addresses()->find($this->checkoutForm->addressId);
+
+        if (!$address) {
+            $this->shippingMessage = 'La dirección seleccionada no existe.';
+            return;
+        }
+
         try {
             $shipping = app(ShippingCalculationService::class)->calculateForCheckout($address);
 
@@ -302,7 +315,7 @@ new class extends Component {
             placeholder="Ej: Prefiero retirar después de las 17hs..."></textarea>
         </div>
         <div class="mb-8">
-          <label for="address_id" class="mb-4 text-lg font-medium text-gray-900">Dirección de envio</label>
+          <label for="address_id" class="mb-4 text-lg font-medium text-gray-900">Dirección de envío</label>
           <select id="address_id" wire:model.live="checkoutForm.addressId"
             class="block w-full px-3 py-2 rounded-md bg-white/50 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
             @forelse ($this->addresses as $address)
@@ -318,26 +331,22 @@ new class extends Component {
             <legend class="text-lg font-medium text-gray-900 mb-4">Método de entrega</legend>
             <div class="space-y-3">
               <label @class([
-                  'flex items-start gap-3 rounded-lg border p-4 transition',
+                  'relative flex items-start gap-3 rounded-lg border p-4 transition',
                   'cursor-pointer border-gray-300 hover:bg-gray-50' => $isShippingFeasible,
                   'cursor-not-allowed border-gray-200 bg-gray-100 opacity-60' => !$isShippingFeasible,
-              ])>
+              ]) wire:loading.class="bg-black/20 bg-blur pointer-events-none"
+                wire:target="distanceKm,checkoutForm.addressId">
                 <input type="radio" name="delivery_method" value="shipping"
                   wire:model.live="checkoutForm.deliveryMethod"
                   class="mt-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   @disabled(!$isShippingFeasible)>
                 <div>
                   <p class="font-medium text-gray-900">🚚 Envío a domicilio</p>
-
                   @if ($isShippingFeasible)
                     <p class="mt-1 text-sm text-gray-600">Podemos realizar el envío a esta dirección.</p>
                     <p class="mt-1 text-sm text-gray-600">
                       Distancia:
-                      <strong wire:loading.remove
-                        wire:target="distanceKm">{{ number_format($distanceKm, 2, ',', '.') }}
-                        km</strong>
-                      <span wire:loading wire:target="distanceKm" class="text-gray-900 animate-pulse">⏳
-                        Actualizando...</span>
+                      <strong>{{ number_format($distanceKm, 2, ',', '.') }} km</strong>
                     </p>
                   @else
                     <p class="mt-1 text-sm text-red-600">
@@ -345,6 +354,9 @@ new class extends Component {
                     </p>
                   @endif
                 </div>
+                <span wire:loading wire:target="distanceKm,checkoutForm.addressId"
+                  class="absolute top-1/2 left-1/2 -translate-1/2 font-bold animate-pulse">⏳
+                  Actualizando...</span>
               </label>
               <label
                 class="flex items-start gap-3 rounded-lg border border-gray-300 p-4 cursor-pointer transition hover:bg-gray-50">
