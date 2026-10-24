@@ -10,6 +10,7 @@ use App\Http\Controllers\{
   ProductController,
   ProviderController,
   RoleController,
+  ShippingController,
   UserController
 };
 use Illuminate\Support\Facades\Route;
@@ -21,13 +22,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
   Route::prefix('dashboard')->group(function () {
     // Settings routes
-    Route::middleware(['permission:manage settings'])->prefix('site')->name('site.')->group(function () {
+    Route::middleware(['permission:manage_settings'])->prefix('site')->name('site.')->group(function () {
       Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
       Route::put('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
     });
 
     // My routes
-    Route::get('my/orders', [OrderController::class, 'myIndex'])->name('my.orders.index')->middleware('permission:view_any_own_orders');
+    Route::livewire('my/orders', 'pages::dashboard.order.index')->name('my.orders.index')->middleware('permission:view_any_own_orders');
     Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show')->middleware('permission:view_own_order');
     Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index')->middleware('permission:view_any_own_payments');
     Route::get('my/carts', function () {
@@ -36,7 +37,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
       $controller = resolve(CartController::class);
       return $controller->show($cart);
-    })->name('my.cart.index')->middleware('permission:view_any_own_cart');
+    })->name('my.cart.index')->middleware('permission:view_own_cart');
 
     // Address routes
     Route::prefix('/addresses')->name('addresses.')->group(function () {
@@ -98,12 +99,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Order routes
     Route::prefix('orders')->name('orders.')->group(function () {
-      Route::get('/', [OrderController::class, 'index'])->name('index')->middleware('permission:view_any_orders');
+      Route::livewire('/', 'pages::dashboard.order.index')->name('index')->middleware('permission:view_any_orders');
       Route::get('/{id}/show', [OrderController::class, 'show'])->name('show')->middleware('permission:view_orders');
-      Route::put('/{order}/states', [OrderController::class, 'updateStates'])->name('updateStates');
       Route::get('/export', [OrderController::class, 'export'])->name('export');
-      Route::post('/count', [OrderController::class, 'count'])->name('count');
-      Route::get('/filter', [OrderController::class, 'filter'])->name('filter');
     });
 
     // Payment routes
@@ -112,6 +110,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::put('/{payment}/states', [PaymentController::class, 'updateStates'])->name('updateStates');
       Route::get('/export', [PaymentController::class, 'export'])->name('export');
       Route::post('/count', [PaymentController::class, 'count'])->name('count');
+    });
+
+    // Shipment routes
+    Route::prefix('shippings')->name('shippings.')->group(function () {
+      Route::livewire('/', 'pages::dashboard.shipping.index')->name('index')->middleware('permission:view_any_shippings');
+      Route::get('/export', [ShippingController::class, 'export'])->name('export');
     });
 
     // Model states & types routes
