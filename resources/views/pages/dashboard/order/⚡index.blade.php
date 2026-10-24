@@ -22,8 +22,8 @@ new #[Layout('layouts::dashboard')] class extends Component {
         'date' => ['column' => 'orders.date', 'label' => 'Fecha', 'default' => 'desc'],
         'total' => ['column' => 'orders.total', 'label' => 'Total', 'default' => 'desc'],
         'user' => ['label' => 'Usuario', 'default' => 'asc'],
-        'order_state' => ['label' => 'Estado', 'default' => 'asc'],
-        'payment' => ['label' => 'M. Pago', 'default' => 'asc'],
+        'order_state' => ['column' => 'order_states.name', 'label' => 'Estado', 'default' => 'asc'],
+        'payment' => ['column' => 'payments.method', 'label' => 'M. Pago', 'default' => 'asc'],
     ];
     protected array $sortAliases = [
         'user_id' => 'user',

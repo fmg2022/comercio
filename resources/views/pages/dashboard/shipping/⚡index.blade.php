@@ -5,11 +5,13 @@ use Livewire\WithPagination;
 use Livewire\Attributes\{Computed, Layout, Url};
 
 use App\Models\{Shipping, ShippingState, User};
+use App\Traits\HasSortableTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 new #[Layout('layouts::dashboard')] class extends Component {
     use WithPagination;
+    use HasSortableTable;
 
     // | --- Filtros --- |
     #[Url(history: true)]
@@ -32,8 +34,21 @@ new #[Layout('layouts::dashboard')] class extends Component {
     // | --- Ordenamiento --- |
     #[Url(history: true)]
     public string $sortBy = 'estimated_delivery_date';
-    #[Url(history: true)]
-    public string $sortDir = 'desc';
+    public array $sorts = [
+        'estimated_delivery_date' => ['column' => 'shippings.estimated_delivery_date', 'label' => 'Fecha Estimada', 'default' => 'desc'],
+        'order_id' => ['column' => 'shippings.order_id', 'label' => '# Orden', 'default' => 'asc'],
+        'cost' => ['column' => 'shippings.cost', 'label' => 'Costo', 'default' => 'desc'],
+        'delivered_to' => ['column' => 'shippings.delivered_to', 'label' => 'Fecha Entrega', 'default' => 'desc'],
+        'tracking_number' => ['column' => 'shippings.tracking_number', 'label' => 'Nº Seguimiento', 'default' => 'asc'],
+        'address' => ['column' => 'addresses.street', 'label' => 'Dirección', 'default' => 'asc'],
+        'shipping_state' => ['column' => 'shipping_states.name', 'label' => 'Estado', 'default' => 'asc'],
+        'transport_user' => ['column' => 'users.surname', 'label' => 'Transportista', 'default' => 'asc'],
+    ];
+    public array $sortAliases = [
+        'address_id' => 'address',
+        'shipping_state_id' => 'shipping_state',
+        'transport_user_id' => 'transport_user',
+    ];
 
     // | --- Modal --- |
     public bool $modalOpen = false;
@@ -50,23 +65,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
     public ?int $shippingOrderId = null;
     public ?string $shippingAddress = null;
     public ?string $shippingRate = null;
-
-    private const SORTS = [
-        'order_id' => ['column' => 'shippings.order_id', 'label' => '# Orden', 'default' => 'asc'],
-        'cost' => ['column' => 'shippings.cost', 'label' => 'Costo', 'default' => 'desc'],
-        'estimated_delivery_date' => ['column' => 'shippings.estimated_delivery_date', 'label' => 'Fecha Estimada', 'default' => 'desc'],
-        'delivered_to' => ['column' => 'shippings.delivered_to', 'label' => 'Fecha Entrega', 'default' => 'desc'],
-        'tracking_number' => ['column' => 'shippings.tracking_number', 'label' => 'N° Seguimiento', 'default' => 'asc'],
-        'address' => ['column' => 'addresses.street', 'label' => 'Dirección', 'default' => 'asc'],
-        'shipping_state' => ['column' => 'shipping_states.name', 'label' => 'Estado', 'default' => 'asc'],
-        'transport_user' => ['column' => 'users.surname', 'label' => 'Transportista', 'default' => 'asc'],
-    ];
-
-    private const SORT_ALIASES = [
-        'address_id' => 'address',
-        'shipping_state_id' => 'shipping_state',
-        'transport_user_id' => 'transport_user',
-    ];
 
     public function mount()
     {
@@ -105,9 +103,9 @@ new #[Layout('layouts::dashboard')] class extends Component {
     public function shippings()
     {
         $dir = strtolower($this->sortDir) === 'asc' ? 'asc' : 'desc';
-        $field = self::SORT_ALIASES[$this->sortBy] ?? $this->sortBy;
+        $field = $this->sortAliases[$this->sortBy] ?? $this->sortBy;
 
-        if (!array_key_exists($field, self::SORTS)) {
+        if (!$this->isSortable($field)) {
             $field = 'estimated_delivery_date';
         }
 
@@ -117,7 +115,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
             'address' => $query->leftJoin('addresses', 'addresses.id', '=', 'shippings.address_id')->orderBy('addresses.street', $dir),
             'shipping_state' => $query->leftJoin('shipping_states', 'shipping_states.id', '=', 'shippings.shipping_state_id')->orderBy('shipping_states.name', $dir),
             'transport_user' => $query->leftJoin('users', 'users.id', '=', 'shippings.transport_user_id')->orderBy('users.surname', $dir),
-            default => $query->orderBy(self::SORTS[$field]['column'], $dir),
+            default => $query->orderBy($this->sortColumn($field), $dir),
         };
 
         return $query->orderBy('shippings.id', $dir)->paginate(10);
@@ -135,16 +133,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
         return ShippingState::query()->select('id', 'name')->orderBy('name')->get();
     }
 
-    #[Computed]
-    public function sortStatus(): string
-    {
-        $field = self::SORT_ALIASES[$this->sortBy] ?? $this->sortBy;
-        $label = self::SORTS[$field]['label'] ?? $this->sortBy;
-        $dir = $this->sortDir === 'asc' ? 'Ascendente' : 'Descendente';
-
-        return "Ordenado por {$label} · {$dir}";
-    }
-
     // | --- Filtros --- |
     public function applyFilters(): void
     {
@@ -155,34 +143,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
     {
         $this->reset(['users', 'states', 'dateFrom', 'dateTo', 'dateDeliveredFrom', 'dateDeliveredTo', 'deliveredNull']);
         $this->dateTo = now()->format('Y-m-d');
-        $this->resetPage();
-    }
-
-    // | --- Ordenamiento --- |
-    public function sort(string $field): void
-    {
-        $field = self::SORT_ALIASES[$field] ?? $field;
-
-        if (!array_key_exists($field, self::SORTS)) {
-            return;
-        }
-
-        if ($this->sortBy === $field) {
-            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $field;
-            $this->sortDir = self::SORTS[$field]['default'];
-        }
-
-        unset($this->shippings, $this->sortStatus);
-        $this->resetPage();
-    }
-
-    public function resetSort(): void
-    {
-        $this->sortBy = 'estimated_delivery_date';
-        $this->sortDir = 'desc';
-        unset($this->shippings, $this->sortStatus);
         $this->resetPage();
     }
 
@@ -465,26 +425,10 @@ new #[Layout('layouts::dashboard')] class extends Component {
     </div>
   </x-sections.headerTitle>
 
-  <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-3 rounded-t-xl bg-slate-800 sm:px-6">
-    <p class="text-sm text-slate-300" wire:loading.remove wire:target="sort, resetSort">{{ $this->sortStatus }}</p>
-    <p class="text-sm text-slate-300" wire:loading wire:target="sort, resetSort">
-      <span class="inline-flex items-center gap-2">
-        <x-icons.animate.spinner class="size-4" />
-        Ordenando…
-      </span>
-    </p>
-    <button type="button" wire:click="resetSort" wire:loading.attr="disabled" wire:target="sort, resetSort"
-      class="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-wait disabled:opacity-60">
-      Restablecer
-    </button>
-  </div>
+  <x-tables.sort-bar sortStatus="{{ $this->sortStatus() }}" />
   <div class="relative">
-    <div wire:loading.flex
-      wire:target="users,states,dateFrom,dateTo,dateDeliveredFrom,dateDeliveredTo,deliveredNull,sort,resetSort"
-      class="absolute inset-0 z-10 items-center justify-center gap-2 font-bold rounded-b-xl bg-slate-900/60 text-slate-200">
-      <x-icons.animate.spinner class="size-6" />
-      Cargando...
-    </div>
+    <x-tables.loading-overlay
+      target="users,states,dateFrom,dateTo,dateDeliveredFrom,dateDeliveredTo,deliveredNull,sort,resetSort" />
     <table class="w-full text-sm border-separate border-spacing-y-1 [&_td]:py-4 [&_td]:px-3 [&_tr]:bg-slate-800">
       <thead class="text-slate-400">
         <tr class="text-left" wire:key="shippings-sort-{{ $sortBy }}-{{ $sortDir }}">
@@ -671,11 +615,13 @@ new #[Layout('layouts::dashboard')] class extends Component {
       </div>
       <div class="shrink-0 flex justify-between px-5 py-4 border-t border-slate-200">
         <button type="button" @click="clearChoicesFilter()"
-          class="px-3 py-2 bg-slate-600 text-white font-semibold rounded-md hover:bg-slate-500 cursor-pointer"> Limpiar
+          class="px-3 py-2 bg-slate-600 text-white font-semibold rounded-md hover:bg-slate-500 cursor-pointer">
+          Limpiar
         </button>
         <div class="flex gap-3">
           <button type="button" @click="closeModal('filterModal')"
-            class="px-3 py-2 bg-red-800 text-white font-semibold rounded-md hover:bg-red-700 cursor-pointer"> Cancelar
+            class="px-3 py-2 bg-red-800 text-white font-semibold rounded-md hover:bg-red-700 cursor-pointer">
+            Cancelar
           </button>
           <button type="button" @click="applyChoicesFilter()"
             class="px-3 py-2 bg-green-700 text-white font-semibold rounded-md hover:bg-green-600 cursor-pointer">

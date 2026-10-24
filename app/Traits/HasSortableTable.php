@@ -24,7 +24,7 @@ trait HasSortableTable
             $this->sortDir = $this->sorts[$field]['default'] ?? 'asc';
         }
 
-        $this->afterSort();
+        $this->resetPage();
     }
 
     public function resetSort(): void
@@ -34,11 +34,6 @@ trait HasSortableTable
         $this->sortBy  = $first;
         $this->sortDir = $this->sorts[$first]['default'] ?? 'desc';
 
-        $this->afterSort();
-    }
-
-    protected function afterSort(): void
-    {
         $this->resetPage();
     }
 
