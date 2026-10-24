@@ -1,82 +1,46 @@
 <?php
 
-use App\Livewire\Forms\{OfferForm, OfferTemplateForm};
 use Livewire\Attributes\{Computed, Layout, On};
 use Livewire\Component;
 use Livewire\WithPagination;
 
+use App\Livewire\Forms\{OfferForm, OfferTemplateForm};
 use App\Models\{Offer, OfferState, OfferTemplate, OfferType, Product};
+use App\Traits\HasSortableTable;
 
 new #[Layout('layouts::dashboard')] class extends Component {
     use WithPagination;
+    use HasSortableTable;
 
     public OfferTemplateForm $offerTemplateForm;
     public OfferForm $offerForm;
 
-    // Estado del modal
+    // | --- Modal --- |
     public $is_active = false;
     public $modalMode = 'create';
     public $modalOpen = false;
 
+    // | --- Ordenamiento --- |
     public string $sortBy = 'end_date';
-    public string $sortDir = 'desc';
-
-    private const SORTS = [
+    protected array $sorts = [
+        'end_date' => ['column' => 'offers.end_date', 'label' => 'Fecha de fin', 'default' => 'desc'],
         'name' => ['column' => 'offers.name', 'label' => 'Nombre', 'default' => 'asc'],
         'start_date' => ['column' => 'offers.start_date', 'label' => 'Fecha de inicio', 'default' => 'desc'],
-        'end_date' => ['column' => 'offers.end_date', 'label' => 'Fecha de fin', 'default' => 'desc'],
         'offer_template' => ['label' => 'Tipo', 'default' => 'asc'],
         'offer_state' => ['label' => 'Estado', 'default' => 'asc'],
     ];
-    private const SORT_ALIASES = [
+    protected array $sortAliases = [
         'offer_template_id' => 'offer_template',
         'offer_state_id' => 'offer_state',
     ];
-
-    public function sort(string $field): void
-    {
-        $field = self::SORT_ALIASES[$field] ?? $field;
-
-        if (!array_key_exists($field, self::SORTS)) {
-            return;
-        }
-
-        if ($this->sortBy === $field) {
-            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $field;
-            $this->sortDir = self::SORTS[$field]['default'];
-        }
-
-        unset($this->offers, $this->sortStatus);
-        $this->resetPage();
-    }
-
-    public function resetSort(): void
-    {
-        $this->sortBy = 'end_date';
-        $this->sortDir = 'desc';
-        unset($this->offers, $this->sortStatus);
-        $this->resetPage();
-    }
-
-    #[Computed]
-    public function sortStatus(): string
-    {
-        $field = self::SORT_ALIASES[$this->sortBy] ?? $this->sortBy;
-        $label = self::SORTS[$field]['label'] ?? $this->sortBy;
-        $dir = $this->sortDir === 'asc' ? 'Ascendente' : 'Descendente';
-
-        return "Ordenado por {$label} · {$dir}";
-    }
 
     #[Computed]
     public function offers()
     {
         $dir = strtolower($this->sortDir) === 'asc' ? 'asc' : 'desc';
-        $field = self::SORT_ALIASES[$this->sortBy] ?? $this->sortBy;
+        $field = $this->sortAliases[$this->sortBy] ?? $this->sortBy;
 
-        if (!array_key_exists($field, self::SORTS)) {
+        if (!$this->isSortable($field)) {
             $field = 'end_date';
         }
 
@@ -87,7 +51,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         match ($field) {
             'offer_template' => $query->leftJoin('offer_templates', 'offer_templates.id', '=', 'offers.offer_template_id')->orderBy('offer_templates.name', $dir),
             'offer_state' => $query->leftJoin('offer_states', 'offer_states.id', '=', 'offers.offer_state_id')->orderBy('offer_states.name', $dir),
-            default => $query->orderBy(self::SORTS[$field]['column'], $dir),
+            default => $query->orderBy($this->sortColumn($field), $dir),
         };
 
         return $query->orderBy('offers.id', $dir)->paginate(10);
@@ -449,25 +413,9 @@ new #[Layout('layouts::dashboard')] class extends Component {
       </div>
     @endcan
   </x-sections.headerTitle>
-  <div class="px-4 py-3 flex flex-wrap items-center justify-between gap-3 rounded-t-xl bg-slate-800 sm:px-6">
-    <p class="text-sm text-slate-300" wire:loading.remove wire:target="sort, resetSort">{{ $this->sortStatus }}</p>
-    <p class="text-sm text-slate-300" wire:loading wire:target="sort, resetSort">
-      <span class="inline-flex items-center gap-2">
-        <x-icons.animate.spinner class="size-4" />
-        Ordenando…
-      </span>
-    </p>
-    <button type="button" wire:click="resetSort" wire:loading.attr="disabled" wire:target="sort, resetSort"
-      class="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-wait disabled:opacity-60">
-      Restablecer
-    </button>
-  </div>
+  <x-tables.sort-bar sortStatus="{{ $this->sortStatus() }}" />
   <div class="relative">
-    <div wire:loading.flex wire:target="sort, resetSort"
-      class="absolute inset-0 z-10 items-center justify-center gap-2 rounded-b-xl bg-slate-900/60 text-sm text-slate-200">
-      <x-icons.animate.spinner class="size-5" />
-      Ordenando…
-    </div>
+    <x-tables.loading-overlay target="offers,sort,resetSort" />
     <table class="w-full text-sm border-separate border-spacing-y-1 [&_td]:py-4 [&_td]:px-3 [&_tr]:bg-slate-800">
       <thead class="text-slate-400">
         <tr class="text-left" wire:key="offers-sort-{{ $sortBy }}-{{ $sortDir }}">
