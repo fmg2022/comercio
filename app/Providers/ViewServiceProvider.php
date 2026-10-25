@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\View\Composers\OfferComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,18 +21,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // sharing daa with multiple views
-        View::composer(['layouts.partials.header', 'pages.home.*'], function ($view) {
-            $user = auth()->user();
-            if ($user) {
-                $user->loadMissing('cart');
-                $cart = $user->cart;
-            } else {
-                $cart = null;
-            }
-            $view->with('categories', \App\Models\Category::getFullTree())
-                ->with('offers', \App\Models\Offer::with(['offerTemplate:id,name,offer_type_id,buy_qty,pay_qty', 'offerTemplate.offerType:id,slug,name'])->active()->get()->keyBy('id'))
-                ->with('cart', $cart);
-        });
+        // Compartir datos con múltiples vistas
+        View::composer(['layouts.partials.header', 'pages.home.*'], OfferComposer::class);
     }
 }

@@ -14,6 +14,7 @@ class OfferSeeder extends Seeder
     public function run(): void
     {
         Offer::factory(16)->create()->each(function ($offer) {
+            $offer->load(['offerTemplate.offerType']);
             $products = Product::query()
                 ->when(
                     $offer->offerTemplate->offerType === 'fixed',

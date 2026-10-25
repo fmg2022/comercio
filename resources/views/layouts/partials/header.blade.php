@@ -1,3 +1,6 @@
+@php
+  $cart = auth()->user()?->cart;
+@endphp
 <input type="checkbox" id="toggle-category" class="hidden peer/category" />
 <input type="checkbox" id="toggle-cart" class="hidden peer/cart" />
 

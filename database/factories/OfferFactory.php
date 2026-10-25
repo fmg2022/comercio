@@ -52,18 +52,35 @@ class OfferFactory extends Factory
         ];
         $startDate = $this->faker->dateTimeBetween('-1 months', '+1 week');
         $endDate = Carbon::parse($startDate)->addDays(rand(5, 21));
-        $type_state = 'active';
+        $now = now();
 
-        $startDate > now()
-            ? $type_state = 'pending'
-            : ($endDate > now() ?: $type_state = 'expired');
+        if ($startDate > $now) {
+            $type_state = 'pending';
+        } elseif ($endDate <= $now) {
+            $type_state = 'expired';
+        } else {
+            $type_state = 'active';
+        }
+
+        $activeStateId = DB::table('offer_states')->where('slug', 'active')->value('id');
+        $pendingStateId = DB::table('offer_states')->where('slug', 'pending')->value('id');
+        $expiredStateId = DB::table('offer_states')->where('slug', 'expired')->value('id');
+
+        $stateId = match ($type_state) {
+            'active' => $activeStateId,
+            'pending' => $pendingStateId,
+            'expired' => $expiredStateId,
+            default => $activeStateId,
+        };
+
+        $templateId = DB::table('offer_templates')->inRandomOrder()->value('id');
 
         return [
             'name' => $offersNames[array_rand($offersNames)],
             'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate,
-            'offer_state_id' => DB::table('offer_states')->where('slug', $type_state)->first()->id,
-            'offer_template_id' => DB::table('offer_templates')->inRandomOrder()->first()->id,
+            'end_date' => $endDate->format('Y-m-d'),
+            'offer_state_id' => $stateId,
+            'offer_template_id' => $templateId,
         ];
     }
 }
