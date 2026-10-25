@@ -267,7 +267,7 @@
     class="max-w-xl w-full max-h-[90%] overflow-y-auto [scrollbar-color:#62748e_transparent] scrollbar-thin">
     <form enctype="multipart/form-data" method="POST"
       class="group w-full flex flex-col gap-4 items-center justify-center editable [&.editable]:mb-12 peer/form">
-      @can('edit_products')
+      @can('update_products')
         @csrf
         @method('PUT')
       @endcan
