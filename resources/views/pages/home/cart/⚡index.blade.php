@@ -116,9 +116,12 @@ new class extends Component {
     {
         try {
             $this->checkoutForm->save();
-        } catch (\Exception $e) {
-            $this->dispatch('notification', message: $e->getMessage(), type: 'error');
         } catch (InsufficientStockException $e) {
+            // Quitar el producto sin stock del carrito
+            $this->cart->products()->detach($e->productId);
+            $this->refreshCart();
+            $this->dispatch('notification', message: $e->getMessage(), type: 'error');
+        } catch (\Exception $e) {
             $this->dispatch('notification', message: $e->getMessage(), type: 'error');
         }
     }

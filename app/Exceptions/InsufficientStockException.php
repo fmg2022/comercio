@@ -10,6 +10,6 @@ class InsufficientStockException extends CheckoutException
         public readonly int $available,
         public readonly int $requested,
     ) {
-        parent::__construct("Stock insuficiente para {$productName}.");
+        parent::__construct("Sin productos en stock");
     }
 }
