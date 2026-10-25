@@ -28,7 +28,7 @@ class ProductSearchService
    */
   public function getProductsByOffer(int $offerId): Collection
   {
-    $offer = Offer::findOrFail($offerId)->active();
+    $offer = Offer::findOrFail($offerId)->active()->first();
     return $offer->products()
       ->with('category')
       ->whereColumn('stock', '>', 'min_stock')

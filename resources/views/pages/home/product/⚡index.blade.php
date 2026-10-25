@@ -166,7 +166,8 @@ new class extends Component {
 
     protected function getByOffer(ProductSearchService $service): void
     {
-        $offer = Offer::findOrFail($this->offerId)->active();
+        $offer = Offer::findOrFail($this->offerId);
+
         $this->products = $service->getProductsByOffer($this->offerId);
         $this->categoriesNav = [$offer->offerTemplate->name];
         $this->brandsProducts = $service->getRelatedBrands($this->products);
