@@ -139,7 +139,7 @@ class CheckoutService
       return [
         'order' => $order->id,
         'payment' => $payment->id,
-        'shipping' => $shipping->id,
+        'shipping' => $shipping?->id,
       ];
     });
     return $result;

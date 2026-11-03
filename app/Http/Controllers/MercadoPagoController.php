@@ -14,7 +14,7 @@ use MercadoPago\MercadoPagoConfig;
 
 class MercadoPagoController extends Controller
 {
-    public function process(Order $order, Payment $payment, Shipping $shipping): RedirectResponse
+    public function process(Order $order, Payment $payment, ?Shipping $shipping = null): RedirectResponse
     {
         $iva = floatval(config('commerce.tax_rate', 21)) / 100;
         $items = $order->products->map(function ($product) use ($iva) {
@@ -34,27 +34,8 @@ class MercadoPagoController extends Controller
 
         $baseUrl = route('webhook.mercadopago');
 
-        $shipments = null;
-
-        if ($shipping !== null) {
-            $shipping->load('address');
-            $shipments[] = [
-                'mode' => 'custom',
-                'cost' => (float) $shipping->cost,
-                'free_shipping' => (float) $shipping->cost === 0,
-                'receiver_address' => (object) [
-                    'zip_code' => $shipping->address->postal_code,
-                    'street_name' => $shipping->address->street,
-                    'city_name' => $shipping->address->city,
-                    'state_name' => $shipping->address->province,
-                    'country_name' => 'Argentina',
-                ],
-            ];
-        }
-
         $preferenceData = [
             'items' => $items,
-            'shipments' => $shipments,
             'payer' => [
                 'name' => $order->user->name,
                 'surname' => $order->user->surname,
@@ -73,6 +54,24 @@ class MercadoPagoController extends Controller
             'external_reference' => (string) $payment->id,
             'notification_url' => $baseUrl . '?source_news=webhooks',
         ];
+
+        if ($shipping !== null) {
+            $shipping->load('address');
+            $shipments[] = [
+                'mode' => 'custom',
+                'cost' => (float) $shipping->cost,
+                'free_shipping' => (float) $shipping->cost === 0,
+                'receiver_address' => (object) [
+                    'zip_code' => $shipping->address->postal_code,
+                    'street_name' => $shipping->address->street,
+                    'city_name' => $shipping->address->city,
+                    'state_name' => $shipping->address->province,
+                    'country_name' => 'Argentina',
+                ],
+            ];
+
+            $preferenceData['shipments'] = $shipments;
+        }
 
         try {
             $client = new PreferenceClient();

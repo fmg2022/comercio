@@ -143,7 +143,7 @@ new class extends Component {
         }
 
         try {
-            $shipping = app(ShippingCalculationService::class)->calculateForCheckout($address);
+            $shipping = app(ShippingCalculationService::class)->calculatePreview($address);
 
             $this->isShippingFeasible = true;
             $this->distanceKm = $shipping['distance_km'];
@@ -151,7 +151,6 @@ new class extends Component {
             if ($this->checkoutForm->deliveryMethod === 'shipping') {
                 $this->shippingCost = (float) $shipping['shipping_cost'];
             }
-            $this->updateOrderTotal();
         } catch (CheckoutException $e) {
             $this->shippingMessage = $e->getMessage();
             $this->addError('checkoutForm.addressId', $e->getMessage());
@@ -161,6 +160,8 @@ new class extends Component {
         } catch (ShippingNotFeasibleException $e) {
             $this->shippingMessage = 'La dirección seleccionada se encuentra fuera de nuestra zona de envío.';
             $this->distanceKm = $e->distance_km;
+        } finally {
+            $this->updateOrderTotal();
         }
     }
 
