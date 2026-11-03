@@ -88,19 +88,13 @@
         {{ $product->trashed() ? ' (Eliminado/a)' : '' }}
       </h1>
       <p class="relative mb-4">
-        <x-buttons.link href="{{ route('products.show', $product->id) }}"
-          class="text-slate-100 hover:text-purple-500 peer/popup">
-          SKU: {{ $product->sku }}
-        </x-buttons.link>
-        <x-popups.text class="top-full left-0 hidden bg-purple-800/80 peer-hover/popup:inline-block">
-          Ver Producto
-        </x-popups.text>
+        SKU: {{ $product->sku }}
       </p>
     </div>
     <div class="mb-4 flex flex-wrap gap-4">
       @can('view_any_products')
-        <x-buttons.linkFill href="{{ route('products.index') }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
-          Volver al listado
+        <x-buttons.linkFill href="{{ url()->previous() }}" class="font-semibold bg-slate-700 hover:bg-slate-600">
+          Volver atras
         </x-buttons.linkFill>
       @endcan
       @if ($product->trashed() && auth()->user()->can('delete_products'))

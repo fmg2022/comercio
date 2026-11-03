@@ -37,7 +37,6 @@
         <th>Precio</th>
         <th class="hidden md:table-cell">Descuento</th>
         <th class="hidden md:table-cell">Subtotal</th>
-        <th class="text-end">Opciones</th>
       </tr>
     </x-slot:thead>
     <x-slot:tbody>
@@ -66,33 +65,6 @@
           </td>
           <td class="text-center hidden md:table-cell">
             <span class="me-px">$</span>{{ $orderLine->pivot->subtotal() }}
-          </td>
-          <td>
-            <div class="relative flex justify-end">
-              @can('view_product')
-                <x-popups.contentWcheck iid="chorderline-{{ $orderLine->id }}" labelClass="hover:bg-slate-900"
-                  class="right-12 -top-1/4">
-                  <x-slot:label>
-                    <x-icons.threeDotsX class="size-6" />
-                  </x-slot:label>
-
-                  <ul
-                    class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                    <li>
-                      <a href="{{ route('products.show', $orderLine->id) }}"
-                        class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                        <span>
-                          <x-icons.show class="size-5" />
-                        </span>
-                        Ver Producto
-                      </a>
-                    </li>
-                  </ul>
-                </x-popups.contentWcheck>
-              @else
-                <p class="px-2 text-end">---</p>
-              @endcan
-            </div>
           </td>
         </tr>
       @endforeach

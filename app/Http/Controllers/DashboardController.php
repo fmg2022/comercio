@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{OfferState, OfferType, Order, OrderProduct, OrderState, Payment, PaymentState};
+use App\Models\{OfferState, OfferType, OrderProduct, OrderState, PaymentState};
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -57,39 +56,6 @@ class DashboardController extends Controller
 			'currentCart',
 			'totalSaved'
 		));
-	}
-
-	public function cantSellers(): JsonResponse
-	{
-		$sellers = Payment::selectRaw('COUNT(*) as total, DATE(paid_at) as paid_date')
-			->OnlyAprobed()
-			->whereMonth('paid_at', now()->month)
-			->groupBy('paid_date')
-			->orderBy('paid_date', 'asc')
-			->get();
-
-		[$data, $labels] = $sellers->reduce(function ($carry, $item) {
-			$carry[0][] = $item->total;
-			$carry[1][] = $item->paid_date;
-			return $carry;
-		}, [[], []]);
-
-		return response()->json(['values' => $data, 'labels' => $labels]);
-	}
-
-	public function cantOrders(): JsonResponse
-	{
-		$orders = Order::selectRaw('COUNT(*) as total, date')
-			->whereMonth('date', now()->month)
-			->groupBy('date')->get();
-
-		[$data, $labels] = $orders->reduce(function ($carry, $item) {
-			$carry[0][] = $item->total;
-			$carry[1][] = $item->date;
-			return $carry;
-		}, [[], []]);
-
-		return response()->json(['values' => $data, 'labels' => $labels]);
 	}
 
 	public function indexStatesTypes(): View

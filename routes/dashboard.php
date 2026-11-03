@@ -63,7 +63,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
       Route::post('/', [AddressController::class, 'store'])->name('store')->middleware('permission:create_addresses');
       Route::put('/{address}', [AddressController::class, 'update'])->name('update')->middleware('permission:update_addresses');
       Route::patch('/default', [AddressController::class, 'updateDefault'])->name('updateDefault')->middleware('permission:update_addresses');
-      // Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy')->middleware('permission:delete_addresses');
     });
 
     // Role routes
@@ -76,12 +75,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Product, category, brand routes
     Route::prefix('products')->name('products.')->group(function () {
-      Route::get('/', [ProductController::class, 'index'])->name('index')->middleware('permission:view_any_products');
-      Route::get('/{id}/show', [ProductController::class, 'show'])->name('show')->middleware('permission:view_product');
-      Route::post('/', [ProductController::class, 'store'])->name('store')->middleware('permission:create_products');
-      Route::put('/{product}', [ProductController::class, 'update'])->name('update')->middleware('permission:update_products');
-      Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy')->middleware('permission:delete_products');
-      Route::post('/{id}/restore', [ProductController::class, 'restore'])->name('restore')->middleware('permission:delete_products');
+      Route::livewire('/', 'pages::dashboard.product.index')->name('index')->middleware('permission:view_any_products');
       Route::get('/{id}/orders', [ProductController::class, 'ordersbyproduct'])->name('orders')->middleware('permission:view_orders');
     });
     Route::group(['middleware' => ['permission:view_any_product_attributes']], function () {

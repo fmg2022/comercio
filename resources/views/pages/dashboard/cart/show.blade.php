@@ -78,17 +78,6 @@
 
                 <ul
                   class="w-max py-2 bg-slate-800 border border-slate-700 rounded-md text-xs text-slate-300 font-semibold">
-                  @can('view_any_carts')
-                    <li>
-                      <a href="{{ route('products.show', $product->id) }}"
-                        class="px-4 py-2.5 flex gap-3 hover:bg-slate-700">
-                        <span>
-                          <x-icons.show class="size-5" />
-                        </span>
-                        Ver Producto
-                      </a>
-                    </li>
-                  @endcan
                   @can('manage_cart_details')
                     <li>
                       <button type="button" data-type="edit" data-uid="{{ $product->id }}"
@@ -123,7 +112,7 @@
   <p
     class="w-fit px-8 py-3 ms-auto flex justify-between items-center gap-4 bg-slate-800 rounded-b-lg text-lg font-semibold">
     <span>Total sin impuestos</span>
-    <span>${{ number_format($cart->subtotal, 2, ',', '.') }}</span>
+    <span>${{ number_format($cart->total, 2, ',', '.') }}</span>
   </p>
 
   @if ($cart->products->count() > 0 && auth()->user()?->can('view_any_carts'))
