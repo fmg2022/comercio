@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Livewire\Forms\{OfferForm, OfferTemplateForm};
 use App\Models\{Offer, OfferState, OfferTemplate, OfferType, Product};
 use App\Traits\HasSortableTable;
+use Illuminate\Support\Collection;
 
 new #[Layout('layouts::dashboard')] class extends Component {
     use WithPagination;
@@ -21,6 +22,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
     public $modalOpen = false;
 
     // | --- Ordenamiento --- |
+    #[Url(history: true)]
     public string $sortBy = 'end_date';
     protected array $sorts = [
         'end_date' => ['column' => 'offers.end_date', 'label' => 'Fecha de fin', 'default' => 'desc'],
@@ -64,13 +66,13 @@ new #[Layout('layouts::dashboard')] class extends Component {
     }
 
     #[Computed]
-    public function offerStates()
+    public function availableOfferStates(): Collection
     {
         return OfferState::all(['id', 'slug', 'name']);
     }
 
     #[Computed]
-    public function offerTypes()
+    public function availableOfferTypes(): Collection
     {
         return OfferType::orderBy('name')->get(['id', 'name']);
     }
@@ -220,7 +222,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         if ($this->modalMode !== 'edit' || !$this->offerForm->offer_state_id) {
             return false;
         }
-        $state = $this->offerStates->firstWhere('id', (int) $this->offerForm->offer_state_id);
+        $state = $this->availableOfferStates->firstWhere('id', (int) $this->offerForm->offer_state_id);
         return $state && !in_array($state->slug, ['expired', 'cancelled'], true);
     }
 };
@@ -568,7 +570,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
                 class="w-full px-3 py-2 text-gray-900 text-base bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-500"
                 wire:model="offerTemplateForm.offer_type_id" required>
                 <option class="text-center" value="" selected>--- Selecciona una plantilla ---</option>
-                @foreach ($this->offerTypes as $offerType)
+                @foreach ($this->availableOfferTypes as $offerType)
                   <option value="{{ $offerType->id }}">{{ $offerType->name }}</option>
                 @endforeach
               </select>
@@ -745,7 +747,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
                       'cursor-not-allowed opacity-70': modalMode === 'show' || !
                           {{ $this->isStateEditable ? 'true' : 'false' }}
                   }">
-                  @foreach ($this->offerStates as $offerState)
+                  @foreach ($this->availableOfferStates as $offerState)
                     <option value="{{ $offerState->id }}">{{ $offerState->name }}</option>
                   @endforeach
                 </select>

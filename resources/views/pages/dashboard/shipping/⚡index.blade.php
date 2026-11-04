@@ -2,7 +2,7 @@
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\{Computed, Layout, Url};
+use Livewire\Attributes\{Computed, Layout, On, Url};
 
 use App\Models\{Shipping, ShippingState, User};
 use App\Traits\HasSortableTable;
@@ -325,7 +325,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
         }
 
         const instance = new Choices(element, options)
-
         element._choicesInstance = instance
 
         if (values.length) {
