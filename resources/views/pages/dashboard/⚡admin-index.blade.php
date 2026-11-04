@@ -80,7 +80,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
     #[Computed]
     public function recentOrders(): Collection
     {
-        return Order::with(['user:id,name,surname', 'orderState:id,name'])
+        return Order::with(['user:id,name,surname', 'orderState:id,name,slug'])
             ->orderByDesc('date')
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->limit($this->recentOrdersLimit)
@@ -90,7 +90,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
     #[Computed]
     public function maxOrders(int $limit = 5): Collection
     {
-        return Order::with(['user:id,name,surname', 'orderState:id,name'])
+        return Order::with(['user:id,name,surname', 'orderState:id,name,slug'])
             ->whereBetween('orders.date', [$this->startDate, $this->endDate])
             ->whereIn('order_state_id', $this->completedStateIds())
             ->orderByDesc('total')
@@ -101,7 +101,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
     #[Computed]
     public function nonPayedOrders(int $limit = 5): Collection
     {
-        return Order::with(['user:id,name,surname', 'orderState:id,name'])
+        return Order::with('user:id,name,surname')
             ->whereBetween('orders.date', [$this->startDate, $this->endDate])
             ->whereIn('order_state_id', OrderState::where('slug', 'pending')->pluck('id'))
             ->orderByDesc('total')
@@ -555,7 +555,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
               <th>Orden N°</th>
               <th class="hidden sm:table-cell">Cliente</th>
               <th>Total</th>
-              <th class="hidden md:table-cell">Estado</th>
               <th>Fecha</th>
             </tr>
           </x-slot:thead>
@@ -575,11 +574,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
                 <td class="hidden sm:table-cell">
                   <span class="me-px text-slate-300/80">$</span>
                   {{ number_format($order->total, 2, ',', '.') }}
-                </td>
-                <td class="hidden md:table-cell">
-                  <span class="text-blue-400 font-semibold before:content-['●'] before:me-px">
-                    {{ $order->orderState->name }}
-                  </span>
                 </td>
                 <td class="text-slate-300/80">{{ $order->date->format('d/m/Y H:i') }}</td>
               </tr>
