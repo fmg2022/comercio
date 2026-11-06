@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     // My routes
     Route::livewire('my/orders', 'pages::dashboard.order.index')->name('my.orders.index')->middleware('permission:view_any_own_orders');
     Route::get('my/orders/{id}/show', [OrderController::class, 'show'])->name('my.orders.show')->middleware('permission:view_own_order');
-    Route::get('my/payments', [PaymentController::class, 'myIndex'])->name('my.payments.index')->middleware('permission:view_any_own_payments');
+    Route::livewire('my/payments', 'pages::dashboard.payment.index')->name('my.payments.index')->middleware('permission:view_any_own_payments');
     Route::get('my/carts', function () {
       $cart = auth()->user()->cart;
       abort_unless($cart, 404, 'Carrito no encontrado');
@@ -100,10 +100,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Payment routes
     Route::prefix('payments')->name('payments.')->group(function () {
-      Route::resource('/', PaymentController::class)->only(['index', 'update']);
-      Route::put('/{payment}/states', [PaymentController::class, 'updateStates'])->name('updateStates');
+      Route::livewire('/', 'pages::dashboard.payment.index')->name('index')->middleware('permission:view_any_payments');
       Route::get('/export', [PaymentController::class, 'export'])->name('export');
-      Route::post('/count', [PaymentController::class, 'count'])->name('count');
     });
 
     // Shipment routes

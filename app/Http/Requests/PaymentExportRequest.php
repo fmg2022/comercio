@@ -30,6 +30,8 @@ class PaymentExportRequest extends FormRequest
             'states.*' => 'nullable|exists:payment_states,id',
             'amount_from' => 'nullable|numeric',
             'amount_to' => 'nullable|numeric',
+            'providers' => 'nullable|array',
+            'providers.*' => 'nullable|exists:payment_providers,id',
         ];
     }
 }
