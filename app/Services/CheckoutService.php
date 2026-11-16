@@ -106,7 +106,7 @@ class CheckoutService
         $random = bin2hex(random_bytes(5));
         $date = date('YmdHis');
         $trackingNumber = "TRK-{$random}-{$date}";
-        $deliveryDate = now()->addhours(random_int(1, 6));
+        $deliveryDate = now()->addhours($data->estimatedTime);
 
         $shipping = Shipping::create([
           'order_id' => $order->id,

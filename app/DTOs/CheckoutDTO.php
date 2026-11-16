@@ -15,6 +15,7 @@ final readonly class CheckoutDTO
         public string $deliveryMethod,
         public string $paymentMethod,
         public ?string $notes,
+        public ?int $estimatedTime,
     ) {}
 
     public static function fromArray(array $data): self
@@ -25,6 +26,7 @@ final readonly class CheckoutDTO
             deliveryMethod: $data['deliveryMethod'],
             paymentMethod: $data['paymentMethod'],
             notes: $data['notes'],
+            estimatedTime: $data['estimatedTime'],
         );
     }
 
@@ -41,6 +43,7 @@ final readonly class CheckoutDTO
             'deliveryMethod' => $this->deliveryMethod,
             'paymentMethod' => $this->paymentMethod,
             'notes' => $this->notes,
+            'estimatedTime' => $this->estimatedTime,
         ];
     }
 }

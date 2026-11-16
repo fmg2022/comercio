@@ -4,21 +4,25 @@ namespace App\Livewire\Forms;
 
 use App\DTOs\CheckoutDTO;
 use App\Services\CheckoutService;
-use Livewire\Attributes\Validate;
+use Livewire\Attributes\{Url, Validate};
 use Livewire\Form;
 
 class CheckoutForm extends Form
 {
     #[Validate('required|exists:carts,id')]
     public int $cartId;
+    #[Url(history: true)]
     #[Validate('nullable|exists:addresses,id|required_if:deliveryMethod,shipping')]
     public ?int $addressId = null;
     #[Validate('nullable|string')]
     public ?string $notes = null;
+    #[Url(history: true)]
     #[Validate('required|string|in:shipping,pickup')]
     public string $deliveryMethod = 'pickup';
     #[Validate('required|string|in:mercadopago,paypal')]
     public string $paymentMethod = 'mercadopago';
+    #[Validate('nullable|int|min:0')]
+    public ?string $estimatedTime = null;
 
 
     public function messages()

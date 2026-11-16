@@ -54,7 +54,10 @@ new class extends Component {
             $this->quantities[$product->id] = $product->pivot->quantity;
         }
 
-        $this->checkoutForm->addressId = auth()->user()->defaultAddress?->id;
+        if (!$this->checkoutForm->addressId) {
+            $this->checkoutForm->addressId = auth()->user()->defaultAddress?->id;
+        }
+
         $this->calculateTotal();
     }
 
@@ -100,11 +103,13 @@ new class extends Component {
 
     public function updatedCheckoutFormAddressId(): void
     {
+        $this->validateOnly('checkoutForm.addressId');
         $this->calculateTotal();
     }
 
     public function updatedCheckoutFormDeliveryMethod(): void
     {
+        $this->validateOnly('checkoutForm.addressId');
         if ($this->checkoutForm->deliveryMethod === 'shipping' && !$this->isShippingFeasible) {
             $this->checkoutForm->deliveryMethod = 'pickup';
         }
@@ -118,9 +123,14 @@ new class extends Component {
             $this->checkoutForm->save();
         } catch (InsufficientStockException $e) {
             // Quitar el producto sin stock del carrito
-            $this->cart->products()->detach($e->productId);
+            if ($e->available > 0) {
+                $this->cart->updateProduct($e->productId, $e->available);
+                $this->dispatch('notification', message: "Solo quedan {$availableStock} unidades de “{$product->name}”. Se ajustó la cantidad en tu carrito.", type: 'error');
+            } else {
+                $this->cart->products()->detach($e->productId);
+                $this->dispatch('notification', message: $e->getMessage(), type: 'error');
+            }
             $this->refreshCart();
-            $this->dispatch('notification', message: $e->getMessage(), type: 'error');
         } catch (\Exception $e) {
             $this->dispatch('notification', message: $e->getMessage(), type: 'error');
         }
@@ -132,6 +142,7 @@ new class extends Component {
 
         $this->shippingCost = 0.0;
         $this->distanceKm = 0.0;
+        $this->checkoutForm->estimatedTime = null;
         $this->isShippingFeasible = false;
         $this->shippingMessage = null;
 
@@ -147,6 +158,7 @@ new class extends Component {
 
             $this->isShippingFeasible = true;
             $this->distanceKm = $shipping['distance_km'];
+            $this->checkoutForm->estimatedTime = 3 + $shipping['shipping_rate_id'];
 
             if ($this->checkoutForm->deliveryMethod === 'shipping') {
                 $this->shippingCost = (float) $shipping['shipping_cost'];
@@ -160,6 +172,7 @@ new class extends Component {
         } catch (ShippingNotFeasibleException $e) {
             $this->shippingMessage = 'La dirección seleccionada se encuentra fuera de nuestra zona de envío.';
             $this->distanceKm = $e->distance_km;
+            $this->checkoutForm->estimatedTime = null;
         } finally {
             $this->updateOrderTotal();
         }
@@ -322,6 +335,7 @@ new class extends Component {
           <label for="address_id" class="mb-4 text-lg font-medium text-gray-900">Dirección de envío</label>
           <select id="address_id" wire:model.live="checkoutForm.addressId"
             class="block w-full px-3 py-2 rounded-md bg-white/50 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+            <option value="">Selecciona una dirección</option>
             @forelse ($this->addresses as $address)
               <option value="{{ $address->id }}">
                 {{ $address->street }}</option>
@@ -347,10 +361,15 @@ new class extends Component {
                 <div>
                   <p class="font-medium text-gray-900">🚚 Envío a domicilio</p>
                   @if ($isShippingFeasible)
+                    <input type="hidden" name="estimated_time" wire:model="checkoutForm.estimatedTime">
                     <p class="mt-1 text-sm text-gray-600">Podemos realizar el envío a esta dirección.</p>
                     <p class="mt-1 text-sm text-gray-600">
                       Distancia:
                       <strong>{{ number_format($distanceKm, 2, ',', '.') }} km</strong>
+                    </p>
+                    <p class="mt-1 text-sm text-gray-600">
+                      Tiempo estimado:
+                      <strong>{{ $checkoutForm->estimatedTime ? $checkoutForm->estimatedTime . ' Hr' : 'No disponible' }}</strong>
                     </p>
                   @else
                     <p class="mt-1 text-sm text-red-600">
