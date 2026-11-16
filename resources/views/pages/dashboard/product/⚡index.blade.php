@@ -748,7 +748,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
     </div>
   </dialog>
 
-  {{-- Modal Show/Edit --}}
+  {{-- Modal Show/Edit/Create --}}
   <div x-cloak x-show="modalOpen" x-on:product-modal-updated.window="syncProductChoices()"
     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"

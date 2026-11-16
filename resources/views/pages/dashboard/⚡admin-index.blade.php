@@ -423,7 +423,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         $conversion = $conversionData;
       @endphp
       <div
-        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-500/80 transition duration-200">
+        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-600/80 transition duration-200">
         <div class="text-sm uppercase tracking-wider text-slate-200">💰 Ingresos Totales</div>
         <div class="my-2 text-3xl font-bold">$ {{ number_format($revenue['current'], 2, ',', '.') }}</div>
         <div class="flex items-center gap-2 text-sm">vs período anterior: <span
@@ -432,7 +432,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         <small>Anterior: $ {{ number_format($revenue['previous'], 2, ',', '.') }}</small>
       </div>
       <div
-        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-500/80 transition duration-200">
+        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-600/80 transition duration-200">
         <div class="text-sm uppercase tracking-wider text-slate-200">📦 Pedidos completados</div>
         <div class="my-2 text-3xl font-bold">{{ number_format($orders['current']) }}</div>
         <div class="flex items-center gap-2 text-sm">vs anterior: <span
@@ -441,7 +441,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         <small>Anterior: {{ number_format($orders['previous']) }}</small>
       </div>
       <div
-        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-500/80 transition duration-200">
+        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-600/80 transition duration-200">
         <div class="text-sm uppercase tracking-wider text-slate-200">🛒 Valor medio carrito (AOV)</div>
         <div class="my-2 text-3xl font-bold">$ {{ number_format($aov['current'], 2, ',', '.') }}</div>
         <div class="flex items-center gap-2 text-sm">vs anterior: <span
@@ -450,7 +450,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         <small>Anterior: $ {{ number_format($aov['previous'], 2, ',', '.') }}</small>
       </div>
       <div
-        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-500/80 transition duration-200">
+        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-600/80 transition duration-200">
         <div class="text-sm uppercase tracking-wider text-slate-200">📈 Tasa de conversión</div>
         <div class="my-2 text-3xl font-bold">{{ $conversion['current'] }}%</div>
         <div class="flex items-center gap-2 text-sm">vs anterior: <span
@@ -459,7 +459,7 @@ new #[Layout('layouts::dashboard')] class extends Component {
         <small>Anterior: {{ $conversion['previous'] }}%</small>
       </div>
       <div
-        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-500/80 transition duration-200">
+        class="p-4 bg-slate-800 rounded-lg border-t-4 border-t-sky-700 shadow-md shadow-slate-600/80 transition duration-200">
         <div class="text-sm uppercase tracking-wider text-slate-200">💎 LTV (Customer Lifetime Value)</div>
         <div class="my-2 text-3xl font-bold">$ {{ number_format($ltv, 2, ',', '.') }}</div>
         <div class="flex items-center gap-2 text-sm">(histórico desde inicio)</div>

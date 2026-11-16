@@ -78,7 +78,7 @@
         <tr>
           <td style="padding: 30px 30px 20px;">
             <h2 style="margin:0 0 8px; font-size: 24px; color:#1e2a3a;">
-              ¡Gracias por tu compra, {{ $order->user->fullName() ?? 'cliente' }}!
+              ¡Gracias por tu compra {{ $order->user->fullName() ?? 'cliente' }}!
             </h2>
             <p style="margin:0 0 24px; color:#4a5568; font-size: 16px;">
               Tu pedido <strong>#{{ $order->id }}</strong> fue procesado correctamente y ya está listo para retirar.

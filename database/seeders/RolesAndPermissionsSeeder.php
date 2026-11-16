@@ -181,57 +181,43 @@ class RolesAndPermissionsSeeder extends Seeder
         /** @var Role $logistics */
         $logistics = Role::where('name', 'logistics')->first();
         $logistics->syncPermissions([
-            // Cliente
             'view_any_own_orders',
             'view_own_order',
             'view_own_cart',
             'view_any_own_payments',
-            // Catálogo (solo lectura)
             'view_any_products',
             'view_product',
             'view_any_state_types',
-            // Pedidos (lectura + actualización de estado)
             'view_any_orders',
             'view_orders',
             'update_orders',
-            // Envíos (gestión completa)
             'view_any_shippings',
             'view_shippings',
             'update_shippings',
-            // Pagos (lectura)
             'view_any_payments',
             'view_payments',
-            // Ofertas (lectura)
             'view_any_offers',
         ]);
 
         /** @var Role $support */
         $support = Role::where('name', 'support')->first();
         $support->syncPermissions([
-            // Cliente
             'view_any_own_orders',
             'view_own_order',
             'view_own_cart',
             'view_any_own_payments',
-            // Usuarios (solo lectura)
             'view_any_users',
-            // Catálogo (solo lectura)
             'view_any_products',
             'view_product',
             'view_any_state_types',
-            // Pedidos (lectura + poder cancelar/actualizar estado)
             'view_any_orders',
             'view_orders',
             'update_orders',
-            // Envíos (solo lectura)
             'view_any_shippings',
             'view_shippings',
-            // Pagos (solo lectura)
             'view_any_payments',
             'view_payments',
-            // Ofertas (solo lectura)
             'view_any_offers',
-            // Carritos (solo lectura)
             'view_any_carts',
         ]);
 

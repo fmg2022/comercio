@@ -59,11 +59,8 @@ new class extends Component {
         DB::beginTransaction();
         try {
             $cart = auth()->user()->cart;
-
             $item = $cart->products()->where('product_id', $this->productId)->lockForUpdate()->first();
-
             $existItem = $item && $item->exists();
-
             $qty = $existItem ? $item->pivot->quantity + $this->quantity : $this->quantity;
 
             if ($existItem) {

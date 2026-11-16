@@ -513,15 +513,6 @@ new #[Layout('layouts::dashboard')] class extends Component {
                         </button>
                       </li>
                     @endcan
-                    {{-- @can('manage_state_types')
-                      <li>
-                        <button type="button"
-                          class="w-full px-4 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors">
-                          <x-icons.edit class="size-5" />
-                          Cambiar Estado
-                        </button>
-                      </li>
-                    @endcan --}}
                   </ul>
                 </x-popups.contentWcheck>
               </div>
