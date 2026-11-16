@@ -94,6 +94,7 @@ class ProductForm extends Form
             'description' => $data['description'],
             'category_id' => $data['categoryId'],
             'brand_id' => $data['brandId'],
+            'image' => 'zz_emptyProducto.webp',
         ];
     }
 }
