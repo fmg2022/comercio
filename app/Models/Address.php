@@ -58,6 +58,13 @@ class Address extends Model
             . ' ' . $this->postal_code;;
     }
 
+    public function shortAddress(): string
+    {
+        return $this->locality
+            . ', ' . $this->street
+            . ($this->intersection ? ', ' . $this->intersection : '');
+    }
+
     // Relationships
     public function user(): BelongsTo
     {
