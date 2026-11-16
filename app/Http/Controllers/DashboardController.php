@@ -12,8 +12,11 @@ class DashboardController extends Controller
 {
 	public function redirectToDashboard(): RedirectResponse
 	{
-		if (auth()->user()->hasRole(['admin', 'super_admin'])) {
+		$user = auth()->user();
+		if ($user->hasRole(['admin', 'super_admin'])) {
 			return redirect()->route('admin.dashboard');
+		} elseif ($user->hasRole('logistics')) {
+			return redirect()->route('logistic.dashboard');
 		}
 		return redirect()->route('client.dashboard');
 	}

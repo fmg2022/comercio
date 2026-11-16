@@ -15,6 +15,12 @@ return [
       'permission' => 'view_any_roles',
     ],
     [
+      'name' => 'Dashboard Logística',
+      'icon' => 'dashboard3',
+      'route' => 'logistic.dashboard',
+      'permission' => 'view_any_shippings',
+    ],
+    [
       'name' => 'Sección de Usuario',
       'route' => '',
       'permission' => null,

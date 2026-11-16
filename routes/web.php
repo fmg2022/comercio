@@ -23,7 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('dashboard.index');
         Route::get('/clients', [\App\Http\Controllers\DashboardController::class, 'index'])
             ->name('client.dashboard');
-        Route::livewire('/admins', 'pages::dashboard.admin-index')->name('admin.dashboard')->middleware('permission:view_any_roles');
+        Route::livewire('/admins', 'pages::dashboard.admin-index')
+            ->name('admin.dashboard')->middleware('permission:view_any_roles');
+        Route::livewire('/logistic', 'pages::dashboard.logistic-index')
+            ->name('logistic.dashboard')->middleware('permission:view_any_shippings');
     });
 
     // Rutas para el carrito
